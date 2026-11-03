@@ -19,6 +19,13 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 - Created the public GitHub repo `ghost-script` (MIT licence) and this log.
 - Plan: write steering docs by hand first (no credits needed), then start Spec 1 (Write mode) once credits arrive.
 
+## Nov 3, 2026: First steering docs
+
+- **What I did:** Added four steering files in `.kiro/steering/`: `product.md`, `tech.md`, `structure.md` (all `inclusion: always`) and `content-accuracy.md` (`inclusion: fileMatch` on data, scripts, oracle and test files). Also added a `.gitignore` that explicitly keeps `.kiro/` tracked.
+- **Kiro feature:** Steering.
+- **Why:** Written before any code, so every Kiro session starts with the same product scope, tech stack and data rules. Drafted with AI help outside Kiro (no credits used yet). The content-accuracy rules only load when working on data files, so they don't fill the context during UI work.
+- **Result:** To review and edit inside Kiro before starting Spec 1. Check that Kiro picks up all four files ("Including Steering Documents").
+
 ---
 
 ## Template for new entries

@@ -1,0 +1,15 @@
+# Dependencies and builds
+node_modules/
+dist/
+build/
+.vite/
+coverage/
+
+# Environment and OS files
+.env
+.env.*
+.DS_Store
+Thumbs.db
+
+# IMPORTANT: never ignore the .kiro directory. It is required for Kiroween judging.
+!.kiro/
