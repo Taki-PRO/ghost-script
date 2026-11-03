@@ -73,6 +73,15 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   3. **Hint-engine property removed.** Property 17 tested a module from a later spec using a stub. It moves to the hint-engine spec, where it can test real code.
 - **Next:** Start implementation one task at a time (not "Run All Tasks") once the 4,000 hackathon credits arrive.
 
+## Nov 3, 2026: Spec 1, task 1: project scaffolding
+
+- **What I did:** Ran task 1 of the `character-dataset` spec through the Kiro chat, with an explicit prompt: task 1 only, follow the steering docs, and install only the listed dev dependencies.
+- **Kiro feature:** Spec task execution, steering (tech.md, structure.md).
+- **Why:** Ran one task with a scoped prompt, instead of "Run All Tasks", to keep control of the 50 free-tier credits and review each step.
+- **Result:** Kiro created the folder structure from `structure.md` (data, scripts, tests, app/public/data, app/src/data) with `.gitkeep` files, a root `package.json` (`build:data`, `test`), a strict `tsconfig.json`, and the `character-list.txt` header. It pinned exact versions of tsx, vitest, fast-check and typescript, so the build is reproducible. `npm install` and `npm test` passed. Checked on GitHub: `node_modules/` was not committed, `package-lock.json` was, and `.kiro/` is still tracked. About 3 credits; 25 left.
+  - **Note for later:** `tests/unit/scaffold.test.ts` is a placeholder so the test runner has a file. Remove it once real tests exist (task 5.2).
+- **Decision for task 4:** use the official HSK 3.0 handwriting list (书写字), elementary band, from `ivankra/hsk30` (MIT; transcribed from the Ministry of Education standard GF0025-2021). It's the list of characters learners must be able to write by hand, which matches what Ghost Script trains.
+
 ---
 
 ## Template for new entries
