@@ -26,6 +26,41 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 - **Why:** Written before any code, so every Kiro session starts with the same product scope, tech stack and data rules. Drafted with AI help outside Kiro (no credits used yet). The content-accuracy rules only load when working on data files, so they don't fill the context during UI work.
 - **Result:** To review and edit inside Kiro before starting Spec 1. Check that Kiro picks up all four files ("Including Steering Documents").
 
+## Nov 3, 2026: Checked steering in Kiro IDE
+
+- **What I did:** Cloned the repo in Kiro IDE and checked the Agent Steering & Skills panel. The four workspace steering files only appeared after reloading the window.
+- **Kiro feature:** Steering (IDE panel).
+- **Why:** To confirm every session would load the project rules before creating the first spec.
+- **Result:** All four showed under "Workspace", next to Kiro's built-in global skills (architecture-selection, quick-spec, bug-fix).
+
+## Nov 3, 2026: Spec 1 (`character-dataset`): requirements
+
+- **What I did:** Started the first spec with the built-in **Spec** agent: chose "Build a Feature" (not Quick Spec, so every phase is reviewed) and "Requirements first". Autopilot off, model on Auto.
+- **Kiro feature:** Specs (requirements-first, EARS acceptance criteria), steering.
+- **Why:** Every game mode (Write, Build, hints, the Oracle) depends on correct character data, so the data pipeline is the first spec. Requirements-first because we knew *what* the data must guarantee before deciding *how* to build it.
+- **Result:** Kiro produced 5 requirements (character list, raw datasets, pipeline script, record schema, property-based tests). About 4.8 credits.
+  - **Steering issue found:** Kiro included only product, structure and tech. `content-accuracy.md` was skipped because its `fileMatch` pattern covered data and script files, not spec files. Fixed by adding `.kiro/specs/**/*` to the pattern, so data rules now load during spec work.
+  - **Review caught a contradiction:** the requirements allowed partial records with null fields, but the tests required every record to be complete. Asked Kiro to revise (about 2.4 credits):
+    1. Missing required fields (pinyin, meanings, stroke count, stroke data, decomposition) now **fail the build** with a full list of affected characters, instead of producing partial records.
+    2. Characters restricted to the main CJK Unified Ideographs block (U+4E00–U+9FFF).
+    3. Build-mode decoy tests moved out of this spec, because decoys come from game logic, not the dataset.
+
+## Nov 3, 2026: Spec 1 (`character-dataset`): technical design
+
+- **What I did:** Generated `design.md` from the approved requirements.
+- **Kiro feature:** Specs (design phase), property-based testing plan.
+- **Why:** Review the architecture before any code is written or credits are spent on implementation.
+- **Result:** A five-stage pipeline (validate inputs → parse each dataset → merge per character → collect errors → write), with:
+  - an atomic temp-file write, so a failed run never leaves a broken `characters.json`;
+  - a "fail-slow" error report: every character is checked and all problems are listed in one run;
+  - deterministic output (records sorted by codepoint, fixed key order);
+  - shared TypeScript types in `app/src/data/types.ts` for the app, pipeline and Oracle;
+  - one parser module per dataset in `scripts/lib/`.
+  - **Atomic characters:** basic characters like 一, 人 and 口 cannot be broken down further, and a "must have a decomposition" rule would have wrongly rejected them. Kiro **read the Make Me a Hanzi README** to check how these are stored: a decomposition starting with `？` means atomic, and a `？` inside a decomposition means one unknown component. The design now marks atomic characters as valid (`atomic: true`, component = the character itself), strips unknown `？` components, and still fails on genuinely missing entries.
+  - **Component range:** the main-block rule was correct for the 300 characters but too strict for components, which can be radical forms in other Unicode blocks (e.g. ⺮ bamboo). Components may now come from CJK Unified Ideographs, Extension A, Radicals Supplement, Kangxi Radicals and CJK Strokes. Placeholders (`？`) and structure symbols are never allowed.
+  - The design now has **17 correctness properties** (Vitest + fast-check, at least 100 runs each), including determinism, schema completeness, no placeholder components, and atomic-character invariants.
+- **Next:** Generate the task list. Start implementation once the 4,000 hackathon credits arrive.
+
 ---
 
 ## Template for new entries
