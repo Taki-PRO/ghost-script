@@ -62,6 +62,17 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 - **Credits:** about 20 of the 50 free-tier credits used so far for Spec 1 (requirements about 7.1, design plus the two design revisions about 12.9). 30 left.
 - **Next:** Generate the task list. Start implementation once the 4,000 hackathon credits arrive.
 
+## Nov 3, 2026: Spec 1 (`character-dataset`): task list
+
+- **What I did:** Generated `tasks.md` (20 tasks with a dependency graph of parallel "waves"), then revised it in review.
+- **Kiro feature:** Specs (tasks phase).
+- **Why:** Break the design into small, checkable steps before spending credits on implementation.
+- **Result:** Kiro's first version had a good structure, but three choices worked against the project. They were revised (edited directly in `tasks.md`, no credits used):
+  1. **All tests made required.** Kiro had marked every unit and property-based test optional (`*`) to get a faster MVP. For Ghost Script, those tests are the proof that the character data is correct, because judges can't check Chinese by reading it.
+  2. **Real data moved to the start.** Downloading the three datasets and choosing the character list moved from tasks 16–17 to tasks 3–4, right after the shared types. Every parser is now built against the real files, so surprises like atomic characters and radical forms show up early.
+  3. **Hint-engine property removed.** Property 17 tested a module from a later spec using a stub. It moves to the hint-engine spec, where it can test real code.
+- **Next:** Start implementation one task at a time (not "Run All Tasks") once the 4,000 hackathon credits arrive.
+
 ---
 
 ## Template for new entries
