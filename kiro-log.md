@@ -59,6 +59,7 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   - **Atomic characters:** basic characters like 一, 人 and 口 cannot be broken down further, and a "must have a decomposition" rule would have wrongly rejected them. Kiro **read the Make Me a Hanzi README** to check how these are stored: a decomposition starting with `？` means atomic, and a `？` inside a decomposition means one unknown component. The design now marks atomic characters as valid (`atomic: true`, component = the character itself), strips unknown `？` components, and still fails on genuinely missing entries.
   - **Component range:** the main-block rule was correct for the 300 characters but too strict for components, which can be radical forms in other Unicode blocks (e.g. ⺮ bamboo). Components may now come from CJK Unified Ideographs, Extension A, Radicals Supplement, Kangxi Radicals and CJK Strokes. Placeholders (`？`) and structure symbols are never allowed.
   - The design now has **17 correctness properties** (Vitest + fast-check, at least 100 runs each), including determinism, schema completeness, no placeholder components, and atomic-character invariants.
+- **Credits:** about 20 of the 50 free-tier credits used so far for Spec 1 (requirements about 7.1, design plus the two design revisions about 12.9). 30 left.
 - **Next:** Generate the task list. Start implementation once the 4,000 hackathon credits arrive.
 
 ---
