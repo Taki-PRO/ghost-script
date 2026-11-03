@@ -1,6 +1,6 @@
 ---
 inclusion: fileMatch
-fileMatchPattern: ["data/**/*", "scripts/**/*", "oracle/**/*", "app/src/data/**/*", "tests/**/*"]
+fileMatchPattern: ["data/**/*", "scripts/**/*", "oracle/**/*", "app/src/data/**/*", "tests/**/*", ".kiro/specs/**/*"]
 ---
 
 # Content accuracy rules (character data)
