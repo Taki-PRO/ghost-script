@@ -6,7 +6,7 @@ Build the data pipeline that transforms three open-source raw datasets into `app
 
 ## Tasks
 
-- [ ] 1. Project scaffolding
+- [x] 1. Project scaffolding
   - Create directory structure: `data/raw/`, `scripts/lib/`, `tests/unit/`, `tests/property/`, `tests/smoke/`, `tests/integration/`, `tests/helpers/`, `app/public/data/`, `app/src/data/`
   - Add `package.json` at repo root (or update existing) with scripts: `"build:data": "tsx scripts/build-data.ts"`, `"test": "vitest run"`
   - Add `tsconfig.json` at repo root covering `scripts/`, `tests/`, and `app/src/data/types.ts` with `"strict": true`, `"module": "ESNext"`, `"moduleResolution": "bundler"`
