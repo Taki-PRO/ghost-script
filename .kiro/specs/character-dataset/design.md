@@ -16,24 +16,29 @@ flowchart TD
     HWD["data/raw/hanzi-writer-data/\n(one JSON file per character)"]
     MMH["data/raw/make-me-a-hanzi/dictionary.txt\n(newline-delimited JSON)"]
     CCD["data/raw/cc-cedict/cedict_ts.u8\n(text, CC-CEDICT format)"]
+    OVR["data/prompt-overrides.csv\n(optional human overrides, by index)"]
 
     CL --> P
     HWD --> P
     MMH --> P
     CCD --> P
+    OVR --> P
 
     subgraph P["scripts/build-data.ts  (Pipeline)"]
         direction TB
         V["1. Validate inputs\n(file presence, CJK range check)"]
-        PA["2. Parse datasets into Maps\n(parseHanziWriterData)\n(parseMakeMeAHanzi)\n(parseCcCedict)"]
-        MG["3. Merge records per character\n(mergeCharacter)"]
+        PA["2. Parse datasets into Maps\n(parseHanziWriterData)\n(parseMakeMeAHanzi)\n(parseCcCedict)\n(parsePromptOverrides)"]
+        MG["3. Merge records per character\n(mergeCharacter)\n(selectPrompt)"]
         ER["4. Collect errors\n(fail-slow pass)"]
-        SV["5. Sort by codepoint\nSerialise deterministically\nWrite output atomically"]
+        SV["5. Sort by codepoint\nSerialise deterministically\nWrite output atomically\nWrite prompt-review.csv"]
         V --> PA --> MG --> ER --> SV
     end
 
     SV --> OUT["app/public/data/characters.json"]
+    SV --> REV["data/prompt-review.csv\n(human-review output)"]
 ```
+
+The build also reads `data/prompt-overrides.csv` when present (an absent file means no overrides), calls `selectPrompt` per character during the merge/assembly pass, and treats a prompt-selection failure (and an out-of-range override index) exactly like a missing-required-field failure: fail-slow, aggregated across all characters, no output written, non-zero exit. On full success it writes `data/prompt-review.csv` next to `data/` as an output artefact for human spot-checking; `app/public/data/characters.json` remains the primary output.
 
 ### Design decisions
 
@@ -55,10 +60,12 @@ The file exports a `main()` function (called on execution) and a pure `buildData
 export async function buildDataset(opts: BuildOptions): Promise<BuildResult>
 
 interface BuildOptions {
-  characterListPath: string;   // path to character-list.txt
-  hanziWriterDataDir: string;  // path to hanzi-writer-data directory
-  makeMeAHanziPath: string;    // path to dictionary.txt
-  ccCedictPath: string;        // path to cedict_ts.u8
+  characterListPath:    string;   // path to character-list.txt
+  hanziWriterDataDir:   string;  // path to hanzi-writer-data directory
+  makeMeAHanziPath:     string;    // path to dictionary.txt
+  ccCedictPath:         string;        // path to cedict_ts.u8
+  promptOverridesPath?: string;  // path to prompt-overrides.csv (optional; absent = no overrides)
+  promptReviewPath?:    string;  // path to write prompt-review.csv on success
 }
 
 type BuildResult =
@@ -68,6 +75,7 @@ type BuildResult =
 interface MissingFieldError {
   character: string;
   missingFields: RequiredField[];
+  promptFailure?: 'no-usable-meaning' | 'no-usable-reading';  // prompt-selection failure reason
 }
 
 type RequiredField = 'pinyin' | 'meanings' | 'strokeCount' | 'strokeData' | 'decomposition';
@@ -181,6 +189,61 @@ type MergeResult =
 
 Pure function. Assembles a `CharacterRecord` from the three parsed entries. Returns a failure result listing every missing required field rather than throwing.
 
+### `scripts/lib/prompt.ts`
+
+```typescript
+export function selectPrompt(
+  char: string,
+  ccCedict: CcCedictEntry,
+  override: PromptOverride | undefined,
+): PromptSelectionResult
+
+export function numberedToToneMarks(numberedPinyin: string): string
+
+export interface PromptOverride {
+  character:    string;
+  meaningIndex: number;
+  readingIndex: number;
+  reviewedBy:   string;
+}
+
+export interface PromptChoice {
+  meaning:       string;   // after (bound form) stripping
+  pinyin:        string;   // tone-mark form
+  meaningIndex:  number;   // index into ccCedict.meanings
+  readingIndex:  number;   // index into ccCedict.pinyin
+  fromOverride:  boolean;
+}
+
+type PromptSelectionResult =
+  | { ok: true;  choice: PromptChoice }
+  | { ok: false; reason: 'no-usable-meaning' | 'no-usable-reading' }
+```
+
+`selectPrompt` chooses the ghost clue for a character. The default rule walks the CC-CEDICT `meanings` in source order, strips a single leading `(bound form) ` prefix (used both for comparison and for output), and skips any meaning that — after stripping — begins case-insensitively with any skipped prefix (`surname `, `variant of`, `old variant of`, `used in`, `see `, `abbr.`, `CL:`, `also pr.`, `Taiwan pr.`); the first remaining meaning is chosen. For the reading it chooses the first pinyin that is not a proper-noun reading (one whose first syllable is capitalised, e.g. `San`), falling back to the first reading if every reading is a proper-noun reading. When an `override` is supplied it takes precedence: the override-selected meaning (with `(bound form) ` stripping still applied) and reading are used instead of the default. Override index validity is validated upstream during the build (it needs the merged CC-CEDICT data), so `selectPrompt` trusts a supplied override.
+
+`numberedToToneMarks` converts a numbered-pinyin reading (tone digits 1–5) to the tone-mark form. It places the diacritic using the standard vowel-priority rule: `a` or `e` always takes the mark; in the sequence `ou` the `o` takes it; otherwise the last vowel takes it. Tone 5 (neutral) produces no mark.
+
+Both functions are pure. `selectPrompt` never throws on a selection failure — it returns `{ ok: false, reason }` so the build can aggregate the failure like a missing required field.
+
+### `scripts/lib/parse-prompt-overrides.ts`
+
+```typescript
+export function parsePromptOverrides(rawCsv: string): ParsePromptOverridesResult
+
+type ParsePromptOverridesResult =
+  | { ok: true;  overrides: Map<string, PromptOverride> }
+  | { ok: false; errors: PromptOverrideError[] }
+
+export interface PromptOverrideError {
+  line: number;
+  character: string;
+  reason: 'unknown-character' | 'meaning-index-out-of-range' | 'reading-index-out-of-range' | 'missing-reviewer' | 'malformed-row' | 'duplicate-character';
+}
+```
+
+Parses `data/prompt-overrides.csv` (header `character,meaningIndex,readingIndex,reviewedBy`). The parser validates row shape (`malformed-row`), non-empty `reviewedBy` (`missing-reviewer`), and duplicate characters (`duplicate-character`). Range validation that depends on a character's parsed CC-CEDICT entry (`unknown-character`, `meaning-index-out-of-range`, `reading-index-out-of-range`) happens during the build, because it needs the merged data; the error type enumerates all reasons the build may report. `data/prompt-overrides.csv` is an INPUT to the build; `data/prompt-review.csv` is an OUTPUT written on success and is never read back.
+
 ### `scripts/lib/serialise.ts`
 
 ```typescript
@@ -189,7 +252,7 @@ export function serialiseDataset(
 ): string
 ```
 
-Sorts records by Unicode codepoint (`char.codePointAt(0)`) ascending, then serialises to JSON with a fixed key order per record (`character`, `pinyin`, `meanings`, `strokeCount`, `strokeData`, `decomposition`, `sources`). Uses `JSON.stringify(sorted, null, 2)` for a human-readable, deterministic output.
+Sorts records by Unicode codepoint (`char.codePointAt(0)`) ascending, then serialises to JSON with a fixed key order per record (`character`, `pinyin`, `meanings`, `strokeCount`, `strokeData`, `decomposition`, `prompt`, `sources`). Uses `JSON.stringify(sorted, null, 2)` for a human-readable, deterministic output.
 
 ---
 
@@ -206,6 +269,7 @@ export interface CharacterRecord {
   strokeCount:  number;          // integer >= 1
   strokeData:   StrokeData;      // verbatim hanzi-writer path object
   decomposition: Decomposition;  // always non-null; atomic=true when character is indivisible
+  prompt:       Prompt;          // always non-null; chosen ghost clue (see Requirement 6)
   sources:      FieldSources;
 }
 
@@ -227,6 +291,11 @@ export interface Decomposition {
                                   // for atomic records, [character]
 }
 
+export interface Prompt {
+  meaning: string;   // chosen English gloss, "(bound form) " prefix stripped; non-empty
+  pinyin:  string;   // chosen reading rendered with tone marks, e.g. "shàng"; non-empty
+}
+
 export type DatasetId = 'cc-cedict' | 'hanzi-writer-data' | 'make-me-a-hanzi';
 
 export interface FieldSources {
@@ -237,6 +306,8 @@ export interface FieldSources {
   decomposition: DatasetId;   // always "make-me-a-hanzi"
 }
 ```
+
+The `Prompt` interface is a canonical type shared in `app/src/data/types.ts` alongside `CharacterRecord`, `StrokeData`, `Decomposition`, and `FieldSources`, so the app, scripts, and oracle all import the same definition.
 
 ### `characters.json` schema
 
@@ -262,6 +333,7 @@ The top-level value is a JSON object:
       "atomic": false,
       "components": ["戈"]
     },
+    "prompt": { "meaning": "I; me; my", "pinyin": "wǒ" },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -284,6 +356,7 @@ The top-level value is a JSON object:
       "atomic": true,
       "components": ["口"]
     },
+    "prompt": { "meaning": "mouth", "pinyin": "kǒu" },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -295,7 +368,7 @@ The top-level value is a JSON object:
 }
 ```
 
-Keys are sorted by Unicode codepoint ascending. Key order within each record is fixed (as listed above). This guarantees byte-for-byte determinism across runs.
+Keys are sorted by Unicode codepoint ascending. Key order within each record is fixed: `character`, `pinyin`, `meanings`, `strokeCount`, `strokeData`, `decomposition`, `prompt`, `sources`. This guarantees byte-for-byte determinism across runs.
 
 ### `data/character-list.txt` format
 
@@ -454,6 +527,38 @@ Keys are sorted by Unicode codepoint ascending. Key order within each record is 
 
 ---
 
+### Property 18: prompt.meaning is a source meaning (after prefix stripping)
+
+*For any* `CharacterRecord` in a successfully built `characters.json`, `prompt.meaning` SHALL equal one of that record's `meanings` entries, OR that entry with a single leading `(bound form) ` removed; and `prompt.meaning` SHALL be non-empty.
+
+**Validates: Requirements 6.2**
+
+---
+
+### Property 19: prompt.pinyin is the tone-mark form of a source reading
+
+*For any* `CharacterRecord` in a successfully built `characters.json`, `prompt.pinyin` SHALL equal `numberedToToneMarks(r)` for some reading `r` in that record's `pinyin` array.
+
+**Validates: Requirements 6.3**
+
+---
+
+### Property 20: no default prompt begins with a skipped prefix
+
+*For any* `CharacterRecord` whose prompt was chosen by the default rule (no override), `prompt.meaning` SHALL NOT begin (case-insensitively, after `(bound form) ` stripping) with any skipped prefix (`surname `, `variant of`, `old variant of`, `used in`, `see `, `abbr.`, `CL:`, `also pr.`, `Taiwan pr.`).
+
+**Validates: Requirements 6.4**
+
+---
+
+### Property 21: every override index is in range and reviewer-attributed
+
+*For any* parsed prompt-override applied in a successful build, `meaningIndex` SHALL be a valid index into the character's `meanings`, `readingIndex` SHALL be a valid index into the character's `pinyin`, and `reviewedBy` SHALL be non-empty.
+
+**Validates: Requirements 6.6, 6.7**
+
+---
+
 ## Error Handling
 
 ### Input validation errors (before processing)
@@ -501,6 +606,9 @@ Concrete example-based tests for:
 - `parseMakeMeAHanzi`: correctly parses a sample `dictionary.txt` line with and without etymology.
 - `parseHanziWriterData`: correctly extracts `strokeCount` from a known JSON fixture.
 - `mergeCharacter`: returns failure when any required field is missing; returns success with correct `sources` when all fields present.
+- `selectPrompt`: real cases such as 三 (skips `surname San`), 后 (skips to a usable sense), and 号; override precedence over the default rule; `no-usable-meaning` and `no-usable-reading` failure results. Fixture lines are taken from the real CC-CEDICT data in `data/raw/cc-cedict/cedict_ts.u8`; no invented entries.
+- `numberedToToneMarks`: example-based tests — `shang3` → `shǎng`, `hao3` → `hǎo`, `lu:4`/`lv4` handling if present, tone 5 (neutral) → no mark.
+- `parsePromptOverrides`: valid rows produce the override map; malformed row, missing reviewer, and duplicate character each produce the correct `PromptOverrideError`. Fixture lines in `data/prompt-overrides.csv` reference real characters (e.g. 三, 后, 号).
 - Pipeline missing-file errors: `buildDataset` with a non-existent dataset path returns an error result listing the missing path.
 
 ### Property-based tests (`tests/property/`)
@@ -519,6 +627,8 @@ Each property corresponds to a design correctness property. All property tests r
 | `output-count.test.ts` | Properties 11, 12 (count invariant, every list char is a key) |
 | `decomposition-components.test.ts` | Property 8 (no placeholder in components), Property 9 (atomic record component invariant), Property 16 (IDS string valid codepoints) |
 | `hint-engine.test.ts` | Property 17 (hint sequence is a subsequence) |
+| `prompt-selection.test.ts` | Properties 18 (meaning is a source meaning), 19 (pinyin is tone-mark of a source reading), 20 (no default prompt starts with a skipped prefix) |
+| `prompt-overrides.test.ts` | Property 21 (override index in range and reviewer-attributed) |
 
 Each test is tagged with a comment referencing its design property:
 
