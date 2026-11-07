@@ -36,15 +36,15 @@ Build the data pipeline that transforms three open-source raw datasets into `app
     - Place the CC BY-SA 3.0 licence file at `data/raw/cc-cedict/LICENSE`
     - _Requirements: 2.3_
 
-- [ ] 4. Populate character list
-  - [ ] 4.1 Populate `data/character-list.txt` with ~300 simplified Chinese characters
+- [x] 4. Populate character list
+  - [x] 4.1 Populate `data/character-list.txt` with ~300 simplified Chinese characters
     - Derive characters from a published frequency or learner list (e.g. HSK 1–4 or TOCFL A1–B2)
     - Ensure the file has 280–320 non-comment, non-blank lines, no duplicates, all codepoints in U+4E00–U+9FFF
     - Update the `#` comment header with the source name, URL, and SPDX licence identifier
     - _Requirements: 1.2, 1.3, 1.5_
 
-- [ ] 5. Character-list parser
-  - [ ] 5.1 Implement `scripts/lib/parse-character-list.ts`
+- [x] 5. Character-list parser
+  - [x] 5.1 Implement `scripts/lib/parse-character-list.ts`
     - `parseCharacterList(raw: string): ParseCharacterListResult`
     - Strip `#`-prefixed comment lines and blank lines; trim whitespace
     - Validate each remaining character is a single codepoint in U+4E00–U+9FFF; emit `'not-cjk'` errors for violations
@@ -52,7 +52,7 @@ Build the data pipeline that transforms three open-source raw datasets into `app
     - Return `{ ok: true, characters }` only when zero errors are found; otherwise `{ ok: false, errors }`
     - _Requirements: 1.1, 1.2, 1.4_
 
-  - [ ] 5.2 Write unit tests for `parseCharacterList`
+  - [x] 5.2 Write unit tests for `parseCharacterList`
     - Test: valid list returns `ok: true` with correct character array
     - Test: comment and blank lines are stripped
     - Test: non-CJK codepoint returns `ok: false` with correct error
@@ -60,22 +60,22 @@ Build the data pipeline that transforms three open-source raw datasets into `app
     - Test: mixed valid + invalid returns all errors (not just first)
     - _Requirements: 1.4_
 
-- [ ] 6. hanzi-writer-data parser
-  - [ ] 6.1 Implement `scripts/lib/parse-hanzi-writer-data.ts`
+- [x] 6. hanzi-writer-data parser
+  - [x] 6.1 Implement `scripts/lib/parse-hanzi-writer-data.ts`
     - `parseHanziWriterData(dataDir: string, characters: string[]): Map<string, HanziWriterEntry>`
     - For each character, attempt to read `<dataDir>/<char>.json`; parse with `unknown` + type guard
     - Characters with no file on disk are simply absent from the returned Map (missing-field handling is in `merge.ts`)
     - Export `HanziWriterEntry` interface matching the design
     - _Requirements: 4.5, 4.6_
 
-  - [ ] 6.2 Write unit tests for `parseHanziWriterData`
+  - [x] 6.2 Write unit tests for `parseHanziWriterData`
     - Test: correctly reads a fixture JSON file and populates Map with `strokes`, `medians`, `radStrokes`
     - Test: missing file → character absent from Map (no throw)
     - Test: malformed JSON → character absent from Map (no throw)
     - _Requirements: 4.5, 4.6_
 
-- [ ] 7. Make Me a Hanzi parser
-  - [ ] 7.1 Implement `scripts/lib/parse-make-me-a-hanzi.ts`
+- [x] 7. Make Me a Hanzi parser
+  - [x] 7.1 Implement `scripts/lib/parse-make-me-a-hanzi.ts`
     - `parseMakeMeAHanzi(rawText: string): Map<string, MakeMeAHanziEntry>`
     - Parse each `\n`-delimited JSON line using `isMakeMeAHanziLine` type guard
     - After parsing each line, compute `atomic` and `components`:
@@ -85,7 +85,7 @@ Build the data pipeline that transforms three open-source raw datasets into `app
     - Export `MakeMeAHanziEntry`, `Etymology`, `extractLeafComponents`
     - _Requirements: 4.7, 4.8, 4.9_
 
-  - [ ] 7.2 Write unit tests for `parseMakeMeAHanzi` and `extractLeafComponents`
+  - [x] 7.2 Write unit tests for `parseMakeMeAHanzi` and `extractLeafComponents`
     - Test: non-atomic entry → correct `decomposition`, `radical`, `components`, `atomic: false`
     - Test: atomic entry (starts with `？`) → `atomic: true`, `components` = `[character]`
     - Test: entry with interior `？` in IDS string → `？` excluded from `components`
@@ -94,8 +94,8 @@ Build the data pipeline that transforms three open-source raw datasets into `app
     - Test: malformed JSON line → skipped (character absent from Map)
     - _Requirements: 4.7, 4.8_
 
-- [ ] 8. CC-CEDICT parser
-  - [ ] 8.1 Implement `scripts/lib/parse-cc-cedict.ts`
+- [x] 8. CC-CEDICT parser
+  - [x] 8.1 Implement `scripts/lib/parse-cc-cedict.ts`
     - `parseCcCedict(rawText: string): Map<string, CcCedictEntry>`
     - Skip `#`-prefixed comment lines
     - Parse data lines in the format `Traditional Simplified [pin1 yin1] /meaning1/meaning2/`
@@ -103,22 +103,22 @@ Build the data pipeline that transforms three open-source raw datasets into `app
     - Export `CcCedictEntry`
     - _Requirements: 4.3, 4.4_
 
-  - [ ] 8.2 Write unit tests for `parseCcCedict`
+  - [x] 8.2 Write unit tests for `parseCcCedict`
     - Test: single entry → correct `pinyin` and `meanings` arrays
     - Test: multiple entries for same character → pinyin/meanings deduplicated, order preserved
     - Test: comment lines skipped
     - Test: character with no entry → absent from Map
     - _Requirements: 4.3_
 
-- [ ] 9. Merge function
-  - [ ] 9.1 Implement `scripts/lib/merge.ts`
+- [x] 9. Merge function
+  - [x] 9.1 Implement `scripts/lib/merge.ts`
     - `mergeCharacter(char, hanziWriter, makeMeAHanzi, ccCedict): MergeResult`
     - Pure function; assembles `CharacterRecord` from three parsed entries
     - Returns `{ ok: false, missingFields }` listing every absent required field; never throws
     - Sets `sources` object with correct `DatasetId` values per field
     - _Requirements: 3.6, 4.2, 4.10, 4.11_
 
-  - [ ] 9.2 Write unit tests for `mergeCharacter`
+  - [x] 9.2 Write unit tests for `mergeCharacter`
     - Test: all fields present → `ok: true`, correct `sources` object
     - Test: missing `ccCedict` → `ok: false`, lists `pinyin` and `meanings` as missing
     - Test: missing `hanziWriter` → `ok: false`, lists `strokeCount` and `strokeData` as missing
@@ -126,15 +126,15 @@ Build the data pipeline that transforms three open-source raw datasets into `app
     - Test: all three missing → all five required fields listed in failure
     - _Requirements: 3.6, 4.11_
 
-- [ ] 10. Serialiser
-  - [ ] 10.1 Implement `scripts/lib/serialise.ts`
+- [x] 10. Serialiser
+  - [x] 10.1 Implement `scripts/lib/serialise.ts`
     - `serialiseDataset(records: Map<string, CharacterRecord>): string`
     - Sort records by Unicode codepoint ascending (`char.codePointAt(0)`)
     - Serialise to JSON with fixed key order per record: `character`, `pinyin`, `meanings`, `strokeCount`, `strokeData`, `decomposition`, `sources`
     - Use `JSON.stringify(sorted, null, 2)` for human-readable, deterministic output
     - _Requirements: 3.4, 5.7_
 
-  - [ ] 10.2 Write unit tests for `serialiseDataset`
+  - [x] 10.2 Write unit tests for `serialiseDataset`
     - Test: output is valid JSON parseable back to the original records
     - Test: keys appear in the fixed order specified in the design
     - Test: records are sorted by codepoint ascending

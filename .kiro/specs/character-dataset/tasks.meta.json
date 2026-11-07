@@ -74,6 +74,181 @@
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794022689613
       }
+    ],
+    "4.1 Populate `data/character-list.txt` with ~300 simplified Chinese characters": [
+      {
+        "executionId": "f8363646-ce8a-4fd2-a5b8-c24547990c70",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794023001924
+      },
+      {
+        "executionId": "f8363646-ce8a-4fd2-a5b8-c24547990c70",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794023498016
+      }
+    ],
+    "4. Populate character list": [
+      {
+        "executionId": "f8363646-ce8a-4fd2-a5b8-c24547990c70",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794023498061
+      }
+    ],
+    "5.1 Implement `scripts/lib/parse-character-list.ts`": [
+      {
+        "executionId": "cbd0a298-7364-42fd-9c58-be2921221fa5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794023772132
+      },
+      {
+        "executionId": "cbd0a298-7364-42fd-9c58-be2921221fa5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794024003490
+      }
+    ],
+    "6.1 Implement `scripts/lib/parse-hanzi-writer-data.ts`": [
+      {
+        "executionId": "cbd0a298-7364-42fd-9c58-be2921221fa5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794023775883
+      },
+      {
+        "executionId": "cbd0a298-7364-42fd-9c58-be2921221fa5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794024015483
+      }
+    ],
+    "7.1 Implement `scripts/lib/parse-make-me-a-hanzi.ts`": [
+      {
+        "executionId": "cbd0a298-7364-42fd-9c58-be2921221fa5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794023779450
+      },
+      {
+        "executionId": "cbd0a298-7364-42fd-9c58-be2921221fa5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794024022958
+      }
+    ],
+    "8.1 Implement `scripts/lib/parse-cc-cedict.ts`": [
+      {
+        "executionId": "cbd0a298-7364-42fd-9c58-be2921221fa5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794023783100
+      },
+      {
+        "executionId": "cbd0a298-7364-42fd-9c58-be2921221fa5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794024030601
+      }
+    ],
+    "9.1 Implement `scripts/lib/merge.ts`": [
+      {
+        "executionId": "cbd0a298-7364-42fd-9c58-be2921221fa5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794023786485
+      },
+      {
+        "executionId": "cbd0a298-7364-42fd-9c58-be2921221fa5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794024037787
+      }
+    ],
+    "5.2 Write unit tests for `parseCharacterList`": [
+      {
+        "executionId": "cbd0a298-7364-42fd-9c58-be2921221fa5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794024007941
+      }
+    ],
+    "5. Character-list parser": [
+      {
+        "executionId": "cbd0a298-7364-42fd-9c58-be2921221fa5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794024007983
+      }
+    ],
+    "6.2 Write unit tests for `parseHanziWriterData`": [
+      {
+        "executionId": "cbd0a298-7364-42fd-9c58-be2921221fa5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794024019163
+      }
+    ],
+    "6. hanzi-writer-data parser": [
+      {
+        "executionId": "cbd0a298-7364-42fd-9c58-be2921221fa5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794024019207
+      }
+    ],
+    "7.2 Write unit tests for `parseMakeMeAHanzi` and `extractLeafComponents`": [
+      {
+        "executionId": "cbd0a298-7364-42fd-9c58-be2921221fa5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794024026795
+      }
+    ],
+    "7. Make Me a Hanzi parser": [
+      {
+        "executionId": "cbd0a298-7364-42fd-9c58-be2921221fa5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794024026841
+      }
+    ],
+    "8.2 Write unit tests for `parseCcCedict`": [
+      {
+        "executionId": "cbd0a298-7364-42fd-9c58-be2921221fa5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794024034266
+      }
+    ],
+    "8. CC-CEDICT parser": [
+      {
+        "executionId": "cbd0a298-7364-42fd-9c58-be2921221fa5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794024034312
+      }
+    ],
+    "9.2 Write unit tests for `mergeCharacter`": [
+      {
+        "executionId": "cbd0a298-7364-42fd-9c58-be2921221fa5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794024041358
+      }
+    ],
+    "9. Merge function": [
+      {
+        "executionId": "cbd0a298-7364-42fd-9c58-be2921221fa5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794024041404
+      }
+    ],
+    "10.1 Implement `scripts/lib/serialise.ts`": [
+      {
+        "executionId": "cbd0a298-7364-42fd-9c58-be2921221fa5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794024045629
+      },
+      {
+        "executionId": "cbd0a298-7364-42fd-9c58-be2921221fa5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794024178091
+      }
+    ],
+    "10.2 Write unit tests for `serialiseDataset`": [
+      {
+        "executionId": "cbd0a298-7364-42fd-9c58-be2921221fa5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794024181589
+      }
+    ],
+    "10. Serialiser": [
+      {
+        "executionId": "cbd0a298-7364-42fd-9c58-be2921221fa5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794024181627
+      }
     ]
   }
 }
