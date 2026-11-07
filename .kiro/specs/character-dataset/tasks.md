@@ -20,18 +20,18 @@ Build the data pipeline that transforms three open-source raw datasets into `app
     - Export everything; no `any`; use `unknown` + type guards at parse boundaries
     - _Requirements: 3.5, 4.2_
 
-- [ ] 3. Raw dataset acquisition
-  - [ ] 3.1 Download and place hanzi-writer-data
+- [x] 3. Raw dataset acquisition
+  - [x] 3.1 Download and place hanzi-writer-data
     - Install `hanzi-writer-data` via npm or download the per-character JSON files; place under `data/raw/hanzi-writer-data/`
     - Copy or symlink the Arphic Public License file into `data/raw/hanzi-writer-data/LICENSE`
     - _Requirements: 2.1_
 
-  - [ ] 3.2 Download and place Make Me a Hanzi `dictionary.txt`
+  - [x] 3.2 Download and place Make Me a Hanzi `dictionary.txt`
     - Download `dictionary.txt` from the Make Me a Hanzi repository; place at `data/raw/make-me-a-hanzi/dictionary.txt`
     - Place the Make Me a Hanzi licence file at `data/raw/make-me-a-hanzi/LICENSE`
     - _Requirements: 2.2_
 
-  - [ ] 3.3 Download and place CC-CEDICT
+  - [x] 3.3 Download and place CC-CEDICT
     - Download `cedict_ts.u8` from cc-cedict.org; place at `data/raw/cc-cedict/cedict_ts.u8`
     - Place the CC BY-SA 3.0 licence file at `data/raw/cc-cedict/LICENSE`
     - _Requirements: 2.3_
