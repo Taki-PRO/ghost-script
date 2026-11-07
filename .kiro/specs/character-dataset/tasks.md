@@ -141,21 +141,21 @@ Build the data pipeline that transforms three open-source raw datasets into `app
     - Test: two calls with the same Map produce byte-for-byte identical strings
     - _Requirements: 3.4_
 
-- [ ] 11. Pipeline entry point
-  - [ ] 11.1 Implement `scripts/build-data.ts` — `buildDataset(opts: BuildOptions): Promise<BuildResult>`
+- [x] 11. Pipeline entry point
+  - [x] 11.1 Implement `scripts/build-data.ts` — `buildDataset(opts: BuildOptions): Promise<BuildResult>`
     - Accept `BuildOptions`; call all parsers; call `mergeCharacter` per character in fail-slow pass
     - Collect all `MissingFieldError` items; if any exist, return `{ ok: false, errors }` without writing output
     - On success: call `serialiseDataset`, write to a temp file, rename atomically to final path
     - Verify final record count matches character-list line count; abort with error if mismatch
     - _Requirements: 3.2, 3.3, 3.6, 4.12_
 
-  - [ ] 11.2 Implement `main()` in `scripts/build-data.ts`
+  - [x] 11.2 Implement `main()` in `scripts/build-data.ts`
     - Resolves hardcoded paths from repo root; calls `buildDataset`; handles missing-file errors (emits to stderr, exits non-zero)
     - On `ok: false` from `buildDataset`: emit full missing-field report to stderr, exit non-zero
     - On `ok: true`: print success summary to stdout (character count, all required fields non-null), write `app/public/data/characters.json`
     - _Requirements: 3.1, 3.7, 4.12_
 
-- [ ] 12. Checkpoint — unit test suite passes
+- [x] 12. Checkpoint — unit test suite passes
   - Ensure all unit tests pass with `npm test`. Ask the user if any questions arise before continuing.
 
 - [ ] 13. Property-based tests — parsers and merge
