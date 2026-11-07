@@ -82,6 +82,11 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   - **Note for later:** `tests/unit/scaffold.test.ts` is a placeholder so the test runner has a file. Remove it once real tests exist (task 5.2).
 - **Decision for task 4:** use the official HSK 3.0 handwriting list (书写字), elementary band, from `ivankra/hsk30` (MIT; transcribed from the Ministry of Education standard GF0025-2021). It's the list of characters learners must be able to write by hand, which matches what Ghost Script trains.
 
+## Nov 7, 2026: Hackathon credits arrived
+
+- The 4,000 Kiroween credits arrived (requested Nov 3, about 3.5 days). Spent Nov 4–6 waiting rather than using the last 25 free-tier credits on bigger tasks, to avoid running out partway through one.
+- Next: Spec 1 task 2.1 (shared types), then tasks one at a time.
+
 ---
 
 ## Template for new entries
