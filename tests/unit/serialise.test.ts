@@ -31,6 +31,10 @@ function makeRecord(
       atomic: true,
       components: [character],
     },
+    prompt: {
+      meaning: 'meaning',
+      pinyin: 'pīn',
+    },
     sources: {
       pinyin: 'cc-cedict',
       meanings: 'cc-cedict',
@@ -88,6 +92,7 @@ describe('serialiseDataset', () => {
         'strokeCount',
         'strokeData',
         'decomposition',
+        'prompt',
         'sources',
       ]);
     }

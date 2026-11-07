@@ -160,9 +160,15 @@ export function parseCcCedict(
   rawText: string
 ): Map<string, CcCedictEntry>
 
-interface CcCedictEntry {
-  pinyin:   string[];   // distinct pinyin strings in source order
-  meanings: string[];   // distinct meaning strings in source order
+export interface CcCedictSense {
+  reading:  string;    // numbered pinyin for this entry, e.g. "liao3"
+  meanings: string[];  // this entry's glosses, in source order
+}
+
+export interface CcCedictEntry {
+  pinyin:   string[];        // distinct pinyin strings in source order (flat, record field)
+  meanings: string[];        // distinct meaning strings in source order (flat, record field)
+  entries:  CcCedictSense[]; // per-entry senses in source order (reading + its glosses) — used for prompts
 }
 ```
 
@@ -170,7 +176,7 @@ Parses the CC-CEDICT format line by line. A data line has the structure:
 ```
 Traditional Simplified [pin1 yin1] /meaning1/meaning2/
 ```
-Lines starting with `#` are comment lines and skipped. For each simplified character, all matching entries are collected; `pinyin` and `meanings` are deduplicated (preserving first-occurrence order).
+Lines starting with `#` are comment lines and skipped. For each simplified character, all matching entries are collected; `pinyin` and `meanings` are deduplicated (preserving first-occurrence order). In addition to building the flat deduplicated `pinyin`/`meanings`, the parser pushes one `CcCedictSense { reading, meanings }` per source line (in file order, no dedup across entries) into `entries`. The flat lists are unchanged for the record; `entries` is what prompt selection consumes so a meaning and its reading stay paired.
 
 ### `scripts/lib/merge.ts`
 
@@ -202,25 +208,25 @@ export function numberedToToneMarks(numberedPinyin: string): string
 
 export interface PromptOverride {
   character:    string;
-  meaningIndex: number;
-  readingIndex: number;
+  entryIndex:   number;   // index into ccCedict.entries
+  meaningIndex: number;   // index into ccCedict.entries[entryIndex].meanings
   reviewedBy:   string;
 }
 
 export interface PromptChoice {
-  meaning:       string;   // after (bound form) stripping
-  pinyin:        string;   // tone-mark form
-  meaningIndex:  number;   // index into ccCedict.meanings
-  readingIndex:  number;   // index into ccCedict.pinyin
-  fromOverride:  boolean;
+  meaning:      string;   // after (bound form) stripping
+  pinyin:       string;   // tone-mark form of the chosen entry's reading
+  entryIndex:   number;   // index into ccCedict.entries
+  meaningIndex: number;   // index into that entry's meanings
+  fromOverride: boolean;
 }
 
 type PromptSelectionResult =
   | { ok: true;  choice: PromptChoice }
-  | { ok: false; reason: 'no-usable-meaning' | 'no-usable-reading' }
+  | { ok: false; reason: 'no-usable-sense' }
 ```
 
-`selectPrompt` chooses the ghost clue for a character. The default rule walks the CC-CEDICT `meanings` in source order, strips a single leading `(bound form) ` prefix (used both for comparison and for output), and skips any meaning that — after stripping — begins case-insensitively with any skipped prefix (`surname `, `variant of`, `old variant of`, `used in`, `see `, `abbr.`, `CL:`, `also pr.`, `Taiwan pr.`); the first remaining meaning is chosen. For the reading it chooses the first pinyin that is not a proper-noun reading (one whose first syllable is capitalised, e.g. `San`), falling back to the first reading if every reading is a proper-noun reading. When an `override` is supplied it takes precedence: the override-selected meaning (with `(bound form) ` stripping still applied) and reading are used instead of the default. Override index validity is validated upstream during the build (it needs the merged CC-CEDICT data), so `selectPrompt` trusts a supplied override.
+`selectPrompt` chooses the ghost clue for a character. The default rule walks `ccCedict.entries` in source order; for each entry it skips the entry when its reading is a proper-noun reading (capitalised first syllable), otherwise it scans that entry's glosses in order, applies `(bound form) ` stripping, and skips glosses beginning with a skipped prefix; the first entry yielding a usable gloss fixes BOTH the meaning (that gloss) and the reading (that entry's reading, converted by `numberedToToneMarks`). When an override is supplied, the entry and gloss are taken by index from `ccCedict.entries[entryIndex].meanings[meaningIndex]` and the reading from that same entry (override index validity is checked upstream in the build). The failure reason collapses to a single `'no-usable-sense'` (no entry yielded a usable gloss).
 
 `numberedToToneMarks` converts a numbered-pinyin reading (tone digits 1–5) to the tone-mark form. It places the diacritic using the standard vowel-priority rule: `a` or `e` always takes the mark; in the sequence `ou` the `o` takes it; otherwise the last vowel takes it. Tone 5 (neutral) produces no mark.
 
@@ -238,11 +244,11 @@ type ParsePromptOverridesResult =
 export interface PromptOverrideError {
   line: number;
   character: string;
-  reason: 'unknown-character' | 'meaning-index-out-of-range' | 'reading-index-out-of-range' | 'missing-reviewer' | 'malformed-row' | 'duplicate-character';
+  reason: 'unknown-character' | 'entry-index-out-of-range' | 'meaning-index-out-of-range' | 'missing-reviewer' | 'malformed-row' | 'duplicate-character';
 }
 ```
 
-Parses `data/prompt-overrides.csv` (header `character,meaningIndex,readingIndex,reviewedBy`). The parser validates row shape (`malformed-row`), non-empty `reviewedBy` (`missing-reviewer`), and duplicate characters (`duplicate-character`). Range validation that depends on a character's parsed CC-CEDICT entry (`unknown-character`, `meaning-index-out-of-range`, `reading-index-out-of-range`) happens during the build, because it needs the merged data; the error type enumerates all reasons the build may report. `data/prompt-overrides.csv` is an INPUT to the build; `data/prompt-review.csv` is an OUTPUT written on success and is never read back.
+Parses `data/prompt-overrides.csv` (header `character,entryIndex,meaningIndex,reviewedBy`). The parser validates row shape (`malformed-row`), non-empty `reviewedBy` (`missing-reviewer`), and duplicate characters (`duplicate-character`). Range validation that depends on a character's parsed CC-CEDICT entry (`unknown-character`, `entry-index-out-of-range`, `meaning-index-out-of-range`) happens during the build, because it needs the merged data; the error type enumerates all reasons the build may report. The build-time range checks are now entry-index (into `ccCedict.entries`) and meaning-within-entry (into the selected entry's glosses). `data/prompt-overrides.csv` is an INPUT to the build; `data/prompt-review.csv` is an OUTPUT written on success and is never read back.
 
 ### `scripts/lib/serialise.ts`
 
@@ -307,7 +313,7 @@ export interface FieldSources {
 }
 ```
 
-The `Prompt` interface is a canonical type shared in `app/src/data/types.ts` alongside `CharacterRecord`, `StrokeData`, `Decomposition`, and `FieldSources`, so the app, scripts, and oracle all import the same definition.
+The `Prompt` interface is a canonical type shared in `app/src/data/types.ts` alongside `CharacterRecord`, `StrokeData`, `Decomposition`, and `FieldSources`, so the app, scripts, and oracle all import the same definition. Both fields originate from the same CC-CEDICT entry (see Requirement 6.12).
 
 ### `characters.json` schema
 
@@ -537,7 +543,7 @@ Keys are sorted by Unicode codepoint ascending. Key order within each record is 
 
 ### Property 19: prompt.pinyin is the tone-mark form of a source reading
 
-*For any* `CharacterRecord` in a successfully built `characters.json`, `prompt.pinyin` SHALL equal `numberedToToneMarks(r)` for some reading `r` in that record's `pinyin` array.
+*For any* `CharacterRecord` in a successfully built `characters.json`, `prompt.pinyin` SHALL equal `numberedToToneMarks(r)` for some reading `r` in that record's `pinyin` array, namely the reading of the entry the chosen meaning belongs to.
 
 **Validates: Requirements 6.3**
 
@@ -556,6 +562,14 @@ Keys are sorted by Unicode codepoint ascending. Key order within each record is 
 *For any* parsed prompt-override applied in a successful build, `meaningIndex` SHALL be a valid index into the character's `meanings`, `readingIndex` SHALL be a valid index into the character's `pinyin`, and `reviewedBy` SHALL be non-empty.
 
 **Validates: Requirements 6.6, 6.7**
+
+---
+
+### Property 22: prompt meaning and reading come from the same entry
+
+*For any* `CharacterRecord` in a successfully built `characters.json`, there SHALL exist a single CC-CEDICT entry for that character such that `prompt.meaning` is one of that entry's glosses (after optional `(bound form) ` stripping) AND `prompt.pinyin` equals `numberedToToneMarks(entry.reading)`.
+
+**Validates: Requirements 6.12**
 
 ---
 
@@ -602,13 +616,14 @@ The test suite lives in `tests/` and uses **Vitest** as the runner and **fast-ch
 
 Concrete example-based tests for:
 - `parseCharacterList`: rejects non-CJK characters, handles comment lines, rejects duplicates, accepts valid input.
-- `parseCcCedict`: correctly parses a sample multi-entry block; deduplicated output matches expected arrays.
+- `parseCcCedict`: correctly parses a sample multi-entry block; deduplicated output matches expected arrays; and that `entries` preserves per-source-line reading+glosses in order (e.g. 了 yields a `liao3` entry and a `le` entry, each with its own glosses).
 - `parseMakeMeAHanzi`: correctly parses a sample `dictionary.txt` line with and without etymology.
 - `parseHanziWriterData`: correctly extracts `strokeCount` from a known JSON fixture.
 - `mergeCharacter`: returns failure when any required field is missing; returns success with correct `sources` when all fields present.
-- `selectPrompt`: real cases such as 三 (skips `surname San`), 后 (skips to a usable sense), and 号; override precedence over the default rule; `no-usable-meaning` and `no-usable-reading` failure results. Fixture lines are taken from the real CC-CEDICT data in `data/raw/cc-cedict/cedict_ts.u8`; no invented entries.
+- `selectPrompt`: entry-based selection — real cases such as 三 (skips the `San` proper-noun entry), 后 (walks to a usable entry), 号, 了 (picks a usable entry whose reading pairs with its gloss), and 中; override precedence over the default rule (override selects an entry + a gloss within it); the single `no-usable-sense` failure result; and that the chosen meaning and reading share an entry. Fixture lines are taken from the real CC-CEDICT data in `data/raw/cc-cedict/cedict_ts.u8`; no invented entries.
 - `numberedToToneMarks`: example-based tests — `shang3` → `shǎng`, `hao3` → `hǎo`, `lu:4`/`lv4` handling if present, tone 5 (neutral) → no mark.
 - `parsePromptOverrides`: valid rows produce the override map; malformed row, missing reviewer, and duplicate character each produce the correct `PromptOverrideError`. Fixture lines in `data/prompt-overrides.csv` reference real characters (e.g. 三, 后, 号).
+- Fixtures for 三, 后, 号, 了, 中 come from the real `data/raw/cc-cedict/cedict_ts.u8`.
 - Pipeline missing-file errors: `buildDataset` with a non-existent dataset path returns an error result listing the missing path.
 
 ### Property-based tests (`tests/property/`)
@@ -627,7 +642,7 @@ Each property corresponds to a design correctness property. All property tests r
 | `output-count.test.ts` | Properties 11, 12 (count invariant, every list char is a key) |
 | `decomposition-components.test.ts` | Property 8 (no placeholder in components), Property 9 (atomic record component invariant), Property 16 (IDS string valid codepoints) |
 | `hint-engine.test.ts` | Property 17 (hint sequence is a subsequence) |
-| `prompt-selection.test.ts` | Properties 18 (meaning is a source meaning), 19 (pinyin is tone-mark of a source reading), 20 (no default prompt starts with a skipped prefix) |
+| `prompt-selection.test.ts` | Properties 18 (meaning is a source meaning), 19 (pinyin is tone-mark of a source reading), 20 (no default prompt starts with a skipped prefix), 22 (meaning and reading come from the same entry) |
 | `prompt-overrides.test.ts` | Property 21 (override index in range and reviewer-attributed) |
 
 Each test is tagged with a comment referencing its design property:

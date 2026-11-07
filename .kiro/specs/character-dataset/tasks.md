@@ -43,7 +43,7 @@ Build the data pipeline that transforms three open-source raw datasets into `app
     - Update the `#` comment header with the source name, URL, and SPDX licence identifier
     - _Requirements: 1.2, 1.3, 1.5_
 
-  - [ ] 4.2 Create `data/prompt-overrides.csv` with a header row `character,meaningIndex,readingIndex,reviewedBy` and no data rows yet (human adds overrides later)
+  - [x] 4.2 Create `data/prompt-overrides.csv` with a header row `character,entryIndex,meaningIndex,reviewedBy` and no data rows yet (human adds overrides later)
     - _Requirements: 6.6_
 
 - [x] 5. Character-list parser
@@ -113,6 +113,11 @@ Build the data pipeline that transforms three open-source raw datasets into `app
     - Test: character with no entry → absent from Map
     - _Requirements: 4.3_
 
+  - [x] 8.3 Extend `parseCcCedict` to retain per-entry senses
+    - Add `CcCedictSense { reading: string; meanings: string[] }` and an `entries: CcCedictSense[]` field on `CcCedictEntry` (one element per source line, in file order; flat `pinyin`/`meanings` unchanged)
+    - Update `tests/unit/parse-cc-cedict.test.ts` and the `tests/fixtures/cc-cedict/sample-cedict.u8` fixture to cover a character with multiple entries whose readings differ (e.g. 了 liao3 / le), asserting `entries` pairs each reading with its own glosses in order
+    - _Requirements: 4.3_
+
 - [x] 9. Merge function
   - [x] 9.1 Implement `scripts/lib/merge.ts`
     - `mergeCharacter(char, hanziWriter, makeMeAHanzi, ccCedict): MergeResult`
@@ -144,35 +149,38 @@ Build the data pipeline that transforms three open-source raw datasets into `app
     - Test: two calls with the same Map produce byte-for-byte identical strings
     - _Requirements: 3.4_
 
-  - [ ] 10.3 Implement `scripts/lib/prompt.ts` — `selectPrompt` + `numberedToToneMarks`
-    - Implement the deterministic default rule (skip-prefix list, `(bound form) ` stripping, proper-noun reading skip with fallback), override-by-index precedence, and numbered→tone-mark conversion
-    - Pure functions; `selectPrompt` returns `{ ok:false, reason }` on no-usable-meaning / no-usable-reading
+  - [x] 10.3 Implement `scripts/lib/prompt.ts` — `selectPrompt` + `numberedToToneMarks`
+    - Implement the deterministic default rule by WALKING `ccCedict.entries` IN SOURCE ORDER: skip an entry whose reading is a proper-noun (capitalised-first-syllable) reading; within an entry scan glosses in order with `(bound form) ` stripping and the skip-prefix list; the first entry yielding a usable gloss fixes BOTH the meaning and the reading (so they share an entry)
+    - Override-by-index precedence: an override supplies `entryIndex` + `meaningIndex`, selecting `ccCedict.entries[entryIndex].meanings[meaningIndex]` and that entry's reading; also implement numbered→tone-mark conversion
+    - Pure functions; `selectPrompt` returns `{ ok:false, reason: 'no-usable-sense' }` when no entry yields a usable gloss
     - Export `Prompt` consumers import the type from `app/src/data/types.ts`
-    - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
+    - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.12_
 
-  - [ ] 10.4 Write unit tests for `prompt.ts`
+  - [x] 10.4 Write unit tests for `prompt.ts`
     - `numberedToToneMarks`: shang3 → shǎng, hao3 → hǎo, lu:4/lv4 if encountered, tone 5 neutral → no mark
-    - `selectPrompt`: real cases 三 (skip "surname San"), 后 (skip to a usable sense), 号 — fixtures from real CC-CEDICT lines in `data/raw/cc-cedict/cedict_ts.u8`; no invented entries
-    - override precedence; no-usable-meaning / no-usable-reading failure results
-    - _Requirements: 6.2, 6.3, 6.4, 6.5, 6.8_
+    - `selectPrompt`: entry-based real cases 三 (skip the `San` proper-noun entry), 后 (walk to a usable entry), 号, 了, 中 — fixtures from real CC-CEDICT lines in `data/raw/cc-cedict/cedict_ts.u8`; no invented entries
+    - override precedence (override selects an entry + gloss within it); `no-usable-sense` failure result
+    - A property/unit test asserts the chosen meaning and reading share a single CC-CEDICT entry
+    - _Requirements: 6.2, 6.3, 6.4, 6.5, 6.8, 6.12_
 
-  - [ ] 10.5 Implement `scripts/lib/parse-prompt-overrides.ts` — `parsePromptOverrides`
-    - Parse the CSV header + rows; validate row shape and non-empty `reviewedBy`; detect duplicate characters; index-range validation is deferred to the build (needs merged data)
+  - [x] 10.5 Implement `scripts/lib/parse-prompt-overrides.ts` — `parsePromptOverrides`
+    - Parse the CSV header `character,entryIndex,meaningIndex,reviewedBy` + rows; validate row shape and non-empty `reviewedBy`; detect duplicate characters; index-range validation (entry-index out of range, meaning-index out of range within the entry) is deferred to the build (needs merged data)
     - _Requirements: 6.6, 6.7_
 
-  - [ ] 10.6 Write unit tests for `parsePromptOverrides`
-    - valid rows; malformed row; missing reviewer; duplicate character
+  - [x] 10.6 Write unit tests for `parsePromptOverrides`
+    - valid rows (header `character,entryIndex,meaningIndex,reviewedBy`); malformed row; missing reviewer; duplicate character
     - _Requirements: 6.6, 6.7_
 
 - [x] 11. Pipeline entry point
   - [x] 11.1 Implement `scripts/build-data.ts` — `buildDataset(opts: BuildOptions): Promise<BuildResult>`
     - Accept `BuildOptions`; call all parsers; call `mergeCharacter` per character in fail-slow pass
-    - Read `data/prompt-overrides.csv` if present (absent file means no overrides); call `selectPrompt` per character in the fail-slow pass and include the resulting `prompt` in each record
-    - Treat a prompt-selection failure and an out-of-range override index as build failures (aggregated with missing-field errors, no output written)
+    - Read `data/prompt-overrides.csv` if present (absent file means no overrides); call `selectPrompt` per character in the fail-slow pass (prompt selection consumes `ccCedict.entries`) and include the resulting `prompt` in each record
+    - Validate each override's indices against the merged data: `entryIndex` in range of that character's `ccCedict.entries` AND `meaningIndex` in range of the glosses within that selected entry
+    - Treat a prompt-selection failure and an out-of-range override index (entry or meaning) as build failures (aggregated with missing-field errors, no output written)
     - Collect all `MissingFieldError` items; if any exist, return `{ ok: false, errors }` without writing output
     - On success: call `serialiseDataset`, write to a temp file, rename atomically to final path
     - Verify final record count matches character-list line count; abort with error if mismatch
-    - _Requirements: 3.2, 3.3, 3.6, 4.12, 6.5, 6.7, 6.8_
+    - _Requirements: 3.2, 3.3, 3.6, 4.12, 6.5, 6.7, 6.8, 6.12_
 
   - [x] 11.2 Implement `main()` in `scripts/build-data.ts`
     - Resolves hardcoded paths from repo root; calls `buildDataset`; handles missing-file errors (emits to stderr, exits non-zero)
@@ -278,6 +286,10 @@ Build the data pipeline that transforms three open-source raw datasets into `app
     - numRuns: 100
     - _Requirements: 6.6, 6.7_
 
+  - [ ] 14.7 Write property test: prompt meaning and reading come from the same CC-CEDICT entry (Property 22)
+    - numRuns: 100
+    - _Requirements: 6.12_
+
 - [ ] 15. Smoke tests
   - [ ] 15.1 Write `tests/smoke/dataset-files.test.ts`
     - Assert all required raw dataset paths and licence files exist on disk
@@ -348,13 +360,13 @@ Build the data pipeline that transforms three open-source raw datasets into `app
     { "id": 1, "tasks": ["2.1"] },
     { "id": 2, "tasks": ["3.1", "3.2", "3.3"] },
     { "id": 3, "tasks": ["4.1", "4.2"] },
-    { "id": 4, "tasks": ["5.1", "6.1", "7.1", "8.1", "9.1", "10.1", "10.3", "10.5"] },
+    { "id": 4, "tasks": ["5.1", "6.1", "7.1", "8.1", "8.3", "9.1", "10.1", "10.3", "10.5"] },
     { "id": 5, "tasks": ["5.2", "6.2", "7.2", "8.2", "9.2", "10.2", "10.4", "10.6"] },
     { "id": 6, "tasks": ["11.1"] },
     { "id": 7, "tasks": ["11.2"] },
     { "id": 8, "tasks": ["13.1"] },
     { "id": 9, "tasks": ["13.2", "13.3", "13.4", "13.5", "13.6", "13.7"] },
-    { "id": 10, "tasks": ["14.1", "14.2", "14.3", "14.4", "14.5", "14.6", "15.1", "15.2", "15.3"] },
+    { "id": 10, "tasks": ["14.1", "14.2", "14.3", "14.4", "14.5", "14.6", "14.7", "15.1", "15.2", "15.3"] },
     { "id": 11, "tasks": ["16.1"] },
     { "id": 12, "tasks": ["18.1"] },
     { "id": 13, "tasks": ["19.1", "19.2"] }

@@ -59,6 +59,10 @@
         "一"
       ]
     },
+    "prompt": {
+      "meaning": "one",
+      "pinyin": "yī"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -177,6 +181,10 @@
         "一",
         "乚"
       ]
+    },
+    "prompt": {
+      "meaning": "seven",
+      "pinyin": "qī"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -308,6 +316,10 @@
         "二"
       ]
     },
+    "prompt": {
+      "meaning": "three",
+      "pinyin": "sān"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -437,6 +449,10 @@
         "⺊",
         "一"
       ]
+    },
+    "prompt": {
+      "meaning": "up; upper; above; previous",
+      "pinyin": "shàng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -578,6 +594,10 @@
         "一",
         "卜"
       ]
+    },
+    "prompt": {
+      "meaning": "down",
+      "pinyin": "xià"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -741,6 +761,10 @@
       "components": [
         "一"
       ]
+    },
+    "prompt": {
+      "meaning": "no; not so",
+      "pinyin": "bù"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -934,6 +958,10 @@
         "七",
         "小"
       ]
+    },
+    "prompt": {
+      "meaning": "east",
+      "pinyin": "dōng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -1213,6 +1241,10 @@
         "从"
       ]
     },
+    "prompt": {
+      "meaning": "two",
+      "pinyin": "liǎng"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -1359,6 +1391,10 @@
         "人",
         "丨"
       ]
+    },
+    "prompt": {
+      "meaning": "(classifier used before a noun that has no specific classifier)",
+      "pinyin": "gè"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -1522,6 +1558,10 @@
         "口",
         "丨"
       ]
+    },
+    "prompt": {
+      "meaning": "within; among; in",
+      "pinyin": "zhōng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -1710,6 +1750,10 @@
         "力"
       ]
     },
+    "prompt": {
+      "meaning": "as (in the capacity of)",
+      "pinyin": "wéi"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -1866,6 +1910,10 @@
         "丿",
         "厶"
       ]
+    },
+    "prompt": {
+      "meaning": "exclamatory final particle",
+      "pinyin": "má"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -2040,6 +2088,10 @@
         "丿",
         "乙"
       ]
+    },
+    "prompt": {
+      "meaning": "nine",
+      "pinyin": "jiǔ"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -2232,6 +2284,10 @@
         "乚"
       ]
     },
+    "prompt": {
+      "meaning": "also; too; as well; (not ...) either",
+      "pinyin": "yě"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -2370,6 +2426,10 @@
       "components": [
         "冫"
       ]
+    },
+    "prompt": {
+      "meaning": "to practice",
+      "pinyin": "xí"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -2546,6 +2606,10 @@
       "components": [
         "丨"
       ]
+    },
+    "prompt": {
+      "meaning": "book",
+      "pinyin": "shū"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -2760,6 +2824,10 @@
         "头"
       ]
     },
+    "prompt": {
+      "meaning": "to buy",
+      "pinyin": "mǎi"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -2898,6 +2966,10 @@
         "乛",
         "亅"
       ]
+    },
+    "prompt": {
+      "meaning": "(completed action marker)",
+      "pinyin": "le"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -3187,6 +3259,10 @@
         "亅"
       ]
     },
+    "prompt": {
+      "meaning": "matter",
+      "pinyin": "shì"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -3274,6 +3350,10 @@
       "components": [
         "一"
       ]
+    },
+    "prompt": {
+      "meaning": "two",
+      "pinyin": "èr"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -3440,6 +3520,10 @@
       "components": [
         "二"
       ]
+    },
+    "prompt": {
+      "meaning": "five",
+      "pinyin": "wǔ"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -3717,6 +3801,10 @@
         "二"
       ]
     },
+    "prompt": {
+      "meaning": "classifier indicating a small amount or small number greater than 1: some, a few, several",
+      "pinyin": "xiē"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -3831,6 +3919,10 @@
       "components": [
         "人"
       ]
+    },
+    "prompt": {
+      "meaning": "person; people",
+      "pinyin": "rén"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -4018,6 +4110,10 @@
         "十"
       ]
     },
+    "prompt": {
+      "meaning": "what",
+      "pinyin": "shén"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -4194,6 +4290,10 @@
       "components": [
         "人"
       ]
+    },
+    "prompt": {
+      "meaning": "now",
+      "pinyin": "jīn"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -4379,6 +4479,10 @@
       "components": [
         "人"
       ]
+    },
+    "prompt": {
+      "meaning": "to introduce",
+      "pinyin": "jiè"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -4574,6 +4678,10 @@
       "components": [
         "人"
       ]
+    },
+    "prompt": {
+      "meaning": "from; through; via",
+      "pinyin": "cóng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -4816,6 +4924,10 @@
         "也"
       ]
     },
+    "prompt": {
+      "meaning": "(third-person singular) (since the early 20th century, usu. male) he; him; his",
+      "pinyin": "tā"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -4997,6 +5109,10 @@
       "components": [
         "人"
       ]
+    },
+    "prompt": {
+      "meaning": "to use",
+      "pinyin": "yǐ"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -5207,6 +5323,10 @@
         "亻",
         "门"
       ]
+    },
+    "prompt": {
+      "meaning": "plural marker for pronouns, and nouns referring to individuals",
+      "pinyin": "men"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -5447,6 +5567,10 @@
         "木"
       ]
     },
+    "prompt": {
+      "meaning": "to rest",
+      "pinyin": "xiū"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -5679,6 +5803,10 @@
         "人",
         "云"
       ]
+    },
+    "prompt": {
+      "meaning": "can; to have the skill; to know how to",
+      "pinyin": "huì"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -5937,6 +6065,10 @@
         "旦"
       ]
     },
+    "prompt": {
+      "meaning": "but; yet; however; still",
+      "pinyin": "dàn"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -6174,6 +6306,10 @@
         "亻",
         "主"
       ]
+    },
+    "prompt": {
+      "meaning": "to live; to reside; to stay",
+      "pinyin": "zhù"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -6433,6 +6569,10 @@
         "本"
       ]
     },
+    "prompt": {
+      "meaning": "body",
+      "pinyin": "tǐ"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -6686,6 +6826,10 @@
         "亻",
         "乍"
       ]
+    },
+    "prompt": {
+      "meaning": "worker",
+      "pinyin": "zuō"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -6955,6 +7099,10 @@
         "亻",
         "尔"
       ]
+    },
+    "prompt": {
+      "meaning": "you (informal, as opposed to courteous 您[nin2])",
+      "pinyin": "nǐ"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -7309,6 +7457,10 @@
         "矦"
       ]
     },
+    "prompt": {
+      "meaning": "to wait",
+      "pinyin": "hòu"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -7660,6 +7812,10 @@
         "亻",
         "昔"
       ]
+    },
+    "prompt": {
+      "meaning": "to borrow",
+      "pinyin": "jiè"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -8063,6 +8219,10 @@
         "叚"
       ]
     },
+    "prompt": {
+      "meaning": "fake",
+      "pinyin": "jiǎ"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -8436,6 +8596,10 @@
         "故"
       ]
     },
+    "prompt": {
+      "meaning": "to make; to produce",
+      "pinyin": "zuò"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -8582,6 +8746,10 @@
         "丿",
         "乚"
       ]
+    },
+    "prompt": {
+      "meaning": "child",
+      "pinyin": "ér"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -8833,6 +9001,10 @@
         "儿"
       ]
     },
+    "prompt": {
+      "meaning": "beforehand; first; earlier",
+      "pinyin": "xiān"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -8934,6 +9106,10 @@
       "components": [
         "八"
       ]
+    },
+    "prompt": {
+      "meaning": "eight",
+      "pinyin": "bā"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -9080,6 +9256,10 @@
         "亠",
         "八"
       ]
+    },
+    "prompt": {
+      "meaning": "six",
+      "pinyin": "liù"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -9305,6 +9485,10 @@
         "天"
       ]
     },
+    "prompt": {
+      "meaning": "mountain pass",
+      "pinyin": "guān"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -9517,6 +9701,10 @@
         "一",
         "八"
       ]
+    },
+    "prompt": {
+      "meaning": "to rise",
+      "pinyin": "xīng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -9751,6 +9939,10 @@
         "冉"
       ]
     },
+    "prompt": {
+      "meaning": "again; once more; re-",
+      "pinyin": "zài"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -9977,6 +10169,10 @@
         "冖",
         "与"
       ]
+    },
+    "prompt": {
+      "meaning": "to write",
+      "pinyin": "xiě"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -10237,6 +10433,10 @@
         "冫",
         "令"
       ]
+    },
+    "prompt": {
+      "meaning": "cold",
+      "pinyin": "lěng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -10538,6 +10738,10 @@
         "冫",
         "争"
       ]
+    },
+    "prompt": {
+      "meaning": "clean",
+      "pinyin": "jìng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -10849,6 +11053,10 @@
         "隹"
       ]
     },
+    "prompt": {
+      "meaning": "to allow",
+      "pinyin": "zhǔn"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -11015,6 +11223,10 @@
         "丿",
         "乙"
       ]
+    },
+    "prompt": {
+      "meaning": "small table",
+      "pinyin": "jī"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -11221,6 +11433,10 @@
         "屮",
         "凵"
       ]
+    },
+    "prompt": {
+      "meaning": "to go out; to come out",
+      "pinyin": "chū"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -11446,6 +11662,10 @@
         "八",
         "刀"
       ]
+    },
+    "prompt": {
+      "meaning": "to divide; to separate",
+      "pinyin": "fēn"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -11738,6 +11958,10 @@
         "刂"
       ]
     },
+    "prompt": {
+      "meaning": "to leave; to part (from)",
+      "pinyin": "bié"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -12005,6 +12229,10 @@
         "至",
         "刂"
       ]
+    },
+    "prompt": {
+      "meaning": "to reach; to arrive",
+      "pinyin": "dào"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -12314,6 +12542,10 @@
         "刖"
       ]
     },
+    "prompt": {
+      "meaning": "front",
+      "pinyin": "qián"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -12559,6 +12791,10 @@
         "云",
         "力"
       ]
+    },
+    "prompt": {
+      "meaning": "(of sth) to move",
+      "pinyin": "dòng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -12843,6 +13079,10 @@
         "力"
       ]
     },
+    "prompt": {
+      "meaning": "to help",
+      "pinyin": "zhù"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -13114,6 +13354,10 @@
         "巳"
       ]
     },
+    "prompt": {
+      "meaning": "to cover",
+      "pinyin": "bāo"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -13323,6 +13567,10 @@
       "components": [
         "匕"
       ]
+    },
+    "prompt": {
+      "meaning": "north",
+      "pinyin": "běi"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -13594,6 +13842,10 @@
         "矢"
       ]
     },
+    "prompt": {
+      "meaning": "medical",
+      "pinyin": "yī"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -13686,6 +13938,10 @@
         "一",
         "丨"
       ]
+    },
+    "prompt": {
+      "meaning": "ten",
+      "pinyin": "shí"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -13823,6 +14079,10 @@
         "丿",
         "干"
       ]
+    },
+    "prompt": {
+      "meaning": "7th earthly branch: 11 a.m.-1 p.m., noon, 5th solar month (6th June-6th July), year of the Horse",
+      "pinyin": "wǔ"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -13991,6 +14251,10 @@
         "丷",
         "牛"
       ]
+    },
+    "prompt": {
+      "meaning": "half",
+      "pinyin": "bàn"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -14295,6 +14559,10 @@
         "干"
       ]
     },
+    "prompt": {
+      "meaning": "south",
+      "pinyin": "nán"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -14493,6 +14761,10 @@
         "厶"
       ]
     },
+    "prompt": {
+      "meaning": "to go",
+      "pinyin": "qù"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -14638,6 +14910,10 @@
       "components": [
         "又"
       ]
+    },
+    "prompt": {
+      "meaning": "(once) again",
+      "pinyin": "yòu"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -14852,6 +15128,10 @@
         "又"
       ]
     },
+    "prompt": {
+      "meaning": "friend",
+      "pinyin": "yǒu"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -14990,6 +15270,10 @@
         "冂",
         "一"
       ]
+    },
+    "prompt": {
+      "meaning": "mouth",
+      "pinyin": "kǒu"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -15188,6 +15472,10 @@
         "丩"
       ]
     },
+    "prompt": {
+      "meaning": "to shout",
+      "pinyin": "jiào"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -15380,6 +15668,10 @@
         "丁",
         "口"
       ]
+    },
+    "prompt": {
+      "meaning": "(prefix) can; may; able to; -able",
+      "pinyin": "kě"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -15615,6 +15907,10 @@
         "口",
         "丂"
       ]
+    },
+    "prompt": {
+      "meaning": "to wail; to howl",
+      "pinyin": "háo"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -15878,6 +16174,10 @@
         "乞"
       ]
     },
+    "prompt": {
+      "meaning": "to eat; to consume",
+      "pinyin": "chī"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -16129,6 +16429,10 @@
         "口"
       ]
     },
+    "prompt": {
+      "meaning": "like",
+      "pinyin": "tóng"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -16367,6 +16671,10 @@
         "夕",
         "口"
       ]
+    },
+    "prompt": {
+      "meaning": "name",
+      "pinyin": "míng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -16620,6 +16928,10 @@
       "components": [
         "口"
       ]
+    },
+    "prompt": {
+      "meaning": "empress",
+      "pinyin": "hòu"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -16888,6 +17200,10 @@
       "components": [
         "口"
       ]
+    },
+    "prompt": {
+      "meaning": "towards",
+      "pinyin": "xiàng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -17161,6 +17477,10 @@
         "口",
         "马"
       ]
+    },
+    "prompt": {
+      "meaning": "(coll.) what?",
+      "pinyin": "má"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -17451,6 +17771,10 @@
         "巴"
       ]
     },
+    "prompt": {
+      "meaning": "bar (loanword) (serving drinks, or providing Internet access etc)",
+      "pinyin": "bā"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -17707,6 +18031,10 @@
         "斤"
       ]
     },
+    "prompt": {
+      "meaning": "smile (archaic)",
+      "pinyin": "yǐn"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -17938,6 +18266,10 @@
         "牛",
         "口"
       ]
+    },
+    "prompt": {
+      "meaning": "to say; to tell",
+      "pinyin": "gào"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -18272,6 +18604,10 @@
         "尼"
       ]
     },
+    "prompt": {
+      "meaning": "(sentence-final particle) used in questions to link back to prior discourse or context (\"what about...?\", \"and...?\")",
+      "pinyin": "ne"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -18551,6 +18887,10 @@
         "禾",
         "口"
       ]
+    },
+    "prompt": {
+      "meaning": "(joining two nouns) and; together with; with (Taiwan pr. [han4])",
+      "pinyin": "hé"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -18869,6 +19209,10 @@
       "components": [
         "可"
       ]
+    },
+    "prompt": {
+      "meaning": "elder brother",
+      "pinyin": "gē"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -19216,6 +19560,10 @@
         "口",
         "那"
       ]
+    },
+    "prompt": {
+      "meaning": "how",
+      "pinyin": "nǎ"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -19582,6 +19930,10 @@
         "昌"
       ]
     },
+    "prompt": {
+      "meaning": "to sing",
+      "pinyin": "chàng"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -19939,6 +20291,10 @@
         "壴",
         "口"
       ]
+    },
+    "prompt": {
+      "meaning": "to be fond of",
+      "pinyin": "xǐ"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -20360,6 +20716,10 @@
         "曷"
       ]
     },
+    "prompt": {
+      "meaning": "to drink",
+      "pinyin": "hē"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -20569,6 +20929,10 @@
         "囗",
         "儿"
       ]
+    },
+    "prompt": {
+      "meaning": "four",
+      "pinyin": "sì"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -20805,6 +21169,10 @@
         "囗",
         "口"
       ]
+    },
+    "prompt": {
+      "meaning": "to go back; to return; to turn back; to turn around",
+      "pinyin": "huí"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -21044,6 +21412,10 @@
         "囗",
         "大"
       ]
+    },
+    "prompt": {
+      "meaning": "cause",
+      "pinyin": "yīn"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -21323,6 +21695,10 @@
         "玉"
       ]
     },
+    "prompt": {
+      "meaning": "country; nation; state",
+      "pinyin": "guó"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -21549,6 +21925,10 @@
         "才",
         "土"
       ]
+    },
+    "prompt": {
+      "meaning": "to exist; to be alive",
+      "pinyin": "zài"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -21806,6 +22186,10 @@
         "土",
         "也"
       ]
+    },
+    "prompt": {
+      "meaning": "-ly",
+      "pinyin": "de"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -22081,6 +22465,10 @@
         "勿"
       ]
     },
+    "prompt": {
+      "meaning": "threshing floor",
+      "pinyin": "cháng"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -22323,6 +22711,10 @@
         "土",
         "不"
       ]
+    },
+    "prompt": {
+      "meaning": "bad",
+      "pinyin": "huài"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -22578,6 +22970,10 @@
         "从",
         "土"
       ]
+    },
+    "prompt": {
+      "meaning": "to sit",
+      "pinyin": "zuò"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -22835,6 +23231,10 @@
         "土",
         "夬"
       ]
+    },
+    "prompt": {
+      "meaning": "lump; chunk; piece",
+      "pinyin": "kuài"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -23141,6 +23541,10 @@
         "田"
       ]
     },
+    "prompt": {
+      "meaning": "to prepare; to equip",
+      "pinyin": "bèi"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -23340,6 +23744,10 @@
         "夕",
         "卜"
       ]
+    },
+    "prompt": {
+      "meaning": "outside",
+      "pinyin": "wài"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -23579,6 +23987,10 @@
         "夕"
       ]
     },
+    "prompt": {
+      "meaning": "many; much; more; a lot of",
+      "pinyin": "duō"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -23738,6 +24150,10 @@
         "一",
         "人"
       ]
+    },
+    "prompt": {
+      "meaning": "big; large; great",
+      "pinyin": "dà"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -23928,6 +24344,10 @@
         "大"
       ]
     },
+    "prompt": {
+      "meaning": "day",
+      "pinyin": "tiān"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -24115,6 +24535,10 @@
         "丶"
       ]
     },
+    "prompt": {
+      "meaning": "highest",
+      "pinyin": "tài"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -24272,6 +24696,10 @@
       "components": [
         "女"
       ]
+    },
+    "prompt": {
+      "meaning": "female",
+      "pinyin": "nǚ"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -24548,6 +24976,10 @@
         "女",
         "乃"
       ]
+    },
+    "prompt": {
+      "meaning": "breast",
+      "pinyin": "nǎi"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -24844,6 +25276,10 @@
         "也"
       ]
     },
+    "prompt": {
+      "meaning": "she",
+      "pinyin": "tā"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -25133,6 +25569,10 @@
         "子"
       ]
     },
+    "prompt": {
+      "meaning": "good",
+      "pinyin": "hǎo"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -25415,6 +25855,10 @@
         "女",
         "马"
       ]
+    },
+    "prompt": {
+      "meaning": "ma",
+      "pinyin": "mā"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -25721,6 +26165,10 @@
         "且"
       ]
     },
+    "prompt": {
+      "meaning": "older sister",
+      "pinyin": "jiě"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -25903,6 +26351,10 @@
         "了",
         "一"
       ]
+    },
+    "prompt": {
+      "meaning": "son",
+      "pinyin": "zǐ"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -26139,6 +26591,10 @@
         "宀",
         "子"
       ]
+    },
+    "prompt": {
+      "meaning": "letter",
+      "pinyin": "zì"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -26416,6 +26872,10 @@
         "冖",
         "子"
       ]
+    },
+    "prompt": {
+      "meaning": "to learn",
+      "pinyin": "xué"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -26740,6 +27200,10 @@
         "亥"
       ]
     },
+    "prompt": {
+      "meaning": "child",
+      "pinyin": "hái"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -27014,6 +27478,10 @@
         "宀",
         "元"
       ]
+    },
+    "prompt": {
+      "meaning": "to finish",
+      "pinyin": "wán"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -27367,6 +27835,10 @@
         "豕"
       ]
     },
+    "prompt": {
+      "meaning": "home",
+      "pinyin": "jiā"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -27579,6 +28051,10 @@
         "寸"
       ]
     },
+    "prompt": {
+      "meaning": "right; correct",
+      "pinyin": "duì"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -27706,6 +28182,10 @@
         "亅",
         "八"
       ]
+    },
+    "prompt": {
+      "meaning": "small",
+      "pinyin": "xiǎo"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -27864,6 +28344,10 @@
         "小",
         "丿"
       ]
+    },
+    "prompt": {
+      "meaning": "few",
+      "pinyin": "shǎo"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -28250,6 +28734,10 @@
         "尤"
       ]
     },
+    "prompt": {
+      "meaning": "(after a suppositional clause) in that case; then",
+      "pinyin": "jiù"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -28385,6 +28873,10 @@
         "凵",
         "丨"
       ]
+    },
+    "prompt": {
+      "meaning": "mountain; hill (CL:座[zuo4])",
+      "pinyin": "shān"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -28618,6 +29110,10 @@
         "夕"
       ]
     },
+    "prompt": {
+      "meaning": "years old",
+      "pinyin": "suì"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -28744,6 +29240,10 @@
         "一",
         "丄"
       ]
+    },
+    "prompt": {
+      "meaning": "work",
+      "pinyin": "gōng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -29044,6 +29544,10 @@
         "工"
       ]
     },
+    "prompt": {
+      "meaning": "difference; discrepancy",
+      "pinyin": "chā"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -29294,6 +29798,10 @@
         "刂",
         "帀"
       ]
+    },
+    "prompt": {
+      "meaning": "teacher",
+      "pinyin": "shī"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -29653,6 +30161,10 @@
         "巾"
       ]
     },
+    "prompt": {
+      "meaning": "to help",
+      "pinyin": "bāng"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -29996,6 +30508,10 @@
         "巾"
       ]
     },
+    "prompt": {
+      "meaning": "always",
+      "pinyin": "cháng"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -30136,6 +30652,10 @@
         "一",
         "十"
       ]
+    },
+    "prompt": {
+      "meaning": "dry",
+      "pinyin": "gān"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -30338,6 +30858,10 @@
       "components": [
         "干"
       ]
+    },
+    "prompt": {
+      "meaning": "year",
+      "pinyin": "nián"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -30577,6 +31101,10 @@
         "⺍",
         "一"
       ]
+    },
+    "prompt": {
+      "meaning": "to agree (to do sth)",
+      "pinyin": "yīng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -30840,6 +31368,10 @@
         "占"
       ]
     },
+    "prompt": {
+      "meaning": "inn; old-style hotel (CL:家[jia1])",
+      "pinyin": "diàn"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -31018,6 +31550,10 @@
         "一",
         "廾"
       ]
+    },
+    "prompt": {
+      "meaning": "to open (transitive or intransitive)",
+      "pinyin": "kāi"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -31258,6 +31794,10 @@
         "⺌",
         "彐"
       ]
+    },
+    "prompt": {
+      "meaning": "(onom.) dong",
+      "pinyin": "dāng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -31590,6 +32130,10 @@
         "彳",
         "艮"
       ]
+    },
+    "prompt": {
+      "meaning": "very; quite",
+      "pinyin": "hěn"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -31961,6 +32505,10 @@
         "寸"
       ]
     },
+    "prompt": {
+      "meaning": "to obtain",
+      "pinyin": "dé"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -32211,6 +32759,10 @@
         "心"
       ]
     },
+    "prompt": {
+      "meaning": "to forget",
+      "pinyin": "wàng"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -32420,6 +32972,10 @@
         "忄",
         "亡"
       ]
+    },
+    "prompt": {
+      "meaning": "busy",
+      "pinyin": "máng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -32686,6 +33242,10 @@
         "忄",
         "夬"
       ]
+    },
+    "prompt": {
+      "meaning": "rapid",
+      "pinyin": "kuài"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -32983,6 +33543,10 @@
         "心"
       ]
     },
+    "prompt": {
+      "meaning": "how",
+      "pinyin": "zěn"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -33253,6 +33817,10 @@
         "忄",
         "白"
       ]
+    },
+    "prompt": {
+      "meaning": "to be afraid",
+      "pinyin": "pà"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -33592,6 +34160,10 @@
         "自",
         "心"
       ]
+    },
+    "prompt": {
+      "meaning": "breath",
+      "pinyin": "xī"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -33942,6 +34514,10 @@
         "你",
         "心"
       ]
+    },
+    "prompt": {
+      "meaning": "you (courteous, as opposed to informal 你[ni3])",
+      "pinyin": "nín"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -34347,6 +34923,10 @@
         "心"
       ]
     },
+    "prompt": {
+      "meaning": "to think (about)",
+      "pinyin": "xiǎng"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -34737,6 +35317,10 @@
         "心"
       ]
     },
+    "prompt": {
+      "meaning": "idea; thought; meaning; sense",
+      "pinyin": "yì"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -35010,6 +35594,10 @@
         "扌",
         "戈"
       ]
+    },
+    "prompt": {
+      "meaning": "I; me; my",
+      "pinyin": "wǒ"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -35298,6 +35886,10 @@
         "户",
         "方"
       ]
+    },
+    "prompt": {
+      "meaning": "house",
+      "pinyin": "fáng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -35592,6 +36184,10 @@
         "斤"
       ]
     },
+    "prompt": {
+      "meaning": "actually",
+      "pinyin": "suǒ"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -35753,6 +36349,10 @@
         "手"
       ]
     },
+    "prompt": {
+      "meaning": "hand",
+      "pinyin": "shǒu"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -35912,6 +36512,10 @@
       "components": [
         "扌"
       ]
+    },
+    "prompt": {
+      "meaning": "ability; talent",
+      "pinyin": "cái"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -36101,6 +36705,10 @@
         "扌",
         "丁"
       ]
+    },
+    "prompt": {
+      "meaning": "(loanword) dozen",
+      "pinyin": "dá"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -36396,6 +37004,10 @@
         "扌",
         "戈"
       ]
+    },
+    "prompt": {
+      "meaning": "to try to find",
+      "pinyin": "zhǎo"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -36694,6 +37306,10 @@
         "扌",
         "巴"
       ]
+    },
+    "prompt": {
+      "meaning": "to hold; to grasp",
+      "pinyin": "bǎ"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -37084,6 +37700,10 @@
         "手"
       ]
     },
+    "prompt": {
+      "meaning": "to hold",
+      "pinyin": "ná"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -37391,6 +38011,10 @@
         "方",
         "攵"
       ]
+    },
+    "prompt": {
+      "meaning": "to put",
+      "pinyin": "fàng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -37786,6 +38410,10 @@
         "攵"
       ]
     },
+    "prompt": {
+      "meaning": "to teach; to instruct",
+      "pinyin": "jiāo"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -37969,6 +38597,10 @@
         "亠",
         "乂"
       ]
+    },
+    "prompt": {
+      "meaning": "language",
+      "pinyin": "wén"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -38330,6 +38962,10 @@
         "斤"
       ]
     },
+    "prompt": {
+      "meaning": "new",
+      "pinyin": "xīn"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -38516,6 +39152,10 @@
       "components": [
         "亠"
       ]
+    },
+    "prompt": {
+      "meaning": "square",
+      "pinyin": "fāng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -38840,6 +39480,10 @@
         "方"
       ]
     },
+    "prompt": {
+      "meaning": "one side",
+      "pinyin": "páng"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -39014,6 +39658,10 @@
         "口",
         "一"
       ]
+    },
+    "prompt": {
+      "meaning": "sun",
+      "pinyin": "rì"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -39230,6 +39878,10 @@
         "日",
         "十"
       ]
+    },
+    "prompt": {
+      "meaning": "early",
+      "pinyin": "zǎo"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -39470,6 +40122,10 @@
         "日",
         "寸"
       ]
+    },
+    "prompt": {
+      "meaning": "time; hour; period; season",
+      "pinyin": "shí"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -39770,6 +40426,10 @@
         "月"
       ]
     },
+    "prompt": {
+      "meaning": "bright",
+      "pinyin": "míng"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -40060,6 +40720,10 @@
         "日",
         "生"
       ]
+    },
+    "prompt": {
+      "meaning": "star",
+      "pinyin": "xīng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -40364,6 +41028,10 @@
         "日",
         "乍"
       ]
+    },
+    "prompt": {
+      "meaning": "yesterday",
+      "pinyin": "zuó"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -40682,6 +41350,10 @@
         "日",
         "疋"
       ]
+    },
+    "prompt": {
+      "meaning": "to be (followed by substantives only)",
+      "pinyin": "shì"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -41063,6 +41735,10 @@
         "免"
       ]
     },
+    "prompt": {
+      "meaning": "evening",
+      "pinyin": "wǎn"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -41346,6 +42022,10 @@
         "乂"
       ]
     },
+    "prompt": {
+      "meaning": "to change or replace",
+      "pinyin": "gēng"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -41527,6 +42207,10 @@
         "冂",
         "二"
       ]
+    },
+    "prompt": {
+      "meaning": "moon",
+      "pinyin": "yuè"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -41771,6 +42455,10 @@
       "components": [
         "月"
       ]
+    },
+    "prompt": {
+      "meaning": "to have; there is",
+      "pinyin": "yǒu"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -42078,6 +42766,10 @@
       "components": [
         "月"
       ]
+    },
+    "prompt": {
+      "meaning": "friend",
+      "pinyin": "péng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -42433,6 +43125,10 @@
         "卩",
         "又"
       ]
+    },
+    "prompt": {
+      "meaning": "clothes",
+      "pinyin": "fú"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -42838,6 +43534,10 @@
         "月"
       ]
     },
+    "prompt": {
+      "meaning": "period",
+      "pinyin": "qī"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -42996,6 +43696,10 @@
         "十",
         "八"
       ]
+    },
+    "prompt": {
+      "meaning": "tree",
+      "pinyin": "mù"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -43202,6 +43906,10 @@
         "木",
         "一"
       ]
+    },
+    "prompt": {
+      "meaning": "root; stem",
+      "pinyin": "běn"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -43478,6 +44186,10 @@
         "几"
       ]
     },
+    "prompt": {
+      "meaning": "machine; mechanism",
+      "pinyin": "jī"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -43702,6 +44414,10 @@
         "未",
         "丷"
       ]
+    },
+    "prompt": {
+      "meaning": "to come",
+      "pinyin": "lái"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -43962,6 +44678,10 @@
         "田",
         "木"
       ]
+    },
+    "prompt": {
+      "meaning": "fruit",
+      "pinyin": "guǒ"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -44262,6 +44982,10 @@
         "对"
       ]
     },
+    "prompt": {
+      "meaning": "tree",
+      "pinyin": "shù"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -44548,6 +45272,10 @@
         "木",
         "羊"
       ]
+    },
+    "prompt": {
+      "meaning": "manner",
+      "pinyin": "yàng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -44962,6 +45690,10 @@
         "娄"
       ]
     },
+    "prompt": {
+      "meaning": "house with more than 1 story",
+      "pinyin": "lóu"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -45201,6 +45933,10 @@
         "冫",
         "欠"
       ]
+    },
+    "prompt": {
+      "meaning": "next in sequence",
+      "pinyin": "cì"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -45456,6 +46192,10 @@
         "又",
         "欠"
       ]
+    },
+    "prompt": {
+      "meaning": "joyous",
+      "pinyin": "huān"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -45901,6 +46641,10 @@
         "欠"
       ]
     },
+    "prompt": {
+      "meaning": "song (CL:首[shou3],支[zhi1])",
+      "pinyin": "gē"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -46094,6 +46838,10 @@
         "一",
         "止"
       ]
+    },
+    "prompt": {
+      "meaning": "first month of the lunar year",
+      "pinyin": "zhēng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -46358,6 +47106,10 @@
         "母"
       ]
     },
+    "prompt": {
+      "meaning": "each",
+      "pinyin": "měi"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -46562,6 +47314,10 @@
         "匕"
       ]
     },
+    "prompt": {
+      "meaning": "euphemistic variant of 屄[bi1]",
+      "pinyin": "bī"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -46764,6 +47520,10 @@
         "亻"
       ]
     },
+    "prompt": {
+      "meaning": "gas; air",
+      "pinyin": "qì"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -46959,6 +47719,10 @@
       "components": [
         "亅"
       ]
+    },
+    "prompt": {
+      "meaning": "water",
+      "pinyin": "shuǐ"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -47160,6 +47924,10 @@
         "氵",
         "又"
       ]
+    },
+    "prompt": {
+      "meaning": "man",
+      "pinyin": "hàn"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -47410,6 +48178,10 @@
         "氵",
         "气"
       ]
+    },
+    "prompt": {
+      "meaning": "steam",
+      "pinyin": "qì"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -47714,6 +48486,10 @@
         "氵",
         "殳"
       ]
+    },
+    "prompt": {
+      "meaning": "(negative prefix for verbs) have not; not",
+      "pinyin": "méi"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -48022,6 +48798,10 @@
         "氵",
         "先"
       ]
+    },
+    "prompt": {
+      "meaning": "to wash; to bathe",
+      "pinyin": "xǐ"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -48428,6 +49208,10 @@
         "曷"
       ]
     },
+    "prompt": {
+      "meaning": "thirsty",
+      "pinyin": "kě"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -48603,6 +49387,10 @@
         "丷",
         "人"
       ]
+    },
+    "prompt": {
+      "meaning": "fire",
+      "pinyin": "huǒ"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -48881,6 +49669,10 @@
         "占",
         "灬"
       ]
+    },
+    "prompt": {
+      "meaning": "to touch briefly; to tap",
+      "pinyin": "diǎn"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -49227,6 +50019,10 @@
         "执",
         "灬"
       ]
+    },
+    "prompt": {
+      "meaning": "to warm up",
+      "pinyin": "rè"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -49582,6 +50378,10 @@
         "肰",
         "灬"
       ]
+    },
+    "prompt": {
+      "meaning": "correct",
+      "pinyin": "rán"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -49960,6 +50760,10 @@
         "友"
       ]
     },
+    "prompt": {
+      "meaning": "to love; to be fond of; to like",
+      "pinyin": "ài"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -50293,6 +51097,10 @@
         "巴"
       ]
     },
+    "prompt": {
+      "meaning": "father",
+      "pinyin": "bà"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -50449,6 +51257,10 @@
       "components": [
         "牛"
       ]
+    },
+    "prompt": {
+      "meaning": "ox",
+      "pinyin": "niú"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -50739,6 +51551,10 @@
         "王",
         "元"
       ]
+    },
+    "prompt": {
+      "meaning": "to play",
+      "pinyin": "wán"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -51060,6 +51876,10 @@
         "见"
       ]
     },
+    "prompt": {
+      "meaning": "to appear",
+      "pinyin": "xiàn"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -51379,6 +52199,10 @@
         "求"
       ]
     },
+    "prompt": {
+      "meaning": "ball used for playing games (variant of 球[qiu2])",
+      "pinyin": "qiú"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -51578,6 +52402,10 @@
         "土"
       ]
     },
+    "prompt": {
+      "meaning": "to grow; to give birth; to produce; to be born",
+      "pinyin": "shēng"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -51770,6 +52598,10 @@
       "components": [
         "冂"
       ]
+    },
+    "prompt": {
+      "meaning": "to use; to make use of; to employ",
+      "pinyin": "yòng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -52001,6 +52833,10 @@
         "曰",
         "乚"
       ]
+    },
+    "prompt": {
+      "meaning": "lightning",
+      "pinyin": "diàn"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -52281,6 +53117,10 @@
         "田",
         "力"
       ]
+    },
+    "prompt": {
+      "meaning": "male",
+      "pinyin": "nán"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -52625,6 +53465,10 @@
         "丙"
       ]
     },
+    "prompt": {
+      "meaning": "illness",
+      "pinyin": "bìng"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -52834,6 +53678,10 @@
       "components": [
         "日"
       ]
+    },
+    "prompt": {
+      "meaning": "white",
+      "pinyin": "bái"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -53069,6 +53917,10 @@
         "一",
         "白"
       ]
+    },
+    "prompt": {
+      "meaning": "hundred",
+      "pinyin": "bǎi"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -53381,6 +54233,10 @@
         "白",
         "勺"
       ]
+    },
+    "prompt": {
+      "meaning": "of; ~'s (possessive particle)",
+      "pinyin": "de"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -53714,6 +54570,10 @@
         "目"
       ]
     },
+    "prompt": {
+      "meaning": "to look after",
+      "pinyin": "kān"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -54033,6 +54893,10 @@
         "直",
         "几"
       ]
+    },
+    "prompt": {
+      "meaning": "really",
+      "pinyin": "zhēn"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -54389,6 +55253,10 @@
         "羊",
         "目"
       ]
+    },
+    "prompt": {
+      "meaning": "a move in chess (Taiwan pr. [zhuo2])",
+      "pinyin": "zhāo"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -54808,6 +55676,10 @@
         "垂"
       ]
     },
+    "prompt": {
+      "meaning": "to sleep",
+      "pinyin": "shuì"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -55087,6 +55959,10 @@
         "矢",
         "口"
       ]
+    },
+    "prompt": {
+      "meaning": "to know",
+      "pinyin": "zhī"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -55437,6 +56313,10 @@
         "示"
       ]
     },
+    "prompt": {
+      "meaning": "ticket",
+      "pinyin": "piào"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -55738,6 +56618,10 @@
         "牙"
       ]
     },
+    "prompt": {
+      "meaning": "to bore through; to pierce; to perforate",
+      "pinyin": "chuān"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -56038,6 +56922,10 @@
         "占"
       ]
     },
+    "prompt": {
+      "meaning": "station",
+      "pinyin": "zhàn"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -56337,6 +57225,10 @@
         "⺮",
         "夭"
       ]
+    },
+    "prompt": {
+      "meaning": "to laugh; to smile",
+      "pinyin": "xiào"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -56702,6 +57594,10 @@
         "弟"
       ]
     },
+    "prompt": {
+      "meaning": "(prefix indicating ordinal number, as in 第六[di4 liu4] \"sixth\")",
+      "pinyin": "dì"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -57049,6 +57945,10 @@
         "⺮",
         "寺"
       ]
+    },
+    "prompt": {
+      "meaning": "to wait for; to await",
+      "pinyin": "děng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -57405,6 +58305,10 @@
         "合"
       ]
     },
+    "prompt": {
+      "meaning": "bound form having the same meaning as the free word 答[da2], used in 答應|答应[da1 ying5], 答理[da1 li5] etc",
+      "pinyin": "dā"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -57678,6 +58582,10 @@
         "丿",
         "糸"
       ]
+    },
+    "prompt": {
+      "meaning": "to connect",
+      "pinyin": "xì"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -58044,6 +58952,10 @@
         "糸"
       ]
     },
+    "prompt": {
+      "meaning": "to accumulate",
+      "pinyin": "lěi"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -58347,6 +59259,10 @@
         "纟",
         "召"
       ]
+    },
+    "prompt": {
+      "meaning": "to continue",
+      "pinyin": "shào"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -58670,6 +59586,10 @@
         "合"
       ]
     },
+    "prompt": {
+      "meaning": "to",
+      "pinyin": "gěi"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -58918,6 +59838,10 @@
         "冂",
         "乂"
       ]
+    },
+    "prompt": {
+      "meaning": "net; web",
+      "pinyin": "wǎng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -59183,6 +60107,10 @@
         "耂",
         "匕"
       ]
+    },
+    "prompt": {
+      "meaning": "prefix used before the surname of a person or a numeral indicating the order of birth of the children in a family or to indicate affection or familiarity",
+      "pinyin": "lǎo"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -59452,6 +60380,10 @@
         "丂"
       ]
     },
+    "prompt": {
+      "meaning": "to beat",
+      "pinyin": "kǎo"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -59645,6 +60577,10 @@
       "components": [
         "而"
       ]
+    },
+    "prompt": {
+      "meaning": "and",
+      "pinyin": "ér"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -59902,6 +60838,10 @@
         "冂",
         "仌"
       ]
+    },
+    "prompt": {
+      "meaning": "meat",
+      "pinyin": "ròu"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -60312,6 +61252,10 @@
         "匕"
       ]
     },
+    "prompt": {
+      "meaning": "can",
+      "pinyin": "néng"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -60584,6 +61528,10 @@
         "艹",
         "化"
       ]
+    },
+    "prompt": {
+      "meaning": "flower",
+      "pinyin": "huā"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -60879,6 +61827,10 @@
         "人",
         "木"
       ]
+    },
+    "prompt": {
+      "meaning": "tea",
+      "pinyin": "chá"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -61193,6 +62145,10 @@
         "艹",
         "采"
       ]
+    },
+    "prompt": {
+      "meaning": "vegetable; greens (CL:棵[ke1])",
+      "pinyin": "cài"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -61548,6 +62504,10 @@
         "虫"
       ]
     },
+    "prompt": {
+      "meaning": "egg",
+      "pinyin": "dàn"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -61788,6 +62748,10 @@
         "亍"
       ]
     },
+    "prompt": {
+      "meaning": "row; line",
+      "pinyin": "háng"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -61995,6 +62959,10 @@
       "components": [
         "亠"
       ]
+    },
+    "prompt": {
+      "meaning": "clothes",
+      "pinyin": "yī"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -62246,6 +63214,10 @@
         "兀",
         "囗"
       ]
+    },
+    "prompt": {
+      "meaning": "west",
+      "pinyin": "xī"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -62561,6 +63533,10 @@
         "女"
       ]
     },
+    "prompt": {
+      "meaning": "to demand; to coerce",
+      "pinyin": "yāo"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -62787,6 +63763,10 @@
         "冂",
         "儿"
       ]
+    },
+    "prompt": {
+      "meaning": "to see",
+      "pinyin": "jiàn"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -63120,6 +64100,10 @@
         "礻",
         "见"
       ]
+    },
+    "prompt": {
+      "meaning": "(literary, or bound form) to look at",
+      "pinyin": "shì"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -63474,6 +64458,10 @@
         "见"
       ]
     },
+    "prompt": {
+      "meaning": "a nap",
+      "pinyin": "jiào"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -63663,6 +64651,10 @@
         "讠",
         "人"
       ]
+    },
+    "prompt": {
+      "meaning": "to recognize",
+      "pinyin": "rèn"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -63858,6 +64850,10 @@
         "讠",
         "上"
       ]
+    },
+    "prompt": {
+      "meaning": "to yield",
+      "pinyin": "ràng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -64088,6 +65084,10 @@
         "讠",
         "己"
       ]
+    },
+    "prompt": {
+      "meaning": "to record",
+      "pinyin": "jì"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -64352,6 +65352,10 @@
         "只"
       ]
     },
+    "prompt": {
+      "meaning": "to know",
+      "pinyin": "shí"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -64610,6 +65614,10 @@
         "讠",
         "斥"
       ]
+    },
+    "prompt": {
+      "meaning": "to complain",
+      "pinyin": "sù"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -64894,6 +65902,10 @@
         "讠",
         "式"
       ]
+    },
+    "prompt": {
+      "meaning": "to test",
+      "pinyin": "shì"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -65190,6 +66202,10 @@
         "舌"
       ]
     },
+    "prompt": {
+      "meaning": "dialect",
+      "pinyin": "huà"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -65485,6 +66501,10 @@
         "讠",
         "亥"
       ]
+    },
+    "prompt": {
+      "meaning": "should",
+      "pinyin": "gāi"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -65787,6 +66807,10 @@
         "讠",
         "吾"
       ]
+    },
+    "prompt": {
+      "meaning": "dialect",
+      "pinyin": "yǔ"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -66123,6 +67147,10 @@
         "讠",
         "兑"
       ]
+    },
+    "prompt": {
+      "meaning": "to persuade",
+      "pinyin": "shuì"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -66480,6 +67508,10 @@
         "青"
       ]
     },
+    "prompt": {
+      "meaning": "to ask",
+      "pinyin": "qǐng"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -66807,6 +67839,10 @@
         "讠",
         "果"
       ]
+    },
+    "prompt": {
+      "meaning": "subject",
+      "pinyin": "kè"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -67140,6 +68176,10 @@
         "讠",
         "隹"
       ]
+    },
+    "prompt": {
+      "meaning": "who",
+      "pinyin": "shéi"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -67530,6 +68570,10 @@
         "射"
       ]
     },
+    "prompt": {
+      "meaning": "to thank",
+      "pinyin": "xiè"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -67860,6 +68904,10 @@
         "贝"
       ]
     },
+    "prompt": {
+      "meaning": "expensive",
+      "pinyin": "guì"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -68095,6 +69143,10 @@
         "土",
         "止"
       ]
+    },
+    "prompt": {
+      "meaning": "to walk",
+      "pinyin": "zǒu"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -68478,6 +69530,10 @@
         "走",
         "己"
       ]
+    },
+    "prompt": {
+      "meaning": "to rise",
+      "pinyin": "qǐ"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -68904,6 +69960,10 @@
         "包"
       ]
     },
+    "prompt": {
+      "meaning": "(of an animal) to paw (the ground)",
+      "pinyin": "páo"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -69327,6 +70387,10 @@
         "艮"
       ]
     },
+    "prompt": {
+      "meaning": "heel",
+      "pinyin": "gēn"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -69748,6 +70812,10 @@
         "各"
       ]
     },
+    "prompt": {
+      "meaning": "road (CL:條|条[tiao2])",
+      "pinyin": "lù"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -70006,6 +71074,10 @@
         "身"
       ]
     },
+    "prompt": {
+      "meaning": "body",
+      "pinyin": "shēn"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -70187,6 +71259,10 @@
         "七",
         "十"
       ]
+    },
+    "prompt": {
+      "meaning": "car",
+      "pinyin": "chē"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -70450,6 +71526,10 @@
         "辶",
         "力"
       ]
+    },
+    "prompt": {
+      "meaning": "side",
+      "pinyin": "biān"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -70718,6 +71798,10 @@
         "辶",
         "寸"
       ]
+    },
+    "prompt": {
+      "meaning": "to cross",
+      "pinyin": "guò"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -71004,6 +72088,10 @@
         "不"
       ]
     },
+    "prompt": {
+      "meaning": "still",
+      "pinyin": "hái"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -71277,6 +72365,10 @@
         "辶",
         "文"
       ]
+    },
+    "prompt": {
+      "meaning": "(pronoun) this; these",
+      "pinyin": "zhè"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -71569,6 +72661,10 @@
         "辶",
         "井"
       ]
+    },
+    "prompt": {
+      "meaning": "to go forward",
+      "pinyin": "jìn"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -71874,6 +72970,10 @@
         "辶",
         "元"
       ]
+    },
+    "prompt": {
+      "meaning": "far",
+      "pinyin": "yuǎn"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -72198,6 +73298,10 @@
         "辶",
         "关"
       ]
+    },
+    "prompt": {
+      "meaning": "to send; to deliver; to transmit",
+      "pinyin": "sòng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -72599,6 +73703,10 @@
         "首"
       ]
     },
+    "prompt": {
+      "meaning": "road; path (CL:條|条[tiao2],股[gu3])",
+      "pinyin": "dào"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -72873,6 +73981,10 @@
       "components": [
         "阝"
       ]
+    },
+    "prompt": {
+      "meaning": "(specifier) that; the; those (colloquial pr. [nei4])",
+      "pinyin": "nà"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -73230,6 +74342,10 @@
         "阝"
       ]
     },
+    "prompt": {
+      "meaning": "all; both; entirely",
+      "pinyin": "dōu"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -73549,6 +74665,10 @@
         "酉"
       ]
     },
+    "prompt": {
+      "meaning": "wine (esp. rice wine)",
+      "pinyin": "jiǔ"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -73792,6 +74912,10 @@
         "田",
         "土"
       ]
+    },
+    "prompt": {
+      "meaning": "lining",
+      "pinyin": "lǐ"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -74152,6 +75276,10 @@
         "钅",
         "戋"
       ]
+    },
+    "prompt": {
+      "meaning": "coin",
+      "pinyin": "qián"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -74578,6 +75706,10 @@
         "昔"
       ]
     },
+    "prompt": {
+      "meaning": "mistake",
+      "pinyin": "cuò"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -74758,6 +75890,10 @@
         "一"
       ]
     },
+    "prompt": {
+      "meaning": "long",
+      "pinyin": "cháng"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -74911,6 +76047,10 @@
         "丶",
         "丨"
       ]
+    },
+    "prompt": {
+      "meaning": "gate; door; doorway; gateway; opening (CL:扇[shan4])",
+      "pinyin": "mén"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -75156,6 +76296,10 @@
         "门",
         "口"
       ]
+    },
+    "prompt": {
+      "meaning": "to ask; to inquire",
+      "pinyin": "wèn"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -75435,6 +76579,10 @@
         "门",
         "日"
       ]
+    },
+    "prompt": {
+      "meaning": "between",
+      "pinyin": "jiān"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -75804,6 +76952,10 @@
         "完"
       ]
     },
+    "prompt": {
+      "meaning": "courtyard",
+      "pinyin": "yuàn"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -76134,6 +77286,10 @@
         "隹"
       ]
     },
+    "prompt": {
+      "meaning": "difficult (to...)",
+      "pinyin": "nán"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -76393,6 +77549,10 @@
       "components": [
         "帀"
       ]
+    },
+    "prompt": {
+      "meaning": "rain",
+      "pinyin": "yǔ"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -76801,6 +77961,10 @@
         "令"
       ]
     },
+    "prompt": {
+      "meaning": "zero",
+      "pinyin": "líng"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -77046,6 +78210,10 @@
       ],
       "atomic": false,
       "components": []
+    },
+    "prompt": {
+      "meaning": "to not be; not",
+      "pinyin": "fēi"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -77334,6 +78502,10 @@
       "atomic": false,
       "components": []
     },
+    "prompt": {
+      "meaning": "face",
+      "pinyin": "miàn"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -77497,6 +78669,10 @@
       ],
       "atomic": false,
       "components": []
+    },
+    "prompt": {
+      "meaning": "to fly",
+      "pinyin": "fēi"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -77801,6 +78977,10 @@
         "饣",
         "反"
       ]
+    },
+    "prompt": {
+      "meaning": "cooked rice",
+      "pinyin": "fàn"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -78166,6 +79346,10 @@
         "我"
       ]
     },
+    "prompt": {
+      "meaning": "hungry",
+      "pinyin": "è"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -78347,6 +79531,10 @@
       "components": [
         "一"
       ]
+    },
+    "prompt": {
+      "meaning": "horse",
+      "pinyin": "mǎ"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -78686,6 +79874,10 @@
         "冋"
       ]
     },
+    "prompt": {
+      "meaning": "high",
+      "pinyin": "gāo"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -79005,6 +80197,10 @@
         "鸟"
       ]
     },
+    "prompt": {
+      "meaning": "fowl",
+      "pinyin": "jī"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -79312,6 +80508,10 @@
       "components": [
         "灬"
       ]
+    },
+    "prompt": {
+      "meaning": "black",
+      "pinyin": "hēi"
     },
     "sources": {
       "pinyin": "cc-cedict",

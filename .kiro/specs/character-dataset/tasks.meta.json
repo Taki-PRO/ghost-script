@@ -260,6 +260,16 @@
         "executionId": "7a5e48bd-5093-4a9f-8df8-80028e295617",
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794024691419
+      },
+      {
+        "executionId": "126357e0-6a53-41d9-beb3-3dff2f314fbc",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794026575953
+      },
+      {
+        "executionId": "126357e0-6a53-41d9-beb3-3dff2f314fbc",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794027070340
       }
     ],
     "11.2 Implement `main()` in `scripts/build-data.ts`": [
@@ -291,6 +301,68 @@
         "executionId": "7a5e48bd-5093-4a9f-8df8-80028e295617",
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794024710013
+      }
+    ],
+    "4.2 Create `data/prompt-overrides.csv` with a header row `character,entryIndex,meaningIndex,reviewedBy` and no data rows yet (human adds overrides later)": [
+      {
+        "executionId": "126357e0-6a53-41d9-beb3-3dff2f314fbc",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794025899870
+      },
+      {
+        "executionId": "126357e0-6a53-41d9-beb3-3dff2f314fbc",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794026131000
+      }
+    ],
+    "8.3 Extend `parseCcCedict` to retain per-entry senses": [
+      {
+        "executionId": "126357e0-6a53-41d9-beb3-3dff2f314fbc",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794025903734
+      },
+      {
+        "executionId": "126357e0-6a53-41d9-beb3-3dff2f314fbc",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794026134975
+      }
+    ],
+    "10.5 Implement `scripts/lib/parse-prompt-overrides.ts` — `parsePromptOverrides`": [
+      {
+        "executionId": "126357e0-6a53-41d9-beb3-3dff2f314fbc",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794025907937
+      },
+      {
+        "executionId": "126357e0-6a53-41d9-beb3-3dff2f314fbc",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794026139019
+      }
+    ],
+    "10.6 Write unit tests for `parsePromptOverrides`": [
+      {
+        "executionId": "126357e0-6a53-41d9-beb3-3dff2f314fbc",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794026142871
+      }
+    ],
+    "10.3 Implement `scripts/lib/prompt.ts` — `selectPrompt` + `numberedToToneMarks`": [
+      {
+        "executionId": "126357e0-6a53-41d9-beb3-3dff2f314fbc",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794026147728
+      },
+      {
+        "executionId": "126357e0-6a53-41d9-beb3-3dff2f314fbc",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794026514473
+      }
+    ],
+    "10.4 Write unit tests for `prompt.ts`": [
+      {
+        "executionId": "126357e0-6a53-41d9-beb3-3dff2f314fbc",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794026518324
       }
     ]
   }

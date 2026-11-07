@@ -68,8 +68,10 @@ describe('parseCcCedict', () => {
     for (const key of map.keys()) {
       expect(key.startsWith('#')).toBe(false);
     }
-    // Only the four data-line simplified strings are present.
-    expect([...map.keys()].sort()).toEqual(['人', '口', '行'].sort());
+    // Only the data-line simplified strings are present.
+    expect([...map.keys()].sort()).toEqual(
+      ['人', '了', '口', '行', '三', '后', '号', '中'].sort(),
+    );
   });
 
   it('omits a character that has no entry from the Map', () => {
@@ -77,5 +79,69 @@ describe('parseCcCedict', () => {
 
     expect(map.has('龍')).toBe(false);
     expect(map.get('龍')).toBeUndefined();
+  });
+
+  it('retains per-entry senses for 了 in source order with their own glosses', () => {
+    const map = parseCcCedict(sample);
+    const entry = map.get('了');
+
+    expect(entry).toBeDefined();
+    // 了 has two source lines in file order: le5 then liao3.
+    expect(entry?.entries).toHaveLength(2);
+
+    expect(entry?.entries[0].reading).toBe('le5');
+    expect(entry?.entries[0].meanings).toEqual([
+      '(completed action marker)',
+      '(modal particle indicating change of state, situation now)',
+      '(modal particle intensifying preceding clause)',
+    ]);
+
+    expect(entry?.entries[1].reading).toBe('liao3');
+    expect(entry?.entries[1].meanings).toEqual([
+      'to finish',
+      '(used with 得[de2] or 不[bu4] after a verb to express (im)possibility, as in 忘不了[wang4 bu5 liao3] "cannot forget")',
+      '(literary) (usually followed by a negative such as 無|无[wu2] or 不[bu4]) completely (not); entirely (not); (not) in the least',
+      'variant of 瞭|了[liao3]',
+    ]);
+
+    // Flat fields remain the deduped union in first-occurrence order.
+    expect(entry?.pinyin).toEqual(['le5', 'liao3']);
+  });
+
+  it('retains all three per-entry senses for 行 in source order', () => {
+    const map = parseCcCedict(sample);
+    const entry = map.get('行');
+
+    expect(entry).toBeDefined();
+    expect(entry?.entries).toHaveLength(3);
+
+    expect(entry?.entries.map((sense) => sense.reading)).toEqual([
+      'hang2',
+      'heng2',
+      'xing2',
+    ]);
+
+    expect(entry?.entries[0].meanings).toEqual([
+      '(bound form) row; line',
+      '(bound form) line of business; trade; profession',
+      '(bound form) commercial firm',
+      "(bound form) to rank (first, second etc) among one's siblings (by age)",
+      '(in data tables) row; (Tw) column',
+      'classifier for rows or lines',
+    ]);
+
+    expect(entry?.entries[1].meanings).toEqual(['used in 道行[dao4 heng2]']);
+
+    expect(entry?.entries[2].meanings).toEqual([
+      '(bound form) to walk; to go; to travel',
+      '(literary) trip; journey; visit',
+      '(bound form) temporary; makeshift',
+      '(bound form) current; in circulation',
+      '(bound form) to do; to perform',
+      'capable; competent',
+      'all right; OK!; will do',
+      'behavior; conduct (Taiwan pr. [xing4])',
+      '(literary) about to; soon',
+    ]);
   });
 });

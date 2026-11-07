@@ -9,12 +9,22 @@
 // For each key, all matching entries are collected in file order; pinyin and
 // meanings are deduplicated while preserving first-occurrence order.
 
+/** A single source entry (one source line) for a simplified string. */
+export interface CcCedictSense {
+  /** Numbered pinyin for this entry, e.g. "liao3". */
+  reading: string;
+  /** This entry's glosses, in source order. */
+  meanings: string[];
+}
+
 /** Parsed CC-CEDICT data for a single simplified string. */
 export interface CcCedictEntry {
   /** Distinct pinyin strings in first-occurrence order. */
   pinyin: string[];
   /** Distinct meaning strings in first-occurrence order. */
   meanings: string[];
+  /** Per-entry senses in source order (reading + its glosses); no dedup. */
+  entries: CcCedictSense[];
 }
 
 // Matches a single CC-CEDICT data line, capturing:
@@ -57,7 +67,7 @@ export function parseCcCedict(rawText: string): Map<string, CcCedictEntry> {
 
     let entry = result.get(simplified);
     if (entry === undefined) {
-      entry = { pinyin: [], meanings: [] };
+      entry = { pinyin: [], meanings: [], entries: [] };
       result.set(simplified, entry);
     }
 
@@ -69,6 +79,10 @@ export function parseCcCedict(rawText: string): Map<string, CcCedictEntry> {
         entry.meanings.push(meaning);
       }
     }
+
+    // Additionally retain this source line as a distinct sense, in file order
+    // with no cross-entry dedup.
+    entry.entries.push({ reading: pinyin, meanings });
   }
 
   return result;
