@@ -121,6 +121,12 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 - **Still to handle (display, not data):** 午 has only a long astrology-style gloss, and some glosses contain dictionary notes like "(CL:棵[ke1])". These will be trimmed by a display rule in the game-UI spec; the stored data stays identical to the source.
 - **Next:** tasks 13–14, property-based tests.
 
+## Nov 7, 2026: End of session
+
+- **Credits:** 87 of the 4,000 hackathon credits used so far (plus 25 of the 50 free-tier credits earlier). Spec 1 is about two-thirds done.
+- **State:** tasks 1–12 and the prompt wave complete; 300-character dataset built, deterministic, with 48 approved prompt overrides; 65/65 tests passing.
+- **Resume with:** tasks 13–15 (property-based tests and smoke tests), using the saved prompt.
+
 ---
 
 ## Template for new entries
