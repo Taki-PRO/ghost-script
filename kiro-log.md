@@ -112,6 +112,15 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   - **Content check found a gap the spec didn't cover:** CC-CEDICT's first meaning is often unusable as a game prompt. 88 of 300 start with "surname …", "variant of …", "used in …", "abbr. …" or "(bound form)". For example 三 → "surname San" and 东 → "surname Dong". Pinyin is in numbered form (shang3) with capitalised surname readings, so it isn't ready to display. A simple filter rule fixed most cases but still chose wrong senses for some (后 → "empress", 号 → "to wail", 体 → "Taiwan pr."), because CC-CEDICT doesn't order senses by how common they are.
 - **Decision:** add a "game prompt" requirement to the spec before writing the property tests. A rule picks a default meaning and reading for each character; a small human-reviewed override file corrects the rest. Every prompt must be chosen *from* the source data, never written freely, and property tests will enforce that.
 
+## Nov 7, 2026: Prompt same-entry fix, implementation and review
+
+- **What I did:** Asked Kiro to fix a design flaw before implementing: meanings and readings were picked from separate lists, so a prompt could pair a meaning with the wrong pronunciation (e.g. 了 "to finish" with *le*). Kiro updated requirements, design and tasks (per-entry senses, `entryIndex` + `meaningIndex` overrides, a new same-entry property), then implemented tasks 4.2, 8.3, 10.3–10.6 and the updated 11.1–11.2.
+- **Kiro feature:** Spec iteration (changing an approved spec in response to real data), sub-agents, unit tests on real fixtures (三, 后, 号, 了, 中).
+- **Result:** 65/65 tests pass; build succeeds; `prompt-review.csv` lists all 300 prompts with every alternative grouped by entry.
+- **Review:** the default rule gave usable but often wrong senses. Claude pre-screened all 300 characters against the review file and suggested 48 overrides. Raghav approved all 48 as suggested, including the six marked "your call" (觉, 地, 本, 所, 现, 然). `reviewedBy` records exactly that: "Raghav (approved Claude suggestions)". Notable fixes: 比 had defaulted to a vulgar euphemism (now "to compare"); wrong readings for 说, 听, 看, 要, 跑, 作, 行; rare senses for 号, 后, 几, 打, 电, 店, 跟, 热, 太, 字. All overrides select existing CC-CEDICT senses by index; the build validated every index.
+- **Still to handle (display, not data):** 午 has only a long astrology-style gloss, and some glosses contain dictionary notes like "(CL:棵[ke1])". These will be trimmed by a display rule in the game-UI spec; the stored data stays identical to the source.
+- **Next:** tasks 13–14, property-based tests.
+
 ---
 
 ## Template for new entries
