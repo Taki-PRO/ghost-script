@@ -43,6 +43,9 @@ Build the data pipeline that transforms three open-source raw datasets into `app
     - Update the `#` comment header with the source name, URL, and SPDX licence identifier
     - _Requirements: 1.2, 1.3, 1.5_
 
+  - [ ] 4.2 Create `data/prompt-overrides.csv` with a header row `character,meaningIndex,readingIndex,reviewedBy` and no data rows yet (human adds overrides later)
+    - _Requirements: 6.6_
+
 - [x] 5. Character-list parser
   - [x] 5.1 Implement `scripts/lib/parse-character-list.ts`
     - `parseCharacterList(raw: string): ParseCharacterListResult`
@@ -141,19 +144,41 @@ Build the data pipeline that transforms three open-source raw datasets into `app
     - Test: two calls with the same Map produce byte-for-byte identical strings
     - _Requirements: 3.4_
 
+  - [ ] 10.3 Implement `scripts/lib/prompt.ts` — `selectPrompt` + `numberedToToneMarks`
+    - Implement the deterministic default rule (skip-prefix list, `(bound form) ` stripping, proper-noun reading skip with fallback), override-by-index precedence, and numbered→tone-mark conversion
+    - Pure functions; `selectPrompt` returns `{ ok:false, reason }` on no-usable-meaning / no-usable-reading
+    - Export `Prompt` consumers import the type from `app/src/data/types.ts`
+    - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
+
+  - [ ] 10.4 Write unit tests for `prompt.ts`
+    - `numberedToToneMarks`: shang3 → shǎng, hao3 → hǎo, lu:4/lv4 if encountered, tone 5 neutral → no mark
+    - `selectPrompt`: real cases 三 (skip "surname San"), 后 (skip to a usable sense), 号 — fixtures from real CC-CEDICT lines in `data/raw/cc-cedict/cedict_ts.u8`; no invented entries
+    - override precedence; no-usable-meaning / no-usable-reading failure results
+    - _Requirements: 6.2, 6.3, 6.4, 6.5, 6.8_
+
+  - [ ] 10.5 Implement `scripts/lib/parse-prompt-overrides.ts` — `parsePromptOverrides`
+    - Parse the CSV header + rows; validate row shape and non-empty `reviewedBy`; detect duplicate characters; index-range validation is deferred to the build (needs merged data)
+    - _Requirements: 6.6, 6.7_
+
+  - [ ] 10.6 Write unit tests for `parsePromptOverrides`
+    - valid rows; malformed row; missing reviewer; duplicate character
+    - _Requirements: 6.6, 6.7_
+
 - [x] 11. Pipeline entry point
   - [x] 11.1 Implement `scripts/build-data.ts` — `buildDataset(opts: BuildOptions): Promise<BuildResult>`
     - Accept `BuildOptions`; call all parsers; call `mergeCharacter` per character in fail-slow pass
+    - Read `data/prompt-overrides.csv` if present (absent file means no overrides); call `selectPrompt` per character in the fail-slow pass and include the resulting `prompt` in each record
+    - Treat a prompt-selection failure and an out-of-range override index as build failures (aggregated with missing-field errors, no output written)
     - Collect all `MissingFieldError` items; if any exist, return `{ ok: false, errors }` without writing output
     - On success: call `serialiseDataset`, write to a temp file, rename atomically to final path
     - Verify final record count matches character-list line count; abort with error if mismatch
-    - _Requirements: 3.2, 3.3, 3.6, 4.12_
+    - _Requirements: 3.2, 3.3, 3.6, 4.12, 6.5, 6.7, 6.8_
 
   - [x] 11.2 Implement `main()` in `scripts/build-data.ts`
     - Resolves hardcoded paths from repo root; calls `buildDataset`; handles missing-file errors (emits to stderr, exits non-zero)
     - On `ok: false` from `buildDataset`: emit full missing-field report to stderr, exit non-zero
-    - On `ok: true`: print success summary to stdout (character count, all required fields non-null), write `app/public/data/characters.json`
-    - _Requirements: 3.1, 3.7, 4.12_
+    - On `ok: true`: print success summary to stdout (character count, all required fields non-null), write `app/public/data/characters.json`, and write `data/prompt-review.csv`
+    - _Requirements: 3.1, 3.7, 4.12, 6.9_
 
 - [x] 12. Checkpoint — unit test suite passes
   - Ensure all unit tests pass with `npm test`. Ask the user if any questions arise before continuing.
@@ -245,6 +270,14 @@ Build the data pipeline that transforms three open-source raw datasets into `app
     - numRuns: 100
     - _Requirements: 5.2, 5.3, 5.4_
 
+  - [ ] 14.5 Write property tests: prompt.meaning is a source meaning; prompt.pinyin is tone-mark of a source reading; no default prompt starts with a skipped prefix (Properties 18, 19, 20)
+    - numRuns: 100
+    - _Requirements: 6.2, 6.3, 6.4_
+
+  - [ ] 14.6 Write property test: every applied override index is in range and reviewer-attributed (Property 21)
+    - numRuns: 100
+    - _Requirements: 6.6, 6.7_
+
 - [ ] 15. Smoke tests
   - [ ] 15.1 Write `tests/smoke/dataset-files.test.ts`
     - Assert all required raw dataset paths and licence files exist on disk
@@ -266,8 +299,9 @@ Build the data pipeline that transforms three open-source raw datasets into `app
     - Call `buildDataset` with the actual paths in `data/raw/` and `data/character-list.txt`
     - Assert `result.ok === true`
     - Parse the resulting JSON; spot-check 3–5 well-known characters for expected field shapes (`pinyin`, `meanings`, `strokeCount`, `strokeData`, `decomposition`)
+    - Spot-check that `prompt.meaning` is non-empty and not a surname/abbr for the sampled characters, and that `data/prompt-review.csv` is produced
     - Assert record count equals character-list line count
-    - _Requirements: 3.4, 4.12, 5.1_
+    - _Requirements: 3.4, 4.12, 5.1, 6.1, 6.9_
 
 - [ ] 17. Checkpoint — full test suite passes
   - Run `npm test`. Ensure all unit tests, property tests, smoke tests, and integration test pass. Ask the user if any questions arise.
@@ -313,14 +347,14 @@ Build the data pipeline that transforms three open-source raw datasets into `app
     { "id": 0, "tasks": ["1"] },
     { "id": 1, "tasks": ["2.1"] },
     { "id": 2, "tasks": ["3.1", "3.2", "3.3"] },
-    { "id": 3, "tasks": ["4.1"] },
-    { "id": 4, "tasks": ["5.1", "6.1", "7.1", "8.1", "9.1", "10.1"] },
-    { "id": 5, "tasks": ["5.2", "6.2", "7.2", "8.2", "9.2", "10.2"] },
+    { "id": 3, "tasks": ["4.1", "4.2"] },
+    { "id": 4, "tasks": ["5.1", "6.1", "7.1", "8.1", "9.1", "10.1", "10.3", "10.5"] },
+    { "id": 5, "tasks": ["5.2", "6.2", "7.2", "8.2", "9.2", "10.2", "10.4", "10.6"] },
     { "id": 6, "tasks": ["11.1"] },
     { "id": 7, "tasks": ["11.2"] },
     { "id": 8, "tasks": ["13.1"] },
     { "id": 9, "tasks": ["13.2", "13.3", "13.4", "13.5", "13.6", "13.7"] },
-    { "id": 10, "tasks": ["14.1", "14.2", "14.3", "14.4", "15.1", "15.2", "15.3"] },
+    { "id": 10, "tasks": ["14.1", "14.2", "14.3", "14.4", "14.5", "14.6", "15.1", "15.2", "15.3"] },
     { "id": 11, "tasks": ["16.1"] },
     { "id": 12, "tasks": ["18.1"] },
     { "id": 13, "tasks": ["19.1", "19.2"] }
