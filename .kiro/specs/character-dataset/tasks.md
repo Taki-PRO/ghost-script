@@ -14,8 +14,8 @@ Build the data pipeline that transforms three open-source raw datasets into `app
   - Install dev dependencies: `tsx`, `vitest`, `fast-check`
   - _Requirements: 3.1, 3.5_
 
-- [ ] 2. Shared TypeScript types
-  - [ ] 2.1 Create `app/src/data/types.ts` with all canonical types: `Etymology`, `StrokeData`, `Decomposition`, `FieldSources`, `DatasetId`, `CharacterRecord`, `RequiredField`, `MissingFieldError`, `BuildOptions`, `BuildResult`
+- [x] 2. Shared TypeScript types
+  - [x] 2.1 Create `app/src/data/types.ts` with all canonical types: `Etymology`, `StrokeData`, `Decomposition`, `FieldSources`, `DatasetId`, `CharacterRecord`, `RequiredField`, `MissingFieldError`, `BuildOptions`, `BuildResult`
     - Types must match the data model section of the design exactly
     - Export everything; no `any`; use `unknown` + type guards at parse boundaries
     - _Requirements: 3.5, 4.2_
