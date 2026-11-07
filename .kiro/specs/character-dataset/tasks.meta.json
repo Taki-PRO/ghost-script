@@ -31,6 +31,49 @@
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794022049302
       }
+    ],
+    "3.1 Download and place hanzi-writer-data": [
+      {
+        "executionId": "251b7a09-7b16-4817-9010-3060aad46c7d",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794022534937
+      },
+      {
+        "executionId": "251b7a09-7b16-4817-9010-3060aad46c7d",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794022688871
+      }
+    ],
+    "3.2 Download and place Make Me a Hanzi `dictionary.txt`": [
+      {
+        "executionId": "251b7a09-7b16-4817-9010-3060aad46c7d",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794022537734
+      },
+      {
+        "executionId": "251b7a09-7b16-4817-9010-3060aad46c7d",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794022689131
+      }
+    ],
+    "3.3 Download and place CC-CEDICT": [
+      {
+        "executionId": "251b7a09-7b16-4817-9010-3060aad46c7d",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794022540880
+      },
+      {
+        "executionId": "251b7a09-7b16-4817-9010-3060aad46c7d",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794022689582
+      }
+    ],
+    "3. Raw dataset acquisition": [
+      {
+        "executionId": "251b7a09-7b16-4817-9010-3060aad46c7d",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794022689613
+      }
     ]
   }
 }
