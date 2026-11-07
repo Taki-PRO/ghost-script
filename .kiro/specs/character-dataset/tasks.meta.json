@@ -12,6 +12,25 @@
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1793718562313
       }
+    ],
+    "2.1 Create `app/src/data/types.ts` with all canonical types: `Etymology`, `StrokeData`, `Decomposition`, `FieldSources`, `DatasetId`, `CharacterRecord`, `RequiredField`, `MissingFieldError`, `BuildOptions`, `BuildResult`": [
+      {
+        "executionId": "a6ca4225-235e-46c4-a158-bb9e3e09327f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794021947807
+      },
+      {
+        "executionId": "a6ca4225-235e-46c4-a158-bb9e3e09327f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794022049269
+      }
+    ],
+    "2. Shared TypeScript types": [
+      {
+        "executionId": "a6ca4225-235e-46c4-a158-bb9e3e09327f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794022049302
+      }
     ]
   }
 }
