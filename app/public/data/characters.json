@@ -1560,7 +1560,7 @@
       ]
     },
     "prompt": {
-      "meaning": "within; among; in",
+      "meaning": "middle; center",
       "pinyin": "zhōng"
     },
     "sources": {
@@ -1912,8 +1912,8 @@
       ]
     },
     "prompt": {
-      "meaning": "exclamatory final particle",
-      "pinyin": "má"
+      "meaning": "suffix, used to form interrogative 什麼|什么[shen2 me5], what?, indefinite 這麼|这么[zhe4 me5] thus, etc",
+      "pinyin": "me"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -6828,8 +6828,8 @@
       ]
     },
     "prompt": {
-      "meaning": "worker",
-      "pinyin": "zuō"
+      "meaning": "to do; to engage in",
+      "pinyin": "zuò"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -9486,7 +9486,7 @@
       ]
     },
     "prompt": {
-      "meaning": "mountain pass",
+      "meaning": "to close; to shut; to turn off",
       "pinyin": "guān"
     },
     "sources": {
@@ -11225,8 +11225,8 @@
       ]
     },
     "prompt": {
-      "meaning": "small table",
-      "pinyin": "jī"
+      "meaning": "how many; how much",
+      "pinyin": "jǐ"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -15909,8 +15909,8 @@
       ]
     },
     "prompt": {
-      "meaning": "to wail; to howl",
-      "pinyin": "háo"
+      "meaning": "(after a numeral) number designation (e.g. 237號房間|237号房间[er4 san1 qi1 hao4 fang2 jian1] \"Room 237\")",
+      "pinyin": "hào"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -16430,7 +16430,7 @@
       ]
     },
     "prompt": {
-      "meaning": "like",
+      "meaning": "same",
       "pinyin": "tóng"
     },
     "sources": {
@@ -16930,7 +16930,7 @@
       ]
     },
     "prompt": {
-      "meaning": "empress",
+      "meaning": "back",
       "pinyin": "hòu"
     },
     "sources": {
@@ -17479,8 +17479,8 @@
       ]
     },
     "prompt": {
-      "meaning": "(coll.) what?",
-      "pinyin": "má"
+      "meaning": "(question particle for \"yes-no\" questions)",
+      "pinyin": "ma"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -17772,8 +17772,8 @@
       ]
     },
     "prompt": {
-      "meaning": "bar (loanword) (serving drinks, or providing Internet access etc)",
-      "pinyin": "bā"
+      "meaning": "(modal particle indicating suggestion or surmise)",
+      "pinyin": "ba"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -18032,8 +18032,8 @@
       ]
     },
     "prompt": {
-      "meaning": "smile (archaic)",
-      "pinyin": "yǐn"
+      "meaning": "to listen to; to hear",
+      "pinyin": "tīng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -21927,7 +21927,7 @@
       ]
     },
     "prompt": {
-      "meaning": "to exist; to be alive",
+      "meaning": "(of sb or sth) to be (located) at",
       "pinyin": "zài"
     },
     "sources": {
@@ -22188,8 +22188,8 @@
       ]
     },
     "prompt": {
-      "meaning": "-ly",
-      "pinyin": "de"
+      "meaning": "earth",
+      "pinyin": "dì"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -22466,8 +22466,8 @@
       ]
     },
     "prompt": {
-      "meaning": "threshing floor",
-      "pinyin": "cháng"
+      "meaning": "large place used for a specific purpose",
+      "pinyin": "chǎng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -24536,7 +24536,7 @@
       ]
     },
     "prompt": {
-      "meaning": "highest",
+      "meaning": "too (much)",
       "pinyin": "tài"
     },
     "sources": {
@@ -26593,7 +26593,7 @@
       ]
     },
     "prompt": {
-      "meaning": "letter",
+      "meaning": "character",
       "pinyin": "zì"
     },
     "sources": {
@@ -31369,7 +31369,7 @@
       ]
     },
     "prompt": {
-      "meaning": "inn; old-style hotel (CL:家[jia1])",
+      "meaning": "shop; store",
       "pinyin": "diàn"
     },
     "sources": {
@@ -36185,7 +36185,7 @@
       ]
     },
     "prompt": {
-      "meaning": "actually",
+      "meaning": "place",
       "pinyin": "suǒ"
     },
     "sources": {
@@ -36707,8 +36707,8 @@
       ]
     },
     "prompt": {
-      "meaning": "(loanword) dozen",
-      "pinyin": "dá"
+      "meaning": "to hit; to strike",
+      "pinyin": "dǎ"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -43908,7 +43908,7 @@
       ]
     },
     "prompt": {
-      "meaning": "root; stem",
+      "meaning": "classifier for books, periodicals, files etc",
       "pinyin": "běn"
     },
     "sources": {
@@ -45935,7 +45935,7 @@
       ]
     },
     "prompt": {
-      "meaning": "next in sequence",
+      "meaning": "classifier for enumerated events: time",
       "pinyin": "cì"
     },
     "sources": {
@@ -46840,8 +46840,8 @@
       ]
     },
     "prompt": {
-      "meaning": "first month of the lunar year",
-      "pinyin": "zhēng"
+      "meaning": "straight",
+      "pinyin": "zhèng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -47315,8 +47315,8 @@
       ]
     },
     "prompt": {
-      "meaning": "euphemistic variant of 屄[bi1]",
-      "pinyin": "bī"
+      "meaning": "to compare",
+      "pinyin": "bǐ"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -47926,8 +47926,8 @@
       ]
     },
     "prompt": {
-      "meaning": "man",
-      "pinyin": "hàn"
+      "meaning": "Chinese (language)",
+      "pinyin": "Hàn"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -49671,7 +49671,7 @@
       ]
     },
     "prompt": {
-      "meaning": "to touch briefly; to tap",
+      "meaning": "(after a number) o'clock",
       "pinyin": "diǎn"
     },
     "sources": {
@@ -50021,7 +50021,7 @@
       ]
     },
     "prompt": {
-      "meaning": "to warm up",
+      "meaning": "hot (of weather)",
       "pinyin": "rè"
     },
     "sources": {
@@ -50380,7 +50380,7 @@
       ]
     },
     "prompt": {
-      "meaning": "correct",
+      "meaning": "so",
       "pinyin": "rán"
     },
     "sources": {
@@ -51877,7 +51877,7 @@
       ]
     },
     "prompt": {
-      "meaning": "to appear",
+      "meaning": "now",
       "pinyin": "xiàn"
     },
     "sources": {
@@ -52200,7 +52200,7 @@
       ]
     },
     "prompt": {
-      "meaning": "ball used for playing games (variant of 球[qiu2])",
+      "meaning": "ball",
       "pinyin": "qiú"
     },
     "sources": {
@@ -52835,7 +52835,7 @@
       ]
     },
     "prompt": {
-      "meaning": "lightning",
+      "meaning": "electricity",
       "pinyin": "diàn"
     },
     "sources": {
@@ -54571,8 +54571,8 @@
       ]
     },
     "prompt": {
-      "meaning": "to look after",
-      "pinyin": "kān"
+      "meaning": "to see; to look at",
+      "pinyin": "kàn"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -55255,8 +55255,8 @@
       ]
     },
     "prompt": {
-      "meaning": "a move in chess (Taiwan pr. [zhuo2])",
-      "pinyin": "zhāo"
+      "meaning": "aspect particle indicating action in progress or ongoing state",
+      "pinyin": "zhe"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -56619,7 +56619,7 @@
       ]
     },
     "prompt": {
-      "meaning": "to bore through; to pierce; to perforate",
+      "meaning": "to wear; to put on (clothes, shoes etc.)",
       "pinyin": "chuān"
     },
     "sources": {
@@ -58306,8 +58306,8 @@
       ]
     },
     "prompt": {
-      "meaning": "bound form having the same meaning as the free word 答[da2], used in 答應|答应[da1 ying5], 答理[da1 li5] etc",
-      "pinyin": "dā"
+      "meaning": "to answer",
+      "pinyin": "dá"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -58953,8 +58953,8 @@
       ]
     },
     "prompt": {
-      "meaning": "to accumulate",
-      "pinyin": "lěi"
+      "meaning": "tired",
+      "pinyin": "lèi"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -59587,7 +59587,7 @@
       ]
     },
     "prompt": {
-      "meaning": "to",
+      "meaning": "to give",
       "pinyin": "gěi"
     },
     "sources": {
@@ -60109,7 +60109,7 @@
       ]
     },
     "prompt": {
-      "meaning": "prefix used before the surname of a person or a numeral indicating the order of birth of the children in a family or to indicate affection or familiarity",
+      "meaning": "old (of people)",
       "pinyin": "lǎo"
     },
     "sources": {
@@ -60381,7 +60381,7 @@
       ]
     },
     "prompt": {
-      "meaning": "to beat",
+      "meaning": "to take an exam",
       "pinyin": "kǎo"
     },
     "sources": {
@@ -62749,8 +62749,8 @@
       ]
     },
     "prompt": {
-      "meaning": "row; line",
-      "pinyin": "háng"
+      "meaning": "to walk; to go; to travel",
+      "pinyin": "xíng"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -63534,8 +63534,8 @@
       ]
     },
     "prompt": {
-      "meaning": "to demand; to coerce",
-      "pinyin": "yāo"
+      "meaning": "to want; to need; to ask for",
+      "pinyin": "yào"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -64459,8 +64459,8 @@
       ]
     },
     "prompt": {
-      "meaning": "a nap",
-      "pinyin": "jiào"
+      "meaning": "to feel",
+      "pinyin": "jué"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -66203,7 +66203,7 @@
       ]
     },
     "prompt": {
-      "meaning": "dialect",
+      "meaning": "spoken words",
       "pinyin": "huà"
     },
     "sources": {
@@ -66809,7 +66809,7 @@
       ]
     },
     "prompt": {
-      "meaning": "dialect",
+      "meaning": "language",
       "pinyin": "yǔ"
     },
     "sources": {
@@ -67149,8 +67149,8 @@
       ]
     },
     "prompt": {
-      "meaning": "to persuade",
-      "pinyin": "shuì"
+      "meaning": "to speak; to talk; to say",
+      "pinyin": "shuō"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -67841,7 +67841,7 @@
       ]
     },
     "prompt": {
-      "meaning": "subject",
+      "meaning": "lesson",
       "pinyin": "kè"
     },
     "sources": {
@@ -69961,8 +69961,8 @@
       ]
     },
     "prompt": {
-      "meaning": "(of an animal) to paw (the ground)",
-      "pinyin": "páo"
+      "meaning": "to run",
+      "pinyin": "pǎo"
     },
     "sources": {
       "pinyin": "cc-cedict",
@@ -70388,7 +70388,7 @@
       ]
     },
     "prompt": {
-      "meaning": "heel",
+      "meaning": "with",
       "pinyin": "gēn"
     },
     "sources": {
@@ -74914,7 +74914,7 @@
       ]
     },
     "prompt": {
-      "meaning": "lining",
+      "meaning": "inside",
       "pinyin": "lǐ"
     },
     "sources": {
