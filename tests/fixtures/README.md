@@ -10,10 +10,9 @@ Three lines copied verbatim from `data/raw/make-me-a-hanzi/dictionary.txt`
 (Make Me a Hanzi `dictionary.txt`; licence GNU LGPL v3.0-or-later, see
 `data/raw/make-me-a-hanzi/LICENSE` and `data/raw/SOURCES.md`).
 
-> Note: `data/raw/SOURCES.md` does not yet record the upstream commit SHA for
-> the Make Me a Hanzi `dictionary.txt`. Provenance here is given as the local
-> file path + line number so the lines can be verified against the copy in the
-> repository. The commit SHA should be backfilled in `SOURCES.md`.
+> Upstream commit: `bddc96d41bef78427ed0e034e9f7e31d71fd1b92` (recorded in `data/raw/SOURCES.md`).
+> The lines keep the source's non-breaking spaces (U+00A0) exactly; an earlier
+> version had normalised them to ordinary spaces.
 
 | Line in fixture | Character | Source line in `dictionary.txt` | Why it is included |
 |---|---|---|---|
