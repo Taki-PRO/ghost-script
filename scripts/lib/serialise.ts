@@ -3,7 +3,8 @@
 // Produces a human-readable JSON string from a Map of CharacterRecords:
 //   - records are sorted by Unicode codepoint ascending (char.codePointAt(0))
 //   - each record's keys are emitted in a FIXED order
-//     (character, pinyin, meanings, strokeCount, strokeData, decomposition, sources)
+//     (character, pinyin, meanings, strokeCount, strokeData, decomposition,
+//      prompt, sources)
 //   - nested strokeData / decomposition / sources objects use the design's
 //     field order
 //
@@ -14,6 +15,7 @@ import type {
   CharacterRecord,
   Decomposition,
   FieldSources,
+  Prompt,
   StrokeData,
 } from '../../app/src/data/types';
 
@@ -57,6 +59,7 @@ interface OrderedRecord {
   strokeCount: number;
   strokeData: StrokeData;
   decomposition: Decomposition;
+  prompt: Prompt;
   sources: FieldSources;
 }
 
@@ -79,6 +82,10 @@ function orderRecord(record: CharacterRecord): OrderedRecord {
       matches: record.decomposition.matches,
       atomic: record.decomposition.atomic,
       components: record.decomposition.components,
+    },
+    prompt: {
+      meaning: record.prompt.meaning,
+      pinyin: record.prompt.pinyin,
     },
     sources: {
       pinyin: record.sources.pinyin,

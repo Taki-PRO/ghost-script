@@ -10,8 +10,10 @@ import { mergeCharacter } from '../../scripts/lib/merge';
 import type { HanziWriterEntry } from '../../scripts/lib/parse-hanzi-writer-data';
 import type { MakeMeAHanziEntry } from '../../scripts/lib/parse-make-me-a-hanzi';
 import type { CcCedictEntry } from '../../scripts/lib/parse-cc-cedict';
+import type { Prompt } from '../../app/src/data/types';
 
 const CHAR = '好';
+const PROMPT: Prompt = { meaning: 'good', pinyin: 'hǎo' };
 
 function makeHanziWriter(): HanziWriterEntry {
   return {
@@ -49,6 +51,10 @@ function makeCcCedict(): CcCedictEntry {
   return {
     pinyin: ['hao3', 'hao4'],
     meanings: ['good', 'to like'],
+    entries: [
+      { reading: 'hao3', meanings: ['good'] },
+      { reading: 'hao4', meanings: ['to like'] },
+    ],
   };
 }
 
@@ -58,7 +64,7 @@ describe('mergeCharacter', () => {
     const mm = makeMakeMeAHanzi();
     const cc = makeCcCedict();
 
-    const result = mergeCharacter(CHAR, hw, mm, cc);
+    const result = mergeCharacter(CHAR, hw, mm, cc, PROMPT);
 
     expect(result.ok).toBe(true);
     if (!result.ok) {
@@ -66,6 +72,9 @@ describe('mergeCharacter', () => {
     }
 
     const { record } = result;
+
+    // prompt is placed into the record verbatim.
+    expect(record.prompt).toEqual(PROMPT);
 
     // sources must be exactly the required mapping.
     expect(record.sources).toEqual({
@@ -104,7 +113,7 @@ describe('mergeCharacter', () => {
   });
 
   it('returns failure listing pinyin and meanings when ccCedict is missing', () => {
-    const result = mergeCharacter(CHAR, makeHanziWriter(), makeMakeMeAHanzi(), undefined);
+    const result = mergeCharacter(CHAR, makeHanziWriter(), makeMakeMeAHanzi(), undefined, PROMPT);
 
     expect(result.ok).toBe(false);
     if (result.ok) {
@@ -114,7 +123,7 @@ describe('mergeCharacter', () => {
   });
 
   it('returns failure listing strokeCount and strokeData when hanziWriter is missing', () => {
-    const result = mergeCharacter(CHAR, undefined, makeMakeMeAHanzi(), makeCcCedict());
+    const result = mergeCharacter(CHAR, undefined, makeMakeMeAHanzi(), makeCcCedict(), PROMPT);
 
     expect(result.ok).toBe(false);
     if (result.ok) {
@@ -124,7 +133,7 @@ describe('mergeCharacter', () => {
   });
 
   it('returns failure listing decomposition when makeMeAHanzi is missing', () => {
-    const result = mergeCharacter(CHAR, makeHanziWriter(), undefined, makeCcCedict());
+    const result = mergeCharacter(CHAR, makeHanziWriter(), undefined, makeCcCedict(), PROMPT);
 
     expect(result.ok).toBe(false);
     if (result.ok) {
@@ -134,7 +143,7 @@ describe('mergeCharacter', () => {
   });
 
   it('lists all five required fields in stable order when all three entries are undefined', () => {
-    const result = mergeCharacter(CHAR, undefined, undefined, undefined);
+    const result = mergeCharacter(CHAR, undefined, undefined, undefined, PROMPT);
 
     expect(result.ok).toBe(false);
     if (result.ok) {
@@ -150,8 +159,12 @@ describe('mergeCharacter', () => {
   });
 
   it('treats an empty pinyin array as a missing pinyin field', () => {
-    const cc: CcCedictEntry = { pinyin: [], meanings: ['good'] };
-    const result = mergeCharacter(CHAR, makeHanziWriter(), makeMakeMeAHanzi(), cc);
+    const cc: CcCedictEntry = {
+      pinyin: [],
+      meanings: ['good'],
+      entries: [{ reading: '', meanings: ['good'] }],
+    };
+    const result = mergeCharacter(CHAR, makeHanziWriter(), makeMakeMeAHanzi(), cc, PROMPT);
 
     expect(result.ok).toBe(false);
     if (result.ok) {
@@ -162,7 +175,7 @@ describe('mergeCharacter', () => {
 
   it('treats empty strokes as missing strokeCount and strokeData', () => {
     const hw: HanziWriterEntry = { strokes: [], medians: [], radStrokes: [] };
-    const result = mergeCharacter(CHAR, hw, makeMakeMeAHanzi(), makeCcCedict());
+    const result = mergeCharacter(CHAR, hw, makeMakeMeAHanzi(), makeCcCedict(), PROMPT);
 
     expect(result.ok).toBe(false);
     if (result.ok) {

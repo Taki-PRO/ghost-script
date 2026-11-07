@@ -9,6 +9,7 @@
 import type {
   CharacterRecord,
   FieldSources,
+  Prompt,
   RequiredField,
 } from '../../app/src/data/types';
 import type { HanziWriterEntry } from './parse-hanzi-writer-data';
@@ -31,6 +32,11 @@ export type MergeResult =
  *   - strokeData:   hanzi-writer present AND hanziWriter.strokes non-empty
  *   - decomposition: make-me-a-hanzi present
  *
+ * The `prompt` is resolved by the build (prompt selection is not a merge
+ * concern); merge simply places the already-chosen Prompt into the record so
+ * that merge stays pure and prompt-selection failures are handled fail-slow in
+ * the build.
+ *
  * @returns { ok: true, record } when every required field is present;
  *          otherwise { ok: false, missingFields } listing every absent field
  *          in the stable order
@@ -41,6 +47,7 @@ export function mergeCharacter(
   hanziWriter: HanziWriterEntry | undefined,
   makeMeAHanzi: MakeMeAHanziEntry | undefined,
   ccCedict: CcCedictEntry | undefined,
+  prompt: Prompt,
 ): MergeResult {
   const missingFields: RequiredField[] = [];
 
@@ -102,6 +109,7 @@ export function mergeCharacter(
       atomic: mm.atomic,
       components: mm.components,
     },
+    prompt,
     sources,
   };
 
