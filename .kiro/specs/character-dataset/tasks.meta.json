@@ -249,6 +249,49 @@
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794024181627
       }
+    ],
+    "11.1 Implement `scripts/build-data.ts` — `buildDataset(opts: BuildOptions): Promise<BuildResult>`": [
+      {
+        "executionId": "7a5e48bd-5093-4a9f-8df8-80028e295617",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794024522793
+      },
+      {
+        "executionId": "7a5e48bd-5093-4a9f-8df8-80028e295617",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794024691419
+      }
+    ],
+    "11.2 Implement `main()` in `scripts/build-data.ts`": [
+      {
+        "executionId": "7a5e48bd-5093-4a9f-8df8-80028e295617",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794024526496
+      },
+      {
+        "executionId": "7a5e48bd-5093-4a9f-8df8-80028e295617",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794024695218
+      }
+    ],
+    "11. Pipeline entry point": [
+      {
+        "executionId": "7a5e48bd-5093-4a9f-8df8-80028e295617",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794024695257
+      }
+    ],
+    "12. Checkpoint — unit test suite passes": [
+      {
+        "executionId": "7a5e48bd-5093-4a9f-8df8-80028e295617",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794024699275
+      },
+      {
+        "executionId": "7a5e48bd-5093-4a9f-8df8-80028e295617",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794024710013
+      }
     ]
   }
 }
