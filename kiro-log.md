@@ -103,6 +103,15 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   3. **Missing licence text.** Make Me a Hanzi's licence points to a separate `LGPL` file, which wasn't copied. Added it from the repo at the pinned commit.
 - **Next:** tasks 11–12 (pipeline entry point, unit-test checkpoint), then a first real `npm run build:data`.
 
+## Nov 7, 2026: Spec 1, tasks 11–12 and the first real build
+
+- **What I did:** Ran tasks 11.1–11.2 (`buildDataset` + `main()`) and 12 (unit-test checkpoint), then the first `npm run build:data` on the real data, with the instruction not to change the character list to make it pass.
+- **Kiro feature:** Spec task execution.
+- **Result:** Build succeeded first time: all 300 characters complete, 9 atomic (一人八又女手牛而身), 0 components outside the allowed Unicode ranges. 35/35 tests pass. `characters.json` is 1.6 MB.
+  - **Independent checks:** rebuilt twice on a different machine (Linux vs his Mac). The output was byte-for-byte identical to the committed file, so the determinism requirement holds across platforms.
+  - **Content check found a gap the spec didn't cover:** CC-CEDICT's first meaning is often unusable as a game prompt. 88 of 300 start with "surname …", "variant of …", "used in …", "abbr. …" or "(bound form)". For example 三 → "surname San" and 东 → "surname Dong". Pinyin is in numbered form (shang3) with capitalised surname readings, so it isn't ready to display. A simple filter rule fixed most cases but still chose wrong senses for some (后 → "empress", 号 → "to wail", 体 → "Taiwan pr."), because CC-CEDICT doesn't order senses by how common they are.
+- **Decision:** add a "game prompt" requirement to the spec before writing the property tests. A rule picks a default meaning and reading for each character; a small human-reviewed override file corrects the rest. Every prompt must be chosen *from* the source data, never written freely, and property tests will enforce that.
+
 ---
 
 ## Template for new entries
