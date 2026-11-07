@@ -87,6 +87,22 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 - The 4,000 Kiroween credits arrived (requested Nov 3, about 3.5 days). Spent Nov 4–6 waiting rather than using the last 25 free-tier credits on bigger tasks, to avoid running out partway through one.
 - Next: Spec 1 task 2.1 (shared types), then tasks one at a time.
 
+## Nov 7, 2026: Spec 1, tasks 2.1–10: types, data, character list, parsers (parallel wave)
+
+- **What I did:** Ran task 2.1 (shared types), task 3 (download the three datasets), task 4 (character list), then tasks 5–10 with their unit tests as **one parallel wave**. Kiro ran up to 5 sub-agents at once.
+- **Kiro feature:** Spec task execution, parallel sub-agents (task dependency waves), steering, unit tests with real-data fixtures.
+- **Why:** The six modules only share the types from 2.1, so they could be built in parallel. Unit tests had to use fixtures copied from the real files, so real-data quirks surface now.
+- **Result:**
+  - 2.1: 10 types in `app/src/data/types.ts`; `tsc` clean.
+  - 3: hanzi-writer-data 2.0.1 (9,574 files, 46 MB), Make Me a Hanzi at commit `bddc96d`, CC-CEDICT release 2026-11-06. 58 MB in total. 7 credits. Kiro read each source's own licence and flagged that CC-CEDICT is **CC BY-SA 4.0** (steering said 3.0) and Make Me a Hanzi `dictionary.txt` is **LGPL-3.0-or-later**. Steering updated.
+  - 4: the 300 HSK 3.0 handwriting characters (writing level 1) from `ivankra/hsk30`, pinned commit. Checked independently against the source CSV: identical list, same order.
+  - 5–10: six modules, 35 unit tests passing, 21 credits. Real fixtures include 我 (normal), 一 (atomic `？`), 㐆 (interior `？`) and 行 (three readings, 16 meanings). Kiro installed `@types/node` and added `"types": ["node"]` to tsconfig, which task 1 had missed.
+- **Problems found in review (fixed by hand, no credits):**
+  1. **Parallel sub-agents overwrote each other's notes.** `data/raw/SOURCES.md` only had hanzi-writer-data and the character list. The Make Me a Hanzi and CC-CEDICT entries written in task 3 were lost, even though Kiro's summary said they were recorded. Added both back, with commit, release date and licences. **Lesson:** parallel tasks shouldn't write to the same shared file; check shared files after a wave.
+  2. **Fixtures were not truly verbatim.** Two Make Me a Hanzi lines had non-breaking spaces (U+00A0) silently turned into normal spaces, despite the fixture README saying "copied verbatim". Restored the exact lines; all three now match the source byte for byte. Tests still pass.
+  3. **Missing licence text.** Make Me a Hanzi's licence points to a separate `LGPL` file, which wasn't copied. Added it from the repo at the pinned commit.
+- **Next:** tasks 11–12 (pipeline entry point, unit-test checkpoint), then a first real `npm run build:data`.
+
 ---
 
 ## Template for new entries
