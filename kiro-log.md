@@ -35,7 +35,7 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 
 ## Nov 3, 2026: Spec 1 (`character-dataset`): requirements
 
-- **What I did:** Started the first spec with the built-in **Spec** agent: chose "Build a Feature" (not Quick Spec, so every phase is reviewed) and "Requirements first". Autopilot off, model on Auto.
+- **What I did:** Started the first spec with the built-in **Spec** agent: chose "Build a Feature" (not Quick Spec, so every phase is reviewed) and "Requirements first". Model on Auto. Autopilot was on during Spec 1; the review stops came from our prompts ("only generate requirements.md", "stop after task N"), which Kiro followed every time.
 - **Kiro feature:** Specs (requirements-first, EARS acceptance criteria), steering.
 - **Why:** Every game mode (Write, Build, hints, the Oracle) depends on correct character data, so the data pipeline is the first spec. Requirements-first because we knew *what* the data must guarantee before deciding *how* to build it.
 - **Result:** Kiro produced 5 requirements (character list, raw datasets, pipeline script, record schema, property-based tests). About 4.8 credits.
