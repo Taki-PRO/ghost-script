@@ -519,7 +519,7 @@ Keys are sorted by Unicode codepoint ascending. Key order within each record is 
 
 ### Property 16: Decomposition IDS string contains only valid codepoints
 
-*For any* `CharacterRecord` whose `decomposition.decomposition` string is not a question-mark sentinel (`？`), every codepoint in that string SHALL be one of: (a) a CJK Unified Ideograph in U+4E00–U+9FFF, (b) an Ideographic Description Character in U+2FF0–U+2FFB, or (c) the recognised placeholder `？` (U+FF1F).
+*For any* `CharacterRecord` whose `decomposition.decomposition` string is not a question-mark sentinel (`？`), every codepoint in that string SHALL be one of: (a) a codepoint in one of the five recognised component blocks (CJK Unified Ideographs U+4E00–U+9FFF, CJK Extension A U+3400–U+4DBF, CJK Radicals Supplement U+2E80–U+2EFF, Kangxi Radicals U+2F00–U+2FDF, CJK Strokes U+31C0–U+31EF), (b) an Ideographic Description Character in U+2FF0–U+2FFB, or (c) the recognised placeholder `？` (U+FF1F). (Corrected Nov 9: the real data contains 11 CJK Radicals Supplement codepoints in IDS strings, so the earlier three-category wording would have rejected valid data.)
 
 **Validates: Requirements 5.5**
 

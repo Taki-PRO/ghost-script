@@ -127,6 +127,30 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 - **State:** tasks 1–12 and the prompt wave complete; 300-character dataset built, deterministic, with 48 approved prompt overrides; 65/65 tests passing.
 - **Resume with:** tasks 13–15 (property-based tests and smoke tests), using the saved prompt.
 
+## Nov 9, 2026: Spec 1, tasks 13–15: property-based and smoke tests
+
+- **What I did:** Ran tasks 13–15 with explicit rules: fast-check with at least 100 runs, realistic generators (real IDS structures, real CC-CEDICT line shapes, real pinyin syllables), and "if a property finds a bug, fix the code, never weaken the test".
+- **Kiro feature:** Property-based testing, spec task waves with parallel sub-agents (5 at a time), shared arbitraries gated as the first task.
+- **Result:** 18 correctness properties (1–16, 18–22; 17 is deferred to the hint-engine spec), **111 tests across 24 files**, all passing; `tsc` clean. No bugs found.
+- **Checking the tests themselves (mutation testing, by hand):** "No bugs found" can mean the tests are too weak, so we deliberately broke the code in 10 ways and re-ran the suite:
+
+  | Deliberate bug | Caught? |
+  |---|---|
+  | `？` placeholder allowed into components | ✅ 6 tests failed |
+  | IDS structure symbols allowed into components | ✅ 10 failed |
+  | Atomic characters get no component | ✅ 2 failed |
+  | Prompt takes its reading from the wrong entry | ✅ 9 failed |
+  | Surname readings not skipped | ✅ 1 failed |
+  | Skip-prefix list ignored ("surname …" allowed) | ✅ 2 failed |
+  | Override uses the wrong entry's reading | ✅ 3 failed |
+  | Tone mark placed on the wrong vowel | ✅ 2 failed |
+  | Neutral-tone syllable keeps its digit | ✅ 2 failed |
+  | Output order reversed (breaks determinism) | ✅ 1 failed |
+
+  All 10 caught. (One extra mutant was "equivalent": it changed the code without changing behaviour, so it couldn't fail.)
+- **Spec fix:** Kiro flagged that design Property 16 allowed only three categories of codepoint in IDS strings. Checked against the real `characters.json`: it contains 11 CJK Radicals Supplement codepoints, so the old wording would have rejected valid data. Corrected Property 16 to the same five component blocks as Requirement 4.7 and Property 8.
+- **Next:** tasks 16–20 (integration test on the real data, end-to-end run, README, final checkpoint).
+
 ---
 
 ## Template for new entries
