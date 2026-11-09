@@ -306,8 +306,8 @@ Build the data pipeline that transforms three open-source raw datasets into `app
     - Assert `package.json` contains a `build:data` script entry
     - _Requirements: 3.1_
 
-- [ ] 16. Integration test
-  - [ ] 16.1 Write `tests/integration/full-pipeline.test.ts`
+- [x] 16. Integration test
+  - [x] 16.1 Write `tests/integration/full-pipeline.test.ts`
     - Call `buildDataset` with the actual paths in `data/raw/` and `data/character-list.txt`
     - Assert `result.ok === true`
     - Parse the resulting JSON; spot-check 3–5 well-known characters for expected field shapes (`pinyin`, `meanings`, `strokeCount`, `strokeData`, `decomposition`)
@@ -315,29 +315,29 @@ Build the data pipeline that transforms three open-source raw datasets into `app
     - Assert record count equals character-list line count
     - _Requirements: 3.4, 4.12, 5.1, 6.1, 6.9_
 
-- [ ] 17. Checkpoint — full test suite passes
+- [x] 17. Checkpoint — full test suite passes
   - Run `npm test`. Ensure all unit tests, property tests, smoke tests, and integration test pass. Ask the user if any questions arise.
 
-- [ ] 18. End-to-end pipeline run
-  - [ ] 18.1 Run `npm run build:data` and verify `app/public/data/characters.json` is produced
+- [x] 18. End-to-end pipeline run
+  - [x] 18.1 Run `npm run build:data` and verify `app/public/data/characters.json` is produced
     - Confirm stdout summary shows correct character count and all required fields non-null
     - Run `npm test` to confirm integration test now passes
     - Fix any missing-field errors surfaced by the pipeline for characters absent from the datasets
     - _Requirements: 3.1, 3.7, 4.12_
 
-- [ ] 19. README updates
-  - [ ] 19.1 Add dataset attribution section to `README.md`
+- [x] 19. README updates
+  - [x] 19.1 Add dataset attribution section to `README.md`
     - List all three datasets with name, URL, and licence (CC BY-SA 3.0, Arphic Public License as applicable)
     - Section must appear before the pipeline usage instructions
     - Record any font licences in the same section
     - _Requirements: 2.4, 1.5_
 
-  - [ ] 19.2 Add pipeline usage instructions to `README.md`
+  - [x] 19.2 Add pipeline usage instructions to `README.md`
     - Document `npm run build:data` command and prerequisites
     - Document `npm test` command
     - _Requirements: 3.1_
 
-- [ ] 20. Final checkpoint — full suite passes and pipeline output verified
+- [x] 20. Final checkpoint — full suite passes and pipeline output verified
   - Run `npm test` from repo root. Confirm all tests pass. Ask the user if questions arise.
 
 ## Notes

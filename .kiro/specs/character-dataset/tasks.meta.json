@@ -606,6 +606,99 @@
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794229714931
       }
+    ],
+    "16.1 Write `tests/integration/full-pipeline.test.ts`": [
+      {
+        "executionId": "78a98b9d-6ef7-43ea-ab56-02375b47bf6f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794230476887
+      },
+      {
+        "executionId": "78a98b9d-6ef7-43ea-ab56-02375b47bf6f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794230859128
+      }
+    ],
+    "16. Integration test": [
+      {
+        "executionId": "78a98b9d-6ef7-43ea-ab56-02375b47bf6f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794230859186
+      }
+    ],
+    "17. Checkpoint — full test suite passes": [
+      {
+        "executionId": "78a98b9d-6ef7-43ea-ab56-02375b47bf6f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794230864233
+      },
+      {
+        "executionId": "78a98b9d-6ef7-43ea-ab56-02375b47bf6f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794230877877
+      }
+    ],
+    "18.1 Run `npm run build:data` and verify `app/public/data/characters.json` is produced": [
+      {
+        "executionId": "78a98b9d-6ef7-43ea-ab56-02375b47bf6f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794230883108
+      },
+      {
+        "executionId": "78a98b9d-6ef7-43ea-ab56-02375b47bf6f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794230905441
+      }
+    ],
+    "18. End-to-end pipeline run": [
+      {
+        "executionId": "78a98b9d-6ef7-43ea-ab56-02375b47bf6f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794230905479
+      }
+    ],
+    "19.1 Add dataset attribution section to `README.md`": [
+      {
+        "executionId": "78a98b9d-6ef7-43ea-ab56-02375b47bf6f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794230910208
+      },
+      {
+        "executionId": "78a98b9d-6ef7-43ea-ab56-02375b47bf6f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794230981766
+      }
+    ],
+    "19.2 Add pipeline usage instructions to `README.md`": [
+      {
+        "executionId": "78a98b9d-6ef7-43ea-ab56-02375b47bf6f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794230914485
+      },
+      {
+        "executionId": "78a98b9d-6ef7-43ea-ab56-02375b47bf6f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794230985950
+      }
+    ],
+    "19. README updates": [
+      {
+        "executionId": "78a98b9d-6ef7-43ea-ab56-02375b47bf6f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794230985991
+      }
+    ],
+    "20. Final checkpoint — full suite passes and pipeline output verified": [
+      {
+        "executionId": "78a98b9d-6ef7-43ea-ab56-02375b47bf6f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794230990481
+      },
+      {
+        "executionId": "78a98b9d-6ef7-43ea-ab56-02375b47bf6f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794231006131
+      }
     ]
   }
 }

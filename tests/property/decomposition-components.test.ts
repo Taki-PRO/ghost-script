@@ -19,25 +19,23 @@
 //                 `record.character`.
 //
 //   Property 16 — For any decomposition IDS string that is not the ？ sentinel,
-//                 every codepoint in that string is one of: (a) a CJK Unified
-//                 Ideograph U+4E00–U+9FFF, (b) an IDC U+2FF0–U+2FFB, or (c) the
+//                 every codepoint in that string is one of: (a) a codepoint in
+//                 one of the five recognised component blocks (CJK Unified
+//                 U+4E00–U+9FFF, CJK Extension A U+3400–U+4DBF, CJK Radicals
+//                 Supplement U+2E80–U+2EFF, Kangxi Radicals U+2F00–U+2FDF, CJK
+//                 Strokes U+31C0–U+31EF), (b) an IDC U+2FF0–U+2FFB, or (c) the
 //                 placeholder ？ (U+FF1F).
 //
-// SPEC DISCREPANCY (reported to the orchestrator):
-//   design.md Property 16 restricts the IDS string's structural codepoints to
-//   CJK Unified + IDC + ？. But the real pipeline (extractLeafComponents in
-//   scripts/lib/parse-make-me-a-hanzi.ts) and the shared arbitraries
-//   (arbitraryComponentCharacter / arbitraryDecomposition) draw component chars
-//   from FIVE blocks, not just CJK Unified. The real Make Me a Hanzi data does
-//   contain radical-form and extension codepoints in IDS strings, so the
-//   design's three-category wording is narrower than reality.
-//
-//   To test Property 16 FAITHFULLY to the design, this file uses a DEDICATED
-//   generator (`arbitraryDesignIdsString`) that emits IDS strings whose
-//   non-structural chars are only CJK Unified ideographs, plus IDCs and an
-//   optional interior ？ — exactly the three categories Property 16 names. The
-//   shared `arbitraryDecomposition` (five blocks) is used for Property 8, which
-//   is stated over all five blocks and matches the pipeline.
+// Note on the dedicated Property-16 generator:
+//   design.md Property 16 now covers the five recognised component blocks (it
+//   was corrected on Nov 9 after the real Make Me a Hanzi data was found to
+//   contain CJK Radicals Supplement codepoints in IDS strings). The dedicated
+//   generator `arbitraryDesignIdsString` below restricts its component chars to
+//   CJK Unified ideographs — a strict subset of the five recognised blocks — so
+//   its assertions remain valid under the corrected property (CJK Unified is
+//   one of the five blocks). The broader five-block coverage is exercised by
+//   the Property 8 tests and by the full-pipeline integration test, which
+//   checks the corrected Property 16 directly against all 300 real records.
 
 import { describe, expect, it } from 'vitest';
 import fc from 'fast-check';
