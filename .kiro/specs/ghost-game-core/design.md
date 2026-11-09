@@ -8,6 +8,10 @@ This feature delivers five things: the legend intro screen (Requirement 1), a 10
 
 The design keeps all game logic as pure functions in `app/src/engine/` (deterministic, clock-injected, no I/O) and all rendering in `app/src/components/` + `app/src/modes/`, so every scheduler invariant and cleanup invariant is unit- and property-testable in isolation (Requirements 6.1, 6.11, 8.1, 8.6).
 
+### Build & install
+
+The repository is a single npm workspace. The ROOT `package.json` declares `"workspaces": ["app"]`, so one `npm install` at the repo root installs both the root (data-pipeline + test) dependencies and the `app/` (React/Vite) dependencies in a single pass. `app/package.json` still exists and lists the app's own runtime/dev dependencies (React, Vite, `hanzi-writer` pinned exact at `3.7.3`, and the testing-library packages), but it is resolved and installed through the workspace rather than by a separate `npm install` inside `app/`. Because the workspace is wired up at the root, `npm test` from the repo root runs the whole suite (both projects) with no extra setup (Requirements 8.6, 8.9).
+
 ### Key design decisions
 
 The design incorporates six deliberate technical decisions, each traced to the requirements:
@@ -79,8 +83,19 @@ flowchart TD
 ### Directory layout (`app/src/`, consistent with the structure steering doc)
 
 ```
+<repo root>
+├── package.json             # "workspaces": ["app"]; root test deps; "test": "vitest run"
+├── vitest.config.ts         # NODE project: include ['tests/**/*.test.ts'], environment 'node'
+├── vitest.workspace.ts      # references BOTH projects (root node + app jsdom)
+├── tests/                   # 129 data tests (unchanged; collected only by the node project)
+└── app/
+    ├── package.json         # app React/Vite + test deps (installed via the root workspace)
+    ├── vite.config.ts
+    ├── vitest.config.ts     # APP project: include ['app/**/*.test.{ts,tsx}'], environment 'jsdom'
+    └── ...
+
 app/
-├── package.json             # app React/Vite + test deps (separate from root)
+├── package.json             # app React/Vite + test deps (installed via the root workspace)
 ├── vite.config.ts
 ├── vitest.config.ts         # jsdom project config, referenced by root workspace
 ├── src/
@@ -251,9 +266,9 @@ export function makeCharDataLoader(
 
 **hanzi-writer quiz wiring (Decision 2).** `WriteMode` creates the writer with `HanziWriter.create(targetEl, char, { charDataLoader: makeCharDataLoader(dataset), showCharacter: false, showOutline: false, ... })` and calls `writer.quiz({ ... })`. Quiz callbacks map onto our outcome/threshold model:
 
-- `onMistake({ strokeNum, mistakesOnStroke })` → increment the total mistake count by one per rejected stroke (Req 5.3); track consecutive misses of the same `strokeNum`.
-- `showHintAfterMisses: config.strokeHintAfterConsecutiveMisses` → hanzi-writer reveals the next expected stroke after that many consecutive misses of the same stroke, one stroke at a time, never the whole glyph (Req 5.4). When this fires at least once, the ghost can no longer be `clean`.
-- `onComplete({ totalMistakes })` → resolve the ghost: `clean` when no hint was shown AND `totalMistakes <= config.cleanMistakeThreshold`, else `struggled` (Req 5.5, 5.6).
+- `onMistake({ strokeNum, mistakesOnStroke })` → increment the total mistake count by one per rejected stroke (Req 5.3); track consecutive misses of the same `strokeNum`. hanzi-writer quiz mode has NO dedicated "hint shown" callback, so `hintShown` is DERIVED here: hanzi-writer passes `mistakesOnStroke` to `onMistake`, and when `mistakesOnStroke >= config.strokeHintAfterConsecutiveMisses` (default 3) `WriteMode` sets `hintShown = true` — that threshold is exactly the point at which hanzi-writer's `showHintAfterMisses` reveals the next stroke. Once `hintShown` is `true` the ghost can no longer resolve as `clean`.
+- `showHintAfterMisses: config.strokeHintAfterConsecutiveMisses` → the quiz option that actually triggers the reveal: hanzi-writer shows the next expected stroke after that many consecutive misses of the same stroke, one stroke at a time, never the whole glyph (Req 5.4). The `onMistake` handler above mirrors this same threshold to set `hintShown`.
+- `onComplete({ totalMistakes })` → resolve the ghost: `clean` when `hintShown` is `false` AND `totalMistakes <= config.cleanMistakeThreshold`, else `struggled` (Req 5.5, 5.6).
 
 ### `app/src/engine/promptCleanup.ts` (display-only, pure)
 
@@ -317,7 +332,7 @@ These hold no game logic; they read `Date.now()` and delegate to the engine (Req
 - **`components/StartMenu.tsx`** — props `{ onStartSeance: () => void; onReviewLegend: () => void }`. The legend re-view entry point lives here (outside any active session) so it never interrupts a Séance (Req 1.5, 3.6).
 - **`components/SeanceSession.tsx`** — props `{ ghosts: readonly CharacterRecord[]; onOutcome: (char: string, outcome: Outcome, now: number) => void; onComplete: (results: SessionResults) => void }`. Presents ghosts one at a time, advances only on a terminal Outcome, prevents repeats within the session, and reports each Outcome immediately (Req 3.2, 3.4, 3.5).
 - **`components/GhostPrompt.tsx`** — props `{ record: CharacterRecord }`. Displays `cleanupMeaning(record.prompt.meaning)` and `record.prompt.pinyin` (as stored), hiding the glyph (Req 4.1, 5.1).
-- **`modes/WriteMode.tsx`** — props `{ record: CharacterRecord; dataset: CharacterDataset; config: EngineConfig; onOutcome: (outcome: Outcome) => void }`. State: `mistakeCount`, `consecutiveMissesByStroke`, `hintShown`, `status`. Hosts the hanzi-writer quiz on a `touch-action: none` surface (Decision 3), wires `onMistake`/`showHintAfterMisses`/`onComplete` to the outcome/threshold model, and exposes a clearly labelled "Give up" control that resolves `gave-up` after an animated stroke-order playthrough (Req 5.3–5.10). Non-colour cues (text/icon) accompany accept/reject feedback (Req 5.9).
+- **`modes/WriteMode.tsx`** — props `{ record: CharacterRecord; dataset: CharacterDataset; config: EngineConfig; onOutcome: (outcome: Outcome) => void }`. State: `mistakeCount`, `consecutiveMissesByStroke`, `hintShown`, `status`. `hintShown` is not reported directly by hanzi-writer; it is derived inside the `onMistake` handler when `mistakesOnStroke >= config.strokeHintAfterConsecutiveMisses` (the point at which `showHintAfterMisses` reveals the next stroke), and once `true` it rules out a `clean` outcome. Hosts the hanzi-writer quiz on a `touch-action: none` surface (Decision 3) and wires `onMistake`/`showHintAfterMisses`/`onComplete` to the outcome/threshold model. The clearly labelled "Give up" control resolves `gave-up` with a strict ordering: it SHALL call `writer.cancelQuiz()` FIRST (so no further `onMistake`/`onComplete` events are counted during the reveal), THEN `writer.animateCharacter()` to play the animated stroke-order reveal, THEN resolve the `gave-up` Outcome (cancelQuiz → animateCharacter → resolve `gave-up`) (Req 5.3–5.10). Non-colour cues (text/icon) accompany accept/reject feedback (Req 5.9).
 - **`components/SessionSummary.tsx`** — props `{ results: SessionResults; onPlayAgain: () => void }`. Shows how many ghosts were laid to rest and offers another Séance (Req 3.3, 3.6).
 
 ```typescript
@@ -471,6 +486,7 @@ The scheduler and prompt-cleanup functions are pure (no I/O, injected clock), wh
 |---|---|
 | `charDataLoader` cannot resolve a character from the dataset | Treat quiz init as failed for that ghost; skip it with a `gave-up`-style fallback (record a missed review, continue to the next ghost) without crashing. |
 | hanzi-writer throws during `create`/`quiz` | Caught in `WriteMode`; the ghost falls back to `gave-up`, the character is revealed, and the session continues. |
+| Player taps "Give up" mid-quiz | `WriteMode` calls `writer.cancelQuiz()` BEFORE `writer.animateCharacter()`, so cancelling the quiz first stops any further `onMistake`/`onComplete` events from being counted during the reveal; the ordering is strictly cancelQuiz → animateCharacter → resolve `gave-up`. |
 
 ---
 
@@ -480,20 +496,53 @@ The scheduler and prompt-cleanup functions are pure (no I/O, injected clock), wh
 
 ### Root Vitest workspace (Decision 1)
 
-A root `vitest.workspace.ts` lists two projects so one invocation runs both suites:
+There are three config files, and the two projects use mutually exclusive include globs so neither ever collects the other's tests.
+
+The ROOT `vitest.config.ts` defines the NODE project. Its `include` is scoped to `tests/` only, so the node project NEVER collects app tests:
+
+```typescript
+// vitest.config.ts (repo root) — NODE project
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  test: {
+    include: ['tests/**/*.test.ts'],
+    environment: 'node',
+  },
+});
+```
+
+The APP project config (`app/vitest.config.ts`) scopes `include` to app tests only and runs them under jsdom, so it collects ONLY app tests:
+
+```typescript
+// app/vitest.config.ts — APP project
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  test: {
+    include: ['app/**/*.test.{ts,tsx}'],
+    environment: 'jsdom',
+    setupFiles: ['app/test/setup.ts'],
+  },
+});
+```
+
+The root `vitest.workspace.ts` references BOTH projects — the root `vitest.config.ts` (node project) and the `app/` project — so one invocation runs both suites:
 
 ```typescript
 // vitest.workspace.ts (repo root)
 export default [
-  './vitest.config.ts', // project A: tests/ — environment 'node', the 129 data tests (unchanged)
-  './app',              // project B: app/ — uses app/vitest.config.ts, environment 'jsdom'
+  './vitest.config.ts', // project A (NODE): include ['tests/**/*.test.ts'], environment 'node' — the 129 data tests (unchanged)
+  './app',              // project B (APP): app/vitest.config.ts → include ['app/**/*.test.{ts,tsx}'], environment 'jsdom'
 ];
 ```
 
-- **Project A (`tests/`, `environment: 'node'`)** — the existing 129 character-dataset tests. They are NOT moved or modified; they keep passing exactly as before. The root `package.json` `test` script stays `vitest run` (now workspace-aware).
+Because project A's glob (`tests/**/*.test.ts`) and project B's glob (`app/**/*.test.{ts,tsx}`) share no paths, the two projects are mutually exclusive: the node project collects only the data tests, the app project collects only the app tests.
+
+- **Project A (`tests/`, `environment: 'node'`)** — the existing 129 character-dataset tests, collected only by the root `vitest.config.ts`. They are NOT moved or modified; they keep passing exactly as before. The root `package.json` `test` script stays `vitest run` (now workspace-aware).
 - **Project B (`app/`, `environment: 'jsdom'`)** — new app tests. `app/vitest.config.ts` sets `environment: 'jsdom'`, registers a setup file (`app/test/setup.ts`) importing `@testing-library/jest-dom`, and uses `@testing-library/react` for component tests. The app has its OWN `app/package.json` (React/Vite deps) and `app/vite.config.ts` / `app/vitest.config.ts`; the root workspace references them.
 
-New dev dependencies are pinned (exact versions, no caret): `jsdom`, `@testing-library/react`, `@testing-library/jest-dom`, `@testing-library/user-event`, plus the pinned runtime dep `hanzi-writer@3.7.3`. fast-check (already pinned at the root) is reused for property tests.
+Dependencies install through the npm workspace: the root `package.json` declares `"workspaces": ["app"]`, so a single `npm install` at the repo root installs both the root (pipeline/test) dev deps and the app deps, and `npm test` works from the root. New dev dependencies are pinned (exact versions, no caret): `jsdom`, `@testing-library/react`, `@testing-library/jest-dom`, `@testing-library/user-event`, plus the pinned runtime dep `hanzi-writer@3.7.3` (exact) listed in `app/package.json`. fast-check (already pinned at the root) is reused for property tests.
 
 ### Unit tests
 
@@ -519,6 +568,12 @@ Property tests target the pure engine (`scheduler`, `promptCleanup`) with genera
 - **IntroScreen** — renders the legend copy and Huainanzi attribution; the begin control is labelled and keyboard-operable; `onBegin` fires.
 - **SeanceSession** — advances only on a terminal Outcome; never repeats a character; reports each Outcome immediately.
 - **WriteMode** — hanzi-writer is mocked so stroke callbacks (`onMistake`, `showHintAfterMisses`, `onComplete`) can be simulated: verify mistake counting, the stroke-hint threshold, `clean` vs `struggled` resolution, and that "Give up" yields `gave-up`. Accessible labels and non-colour cues are asserted.
+
+### Real-hanzi-writer integration test (jsdom, library NOT mocked)
+
+Distinct from the mocked WriteMode component tests above, one integration test in the app jsdom project exercises the REAL `hanzi-writer` library end-to-end against OUR offline data. It calls `HanziWriter.create` wired with `makeCharDataLoader(dataset)` built from the loaded `characters.json`, for three real characters — 我, 口, 爱 — and asserts that the stroke data loads successfully from our dataset: the `charDataLoader` resolves each character to a non-empty `strokes` array (and the writer reaches a ready state). This proves the offline `charDataLoader` wiring works with the actual library rather than a stub, closing the gap that mocked tests leave open.
+
+jsdom caveat: hanzi-writer renders to SVG, which jsdom does not paint, so this test asserts data loading / `charDataLoader` resolution (and reaching a ready state) rather than pixel-level rendering. Verifying the resolved `strokes` data is sufficient to prove the dataset → library wiring is correct offline.
 
 ### Confirming the data tests still run
 
