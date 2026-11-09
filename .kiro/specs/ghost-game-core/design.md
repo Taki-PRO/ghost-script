@@ -1,0 +1,525 @@
+# Design Document: ghost-game-core
+
+## Overview
+
+The ghost-game-core feature is the first playable version of Ghost Script: a React + Vite single-page web app living in `app/`. It reads the pre-generated, read-only `app/public/data/characters.json` (produced by the character-dataset spec) and turns forgotten characters into ghosts the player lays to rest by writing them from memory.
+
+This feature delivers five things: the legend intro screen (Requirement 1), a 10-ghost Nightly Séance selected by a pure spaced-repetition haunting scheduler (Requirements 3, 6), Write mode with live per-stroke checking via hanzi-writer quiz mode (Requirement 5), a display-only prompt cleanup rule (Requirement 4), and local progress persistence through a wrapped Storage module (Requirement 7). The app is a fully offline static SPA: once assets and `characters.json` are loaded it makes no network calls, uses no paid APIs, holds no API keys, and performs no runtime LLM calls (Requirement 2.1, 8.3).
+
+The design keeps all game logic as pure functions in `app/src/engine/` (deterministic, clock-injected, no I/O) and all rendering in `app/src/components/` + `app/src/modes/`, so every scheduler invariant and cleanup invariant is unit- and property-testable in isolation (Requirements 6.1, 6.11, 8.1, 8.6).
+
+### Key design decisions
+
+The design incorporates six deliberate technical decisions, each traced to the requirements:
+
+1. **Single root Vitest workspace** running two projects — the existing 129 Node data tests under `tests/` (unchanged) and the new jsdom app tests under `app/` — so one `npm test` verifies the whole repository (Requirement 8.6, 8.7, 8.9).
+2. **Pinned hanzi-writer `3.7.3`** wired to load stroke data from OUR dataset via a `charDataLoader`, never the CDN, keeping the app offline and on verified data (Requirements 2.1, 5.1, 8.3).
+3. **Writing surface with `touch-action: none`** and Pointer-Event input, responsive 375px→1440px+ (Requirements 5.2, 8.4).
+4. **Injected clock**: the engine takes `now: number` on every time-dependent function and never reads `Date.now()`; only the UI reads the real clock (Requirements 6.1, 6.6, 8.7).
+5. **One engine config module** (`app/src/engine/config.ts`) holding every tunable constant; nothing hard-codes them (Requirements 5.8, 6.2, 6.3, 6.5).
+6. **Minimal Tailwind dark theme** with a small, contrast-checked token set where colour is never the only signal (Requirement 8.5).
+
+---
+
+## Architecture
+
+```mermaid
+flowchart TD
+    JSON["app/public/data/characters.json\n(read-only input)"]
+
+    subgraph data["app/src/data/"]
+        LOADER["charDataLoader.ts\nload + validate CharacterRecord\ngetRecord(char)\nhanzi-writer charDataLoader adapter"]
+        TYPES["types.ts\n(shared CharacterRecord / Prompt / StrokeData)"]
+    end
+
+    subgraph engine["app/src/engine/ (pure, clock-injected)"]
+        CONFIG["config.ts\nALL tunable constants"]
+        SCHED["scheduler.ts\napplyReview / nextDue / selectSession"]
+        CLEAN["promptCleanup.ts\ncleanupMeaning (pure, idempotent)"]
+    end
+
+    subgraph storage["app/src/storage/"]
+        STORE["storage.ts\nwrapped localStorage\nschemaVersion + migrate/reset"]
+    end
+
+    subgraph ui["app/src/components/ + app/src/modes/"]
+        APP["App (router/state)\nreads Date.now()"]
+        INTRO["IntroScreen"]
+        MENU["StartMenu"]
+        SEANCE["SeanceSession"]
+        PROMPT["GhostPrompt"]
+        WRITE["modes/WriteMode (hanzi-writer quiz)"]
+        SUMMARY["SessionSummary"]
+    end
+
+    JSON --> LOADER
+    TYPES --> LOADER
+    TYPES --> SCHED
+    LOADER --> APP
+    APP --> INTRO
+    APP --> MENU
+    APP --> SEANCE
+    SEANCE --> PROMPT
+    SEANCE --> WRITE
+    SEANCE --> SUMMARY
+    PROMPT -. cleaned meaning .-> CLEAN
+    WRITE -. strokeData adapter .-> LOADER
+
+    APP -- "now = Date.now()" --> SCHED
+    CONFIG --> SCHED
+    CONFIG --> WRITE
+    CONFIG --> SEANCE
+
+    APP <--> STORE
+    STORE -- "Review history" --> SCHED
+```
+
+**Reading the diagram.** The data loader reads and validates `characters.json`. The App layer owns all state and side effects: it reads the real clock (`Date.now()`), reads/writes the Storage module, and passes `now` plus the loaded Review history into the pure scheduler. The scheduler, cleanup, and config modules are pure and side-effect free. React screens flow Intro → Start/Menu → Séance (which hosts WriteMode per ghost) → Summary. The config module feeds both the engine and the UI, so thresholds live in exactly one place. Storage talks only to the App layer; the engine never touches `localStorage` (Requirement 6.1).
+
+### Directory layout (`app/src/`, consistent with the structure steering doc)
+
+```
+app/
+├── package.json             # app React/Vite + test deps (separate from root)
+├── vite.config.ts
+├── vitest.config.ts         # jsdom project config, referenced by root workspace
+├── src/
+│   ├── engine/              # pure game logic (clock-injected, no I/O)
+│   │   ├── config.ts        # ALL tunable constants (Decision 5)
+│   │   ├── scheduler.ts     # haunting scheduler: applyReview / nextDue / selectSession
+│   │   └── promptCleanup.ts # display-only cleanupMeaning (pure, idempotent)
+│   ├── data/
+│   │   ├── types.ts         # existing shared types (CharacterRecord, Prompt, StrokeData)
+│   │   └── charDataLoader.ts# load + validate characters.json; hanzi-writer adapter
+│   ├── storage/
+│   │   └── storage.ts       # wrapped localStorage, schemaVersion, migrate/reset
+│   ├── components/          # UI: IntroScreen, StartMenu, SeanceSession, GhostPrompt, SessionSummary
+│   ├── modes/               # WriteMode.tsx (Build/Type modes land later)
+│   └── styles/              # Tailwind entry + theme tokens
+└── test/
+    └── setup.ts             # @testing-library/jest-dom + jsdom setup (Decision 1)
+```
+
+The existing `app/src/data/types.ts` is reused as-is; this feature does not redefine `CharacterRecord`, `Prompt`, or `StrokeData`.
+
+---
+
+## Components and Interfaces
+
+All signatures are TypeScript `strict: true` with no `any` (Requirement 8.1, 8.2).
+
+### `app/src/engine/config.ts` (Decision 5)
+
+A single module holds every tunable constant. UI and engine both import from here; nothing hard-codes these values (Requirements 5.8, 6.2, 6.3, 6.5).
+
+```typescript
+/** Milliseconds in one day, used to express the interval ladder. */
+export const DAY_MS = 24 * 60 * 60 * 1000;
+
+/** All tunable game constants. Nothing in engine or UI hard-codes these. */
+export interface EngineConfig {
+  /** Max total mistakes for a clean outcome (default 2). Req 5.5, 5.8. */
+  readonly cleanMistakeThreshold: number;
+  /** Consecutive misses of the same stroke before a stroke hint (default 3). Req 5.4, 5.8. */
+  readonly strokeHintAfterConsecutiveMisses: number;
+  /** Interval ladder in ms: [1,3,7,14,30,60] days (steps 0–5). Req 6.2. */
+  readonly intervalLadderMs: readonly number[];
+  /** Delay applied on a missed review, in ms (10 minutes). Req 6.3. */
+  readonly relearnDelayMs: number;
+  /** Max NEW characters per session when something is due (default 5). Req 6.5. */
+  readonly newPerSessionCap: number;
+  /** Target ghosts per Nightly Séance (default 10). Req 3.1, 6.7. */
+  readonly sessionSize: number;
+}
+
+export const DEFAULT_CONFIG: EngineConfig = {
+  cleanMistakeThreshold: 2,
+  strokeHintAfterConsecutiveMisses: 3,
+  intervalLadderMs: [1 * DAY_MS, 3 * DAY_MS, 7 * DAY_MS, 14 * DAY_MS, 30 * DAY_MS, 60 * DAY_MS],
+  relearnDelayMs: 10 * 60 * 1000,
+  newPerSessionCap: 5,
+  sessionSize: 10,
+};
+```
+
+### `app/src/engine/scheduler.ts` (Decision 4: injected clock)
+
+Pure functions only. Every function that needs time takes `now: number` (ms); the module never calls `Date.now()` and performs no I/O. This makes the scheduler deterministic and testable (Requirements 6.1, 6.6, 6.11, 8.7).
+
+```typescript
+import type { EngineConfig } from './config';
+
+/** Outcome of a ghost in Write mode. `clean` = correct; the other two = missed. Req 5. */
+export type Outcome = 'clean' | 'struggled' | 'gave-up';
+
+/** One past attempt, kept for auditing/analysis (optional). */
+export interface AttemptRecord {
+  readonly outcome: Outcome;
+  readonly at: number; // timestamp (ms) supplied by UI
+}
+
+/** Persisted per-character scheduler state. Req 6, Req 7. */
+export interface ReviewEntry {
+  /** Current index into the interval ladder (0–5). */
+  readonly step: number;
+  /** The most recent outcome recorded for this character. */
+  readonly lastOutcome: Outcome;
+  /** Next-due timestamp (ms). Always >= the review time it was computed from. Req 6.4. */
+  readonly nextDue: number;
+  /** Optional attempt history (newest last). */
+  readonly history?: readonly AttemptRecord[];
+}
+
+/**
+ * Apply a review outcome to an entry at time `now`, returning a NEW entry.
+ * - clean  → step advances by 1 (capped at ladder top), nextDue = now + ladder[newStep]. Req 6.2.
+ * - missed → step resets to 0, nextDue = now + relearnDelayMs (10 min). Req 6.3.
+ * `prior` may be undefined for a first-ever review (new character). Pure.
+ */
+export function applyReview(
+  prior: ReviewEntry | undefined,
+  outcome: Outcome,
+  now: number,
+  config: EngineConfig,
+): ReviewEntry;
+
+/** The entry's next-due timestamp (ms). Never negative. Req 6.4. */
+export function nextDue(entry: ReviewEntry): number;
+
+/**
+ * Deterministically select up to `config.sessionSize` distinct characters for a
+ * Nightly Séance given the Review history, the full character list (in
+ * character-list order), the injected clock `now`, and config. Implements the
+ * ordering of Req 6.5 (due-overdue-first → new capped → soonest-due → extra new
+ * uncapped), with all ties broken by character-list order. Pure. Req 6.5–6.7, 6.10.
+ */
+export function selectSession(
+  history: ReviewHistory,
+  characterList: readonly string[],
+  now: number,
+  config: EngineConfig,
+): string[];
+```
+
+### `app/src/data/charDataLoader.ts` (Decision 2: offline hanzi-writer)
+
+Loads and validates `characters.json`, exposes typed record access, and provides the hanzi-writer `charDataLoader` adapter so hanzi-writer never touches its CDN (Requirements 2.1, 2.3, 2.5, 5.1, 8.3).
+
+```typescript
+import type { CharacterRecord, StrokeData } from './types';
+
+/** In-memory dataset keyed by character. */
+export type CharacterDataset = ReadonlyMap<string, CharacterRecord>;
+
+/** Shape hanzi-writer quiz mode expects from its charDataLoader. */
+export interface HanziWriterCharData {
+  readonly strokes: string[];
+  readonly medians: number[][][];
+  readonly radStrokes?: number[];
+}
+
+export type LoadResult =
+  | { ok: true; dataset: CharacterDataset }
+  | { ok: false; reason: 'fetch-failed' | 'parse-failed' | 'invalid-shape' };
+
+/**
+ * Fetch and validate characters.json. Validates each record against the shared
+ * CharacterRecord type before use. Never throws on load/parse failure — returns
+ * a failure result so the App can show a non-technical error state. Req 2.1–2.4.
+ */
+export async function loadDataset(url?: string): Promise<LoadResult>;
+
+/** Typed lookup. Returns undefined when the character is absent. */
+export function getRecord(dataset: CharacterDataset, char: string): CharacterRecord | undefined;
+
+/**
+ * Map a CharacterRecord's strokeData into the object hanzi-writer quiz mode
+ * expects. Pure; no modification of the record. Req 2.5, 5.1.
+ */
+export function toHanziWriterData(strokeData: StrokeData): HanziWriterCharData;
+
+/**
+ * Build the synchronous charDataLoader passed to HanziWriter.create(...).
+ * hanzi-writer calls this with a character; we resolve it from OUR dataset
+ * synchronously (no network). An unknown character resolves to undefined so the
+ * caller can treat init as failed and fall back. Req 8.3.
+ */
+export function makeCharDataLoader(
+  dataset: CharacterDataset,
+): (char: string, onComplete: (data: HanziWriterCharData) => void) => void;
+```
+
+**hanzi-writer quiz wiring (Decision 2).** `WriteMode` creates the writer with `HanziWriter.create(targetEl, char, { charDataLoader: makeCharDataLoader(dataset), showCharacter: false, showOutline: false, ... })` and calls `writer.quiz({ ... })`. Quiz callbacks map onto our outcome/threshold model:
+
+- `onMistake({ strokeNum, mistakesOnStroke })` → increment the total mistake count by one per rejected stroke (Req 5.3); track consecutive misses of the same `strokeNum`.
+- `showHintAfterMisses: config.strokeHintAfterConsecutiveMisses` → hanzi-writer reveals the next expected stroke after that many consecutive misses of the same stroke, one stroke at a time, never the whole glyph (Req 5.4). When this fires at least once, the ghost can no longer be `clean`.
+- `onComplete({ totalMistakes })` → resolve the ghost: `clean` when no hint was shown AND `totalMistakes <= config.cleanMistakeThreshold`, else `struggled` (Req 5.5, 5.6).
+
+### `app/src/engine/promptCleanup.ts` (display-only, pure)
+
+```typescript
+/**
+ * Remove dictionary-style notes from a prompt meaning for DISPLAY ONLY.
+ * Pure, idempotent, and additive-free: every character in the output was present
+ * in the input (aside from removing notes and trimming/collapsing whitespace a
+ * removal leaves behind). Falls back to the original string when cleanup would
+ * otherwise yield empty/whitespace-only output. Never mutates characters.json,
+ * the loaded record, or persisted data. Req 4.2–4.6.
+ */
+export function cleanupMeaning(raw: string): string;
+```
+
+Note patterns removed (Req 4.2): classifier notes `(CL:...)` and `CL:...`; bracketed pinyin references `[pin1 yin1]`; example clauses `(e.g. ...)`; and pronunciation notes `Taiwan pr. [...]`, `(Taiwan pr. ...)`, and `also pr. [...]`. After removals, surrounding whitespace is trimmed and internal runs collapsed to a single space. `prompt.pinyin` is displayed as stored and is never passed through cleanup (Req 4.7).
+
+### `app/src/storage/storage.ts` (wrapped localStorage, Req 7)
+
+A small typed API; the rest of the app never touches `localStorage` keys directly. Every read/write is wrapped in `try/catch` and degrades gracefully (Req 7.3, 7.5, 7.7).
+
+```typescript
+import type { ReviewHistory } from '../engine/scheduler';
+
+/** Current persisted-data schema version. Bump when the blob shape changes. Req 7.2. */
+export const CURRENT_SCHEMA_VERSION = 1;
+
+/** The persisted blob. Req 7.1, 7.2. */
+export interface PersistedState {
+  readonly schemaVersion: number;
+  readonly introSeen: boolean;
+  readonly history: ReviewHistory;
+}
+
+/** Safe default used on first run, disabled storage, corruption, or reset. */
+export const DEFAULT_STATE: PersistedState;
+
+/**
+ * Load persisted state. On a known older schemaVersion with a defined migration,
+ * migrate to CURRENT_SCHEMA_VERSION. On unknown/newer schemaVersion, corrupt data,
+ * shape mismatch, or any read/parse failure, return DEFAULT_STATE. Never throws. Req 7.4, 7.5.
+ */
+export function loadState(): PersistedState;
+
+/** Persist full state. On any write failure (quota, disabled) performs a no-op. Never throws. Req 7.5, 7.6. */
+export function saveState(state: PersistedState): void;
+
+/** Record one character's outcome immediately and persist. Returns the new state. Req 3.4, 7.6. */
+export function recordOutcome(char: string, entry: ReviewEntry, now: number): PersistedState;
+
+export function getIntroSeen(): boolean;      // Req 1.1, 1.5
+export function setIntroSeen(seen: boolean): void; // Req 1.4
+export function resetToDefaults(): void;      // Req 7.4
+```
+
+### UI components (`app/src/components/` + `app/src/modes/`)
+
+These hold no game logic; they read `Date.now()` and delegate to the engine (Requirements 6.11, 8.1). Colour is never the only signal and all interactive controls carry accessible labels (Requirements 5.9, 5.10, 8.5).
+
+- **`components/IntroScreen.tsx`** — props `{ onBegin: () => void }`. Renders the legend copy (Cangjie invented writing; legend of wailing ghosts; forgotten characters are ghosts laid to rest by writing), attributes the wailing-ghosts line to the Huainanzi (天雨粟，鬼夜哭), and nothing else historical (Req 1.2, 1.7, 1.8). A labelled "Begin the Séance" button fires `onBegin`; operable by touch and mouse/keyboard (Req 1.3, 1.6).
+- **`components/StartMenu.tsx`** — props `{ onStartSeance: () => void; onReviewLegend: () => void }`. The legend re-view entry point lives here (outside any active session) so it never interrupts a Séance (Req 1.5, 3.6).
+- **`components/SeanceSession.tsx`** — props `{ ghosts: readonly CharacterRecord[]; onOutcome: (char: string, outcome: Outcome, now: number) => void; onComplete: (results: SessionResults) => void }`. Presents ghosts one at a time, advances only on a terminal Outcome, prevents repeats within the session, and reports each Outcome immediately (Req 3.2, 3.4, 3.5).
+- **`components/GhostPrompt.tsx`** — props `{ record: CharacterRecord }`. Displays `cleanupMeaning(record.prompt.meaning)` and `record.prompt.pinyin` (as stored), hiding the glyph (Req 4.1, 5.1).
+- **`modes/WriteMode.tsx`** — props `{ record: CharacterRecord; dataset: CharacterDataset; config: EngineConfig; onOutcome: (outcome: Outcome) => void }`. State: `mistakeCount`, `consecutiveMissesByStroke`, `hintShown`, `status`. Hosts the hanzi-writer quiz on a `touch-action: none` surface (Decision 3), wires `onMistake`/`showHintAfterMisses`/`onComplete` to the outcome/threshold model, and exposes a clearly labelled "Give up" control that resolves `gave-up` after an animated stroke-order playthrough (Req 5.3–5.10). Non-colour cues (text/icon) accompany accept/reject feedback (Req 5.9).
+- **`components/SessionSummary.tsx`** — props `{ results: SessionResults; onPlayAgain: () => void }`. Shows how many ghosts were laid to rest and offers another Séance (Req 3.3, 3.6).
+
+```typescript
+export interface SessionResults {
+  readonly total: number;
+  readonly laidToRest: number; // clean + struggled (both revealed in ink)
+}
+```
+
+### Writing surface sizing (Decision 3)
+
+The hanzi-writer target element sits inside a square container that sets CSS `touch-action: none`, so drawing never scrolls or zooms the page; all input arrives via Pointer Events (Req 5.2, 8.4). The container sizes responsively (e.g. `min(80vw, 420px)`) from 375px phones to 1440px+ laptops. A single hanzi-writer target element is retained across ghosts; between ghosts `WriteMode` tears down the previous quiz and calls `HanziWriter.create` for the next character rather than remounting the DOM node, keeping sizing stable.
+
+---
+
+## Data Models
+
+Reuses `CharacterRecord`, `Prompt`, and `StrokeData` from `app/src/data/types.ts` verbatim — not redefined here.
+
+```typescript
+// Outcome union (app/src/engine/scheduler.ts)
+export type Outcome = 'clean' | 'struggled' | 'gave-up';
+
+// Per-character scheduler state (app/src/engine/scheduler.ts)
+export interface ReviewEntry {
+  readonly step: number;                 // 0–5 ladder index
+  readonly lastOutcome: Outcome;
+  readonly nextDue: number;              // ms, never negative
+  readonly history?: readonly AttemptRecord[];
+}
+
+// Full history: character → entry (app/src/engine/scheduler.ts)
+export type ReviewHistory = Readonly<Record<string, ReviewEntry>>;
+
+// Persisted blob (app/src/storage/storage.ts)
+export interface PersistedState {
+  readonly schemaVersion: number;        // Req 7.2
+  readonly introSeen: boolean;           // Req 1.4, 1.5
+  readonly history: ReviewHistory;       // Req 6, 7.1
+}
+
+// hanzi-writer quiz adapter data shape (app/src/data/charDataLoader.ts)
+export interface HanziWriterCharData {
+  readonly strokes: string[];
+  readonly medians: number[][][];
+  readonly radStrokes?: number[];
+}
+```
+
+`ReviewHistory` is a plain character-keyed map so it serialises directly to JSON inside `PersistedState`. The hanzi-writer adapter shape is a projection of `StrokeData` (`{ strokes, medians, radStrokes }`), produced by `toHanziWriterData` without mutating the record.
+
+---
+
+## Correctness Properties
+
+*A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
+
+The scheduler and prompt-cleanup functions are pure (no I/O, injected clock), which makes them ideal for property-based testing. The following eleven properties restate the targets of Requirement 8.7 as named design properties. Each is implemented by a single fast-check property test running at least 100 iterations.
+
+### Property 1: Cleanup never returns an empty string
+
+*For any* input meaning string, `cleanupMeaning` SHALL return a non-empty string, falling back to the original `prompt.meaning` whenever cleanup would otherwise produce an empty or whitespace-only result.
+
+**Validates: Requirements 4.4, 8.7**
+
+### Property 2: Cleanup never adds text
+
+*For any* input meaning string, every character in `cleanupMeaning`'s output SHALL have been present in the input, aside from the removal of notes and the trimming/collapsing of whitespace a removal leaves behind.
+
+**Validates: Requirements 4.5, 8.7**
+
+### Property 3: Cleanup is idempotent
+
+*For any* input meaning string, `cleanupMeaning(cleanupMeaning(x))` SHALL equal `cleanupMeaning(x)`.
+
+**Validates: Requirements 4.6, 8.7**
+
+### Property 4: A missed character is never scheduled later than a clean one with the same history
+
+*For any* two characters with otherwise-identical prior history reviewed at the same time `now`, the character whose latest Outcome is a miss (`struggled`/`gave-up`) SHALL have a `nextDue` no later than the character whose latest Outcome is `clean`.
+
+**Validates: Requirements 6.9, 8.7**
+
+### Property 5: Intervals and next-due offsets are never negative
+
+*For any* prior entry, outcome, clock `now`, and config, `applyReview` SHALL produce a `nextDue` such that `nextDue - now >= 0`, and the chosen ladder interval SHALL be non-negative.
+
+**Validates: Requirements 6.4, 8.7**
+
+### Property 6: Session selection is deterministic
+
+*For any* Review history, character list, and clock `now`, calling `selectSession` twice with identical inputs SHALL produce identical selections in identical order.
+
+**Validates: Requirements 6.6, 8.7**
+
+### Property 7: The interval ladder never skips a step on a clean review
+
+*For any* prior entry at step `s` below the top, a `clean` review SHALL set the new step to exactly `min(s + 1, topStep)` — advancing by exactly one and never skipping a step — and the resulting ladder-interval sequence over consecutive clean reviews SHALL be non-decreasing.
+
+**Validates: Requirements 6.2, 6.8, 8.7**
+
+### Property 8: A missed review resets to step 0 with a 10-minute delay
+
+*For any* prior entry, a `struggled` or `gave-up` review SHALL set the new step to 0 and `nextDue` to `now + config.relearnDelayMs` (10 minutes).
+
+**Validates: Requirements 6.3, 8.7**
+
+### Property 9: The new-per-session cap holds whenever something is due
+
+*For any* Review history and character list where at least one character is due at `now`, the count of NEW (no-history) characters in the selected session SHALL NOT exceed `config.newPerSessionCap` (5).
+
+**Validates: Requirements 6.5, 8.7**
+
+### Property 10: Ties are broken by character-list order
+
+*For any* set of candidate characters that tie on their primary ordering key, `selectSession` SHALL order the tied characters by their position in the character list.
+
+**Validates: Requirements 6.5, 6.6, 8.7**
+
+### Property 11: A full dataset always yields exactly 10 distinct ghosts
+
+*For any* Review history and character list with at least 10 characters, `selectSession` SHALL return exactly 10 characters with no duplicates; with fewer than 10 characters it SHALL return all of them, still without duplicates.
+
+**Validates: Requirements 3.1, 6.7, 8.7**
+
+---
+
+## Error Handling
+
+### Dataset load/parse (Requirement 2.4)
+
+| Condition | Behaviour |
+|---|---|
+| `characters.json` fetch fails | `loadDataset` returns `{ ok: false, reason: 'fetch-failed' }`; App renders a clear, non-technical error screen (no blank page, no crash). |
+| `characters.json` is not valid JSON | Returns `{ ok: false, reason: 'parse-failed' }`; same non-technical error screen. |
+| A record fails `CharacterRecord` shape validation | Returns `{ ok: false, reason: 'invalid-shape' }`; same non-technical error screen. |
+
+### localStorage (Requirement 7.4, 7.5)
+
+| Condition | Behaviour |
+|---|---|
+| Storage disabled / private mode | `try/catch` catches the throw; `loadState` returns `DEFAULT_STATE`, `saveState` is a no-op; App keeps running (progress simply not persisted). |
+| Quota exceeded on write | `saveState` catches the throw and no-ops; App keeps running. |
+| Corrupt or shape-mismatched blob | `loadState` returns `DEFAULT_STATE` (reset, no migration). |
+| Unknown or newer `schemaVersion` | `loadState` returns `DEFAULT_STATE` (reset, never migrate forward). Req 7.4. |
+| Known older `schemaVersion` with a defined migration | `loadState` migrates to `CURRENT_SCHEMA_VERSION`. Req 7.4. |
+
+### hanzi-writer init (Requirement 5, offline guarantee)
+
+| Condition | Behaviour |
+|---|---|
+| `charDataLoader` cannot resolve a character from the dataset | Treat quiz init as failed for that ghost; skip it with a `gave-up`-style fallback (record a missed review, continue to the next ghost) without crashing. |
+| hanzi-writer throws during `create`/`quiz` | Caught in `WriteMode`; the ghost falls back to `gave-up`, the character is revealed, and the session continues. |
+
+---
+
+## Testing Strategy
+
+`npm test` from the repository root is the single command that verifies the whole project (Requirement 8.9).
+
+### Root Vitest workspace (Decision 1)
+
+A root `vitest.workspace.ts` lists two projects so one invocation runs both suites:
+
+```typescript
+// vitest.workspace.ts (repo root)
+export default [
+  './vitest.config.ts', // project A: tests/ — environment 'node', the 129 data tests (unchanged)
+  './app',              // project B: app/ — uses app/vitest.config.ts, environment 'jsdom'
+];
+```
+
+- **Project A (`tests/`, `environment: 'node'`)** — the existing 129 character-dataset tests. They are NOT moved or modified; they keep passing exactly as before. The root `package.json` `test` script stays `vitest run` (now workspace-aware).
+- **Project B (`app/`, `environment: 'jsdom'`)** — new app tests. `app/vitest.config.ts` sets `environment: 'jsdom'`, registers a setup file (`app/test/setup.ts`) importing `@testing-library/jest-dom`, and uses `@testing-library/react` for component tests. The app has its OWN `app/package.json` (React/Vite deps) and `app/vite.config.ts` / `app/vitest.config.ts`; the root workspace references them.
+
+New dev dependencies are pinned (exact versions, no caret): `jsdom`, `@testing-library/react`, `@testing-library/jest-dom`, `@testing-library/user-event`, plus the pinned runtime dep `hanzi-writer@3.7.3`. fast-check (already pinned at the root) is reused for property tests.
+
+### Unit tests
+
+Example-based tests, kept lean because property tests cover broad input ranges:
+
+- **`promptCleanup`** — each note pattern (`(CL:...)`, `CL:...`, `[pin1 yin1]`, `(e.g. ...)`, `Taiwan pr. [...]`, `(Taiwan pr. ...)`, `also pr. [...]`) removed on representative real meanings; whitespace collapse; the empty-result fallback.
+- **`scheduler`** — `applyReview` for clean (step up, capped at 5) and missed (reset + 10 min); `selectSession` ordering across the four bands of Req 6.5 with concrete fixtures.
+- **`storage`** — migration from a known older `schemaVersion`; reset on unknown/newer/corrupt; no-op on simulated write failure; `recordOutcome` persists immediately.
+- **`charDataLoader`** — `toHanziWriterData` projection; `loadDataset` failure results for fetch/parse/shape; `makeCharDataLoader` resolves known chars and returns undefined for unknown.
+
+### Property tests (Vitest + fast-check, ≥100 iterations each)
+
+One property test per design property (Properties 1–11), each tagged with the feature and property number. Tag format:
+
+```
+// Feature: ghost-game-core, Property 7: The interval ladder never skips a step on a clean review
+```
+
+Property tests target the pure engine (`scheduler`, `promptCleanup`) with generated histories, character lists, clock values, and meaning strings — no DOM, no network.
+
+### Component tests (jsdom + testing-library)
+
+- **IntroScreen** — renders the legend copy and Huainanzi attribution; the begin control is labelled and keyboard-operable; `onBegin` fires.
+- **SeanceSession** — advances only on a terminal Outcome; never repeats a character; reports each Outcome immediately.
+- **WriteMode** — hanzi-writer is mocked so stroke callbacks (`onMistake`, `showHintAfterMisses`, `onComplete`) can be simulated: verify mistake counting, the stroke-hint threshold, `clean` vs `struggled` resolution, and that "Give up" yields `gave-up`. Accessible labels and non-colour cues are asserted.
+
+### Confirming the data tests still run
+
+The node project continues to execute the 129 `tests/` cases under the same `npm test`. Adding the app project does not remove or alter them (Requirement 8.9).
