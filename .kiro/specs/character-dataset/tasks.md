@@ -191,8 +191,8 @@ Build the data pipeline that transforms three open-source raw datasets into `app
 - [x] 12. Checkpoint — unit test suite passes
   - Ensure all unit tests pass with `npm test`. Ask the user if any questions arise before continuing.
 
-- [ ] 13. Property-based tests — parsers and merge
-  - [ ] 13.1 Create `tests/helpers/arbitraries.ts` with shared fast-check arbitraries
+- [x] 13. Property-based tests — parsers and merge
+  - [x] 13.1 Create `tests/helpers/arbitraries.ts` with shared fast-check arbitraries
     - `arbitraryCharacter()` — `fc.integer` filtered to U+4E00–U+9FFF mapped to `String.fromCodePoint`
     - `arbitraryCharacterList()` — `fc.uniqueArray(arbitraryCharacter(), { minLength: 1, maxLength: 320 })`
     - `arbitraryCcCedictEntry()` — random ASCII pinyin syllables + meaning strings
@@ -201,50 +201,50 @@ Build the data pipeline that transforms three open-source raw datasets into `app
     - `arbitraryCharacterRecord()` — full record with all required fields present
     - _Requirements: 5.1–5.8_
 
-  - [ ] 13.2 Write property test: CJK range validation (Property 1)
+  - [x] 13.2 Write property test: CJK range validation (Property 1)
     - **Property 1: CJK range validation rejects non-CJK codepoints**
     - **Validates: Requirements 1.4**
     - Generate strings with at least one non-CJK codepoint; assert `parseCharacterList` returns `ok: false`
     - numRuns: 100
     - _Requirements: 1.4_
 
-  - [ ] 13.3 Write property test: pipeline determinism (Property 2)
+  - [x] 13.3 Write property test: pipeline determinism (Property 2)
     - **Property 2: Pipeline determinism**
     - **Validates: Requirements 3.4, 5.7**
     - Generate random `BuildOptions`-shaped inputs; call `buildDataset` twice; assert results are deeply equal
     - numRuns: 100
     - _Requirements: 3.4, 5.8_
 
-  - [ ] 13.4 Write property test: fail-slow error aggregation (Property 3)
+  - [x] 13.4 Write property test: fail-slow error aggregation (Property 3)
     - **Property 3: Fail-slow error aggregation**
     - **Validates: Requirements 3.6**
     - Generate character lists where a random subset is missing fields; assert failure result includes every affected character
     - numRuns: 100
     - _Requirements: 3.6_
 
-  - [ ] 13.5 Write property test: CC-CEDICT deduplication preserves order (Property 5)
+  - [x] 13.5 Write property test: CC-CEDICT deduplication preserves order (Property 5)
     - **Property 5: CC-CEDICT multi-entry deduplication preserves order**
     - **Validates: Requirements 4.3**
     - Generate sequences of entries for a character with random duplicate pinyin/meanings; assert output arrays equal deduplicated first-occurrence-order lists
     - numRuns: 100
     - _Requirements: 4.3_
 
-  - [ ] 13.6 Write property test: stroke data round-trip (Property 6)
+  - [x] 13.6 Write property test: stroke data round-trip (Property 6)
     - **Property 6: Stroke data extraction round-trip**
     - **Validates: Requirements 4.5**
     - Generate arbitrary `HanziWriterEntry` objects; assert `strokeCount` = `strokes.length` and `strokeData` deep-equals input
     - numRuns: 100
     - _Requirements: 4.5_
 
-  - [ ] 13.7 Write property test: decomposition verbatim pass-through (Property 7)
+  - [x] 13.7 Write property test: decomposition verbatim pass-through (Property 7)
     - **Property 7: Decomposition verbatim pass-through**
     - **Validates: Requirements 4.7**
     - Generate arbitrary Make Me a Hanzi dictionary lines; assert parsed `decomposition` field equals original value
     - numRuns: 100
     - _Requirements: 4.7_
 
-- [ ] 14. Property-based tests — output invariants
-  - [ ] 14.1 Write property tests: CharacterRecord schema completeness and sources validity (Properties 4 and 10)
+- [x] 14. Property-based tests — output invariants
+  - [x] 14.1 Write property tests: CharacterRecord schema completeness and sources validity (Properties 4 and 10)
     - **Property 4: CharacterRecord schema completeness**
     - **Property 10: sources object has exactly the required keys with valid values**
     - **Validates: Requirements 4.2, 4.10**
@@ -252,7 +252,7 @@ Build the data pipeline that transforms three open-source raw datasets into `app
     - numRuns: 100
     - _Requirements: 4.2, 4.10_
 
-  - [ ] 14.2 Write property tests: no placeholder in components, atomic invariant, IDS codepoints (Properties 8, 9, 16)
+  - [x] 14.2 Write property tests: no placeholder in components, atomic invariant, IDS codepoints (Properties 8, 9, 16)
     - **Property 8: No placeholder in components array**
     - **Property 9: Atomic record has exactly one component equal to the character**
     - **Property 16: Decomposition IDS string contains only valid codepoints**
@@ -261,7 +261,7 @@ Build the data pipeline that transforms three open-source raw datasets into `app
     - numRuns: 100
     - _Requirements: 5.5, 5.6_
 
-  - [ ] 14.3 Write property tests: output record count and every list character is a key (Properties 11 and 12)
+  - [x] 14.3 Write property tests: output record count and every list character is a key (Properties 11 and 12)
     - **Property 11: Output record count equals character-list entry count**
     - **Property 12: Every list character is a key in the output, exactly once**
     - **Validates: Requirements 4.12, 5.1**
@@ -269,7 +269,7 @@ Build the data pipeline that transforms three open-source raw datasets into `app
     - numRuns: 100
     - _Requirements: 4.12, 5.1_
 
-  - [ ] 14.4 Write property tests: non-null arrays have at least one non-empty element (Properties 13, 14, 15)
+  - [x] 14.4 Write property tests: non-null arrays have at least one non-empty element (Properties 13, 14, 15)
     - **Property 13: Non-null pinyin contains at least one non-empty string**
     - **Property 14: Non-null meanings contains at least one non-empty string**
     - **Property 15: strokeCount is a positive integer**
@@ -278,31 +278,31 @@ Build the data pipeline that transforms three open-source raw datasets into `app
     - numRuns: 100
     - _Requirements: 5.2, 5.3, 5.4_
 
-  - [ ] 14.5 Write property tests: prompt.meaning is a source meaning; prompt.pinyin is tone-mark of a source reading; no default prompt starts with a skipped prefix (Properties 18, 19, 20)
+  - [x] 14.5 Write property tests: prompt.meaning is a source meaning; prompt.pinyin is tone-mark of a source reading; no default prompt starts with a skipped prefix (Properties 18, 19, 20)
     - numRuns: 100
     - _Requirements: 6.2, 6.3, 6.4_
 
-  - [ ] 14.6 Write property test: every applied override index is in range and reviewer-attributed (Property 21)
+  - [x] 14.6 Write property test: every applied override index is in range and reviewer-attributed (Property 21)
     - numRuns: 100
     - _Requirements: 6.6, 6.7_
 
-  - [ ] 14.7 Write property test: prompt meaning and reading come from the same CC-CEDICT entry (Property 22)
+  - [x] 14.7 Write property test: prompt meaning and reading come from the same CC-CEDICT entry (Property 22)
     - numRuns: 100
     - _Requirements: 6.12_
 
-- [ ] 15. Smoke tests
-  - [ ] 15.1 Write `tests/smoke/dataset-files.test.ts`
+- [x] 15. Smoke tests
+  - [x] 15.1 Write `tests/smoke/dataset-files.test.ts`
     - Assert all required raw dataset paths and licence files exist on disk
     - Assert `app/public/data/` directory exists
     - _Requirements: 2.1, 2.2, 2.3_
 
-  - [ ] 15.2 Write `tests/smoke/character-list-bounds.test.ts`
+  - [x] 15.2 Write `tests/smoke/character-list-bounds.test.ts`
     - Assert `data/character-list.txt` has 280–320 non-comment lines
     - Assert no duplicate characters
     - Assert first line is a `#` comment
     - _Requirements: 1.2, 1.3_
 
-  - [ ] 15.3 Write `tests/smoke/npm-script.test.ts`
+  - [x] 15.3 Write `tests/smoke/npm-script.test.ts`
     - Assert `package.json` contains a `build:data` script entry
     - _Requirements: 3.1_
 

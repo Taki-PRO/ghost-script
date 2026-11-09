@@ -1,5 +1,22 @@
 {
-  "pbtResults": {},
+  "pbtResults": {
+    "13.3 Write property test: pipeline determinism (Property 2)": {
+      "status": "passed",
+      "lastRunTimestamp": 1794228580321
+    },
+    "13.6 Write property test: stroke data round-trip (Property 6)": {
+      "status": "passed",
+      "lastRunTimestamp": 1794228581186
+    },
+    "13.4 Write property test: fail-slow error aggregation (Property 3)": {
+      "status": "passed",
+      "lastRunTimestamp": 1794228589838
+    },
+    "13.7 Write property test: decomposition verbatim pass-through (Property 7)": {
+      "status": "passed",
+      "lastRunTimestamp": 1794228726154
+    }
+  },
   "executionHistory": {
     "1. Project scaffolding": [
       {
@@ -363,6 +380,231 @@
         "executionId": "126357e0-6a53-41d9-beb3-3dff2f314fbc",
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794026518324
+      }
+    ],
+    "13.1 Create `tests/helpers/arbitraries.ts` with shared fast-check arbitraries": [
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794228225713
+      },
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794228435103
+      }
+    ],
+    "13.2 Write property test: CJK range validation (Property 1)": [
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794228440058
+      },
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794228610848
+      }
+    ],
+    "13.3 Write property test: pipeline determinism (Property 2)": [
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794228444115
+      },
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794228615031
+      }
+    ],
+    "13.4 Write property test: fail-slow error aggregation (Property 3)": [
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794228448203
+      },
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794228619227
+      }
+    ],
+    "13.5 Write property test: CC-CEDICT deduplication preserves order (Property 5)": [
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794228452305
+      },
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794228623329
+      }
+    ],
+    "13.6 Write property test: stroke data round-trip (Property 6)": [
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794228456254
+      },
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794228627381
+      }
+    ],
+    "13.7 Write property test: decomposition verbatim pass-through (Property 7)": [
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794228636849
+      },
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794228742217
+      }
+    ],
+    "13. Property-based tests — parsers and merge": [
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794228742259
+      }
+    ],
+    "14.1 Write property tests: CharacterRecord schema completeness and sources validity (Properties 4 and 10)": [
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794228747302
+      },
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794229079347
+      }
+    ],
+    "14.2 Write property tests: no placeholder in components, atomic invariant, IDS codepoints (Properties 8, 9, 16)": [
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794228751870
+      },
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794229083745
+      }
+    ],
+    "14.3 Write property tests: output record count and every list character is a key (Properties 11 and 12)": [
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794228755893
+      },
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794229088085
+      }
+    ],
+    "14.4 Write property tests: non-null arrays have at least one non-empty element (Properties 13, 14, 15)": [
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794228760259
+      },
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794229093432
+      }
+    ],
+    "14.5 Write property tests: prompt.meaning is a source meaning; prompt.pinyin is tone-mark of a source reading; no default prompt starts with a skipped prefix (Properties 18, 19, 20)": [
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794228764614
+      },
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794229102438
+      }
+    ],
+    "14.6 Write property test: every applied override index is in range and reviewer-attributed (Property 21)": [
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794229107389
+      },
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794229697696
+      }
+    ],
+    "14.7 Write property test: prompt meaning and reading come from the same CC-CEDICT entry (Property 22)": [
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794229111564
+      },
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794229701904
+      }
+    ],
+    "15.1 Write `tests/smoke/dataset-files.test.ts`": [
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794229115733
+      },
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794229706666
+      }
+    ],
+    "15.2 Write `tests/smoke/character-list-bounds.test.ts`": [
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794229119812
+      },
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794229710832
+      }
+    ],
+    "15.3 Write `tests/smoke/npm-script.test.ts`": [
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794229124153
+      },
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794229714889
+      }
+    ],
+    "14. Property-based tests — output invariants": [
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794229701941
+      }
+    ],
+    "15. Smoke tests": [
+      {
+        "executionId": "e9b9b4be-9090-4332-8c0f-e1f3e81d69f9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794229714931
       }
     ]
   }
