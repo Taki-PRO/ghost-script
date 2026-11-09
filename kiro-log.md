@@ -157,6 +157,7 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 - **Kiro feature:** Spec task execution; property checks run against the real output.
 - **Result:** **66/66 tasks done, 129 tests across 25 files**, `tsc` clean. The integration test checks Properties 8, 9, 11–16 and 18–22 on all 300 real records; all pass. Kiro noticed the 48 overrides and adjusted the checks correctly (Property 20 only for the 252 default prompts; reviewer attribution for the 48).
 - **Review fixes (no credits):** added the MIT licence file for the HSK character list (`data/raw/hsk30/LICENSE`); made the README say exactly how the overrides were made (Claude-suggested, approved by Raghav). Kiro's summary guessed 了 was overridden; it wasn't (it keeps the default "(completed action marker)").
+- **Credits:** 170 of 4,000 hackathon credits used in total (plus 25 of the 50 free-tier credits before they arrived). Tasks 13–20 took 83 (property and smoke tests, integration test, README); everything before took 87.
 - **Spec 1 in numbers:** 300 characters · 3 datasets + 1 list, all pinned · 22 designed properties (21 tested here, 1 deferred) · 129 tests · 10/10 deliberate bugs caught · deterministic across Mac and Linux.
 
 ---
