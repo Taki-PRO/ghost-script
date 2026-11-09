@@ -137,3 +137,10 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 - **Kiro feature:**
 - **Why:**
 - **Result:**
+
+## Task 14.5: Prompt-selection property tests (Properties 18, 19, 20)
+
+- **What I did:** Added `tests/property/prompt-selection.test.ts` exercising `selectPrompt` (DEFAULT rule) against `arbitraryCcCedictEntry()`. Property 18 (meaning is a bound-form-stripped source gloss of the chosen entry), Property 19 (pinyin is `numberedToToneMarks` of the chosen entry's reading), Property 20 (no skipped-prefix meaning). Added a justification check for `no-usable-sense` failures and a bonus same-entry check.
+- **Kiro feature:** Property-based tests (fast-check + Vitest).
+- **Why:** These prove the ghost clue never shows a surname/variant/abbr gloss and that meaning + reading always come from one CC-CEDICT entry — correctness judges cannot verify by reading Chinese.
+- **Result:** `npx tsc --noEmit` clean; all 5 tests pass (numRuns 200). No bug surfaced in `prompt.ts`; no changes to source needed.
