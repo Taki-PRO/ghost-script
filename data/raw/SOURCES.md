@@ -31,4 +31,5 @@ This file records the provenance and licence of every raw dataset in `data/raw/`
 - **File:** hsk30-chars.csv (rows where WritingLevel == 1)
 - **Licence:** MIT
 - **Original standard:** Ministry of Education GF0025-2021 (2021)
+- **Licence file:** data/raw/hsk30/LICENSE (copied from the repo at the pinned commit)
 - **Used for:** character-list.txt (the ~300 characters taught in the app)
