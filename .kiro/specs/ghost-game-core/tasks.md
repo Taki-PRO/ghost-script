@@ -8,8 +8,11 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
 
 - [ ] 1. App scaffold, npm workspace, and dual-project test bring-up
   - Scaffold a Vite + React + TypeScript app under `app/` with `strict: true`: create `app/package.json`, `app/tsconfig.json`, `app/vite.config.ts`, `app/index.html`, `app/src/main.tsx`, `app/src/App.tsx` (placeholder), and a Tailwind CSS setup (`app/tailwind.config.ts`, `app/postcss.config.js`, `app/src/styles/index.css` with Tailwind directives)
-  - In `app/package.json` pin exact versions (no caret): runtime `react`, `react-dom`, `hanzi-writer` EXACT `3.7.3`; dev `vite`, `@vitejs/plugin-react`, `typescript`, `tailwindcss`, `postcss`, `autoprefixer`, `jsdom`, `@testing-library/react`, `@testing-library/jest-dom`, `@testing-library/user-event`
+  - In `app/package.json` pin EXACT versions (no caret) chosen to be compatible with the repo-root Vitest 2.1.9: dev `vite@5.4.x` (pick a concrete 5.4 patch, e.g. `5.4.11` — choose the latest 5.4 patch at implementation time), `@vitejs/plugin-react@4.3.x` (concrete 4.3 patch), `tailwindcss@3.4.x` (concrete 3.4 patch; v3-style config with `postcss` + `autoprefixer` as already planned); runtime `react@18.3.x` and `react-dom@18.3.x` (concrete 18.3 patch) UNLESS the chosen `@testing-library/react` version requires React 19 — in that case use the React version testing-library requires and note the deviation; runtime `hanzi-writer` EXACT `3.7.3`
+  - Dev deps also include the testing-library set (`@testing-library/react`, `@testing-library/jest-dom`, `@testing-library/user-event`) PLUS `@testing-library/dom` (exact pin) as an explicit dev dependency (it is a peer of `@testing-library/react`), and `typescript`, `postcss`, `autoprefixer`, `jsdom` (all exact pins)
+  - Add `app/package.json` scripts: `"dev": "vite"`, `"build": "vite build"`, `"preview": "vite preview"` (so the app can be run and the manual check in Task 18 can start the dev server)
   - Add `"workspaces": ["app"]` to the root `package.json`; keep the root `"test": "vitest run"` script unchanged
+  - After the root `npm install`, run `npm ls` (and/or `npm ls --workspaces`) to check peer-dependency compatibility, and REPORT any peer-dependency warnings or conflicts (e.g. React version peers for testing-library, Vite plugin peers). Resolve or explicitly document any warning before moving on
   - Create root `vitest.config.ts` (NODE project): `include: ['tests/**/*.test.ts']`, `environment: 'node'`
   - Create `app/vitest.config.ts` (APP project): `include: ['app/**/*.test.{ts,tsx}']`, `environment: 'jsdom'`, `setupFiles: ['app/test/setup.ts']`
   - Create `app/test/setup.ts` importing `@testing-library/jest-dom`
@@ -140,8 +143,10 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
     - _Requirements: 2.4, 2.5, 5.1_
 
 - [ ] 8. Real-hanzi-writer offline integration test
-  - [ ] 8.1 Write `app/src/data/charDataLoader.hanziwriter.integration.test.ts` (library NOT mocked)
-    - Load the real `characters.json`, build `makeCharDataLoader(dataset)`, and call the real `HanziWriter.create` for 我, 口, 爱 in jsdom; assert the `charDataLoader` resolves each to a non-empty `strokes` array and the writer reaches a ready state, proving stroke data loads from our dataset offline (SVG paint is not asserted)
+  - [ ] 8.1 Write `app/src/data/charDataLoader.hanziwriter.integration.test.ts` (real library — NOT mocked)
+    - hanzi-writer MUST NOT be mocked in this test; the whole point is to exercise the real library against our data. Load the real `characters.json`, build `makeCharDataLoader(dataset)`, and call the real `HanziWriter.create` for 我, 口, 爱 in jsdom
+    - jsdom does not implement some SVG/DOM APIs hanzi-writer may touch. IF (and only if) the real library needs browser APIs jsdom lacks, add MINIMAL polyfills for ONLY those specific APIs (e.g. `SVGElement.prototype.getBBox`, `getScreenCTM`/`getCTM`, `requestAnimationFrame` if missing) in the test's setup, and DOCUMENT in the test file exactly which APIs were polyfilled and why. Do not mock hanzi-writer itself; polyfill only the missing host APIs
+    - Success criterion: using `makeCharDataLoader(dataset)` built from the real `characters.json`, hanzi-writer reports the character data LOADED for 我, 口, and 爱 (e.g. via its char-data-loaded signal / the loader resolving each to a non-empty `strokes` array and the writer reaching a ready state). Do NOT assert pixel/SVG paint
     - _Requirements: 2.1, 2.5, 5.1, 8.3_
 
 - [ ] 9. Theme tokens
@@ -217,9 +222,10 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
 - [ ] 17. Checkpoint — full suite passes
   - Run `npm test` from the repo root: the 129 data tests plus all app unit, property, component, and integration tests pass; `tsc` is clean across root and app; no `any` in app source. Ask the user if any questions arise.
 
-- [ ] 18. Manual verification — one full Nightly Séance with a mouse (NON-CODING)
-  - This is the single manual, non-coding task. Run the Vite dev server (`npm run dev` in `app/` or via the workspace) and play ONE full Nightly Séance with a MOUSE (laptop Write mode), verifying: the legend intro appears on first visit, the session has 10 ghosts, live per-stroke checking works, at least one `clean`, one `struggled`, and one `gave-up` outcome occur, each ghost is laid to rest, the session summary shows the laid-to-rest count, and progress persists across a page reload
-  - Append the result (date, what worked, any issues) to `kiro-log.md` at the repo root without deleting existing entries (keep `kiro-log.md` updated per the structure steering doc)
+- [ ] 18. Manual verification — one full Nightly Séance with a mouse (NON-CODING, performed by Raghav)
+  - This is the single manual, non-coding task. This manual play-through is performed by Raghav (human), not by Kiro. Kiro/the agent SHALL run nothing for this task and SHALL NOT append the `kiro-log.md` entry
+  - Raghav runs the Vite dev server (`npm run dev` in `app/` or via the workspace) and plays ONE full Nightly Séance with a MOUSE (laptop Write mode), verifying: the legend intro appears on first visit, the session has 10 ghosts, live per-stroke checking works, at least one `clean`, one `struggled`, and one `gave-up` outcome occur, each ghost is laid to rest, the session summary shows the laid-to-rest count, and progress persists across a page reload
+  - Raghav records the result (date, what worked, any issues) in `kiro-log.md` at the repo root himself, without deleting existing entries (keep `kiro-log.md` updated per the structure steering doc)
   - _Requirements: 1.1, 3.1, 3.3, 5.1, 7.6_
 
 ## Notes
@@ -230,7 +236,7 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
 - Property tests use fast-check at ≥100 runs each and are tagged `// Feature: ghost-game-core, Property N: <title>`, one test per design Property (1–11).
 - `hanzi-writer` is pinned EXACT `3.7.3` in `app/package.json` and always loaded via our `makeCharDataLoader` from `characters.json` — never the CDN. Task 8 proves this against the real library offline.
 - The writing surface uses `touch-action: none` with Pointer Events; Give-up ordering is strictly `cancelQuiz` → `animateCharacter` → resolve `'gave-up'`; `hintShown` is derived inside `onMistake` at the stroke-hint threshold.
-- Task 18 is the ONLY manual, non-coding task; every other task is a coding task.
+- Task 18 is the ONLY manual, non-coding task; every other task is a coding task. Task 18 is performed by Raghav (human) — Kiro does not run it and does not write that `kiro-log.md` entry; Raghav records it himself.
 - Do not add `.kiro/` to `.gitignore`; it must stay in the repo for judging.
 - Run tasks one at a time and review each result. Do not use "Run All Tasks".
 
