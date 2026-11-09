@@ -117,7 +117,7 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 - **What I did:** Asked Kiro to fix a design flaw before implementing: meanings and readings were picked from separate lists, so a prompt could pair a meaning with the wrong pronunciation (e.g. 了 "to finish" with *le*). Kiro updated requirements, design and tasks (per-entry senses, `entryIndex` + `meaningIndex` overrides, a new same-entry property), then implemented tasks 4.2, 8.3, 10.3–10.6 and the updated 11.1–11.2.
 - **Kiro feature:** Spec iteration (changing an approved spec in response to real data), sub-agents, unit tests on real fixtures (三, 后, 号, 了, 中).
 - **Result:** 65/65 tests pass; build succeeds; `prompt-review.csv` lists all 300 prompts with every alternative grouped by entry.
-- **Review:** the default rule gave usable but often wrong senses. Claude pre-screened all 300 characters against the review file and suggested 48 overrides. Raghav approved all 48 as suggested, including the six marked "your call" (觉, 地, 本, 所, 现, 然). `reviewedBy` records exactly that: "Raghav (approved Claude suggestions)". Notable fixes: 比 had defaulted to a vulgar euphemism (now "to compare"); wrong readings for 说, 听, 看, 要, 跑, 作, 行; rare senses for 号, 后, 几, 打, 电, 店, 跟, 热, 太, 字. All overrides select existing CC-CEDICT senses by index; the build validated every index.
+- **Review:** the default rule gave usable but often wrong senses. Claude pre-screened all 300 characters against the review file and suggested 48 overrides. All 48 were approved as suggested, including the six marked "your call" (觉, 地, 本, 所, 现, 然). `reviewedBy` records exactly that: "approved (Claude-suggested)". Notable fixes: 比 had defaulted to a vulgar euphemism (now "to compare"); wrong readings for 说, 听, 看, 要, 跑, 作, 行; rare senses for 号, 后, 几, 打, 电, 店, 跟, 热, 太, 字. All overrides select existing CC-CEDICT senses by index; the build validated every index.
 - **Still to handle (display, not data):** 午 has only a long astrology-style gloss, and some glosses contain dictionary notes like "(CL:棵[ke1])". These will be trimmed by a display rule in the game-UI spec; the stored data stays identical to the source.
 - **Next:** tasks 13–14, property-based tests.
 
@@ -156,7 +156,7 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 - **What I did:** Ran tasks 16–20: an integration test on the real data, the end-to-end build, the README, and the final checkpoint.
 - **Kiro feature:** Spec task execution; property checks run against the real output.
 - **Result:** **66/66 tasks done, 129 tests across 25 files**, `tsc` clean. The integration test checks Properties 8, 9, 11–16 and 18–22 on all 300 real records; all pass. Kiro noticed the 48 overrides and adjusted the checks correctly (Property 20 only for the 252 default prompts; reviewer attribution for the 48).
-- **Review fixes (no credits):** added the MIT licence file for the HSK character list (`data/raw/hsk30/LICENSE`); made the README say exactly how the overrides were made (Claude-suggested, approved by Raghav). Kiro's summary guessed 了 was overridden; it wasn't (it keeps the default "(completed action marker)").
+- **Review fixes (no credits):** added the MIT licence file for the HSK character list (`data/raw/hsk30/LICENSE`); made the README say exactly how the overrides were made (Claude-suggested, then approved). Kiro's summary guessed 了 was overridden; it wasn't (it keeps the default "(completed action marker)").
 - **Credits:** 170 of 4,000 hackathon credits used in total (plus 25 of the 50 free-tier credits before they arrived). Tasks 13–20 took 83 (property and smoke tests, integration test, README); everything before took 87.
 - **Spec 1 in numbers:** 300 characters · 3 datasets + 1 list, all pinned · 22 designed properties (21 tested here, 1 deferred) · 129 tests · 10/10 deliberate bugs caught · deterministic across Mac and Linux.
 
@@ -178,7 +178,7 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   3. hanzi-writer has **no "hint shown" event**. Hint use is now derived from `mistakesOnStroke` reaching the threshold.
   4. "Give up" could count extra mistakes during the reveal. Now `cancelQuiz()` runs before `animateCharacter()`.
   - Added one test that uses the **real** hanzi-writer (not mocked) to prove our stroke data loads offline.
-- **Task list (18 tasks, no optional tests) review:** pinned versions compatible with Vitest 2.1.9 (Vite 5.4, React plugin 4.3, Tailwind 3.4 with its v3 setup, React 18.3, plus `@testing-library/dom`). hanzi-writer 3.7.3 was confirmed on npm (MIT). Task 18 (play one Séance with a mouse) is marked as Raghav's manual check, so Kiro can't write that log entry for him.
+- **Task list (18 tasks, no optional tests) review:** pinned versions compatible with Vitest 2.1.9 (Vite 5.4, React plugin 4.3, Tailwind 3.4 with its v3 setup, React 18.3, plus `@testing-library/dom`). hanzi-writer 3.7.3 was confirmed on npm (MIT). Task 18 (play one Séance with a mouse) is marked as a human manual check, so Kiro can't write that log entry.
 - **Credits:** 212 of 4,000 used in total. Spec 2 planning (requirements, analysis, design, tasks and their revisions) took 42.
 - **Next:** task 1 (app scaffold, workspace, both test projects) and confirm the 129 data tests still pass.
 
