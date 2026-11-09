@@ -179,6 +179,7 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   4. "Give up" could count extra mistakes during the reveal. Now `cancelQuiz()` runs before `animateCharacter()`.
   - Added one test that uses the **real** hanzi-writer (not mocked) to prove our stroke data loads offline.
 - **Task list (18 tasks, no optional tests) review:** pinned versions compatible with Vitest 2.1.9 (Vite 5.4, React plugin 4.3, Tailwind 3.4 with its v3 setup, React 18.3, plus `@testing-library/dom`). hanzi-writer 3.7.3 was confirmed on npm (MIT). Task 18 (play one Séance with a mouse) is marked as Raghav's manual check, so Kiro can't write that log entry for him.
+- **Credits:** 212 of 4,000 used in total. Spec 2 planning (requirements, analysis, design, tasks and their revisions) took 42.
 - **Next:** task 1 (app scaffold, workspace, both test projects) and confirm the 129 data tests still pass.
 
 ---
