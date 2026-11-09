@@ -160,6 +160,27 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 - **Credits:** 170 of 4,000 hackathon credits used in total (plus 25 of the 50 free-tier credits before they arrived). Tasks 13–20 took 83 (property and smoke tests, integration test, README); everything before took 87.
 - **Spec 1 in numbers:** 300 characters · 3 datasets + 1 list, all pinned · 22 designed properties (21 tested here, 1 deferred) · 129 tests · 10/10 deliberate bugs caught · deterministic across Mac and Linux.
 
+## Nov 9, 2026: Spec 2 (`ghost-game-core`): requirements, analysis, design, tasks
+
+- **What I did:** Started the second spec (Spec agent → Build a Feature → Requirements first): the first playable game, with the legend intro, a 10-ghost Nightly Séance, Write mode with live stroke checking, the haunting scheduler, display cleanup of prompts, and progress saved in the browser. Reviewed each phase before moving on.
+- **Kiro feature:** Specs (requirements → design → tasks), the **requirements analysis tool**, steering.
+- **Requirements review caught five gaps** in Kiro's first draft:
+  1. "Correct" meant *any* finished character, even with every stroke hinted. Replaced with three outcomes: **clean** (no hints, ≤ 2 mistakes), **struggled** (hints or more mistakes; laid to rest but scheduled as missed) and **gave up**.
+  2. The scheduler had properties but no algorithm. Added an interval ladder (1, 3, 7, 14, 30, 60 days; a miss resets with a 10-minute relearn delay) and a precise session-filling order.
+  3. No "give up" control or rule.
+  4. Saved progress wasn't versioned. Added `schemaVersion` with migrate-or-reset.
+  5. The cleanup missed "Taiwan pr. […]" notes. The legend now names its source: *Huainanzi*, 天雨粟，鬼夜哭.
+  - A second review found an edge case in session filling: a player with 2 practised characters would get only 7 ghosts. Added a final "fill with more new characters" step and a property test that a session always has exactly 10.
+- **Requirements analysis tool:** asked four clarifying questions. Answers: mistake counting is scoped to the stroke event; the legend can only be re-viewed outside a session (no pause/resume); unknown schema versions always reset (migrate only known older versions); and the 8.7 property-test list had been written as sub-bullets the analyser couldn't read, so it was rewritten inline as 11 numbered cases.
+- **Design review caught four implementation bugs before any code existed:**
+  1. The node test project would also have collected the new app tests (no `include` set), running browser tests under node.
+  2. A separate `app/package.json` would need a second `npm install`. Switched to **npm workspaces**.
+  3. hanzi-writer has **no "hint shown" event**. Hint use is now derived from `mistakesOnStroke` reaching the threshold.
+  4. "Give up" could count extra mistakes during the reveal. Now `cancelQuiz()` runs before `animateCharacter()`.
+  - Added one test that uses the **real** hanzi-writer (not mocked) to prove our stroke data loads offline.
+- **Task list (18 tasks, no optional tests) review:** pinned versions compatible with Vitest 2.1.9 (Vite 5.4, React plugin 4.3, Tailwind 3.4 with its v3 setup, React 18.3, plus `@testing-library/dom`). hanzi-writer 3.7.3 was confirmed on npm (MIT). Task 18 (play one Séance with a mouse) is marked as Raghav's manual check, so Kiro can't write that log entry for him.
+- **Next:** task 1 (app scaffold, workspace, both test projects) and confirm the 129 data tests still pass.
+
 ---
 
 ## Template for new entries
