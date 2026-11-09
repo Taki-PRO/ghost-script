@@ -222,10 +222,10 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
 - [ ] 17. Checkpoint — full suite passes
   - Run `npm test` from the repo root: the 129 data tests plus all app unit, property, component, and integration tests pass; `tsc` is clean across root and app; no `any` in app source. Ask the user if any questions arise.
 
-- [ ] 18. Manual verification — one full Nightly Séance with a mouse (NON-CODING, performed by Raghav)
-  - This is the single manual, non-coding task. This manual play-through is performed by Raghav (human), not by Kiro. Kiro/the agent SHALL run nothing for this task and SHALL NOT append the `kiro-log.md` entry
-  - Raghav runs the Vite dev server (`npm run dev` in `app/` or via the workspace) and plays ONE full Nightly Séance with a MOUSE (laptop Write mode), verifying: the legend intro appears on first visit, the session has 10 ghosts, live per-stroke checking works, at least one `clean`, one `struggled`, and one `gave-up` outcome occur, each ghost is laid to rest, the session summary shows the laid-to-rest count, and progress persists across a page reload
-  - Raghav records the result (date, what worked, any issues) in `kiro-log.md` at the repo root himself, without deleting existing entries (keep `kiro-log.md` updated per the structure steering doc)
+- [ ] 18. Manual verification — one full Nightly Séance with a mouse (NON-CODING, performed by a human)
+  - This is the single manual, non-coding task. This manual play-through is performed by a human, not by Kiro. Kiro/the agent SHALL run nothing for this task and SHALL NOT append the `kiro-log.md` entry
+  - The human tester runs the Vite dev server (`npm run dev` in `app/` or via the workspace) and plays ONE full Nightly Séance with a MOUSE (laptop Write mode), verifying: the legend intro appears on first visit, the session has 10 ghosts, live per-stroke checking works, at least one `clean`, one `struggled`, and one `gave-up` outcome occur, each ghost is laid to rest, the session summary shows the laid-to-rest count, and progress persists across a page reload
+  - The human tester records the result (date, what worked, any issues) in `kiro-log.md` at the repo root themselves, without deleting existing entries (keep `kiro-log.md` updated per the structure steering doc)
   - _Requirements: 1.1, 3.1, 3.3, 5.1, 7.6_
 
 ## Notes
@@ -236,7 +236,7 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
 - Property tests use fast-check at ≥100 runs each and are tagged `// Feature: ghost-game-core, Property N: <title>`, one test per design Property (1–11).
 - `hanzi-writer` is pinned EXACT `3.7.3` in `app/package.json` and always loaded via our `makeCharDataLoader` from `characters.json` — never the CDN. Task 8 proves this against the real library offline.
 - The writing surface uses `touch-action: none` with Pointer Events; Give-up ordering is strictly `cancelQuiz` → `animateCharacter` → resolve `'gave-up'`; `hintShown` is derived inside `onMistake` at the stroke-hint threshold.
-- Task 18 is the ONLY manual, non-coding task; every other task is a coding task. Task 18 is performed by Raghav (human) — Kiro does not run it and does not write that `kiro-log.md` entry; Raghav records it himself.
+- Task 18 is the ONLY manual, non-coding task; every other task is a coding task. Task 18 is performed by a human — Kiro does not run it and does not write that `kiro-log.md` entry; the human tester records it.
 - Do not add `.kiro/` to `.gitignore`; it must stay in the repo for judging.
 - Run tasks one at a time and review each result. Do not use "Run All Tasks".
 
