@@ -91,7 +91,7 @@ flowchart TD
 └── app/
     ├── package.json         # app React/Vite + test deps (installed via the root workspace)
     ├── vite.config.ts
-    ├── vitest.config.ts     # APP project: include ['app/**/*.test.{ts,tsx}'], environment 'jsdom'
+    ├── vitest.config.ts     # APP project (root = app/): include ['**/*.test.{ts,tsx}'], environment 'jsdom'
     └── ...
 
 app/
@@ -520,9 +520,10 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    include: ['app/**/*.test.{ts,tsx}'],
+    include: ['**/*.test.{ts,tsx}'], // relative to app/ (the project root)
+    exclude: ['node_modules/**'],
     environment: 'jsdom',
-    setupFiles: ['app/test/setup.ts'],
+    setupFiles: ['test/setup.ts'],
   },
 });
 ```
@@ -533,14 +534,14 @@ The root `vitest.workspace.ts` references BOTH projects — the root `vitest.con
 // vitest.workspace.ts (repo root)
 export default [
   './vitest.config.ts', // project A (NODE): include ['tests/**/*.test.ts'], environment 'node' — the 129 data tests (unchanged)
-  './app',              // project B (APP): app/vitest.config.ts → include ['app/**/*.test.{ts,tsx}'], environment 'jsdom'
+  './app',              // project B (APP): app/vitest.config.ts → include ['**/*.test.{ts,tsx}'] relative to app/, environment 'jsdom'
 ];
 ```
 
-Because project A's glob (`tests/**/*.test.ts`) and project B's glob (`app/**/*.test.{ts,tsx}`) share no paths, the two projects are mutually exclusive: the node project collects only the data tests, the app project collects only the app tests.
+Because project A's glob (`tests/**/*.test.ts`) and project B's glob (`**/*.test.{ts,tsx}`, resolved from the `app/` project root) share no paths, the two projects are mutually exclusive: the node project collects only the data tests, the app project collects only the app tests.
 
 - **Project A (`tests/`, `environment: 'node'`)** — the existing 129 character-dataset tests, collected only by the root `vitest.config.ts`. They are NOT moved or modified; they keep passing exactly as before. The root `package.json` `test` script stays `vitest run` (now workspace-aware).
-- **Project B (`app/`, `environment: 'jsdom'`)** — new app tests. `app/vitest.config.ts` sets `environment: 'jsdom'`, registers a setup file (`app/test/setup.ts`) importing `@testing-library/jest-dom`, and uses `@testing-library/react` for component tests. The app has its OWN `app/package.json` (React/Vite deps) and `app/vite.config.ts` / `app/vitest.config.ts`; the root workspace references them.
+- **Project B (`app/`, `environment: 'jsdom'`)** — new app tests. `app/vitest.config.ts` sets `environment: 'jsdom'`, registers a setup file (`app/test/setup.ts`) importing `@testing-library/jest-dom/vitest`, and uses `@testing-library/react` for component tests. The app has its OWN `app/package.json` (React/Vite deps) and `app/vite.config.ts` / `app/vitest.config.ts`; the root workspace references them.
 
 Dependencies install through the npm workspace: the root `package.json` declares `"workspaces": ["app"]`, so a single `npm install` at the repo root installs both the root (pipeline/test) dev deps and the app deps, and `npm test` works from the root. New dev dependencies are pinned (exact versions, no caret): `jsdom`, `@testing-library/react`, `@testing-library/jest-dom`, `@testing-library/user-event`, plus the pinned runtime dep `hanzi-writer@3.7.3` (exact) listed in `app/package.json`. fast-check (already pinned at the root) is reused for property tests.
 
