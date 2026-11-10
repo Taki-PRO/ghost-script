@@ -12,6 +12,44 @@
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794324499388
       }
+    ],
+    "2.1 Implement `app/src/engine/config.ts`": [
+      {
+        "executionId": "3a7efe27-9d2e-4ce1-bb5e-e1419757a73f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794325556818
+      },
+      {
+        "executionId": "3a7efe27-9d2e-4ce1-bb5e-e1419757a73f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794325609558
+      }
+    ],
+    "9.1 Implement `app/src/styles/theme.ts` and dark-theme Tailwind tokens": [
+      {
+        "executionId": "3a7efe27-9d2e-4ce1-bb5e-e1419757a73f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794325557532
+      },
+      {
+        "executionId": "3a7efe27-9d2e-4ce1-bb5e-e1419757a73f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794325610194
+      }
+    ],
+    "2. Engine config module": [
+      {
+        "executionId": "3a7efe27-9d2e-4ce1-bb5e-e1419757a73f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794325609590
+      }
+    ],
+    "9. Theme tokens": [
+      {
+        "executionId": "3a7efe27-9d2e-4ce1-bb5e-e1419757a73f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794325610225
+      }
     ]
   }
 }
