@@ -6,7 +6,7 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
 
 ## Tasks
 
-- [ ] 1. App scaffold, npm workspace, and dual-project test bring-up
+- [x] 1. App scaffold, npm workspace, and dual-project test bring-up
   - Scaffold a Vite + React + TypeScript app under `app/` with `strict: true`: create `app/package.json`, `app/tsconfig.json`, `app/vite.config.ts`, `app/index.html`, `app/src/main.tsx`, `app/src/App.tsx` (placeholder), and a Tailwind CSS setup (`app/tailwind.config.ts`, `app/postcss.config.js`, `app/src/styles/index.css` with Tailwind directives)
   - In `app/package.json` pin EXACT versions (no caret) chosen to be compatible with the repo-root Vitest 2.1.9: dev `vite@5.4.x` (pick a concrete 5.4 patch, e.g. `5.4.11` — choose the latest 5.4 patch at implementation time), `@vitejs/plugin-react@4.3.x` (concrete 4.3 patch), `tailwindcss@3.4.x` (concrete 3.4 patch; v3-style config with `postcss` + `autoprefixer` as already planned); runtime `react@18.3.x` and `react-dom@18.3.x` (concrete 18.3 patch) UNLESS the chosen `@testing-library/react` version requires React 19 — in that case use the React version testing-library requires and note the deviation; runtime `hanzi-writer` EXACT `3.7.3`
   - Dev deps also include the testing-library set (`@testing-library/react`, `@testing-library/jest-dom`, `@testing-library/user-event`) PLUS `@testing-library/dom` (exact pin) as an explicit dev dependency (it is a peer of `@testing-library/react`), and `typescript`, `postcss`, `autoprefixer`, `jsdom` (all exact pins)
