@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Dark base. Colour is never the only signal: components pair colour tokens
+   with text/icon cues. */
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-background text-ink;
+  }
+}

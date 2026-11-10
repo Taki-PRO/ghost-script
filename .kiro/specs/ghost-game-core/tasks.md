@@ -21,8 +21,8 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
   - Acceptance: a single root `npm install` installs root + app deps; `npm test` runs BOTH the existing 129 data tests (node project, unchanged) AND the trivial app test (jsdom project), all passing; the node project does NOT collect app tests and the app project does NOT collect data tests
   - _Requirements: 8.1, 8.3, 8.6, 8.9_
 
-- [ ] 2. Engine config module
-  - [ ] 2.1 Implement `app/src/engine/config.ts`
+- [x] 2. Engine config module
+  - [x] 2.1 Implement `app/src/engine/config.ts`
     - Define `DAY_MS`, the `EngineConfig` interface (`cleanMistakeThreshold`, `strokeHintAfterConsecutiveMisses`, `intervalLadderMs`, `relearnDelayMs`, `newPerSessionCap`, `sessionSize`), and `DEFAULT_CONFIG` exactly as in the design
     - All constants live here; no `any`; readonly fields
     - _Requirements: 5.8, 6.2, 6.3, 6.5, 8.1, 8.2_
@@ -149,8 +149,8 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
     - Success criterion: using `makeCharDataLoader(dataset)` built from the real `characters.json`, hanzi-writer reports the character data LOADED for 我, 口, and 爱 (e.g. via its char-data-loaded signal / the loader resolving each to a non-empty `strokes` array and the writer reaching a ready state). Do NOT assert pixel/SVG paint
     - _Requirements: 2.1, 2.5, 5.1, 8.3_
 
-- [ ] 9. Theme tokens
-  - [ ] 9.1 Implement `app/src/styles/theme.ts` and dark-theme Tailwind tokens
+- [x] 9. Theme tokens
+  - [x] 9.1 Implement `app/src/styles/theme.ts` and dark-theme Tailwind tokens
     - A small, contrast-checked token set (background, surface, text, accent, success/accepted, error/rejected) wired into `app/tailwind.config.ts`; colour is never the only signal (tokens pair with text/icon cues used by components)
     - _Requirements: 8.5_
 
