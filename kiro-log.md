@@ -217,6 +217,17 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 - **Credits:** 265 of 4,000 used in total (53 since Spec 2 planning: tasks 1, 2.1, 9.1, 3, 4 and this change).
 - **Next:** tasks 5.1 (session selection), 6.1 (save data) and 7.1 (stroke-data loader).
 
+## Nov 11, 2026: Spec 2, tasks 5–7: session picker, save data, stroke-data loader
+
+- **What I did:** Ran tasks 5 (5.1–5.7: choosing the 10 characters for a Séance), 6 (6.1–6.2: saving progress in the browser) and 7 (7.1–7.2: loading our own stroke data into hanzi-writer), with their tests.
+- **Kiro feature:** Spec task execution with parallel sub-agents; property-based tests (Properties 4, 6, 9, 10, 11).
+- **Result:** 137 new app tests; **329 tests pass** (129 data + 200 app); `tsc` clean for root and app; no `any`. Also passes on Linux with Node 22, not just his Mac's Node 26. No property test found a code bug.
+  - **Spec bug Kiro caught:** Property 9 ("at most 5 new characters whenever something is due") contradicts Req 6.5(d), which tops up a short session with extra new characters so it still has 10. The code follows the requirement; the property wording needs fixing.
+  - **Ordering gap Kiro caught:** the app only sees `characters.json`, which is sorted by codepoint, so new characters would be introduced in Unicode order. The HSK list is alphabetical by pinyin, so neither is a learning order. Needs a decision before task 16.
+  - **Test-environment bug Kiro caught:** on Node 26 the built-in `localStorage` hid jsdom's, and its first fix (a Node flag in the app's Vitest config) never reached the test workers, because Vitest 2.1.9 ignores that setting inside a workspace project. 3 storage tests failed under the real `npm test` while passing when run alone. Fixed with a small typed shim in `app/test/setup.ts`.
+  - Matched hanzi-writer 3.7.3's real loader signature `(char, onLoad, onError)` instead of the two-argument version in the design.
+- **Next:** fix the Property 9 wording and stale design text, settle the learning order, then the UI tasks.
+
 ---
 
 ## Template for new entries
