@@ -187,7 +187,8 @@ export interface ReviewEntry {
 
 /**
  * Apply a review outcome to an entry at time `now`, returning a NEW entry.
- * - clean  → step advances by 1 (capped at ladder top), nextDue = now + ladder[newStep]. Req 6.2.
+ * - clean after a miss (prior last Outcome struggled/gave-up) or for a new character → step 0 (1-day rung);
+ *   otherwise step advances by exactly one (capped at ladder top). nextDue = now + ladder[newStep]. Req 6.2.
  * - missed → step resets to 0, nextDue = now + relearnDelayMs (10 min). Req 6.3.
  * `prior` may be undefined for a first-ever review (new character). Pure.
  */
@@ -284,7 +285,7 @@ export function makeCharDataLoader(
 export function cleanupMeaning(raw: string): string;
 ```
 
-Note patterns removed (Req 4.2): classifier notes `(CL:...)` and `CL:...`; bracketed pinyin references `[pin1 yin1]`; example clauses `(e.g. ...)`; and pronunciation notes `Taiwan pr. [...]`, `(Taiwan pr. ...)`, and `also pr. [...]`. After removals, surrounding whitespace is trimmed and internal runs collapsed to a single space. `prompt.pinyin` is displayed as stored and is never passed through cleanup (Req 4.7).
+Note patterns removed (Req 4.2): classifier notes `(CL:...)` and `CL:...`; bracketed pinyin references `[pin1 yin1]`; example clauses `(e.g. ...)`; and pronunciation notes `Taiwan pr. [...]`, `(Taiwan pr. ...)`, and `also pr. [...]`; and a note of a single word followed by `pr. [...]`, with or without parentheses (e.g. `colloquial pr. [nei4]`, `(colloquial pr. [nei4])`). After removals, surrounding whitespace is trimmed and internal runs collapsed to a single space. `prompt.pinyin` is displayed as stored and is never passed through cleanup (Req 4.7).
 
 ### `app/src/storage/storage.ts` (wrapped localStorage, Req 7)
 
@@ -430,7 +431,7 @@ The scheduler and prompt-cleanup functions are pure (no I/O, injected clock), wh
 
 ### Property 7: The interval ladder never skips a step on a clean review
 
-*For any* prior entry at step `s` below the top, a `clean` review SHALL set the new step to exactly `min(s + 1, topStep)` — advancing by exactly one and never skipping a step — and the resulting ladder-interval sequence over consecutive clean reviews SHALL be non-decreasing.
+*For any* prior entry at step `s` below the top whose last Outcome was NOT a miss, a `clean` review SHALL set the new step to exactly `min(s + 1, topStep)` — advancing by exactly one and never skipping a step. *For any* character with no history, or whose prior last Outcome was a miss (`struggled`/`gave-up`), a `clean` review SHALL set step 0 (the 1-day rung). The resulting ladder-interval sequence over consecutive clean reviews SHALL remain non-decreasing.
 
 **Validates: Requirements 6.2, 6.8, 8.7**
 

@@ -31,9 +31,11 @@ export type ReviewHistory = Readonly<Record<string, ReviewEntry>>;
  * Apply one review result. Pure.
  *
  * Step model:
- * - A character with no history is at virtual step -1, so its first clean
- *   review lands on step 0 (interval ladder[0], e.g. 1 day).
- * - Clean (Req 6.2): newStep = min(priorStep + 1, top); nextDue = now + ladder[newStep].
+ * - A new character (no prior entry) or one whose last outcome was a miss
+ *   (struggled / gave-up) lands on step 0 on its next clean review
+ *   (interval ladder[0], e.g. 1 day).
+ * - Otherwise clean (Req 6.2) advances by exactly one:
+ *   newStep = min(priorStep + 1, top); nextDue = now + ladder[newStep].
  * - Struggled / gave-up (Req 6.3): step = 0; nextDue = now + relearnDelayMs.
  * - Offsets are clamped to be non-negative (Req 6.4); an empty ladder yields 0.
  * - A corrupt prior step is clamped into [0, top] before advancing.
@@ -50,9 +52,11 @@ export function applyReview(
   let step: number;
   let offset: number;
   if (outcome === 'clean') {
-    const priorStep = prior
-      ? Math.min(Math.max(Number.isFinite(prior.step) ? Math.trunc(prior.step) : 0, 0), top)
-      : -1;
+    const afterMiss = prior !== undefined && prior.lastOutcome !== 'clean';
+    const priorStep =
+      prior && !afterMiss
+        ? Math.min(Math.max(Number.isFinite(prior.step) ? Math.trunc(prior.step) : 0, 0), top)
+        : -1;
     step = Math.min(priorStep + 1, top);
     offset = ladder[step] ?? 0;
   } else {

@@ -39,7 +39,8 @@ describe('Property 7: ladder never skips a step on a clean review', () => {
           const s = stepSeed % (top + 1);
           const prior: ReviewEntry = { step: s, lastOutcome, nextDue: dueSeed, history };
           const result = applyReview(prior, 'clean', now, config);
-          const expected = Math.min(s + 1, top);
+          // Prior clean advances exactly one (capped); prior miss lands on step 0.
+          const expected = lastOutcome === 'clean' ? Math.min(s + 1, top) : 0;
           expect(result.step).toBe(expected);
           expect(result.nextDue).toBe(now + config.intervalLadderMs[expected]);
 
@@ -64,16 +65,18 @@ describe('Property 7: ladder never skips a step on a clean review', () => {
           let entry: ReviewEntry | undefined = miss
             ? applyReview(undefined, miss, start, config)
             : undefined;
-          let prevStep = entry ? entry.step : -1;
+          // The first clean (from nothing or a miss) lands on step 0, so the
+          // "previous" step is virtually -1 for both starting points.
+          let prevStep = -1;
           let now = entry ? entry.nextDue : start;
           let prevInterval = -Infinity;
 
           for (const gap of gaps) {
-            now += gap; // strictly later or equal to previous nextDue
+            now += gap; // later than or equal to previous nextDue
             const next: ReviewEntry = applyReview(entry, 'clean', now, config);
             expect(next.step).toBe(Math.min(prevStep + 1, top));
             expect(next.step - prevStep).toBeLessThanOrEqual(1);
-            expect(next.step).toBeGreaterThanOrEqual(prevStep);
+            expect(next.step).toBeGreaterThanOrEqual(Math.max(prevStep, 0));
             const interval = next.nextDue - now;
             expect(interval).toBe(config.intervalLadderMs[next.step]);
             expect(interval).toBeGreaterThanOrEqual(prevInterval);
