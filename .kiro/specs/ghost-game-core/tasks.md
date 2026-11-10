@@ -14,8 +14,8 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
   - Add `"workspaces": ["app"]` to the root `package.json`; keep the root `"test": "vitest run"` script unchanged
   - After the root `npm install`, run `npm ls` (and/or `npm ls --workspaces`) to check peer-dependency compatibility, and REPORT any peer-dependency warnings or conflicts (e.g. React version peers for testing-library, Vite plugin peers). Resolve or explicitly document any warning before moving on
   - Create root `vitest.config.ts` (NODE project): `include: ['tests/**/*.test.ts']`, `environment: 'node'`
-  - Create `app/vitest.config.ts` (APP project): `include: ['app/**/*.test.{ts,tsx}']`, `environment: 'jsdom'`, `setupFiles: ['app/test/setup.ts']`
-  - Create `app/test/setup.ts` importing `@testing-library/jest-dom`
+  - Create `app/vitest.config.ts` (APP project): `name: 'app'`, `include: ['**/*.test.{ts,tsx}']`, `exclude: ['node_modules/**']`, `environment: 'jsdom'`, `setupFiles: ['test/setup.ts']` (paths are relative to `app/`, because the `./app` workspace entry makes `app/` the project root)
+  - Create `app/test/setup.ts` importing `@testing-library/jest-dom/vitest`
   - Create root `vitest.workspace.ts` referencing BOTH projects (`'./vitest.config.ts'` and `'./app'`)
   - Add one trivial app test `app/src/smoke.test.ts` asserting `true` to prove the app jsdom project runs
   - Acceptance: a single root `npm install` installs root + app deps; `npm test` runs BOTH the existing 129 data tests (node project, unchanged) AND the trivial app test (jsdom project), all passing; the node project does NOT collect app tests and the app project does NOT collect data tests
@@ -230,7 +230,7 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
 
 ## Notes
 
-- The existing 129 character-dataset tests under `tests/` are never moved or modified; task 1 only adds the workspace and the app jsdom project around them, and the node project's `tests/**/*.test.ts` glob and the app project's `app/**/*.test.{ts,tsx}` glob never overlap.
+- The existing 129 character-dataset tests under `tests/` are never moved or modified; task 1 only adds the workspace and the app jsdom project around them, and the node project's `tests/**/*.test.ts` glob and the app project's `**/*.test.{ts,tsx}` glob (relative to `app/`) never overlap.
 - The engine (`config`, `promptCleanup`, `scheduler`) is pure and clock-injected: engine functions take `now: number` and never call `Date.now()`; only the UI (App) reads the real clock and performs I/O.
 - All tests are required — there are no optional tests and nothing is marked with `*`. Tests live next to the code they cover and are written in the same task group as that code.
 - Property tests use fast-check at ≥100 runs each and are tagged `// Feature: ghost-game-core, Property N: <title>`, one test per design Property (1–11).

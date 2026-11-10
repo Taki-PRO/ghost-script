@@ -182,6 +182,15 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 - **Credits:** 212 of 4,000 used in total. Spec 2 planning (requirements, analysis, design, tasks and their revisions) took 42.
 - **Next:** task 1 (app scaffold, workspace, both test projects) and confirm the 129 data tests still pass.
 
+## Nov 10, 2026: Spec 2, task 1: app scaffold and dual test projects
+
+- **What I did:** Ran task 1 alone: a Vite + React + TypeScript app in `app/`, npm workspaces, and a Vitest workspace with two projects (node for the data tests, jsdom for the app).
+- **Kiro feature:** Spec task execution.
+- **Result:** Exact pins as planned: vite 5.4.21, @vitejs/plugin-react 4.3.4, tailwindcss 3.4.19, react 18.3.1, hanzi-writer 3.7.3, jsdom 31.0.0, @testing-library/react 16.3.3 and @testing-library/dom 10.4.2. `npm ls` shows no peer warnings. **130 tests pass** (129 data + 1 app smoke test); `tsc` is clean for root and app. Verified again on a fresh clean install on Linux.
+  - **Bug Kiro caught:** the design's app test glob (`app/**/*.test.{ts,tsx}`) matched nothing, because the `./app` workspace entry makes `app/` the project root. App tests would have been **silently skipped** while the run still looked green. Fixed with globs relative to `app/`, plus project names (`node`, `app`) in the output so it's visible which project ran each file. design.md and tasks.md updated to match.
+  - **`npm audit`:** 6 findings (2 critical, 1 high, 3 moderate), all in development tooling: vitest 2.1.9, its tinypool/mocker/vite-node, vite 5.4.21 and esbuild. None of it ships in the built app, which is static files. The fixes need vitest 5 and vite 8, which would break the pinned setup mid-hackathon. Decision: keep the pins; don't run the Vitest UI; never expose the dev server to a network (`--host`); test on iPad through the deployed site instead. Revisit upgrades after judging.
+- **Next:** tasks 2.1 (engine config) and 9.1 (theme tokens).
+
 ---
 
 ## Template for new entries
