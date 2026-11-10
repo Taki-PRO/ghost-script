@@ -199,6 +199,24 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   - Git: the sync happened after Kiro had already edited `tasks.md` while a newer version was on GitHub; committing first and then syncing merged both cleanly, with no conflict markers.
 - **Next:** tasks 3 (prompt cleanup with its property tests) and 4 (scheduler review logic with its property tests).
 
+## Nov 11, 2026: Spec 2, tasks 3 and 4: prompt cleanup and scheduler
+
+- **What I did:** Ran tasks 3 (3.1–3.5: clean-up of dictionary notes in the ghost's clue) and 4 (4.1–4.5: spaced-repetition review logic), each with its property tests.
+- **Kiro feature:** Spec task execution with parallel sub-agents (five test files at once, each with its own inline generators so no two agents wrote the same file); property-based tests.
+- **Result:** 45 new app tests; **188 tests pass**; `tsc` clean for root and app; no `any` in app source. The property tests found no bugs, so no code or test was changed to make them pass.
+  - Cleanup checked against all 300 real clues: 13 change, and none still contain `CL:`, `[` or `e.g.` (e.g. `mountain; hill (CL:座[zuo4])` → `mountain; hill`).
+  - Kiro widened the `pr.` rule beyond the spec because real data needed it: 那 was left with `(colloquial pr. )`. Kept, and added to Req 4.2.
+  - Kiro flagged that a character relearned after a miss jumped straight to the 3-day gap, skipping 1 day.
+
+## Nov 11, 2026: Requirements change: relearned characters restart at 1 day
+
+- **What I did:** Changed the rule so a clean review after a miss lands on step 0 (1 day), the same as a new character, instead of 3 days. Approved by Takshil.
+- **Kiro feature:** Spec-driven change: requirements (AC 6.2, AC 4.2), design (Property 7), code and tests updated together in one pass.
+- **Why:** A character forgotten ten minutes ago shouldn't wait 3 days; mainstream spaced-repetition apps also send relearned cards back to about a day.
+- **Result:** The rule reads the last outcome rather than the step, so it also holds for corrupt or hand-built entries. Sequence miss → clean → clean → clean gives steps 0, 0, 1, 2. **192 tests pass**; `tsc` clean. Leftover descriptions of the old rule in tasks.md and design.md updated to match.
+- **Credits:** 265 of 4,000 used in total (53 since Spec 2 planning: tasks 1, 2.1, 9.1, 3, 4 and this change).
+- **Next:** tasks 5.1 (session selection), 6.1 (save data) and 7.1 (stroke-data loader).
+
 ---
 
 ## Template for new entries
