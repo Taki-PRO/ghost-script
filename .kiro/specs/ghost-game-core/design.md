@@ -551,7 +551,7 @@ Dependencies install through the npm workspace: the root `package.json` declares
 Example-based tests, kept lean because property tests cover broad input ranges:
 
 - **`promptCleanup`** — each note pattern (`(CL:...)`, `CL:...`, `[pin1 yin1]`, `(e.g. ...)`, `Taiwan pr. [...]`, `(Taiwan pr. ...)`, `also pr. [...]`) removed on representative real meanings; whitespace collapse; the empty-result fallback.
-- **`scheduler`** — `applyReview` for clean (step up, capped at 5) and missed (reset + 10 min); `selectSession` ordering across the four bands of Req 6.5 with concrete fixtures.
+- **`scheduler`** — `applyReview` for clean (step 0 when new or after a miss, otherwise step up, capped at 5) and missed (reset + 10 min); `selectSession` ordering across the four bands of Req 6.5 with concrete fixtures.
 - **`storage`** — migration from a known older `schemaVersion`; reset on unknown/newer/corrupt; no-op on simulated write failure; `recordOutcome` persists immediately.
 - **`charDataLoader`** — `toHanziWriterData` projection; `loadDataset` failure results for fetch/parse/shape; `makeCharDataLoader` resolves known chars and returns undefined for unknown.
 

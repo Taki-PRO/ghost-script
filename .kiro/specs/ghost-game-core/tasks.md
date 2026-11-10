@@ -58,7 +58,7 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
 - [x] 4. Haunting scheduler — review application and next-due
   - [x] 4.1 Implement review types and `applyReview` / `nextDue` in `app/src/engine/scheduler.ts`
     - Define `Outcome`, `AttemptRecord`, `ReviewEntry`, `ReviewHistory`
-    - `applyReview(prior, outcome, now, config)` — clean advances step by 1 capped at ladder top, `nextDue = now + ladder[newStep]`; missed resets step to 0, `nextDue = now + relearnDelayMs`; pure, no `Date.now()`
+    - `applyReview(prior, outcome, now, config)` — clean lands on step 0 for a new character or after a prior miss, otherwise advances step by 1 capped at ladder top, `nextDue = now + ladder[newStep]`; missed resets step to 0, `nextDue = now + relearnDelayMs`; pure, no `Date.now()`
     - `nextDue(entry)` returns the entry's next-due timestamp
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.11_
 
@@ -74,7 +74,7 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
 
   - [x] 4.4 Write property test for the clean-review ladder step `app/src/engine/scheduler.ladder.property.test.ts`
     - `// Feature: ghost-game-core, Property 7: The interval ladder never skips a step on a clean review`
-    - fast-check, ≥100 runs; assert a clean review sets new step to `min(s+1, topStep)` and that the ladder-interval sequence over consecutive clean reviews is non-decreasing
+    - fast-check, ≥100 runs; assert a clean review sets new step to `min(s+1, topStep)` after a prior clean, and step 0 when there is no prior or the prior was a miss, and that the ladder-interval sequence over consecutive clean reviews is non-decreasing
     - **Validates: Requirements 6.2, 6.8, 8.7**
     - _Requirements: 6.2, 6.8, 8.6, 8.7_
 
