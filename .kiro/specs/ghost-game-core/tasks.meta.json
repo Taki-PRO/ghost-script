@@ -194,6 +194,159 @@
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794331976919
       }
+    ],
+    "6.1 Implement `app/src/storage/storage.ts`": [
+      {
+        "executionId": "7a728a7f-0ca1-4294-93bf-a483f4d7757f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794333645200
+      },
+      {
+        "executionId": "7a728a7f-0ca1-4294-93bf-a483f4d7757f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794333855424
+      }
+    ],
+    "5.1 Implement `selectSession` in `app/src/engine/scheduler.ts`": [
+      {
+        "executionId": "7a728a7f-0ca1-4294-93bf-a483f4d7757f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794333645227
+      },
+      {
+        "executionId": "7a728a7f-0ca1-4294-93bf-a483f4d7757f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794333855274
+      }
+    ],
+    "7.1 Implement `app/src/data/charDataLoader.ts`": [
+      {
+        "executionId": "7a728a7f-0ca1-4294-93bf-a483f4d7757f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794333645252
+      },
+      {
+        "executionId": "7a728a7f-0ca1-4294-93bf-a483f4d7757f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794333855554
+      }
+    ],
+    "5.2 Write unit tests for `selectSession` `app/src/engine/scheduler.selectSession.test.ts`": [
+      {
+        "executionId": "7a728a7f-0ca1-4294-93bf-a483f4d7757f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794333867349
+      },
+      {
+        "executionId": "7a728a7f-0ca1-4294-93bf-a483f4d7757f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794333971440
+      }
+    ],
+    "5.3 Write property test for missed-vs-clean ordering `app/src/engine/scheduler.missedVsClean.property.test.ts`": [
+      {
+        "executionId": "7a728a7f-0ca1-4294-93bf-a483f4d7757f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794333867507
+      },
+      {
+        "executionId": "7a728a7f-0ca1-4294-93bf-a483f4d7757f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794333971463
+      }
+    ],
+    "5.4 Write property test for deterministic selection `app/src/engine/scheduler.deterministic.property.test.ts`": [
+      {
+        "executionId": "7a728a7f-0ca1-4294-93bf-a483f4d7757f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794333867526
+      },
+      {
+        "executionId": "7a728a7f-0ca1-4294-93bf-a483f4d7757f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794333971602
+      }
+    ],
+    "5.5 Write property test for the new-per-session cap `app/src/engine/scheduler.newcap.property.test.ts`": [
+      {
+        "executionId": "7a728a7f-0ca1-4294-93bf-a483f4d7757f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794333867835
+      },
+      {
+        "executionId": "7a728a7f-0ca1-4294-93bf-a483f4d7757f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794333972473
+      }
+    ],
+    "5.6 Write property test for tie-breaking by list order `app/src/engine/scheduler.ties.property.test.ts`": [
+      {
+        "executionId": "7a728a7f-0ca1-4294-93bf-a483f4d7757f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794333868573
+      },
+      {
+        "executionId": "7a728a7f-0ca1-4294-93bf-a483f4d7757f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794333973289
+      }
+    ],
+    "5.7 Write property test for exactly-10 distinct ghosts `app/src/engine/scheduler.tenDistinct.property.test.ts`": [
+      {
+        "executionId": "7a728a7f-0ca1-4294-93bf-a483f4d7757f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794333979216
+      },
+      {
+        "executionId": "7a728a7f-0ca1-4294-93bf-a483f4d7757f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794334469067
+      }
+    ],
+    "6.2 Write unit tests `app/src/storage/storage.test.ts`": [
+      {
+        "executionId": "7a728a7f-0ca1-4294-93bf-a483f4d7757f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794333980308
+      },
+      {
+        "executionId": "7a728a7f-0ca1-4294-93bf-a483f4d7757f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794334469423
+      }
+    ],
+    "7.2 Write unit tests `app/src/data/charDataLoader.test.ts`": [
+      {
+        "executionId": "7a728a7f-0ca1-4294-93bf-a483f4d7757f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794333980952
+      },
+      {
+        "executionId": "7a728a7f-0ca1-4294-93bf-a483f4d7757f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794334470449
+      }
+    ],
+    "5. Haunting scheduler — session selection": [
+      {
+        "executionId": "7a728a7f-0ca1-4294-93bf-a483f4d7757f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794334469120
+      }
+    ],
+    "6. Storage module": [
+      {
+        "executionId": "7a728a7f-0ca1-4294-93bf-a483f4d7757f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794334469455
+      }
+    ],
+    "7. Character data loader (offline hanzi-writer wiring)": [
+      {
+        "executionId": "7a728a7f-0ca1-4294-93bf-a483f4d7757f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794334470488
+      }
     ]
   }
 }

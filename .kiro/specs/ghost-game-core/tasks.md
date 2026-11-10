@@ -84,61 +84,61 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
     - **Validates: Requirements 6.3, 8.7**
     - _Requirements: 6.3, 8.6, 8.7_
 
-- [ ] 5. Haunting scheduler — session selection
-  - [ ] 5.1 Implement `selectSession` in `app/src/engine/scheduler.ts`
+- [x] 5. Haunting scheduler — session selection
+  - [x] 5.1 Implement `selectSession` in `app/src/engine/scheduler.ts`
     - `selectSession(history, characterList, now, config)` — assembles up to `config.sessionSize` distinct characters in the Req 6.5 order: (a) due, most-overdue first; (b) new in list order capped at `newPerSessionCap` unless nothing is due; (c) soonest not-yet-due; (d) extra new in list order, cap ignored; all ties broken by character-list order; deterministic; pure, clock injected
     - _Requirements: 6.5, 6.6, 6.7, 6.10, 6.11_
 
-  - [ ] 5.2 Write unit tests for `selectSession` `app/src/engine/scheduler.selectSession.test.ts`
+  - [x] 5.2 Write unit tests for `selectSession` `app/src/engine/scheduler.selectSession.test.ts`
     - Concrete fixtures exercising each of the four bands and tie-breaking by list order
     - _Requirements: 6.5, 6.7_
 
-  - [ ] 5.3 Write property test for missed-vs-clean ordering `app/src/engine/scheduler.missedVsClean.property.test.ts`
+  - [x] 5.3 Write property test for missed-vs-clean ordering `app/src/engine/scheduler.missedVsClean.property.test.ts`
     - `// Feature: ghost-game-core, Property 4: A missed character is never scheduled later than a clean one with the same history`
     - fast-check, ≥100 runs; two characters, identical prior history, same `now`: missed `nextDue` ≤ clean `nextDue`
     - **Validates: Requirements 6.9, 8.7**
     - _Requirements: 6.9, 8.6, 8.7_
 
-  - [ ] 5.4 Write property test for deterministic selection `app/src/engine/scheduler.deterministic.property.test.ts`
+  - [x] 5.4 Write property test for deterministic selection `app/src/engine/scheduler.deterministic.property.test.ts`
     - `// Feature: ghost-game-core, Property 6: Session selection is deterministic`
     - fast-check, ≥100 runs; two calls with identical inputs produce identical selection and order
     - **Validates: Requirements 6.6, 8.7**
     - _Requirements: 6.6, 8.6, 8.7_
 
-  - [ ] 5.5 Write property test for the new-per-session cap `app/src/engine/scheduler.newcap.property.test.ts`
+  - [x] 5.5 Write property test for the new-per-session cap `app/src/engine/scheduler.newcap.property.test.ts`
     - `// Feature: ghost-game-core, Property 9: The new-per-session cap holds whenever something is due`
     - fast-check, ≥100 runs; when at least one character is due, new (no-history) characters in the session ≤ `newPerSessionCap`
     - **Validates: Requirements 6.5, 8.7**
     - _Requirements: 6.5, 8.6, 8.7_
 
-  - [ ] 5.6 Write property test for tie-breaking by list order `app/src/engine/scheduler.ties.property.test.ts`
+  - [x] 5.6 Write property test for tie-breaking by list order `app/src/engine/scheduler.ties.property.test.ts`
     - `// Feature: ghost-game-core, Property 10: Ties are broken by character-list order`
     - fast-check, ≥100 runs; tied candidates are ordered by their position in the character list
     - **Validates: Requirements 6.5, 6.6, 8.7**
     - _Requirements: 6.5, 6.6, 8.6, 8.7_
 
-  - [ ] 5.7 Write property test for exactly-10 distinct ghosts `app/src/engine/scheduler.tenDistinct.property.test.ts`
+  - [x] 5.7 Write property test for exactly-10 distinct ghosts `app/src/engine/scheduler.tenDistinct.property.test.ts`
     - `// Feature: ghost-game-core, Property 11: A full dataset always yields exactly 10 distinct ghosts`
     - fast-check, ≥100 runs; ≥10 characters → exactly 10 distinct; <10 → all of them, no duplicates
     - **Validates: Requirements 3.1, 6.7, 8.7**
     - _Requirements: 3.1, 6.7, 8.6, 8.7_
 
-- [ ] 6. Storage module
-  - [ ] 6.1 Implement `app/src/storage/storage.ts`
+- [x] 6. Storage module
+  - [x] 6.1 Implement `app/src/storage/storage.ts`
     - `CURRENT_SCHEMA_VERSION`, `PersistedState`, `DEFAULT_STATE`; `loadState` (migrate on known older version, reset on unknown/newer/corrupt/shape-mismatch, never throw), `saveState` (no-op on write failure, never throw), `recordOutcome` (persist one outcome immediately), `getIntroSeen`/`setIntroSeen`, `resetToDefaults`
     - All reads/writes wrapped in `try/catch`; the rest of the app never touches `localStorage` keys directly
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7_
 
-  - [ ] 6.2 Write unit tests `app/src/storage/storage.test.ts`
+  - [x] 6.2 Write unit tests `app/src/storage/storage.test.ts`
     - Migration from a known older `schemaVersion`; reset on unknown/newer/corrupt blob; no-op on simulated write failure (storage throws); `recordOutcome` persists immediately; intro-seen get/set round-trip
     - _Requirements: 7.4, 7.5, 7.6_
 
-- [ ] 7. Character data loader (offline hanzi-writer wiring)
-  - [ ] 7.1 Implement `app/src/data/charDataLoader.ts`
+- [x] 7. Character data loader (offline hanzi-writer wiring)
+  - [x] 7.1 Implement `app/src/data/charDataLoader.ts`
     - `CharacterDataset`, `HanziWriterCharData`, `LoadResult`; `loadDataset(url?)` (fetch + validate each record against `CharacterRecord`; return `{ok:false, reason}` for fetch/parse/shape failures, never throw); `getRecord`; `toHanziWriterData` (pure projection of `StrokeData`); `makeCharDataLoader(dataset)` (synchronous loader resolving from our dataset, undefined for unknown chars — never the CDN)
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 5.1, 8.3_
 
-  - [ ] 7.2 Write unit tests `app/src/data/charDataLoader.test.ts`
+  - [x] 7.2 Write unit tests `app/src/data/charDataLoader.test.ts`
     - `loadDataset` fetch-failed / parse-failed / invalid-shape results; `toHanziWriterData` projection correctness; `makeCharDataLoader` resolves known chars and returns undefined for unknown
     - _Requirements: 2.4, 2.5, 5.1_
 
