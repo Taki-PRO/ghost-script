@@ -62,12 +62,40 @@ describe('applyReview', () => {
     expect(r.history).toEqual([{ outcome, at: NOW }]);
   });
 
-  it('clean after a miss goes to step 1 (3 days)', () => {
+  it('clean after a miss lands on step 0 (1 day)', () => {
     const missed = applyReview(entry(4), 'struggled', NOW, DEFAULT_CONFIG);
     const later = NOW + TEN_MIN;
     const r = applyReview(missed, 'clean', later, DEFAULT_CONFIG);
-    expect(r.step).toBe(1);
-    expect(r.nextDue).toBe(later + 3 * DAY_MS);
+    expect(r.step).toBe(0);
+    expect(r.nextDue).toBe(later + DAY_MS);
+  });
+
+  it.each<Outcome>(['struggled', 'gave-up'])(
+    'clean after a hand-built %s entry at step 4 lands on step 0 (1 day)',
+    (lastOutcome) => {
+      const r = applyReview(entry(4, { lastOutcome }), 'clean', NOW, DEFAULT_CONFIG);
+      expect(r.step).toBe(0);
+      expect(r.nextDue).toBe(NOW + DAY_MS);
+    },
+  );
+
+  it('clean after a clean still advances by one (step 2 -> 3, 14 days)', () => {
+    const r = applyReview(entry(2, { lastOutcome: 'clean' }), 'clean', NOW, DEFAULT_CONFIG);
+    expect(r.step).toBe(3);
+    expect(r.nextDue).toBe(NOW + 14 * DAY_MS);
+  });
+
+  it('sequence miss -> clean -> clean -> clean gives steps 0, 0, 1, 2', () => {
+    const steps: number[] = [];
+    let e = applyReview(entry(3), 'struggled', NOW, DEFAULT_CONFIG);
+    steps.push(e.step);
+    let t = NOW;
+    for (let i = 0; i < 3; i++) {
+      t += DAY_MS;
+      e = applyReview(e, 'clean', t, DEFAULT_CONFIG);
+      steps.push(e.step);
+    }
+    expect(steps).toEqual([0, 0, 1, 2]);
   });
 
   it('appends history newest-last without mutating the prior entry', () => {
