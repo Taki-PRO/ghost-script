@@ -4,6 +4,9 @@
   "description": "Haunted handwriting game — data pipeline and tests",
   "private": true,
   "type": "module",
+  "workspaces": [
+    "app"
+  ],
   "scripts": {
     "build:data": "tsx scripts/build-data.ts",
     "test": "vitest run"
