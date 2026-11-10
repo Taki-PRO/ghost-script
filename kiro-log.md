@@ -191,6 +191,14 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   - **`npm audit`:** 6 findings (2 critical, 1 high, 3 moderate), all in development tooling: vitest 2.1.9, its tinypool/mocker/vite-node, vite 5.4.21 and esbuild. None of it ships in the built app, which is static files. The fixes need vitest 5 and vite 8, which would break the pinned setup mid-hackathon. Decision: keep the pins; don't run the Vitest UI; never expose the dev server to a network (`--host`); test on iPad through the deployed site instead. Revisit upgrades after judging.
 - **Next:** tasks 2.1 (engine config) and 9.1 (theme tokens).
 
+## Nov 10, 2026: Spec 2, tasks 2.1 and 9.1: engine config and theme
+
+- **What I did:** Ran tasks 2.1 (one config module with every game threshold) and 9.1 (dark theme tokens wired into Tailwind).
+- **Kiro feature:** Spec task execution.
+- **Result:** `config.ts` holds the clean-mistake threshold (2), hint after 3 misses, the ladder (1/3/7/14/30/60 days), the 10-minute relearn delay, the new-per-session cap (5) and the session size (10), all read-only. The theme has 7 colour tokens, and Kiro added a test that checks each text colour against WCAG AA contrast (at least 4.5:1) instead of just claiming it. **143 tests pass**; `tsc` is clean for root and app.
+  - Git: the sync happened after Kiro had already edited `tasks.md` while a newer version was on GitHub; committing first and then syncing merged both cleanly, with no conflict markers.
+- **Next:** tasks 3 (prompt cleanup with its property tests) and 4 (scheduler review logic with its property tests).
+
 ---
 
 ## Template for new entries
