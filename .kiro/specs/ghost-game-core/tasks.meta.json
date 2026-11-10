@@ -50,6 +50,140 @@
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794325610225
       }
+    ],
+    "3.1 Implement `app/src/engine/promptCleanup.ts`": [
+      {
+        "executionId": "7ce7f153-dcb4-4aa1-a880-fd07ed464e22",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794331527377
+      },
+      {
+        "executionId": "7ce7f153-dcb4-4aa1-a880-fd07ed464e22",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794331674669
+      }
+    ],
+    "4.1 Implement review types and `applyReview` / `nextDue` in `app/src/engine/scheduler.ts`": [
+      {
+        "executionId": "7ce7f153-dcb4-4aa1-a880-fd07ed464e22",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794331528267
+      },
+      {
+        "executionId": "7ce7f153-dcb4-4aa1-a880-fd07ed464e22",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794331674831
+      }
+    ],
+    "3.2 Write unit tests `app/src/engine/promptCleanup.test.ts`": [
+      {
+        "executionId": "7ce7f153-dcb4-4aa1-a880-fd07ed464e22",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794331691508
+      },
+      {
+        "executionId": "7ce7f153-dcb4-4aa1-a880-fd07ed464e22",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794331842657
+      }
+    ],
+    "3.3 Write property test for cleanup non-emptiness `app/src/engine/promptCleanup.nonempty.property.test.ts`": [
+      {
+        "executionId": "7ce7f153-dcb4-4aa1-a880-fd07ed464e22",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794331696576
+      },
+      {
+        "executionId": "7ce7f153-dcb4-4aa1-a880-fd07ed464e22",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794331843469
+      }
+    ],
+    "3.4 Write property test for cleanup additive-freeness `app/src/engine/promptCleanup.additive.property.test.ts`": [
+      {
+        "executionId": "7ce7f153-dcb4-4aa1-a880-fd07ed464e22",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794331697437
+      },
+      {
+        "executionId": "7ce7f153-dcb4-4aa1-a880-fd07ed464e22",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794331844267
+      }
+    ],
+    "3.5 Write property test for cleanup idempotence `app/src/engine/promptCleanup.idempotent.property.test.ts`": [
+      {
+        "executionId": "7ce7f153-dcb4-4aa1-a880-fd07ed464e22",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794331698707
+      },
+      {
+        "executionId": "7ce7f153-dcb4-4aa1-a880-fd07ed464e22",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794331845309
+      }
+    ],
+    "4.2 Write unit tests for `applyReview` / `nextDue` `app/src/engine/scheduler.applyReview.test.ts`": [
+      {
+        "executionId": "7ce7f153-dcb4-4aa1-a880-fd07ed464e22",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794331699279
+      },
+      {
+        "executionId": "7ce7f153-dcb4-4aa1-a880-fd07ed464e22",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794331846090
+      }
+    ],
+    "3. Prompt display cleanup": [
+      {
+        "executionId": "7ce7f153-dcb4-4aa1-a880-fd07ed464e22",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794331845338
+      }
+    ],
+    "4.3 Write property test for non-negative intervals `app/src/engine/scheduler.nonneg.property.test.ts`": [
+      {
+        "executionId": "7ce7f153-dcb4-4aa1-a880-fd07ed464e22",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794331859198
+      },
+      {
+        "executionId": "7ce7f153-dcb4-4aa1-a880-fd07ed464e22",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794331975515
+      }
+    ],
+    "4.4 Write property test for the clean-review ladder step `app/src/engine/scheduler.ladder.property.test.ts`": [
+      {
+        "executionId": "7ce7f153-dcb4-4aa1-a880-fd07ed464e22",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794331859226
+      },
+      {
+        "executionId": "7ce7f153-dcb4-4aa1-a880-fd07ed464e22",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794331976086
+      }
+    ],
+    "4.5 Write property test for the missed-review reset `app/src/engine/scheduler.reset.property.test.ts`": [
+      {
+        "executionId": "7ce7f153-dcb4-4aa1-a880-fd07ed464e22",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794331859344
+      },
+      {
+        "executionId": "7ce7f153-dcb4-4aa1-a880-fd07ed464e22",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794331976884
+      }
+    ],
+    "4. Haunting scheduler — review application and next-due": [
+      {
+        "executionId": "7ce7f153-dcb4-4aa1-a880-fd07ed464e22",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794331976919
+      }
     ]
   }
 }
