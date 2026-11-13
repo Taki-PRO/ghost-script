@@ -259,7 +259,7 @@ describe('never throws', () => {
     expect(() => s.setIntroSeen(true)).not.toThrow();
     let result: PersistedState | undefined;
     expect(() => {
-      result = s.recordOutcome('女', e, NOW);
+      result = s.recordOutcome('女', e);
     }).not.toThrow();
     expect(result?.history['女']).toEqual(e);
     expect(backend.data.size).toBe(0);
@@ -283,7 +283,7 @@ describe('never throws', () => {
     expect(() => s.saveState(s.defaultState)).not.toThrow();
     expect(() => s.setIntroSeen(true)).not.toThrow();
     expect(s.getIntroSeen()).toBe(false);
-    expect(s.recordOutcome('女', e, NOW).history['女']).toEqual(e);
+    expect(s.recordOutcome('女', e).history['女']).toEqual(e);
     expect(() => s.resetToDefaults()).not.toThrow();
   });
 
@@ -293,7 +293,7 @@ describe('never throws', () => {
     expect(s.loadState()).toEqual(s.defaultState);
     expect(s.getIntroSeen()).toBe(false);
     expect(() => s.setIntroSeen(true)).not.toThrow();
-    expect(s.recordOutcome('女', e, NOW).history['女']).toEqual(e);
+    expect(s.recordOutcome('女', e).history['女']).toEqual(e);
     expect(() => s.resetToDefaults()).not.toThrow();
   });
 });
@@ -303,7 +303,7 @@ describe('recordOutcome persists immediately (Req 7.6)', () => {
     const s = createStore({ backend, key: KEY });
     const e = entry();
     const before = backend.calls.filter((c) => c === 'setItem').length;
-    const result = s.recordOutcome('女', e, NOW);
+    const result = s.recordOutcome('女', e);
     expect(backend.calls.filter((c) => c === 'setItem').length - before).toBe(1);
     const raw = JSON.parse(backend.data.get(KEY) as string) as PersistedState;
     expect(raw.history['女']).toEqual(e);
@@ -314,8 +314,8 @@ describe('recordOutcome persists immediately (Req 7.6)', () => {
     const s = createStore({ backend, key: KEY });
     const a = entry('clean');
     const b = entry('struggled');
-    s.recordOutcome('女', a, NOW);
-    s.recordOutcome('好', b, NOW);
+    s.recordOutcome('女', a);
+    s.recordOutcome('好', b);
     const raw = JSON.parse(backend.data.get(KEY) as string) as PersistedState;
     expect(raw.history).toEqual({ 女: a, 好: b });
   });
@@ -324,8 +324,8 @@ describe('recordOutcome persists immediately (Req 7.6)', () => {
     const s = createStore({ backend, key: KEY });
     const first = entry('clean');
     const second = entry('clean', first);
-    s.recordOutcome('女', first, NOW);
-    const result = s.recordOutcome('女', second, NOW);
+    s.recordOutcome('女', first);
+    const result = s.recordOutcome('女', second);
     expect(Object.keys(result.history)).toEqual(['女']);
     expect(result.history['女']).toEqual(second);
     expect(s.loadState().history['女']).toEqual(second);
@@ -334,7 +334,7 @@ describe('recordOutcome persists immediately (Req 7.6)', () => {
   it('preserves introSeen', () => {
     const s = createStore({ backend, key: KEY });
     s.setIntroSeen(true);
-    const result = s.recordOutcome('女', entry(), NOW);
+    const result = s.recordOutcome('女', entry());
     expect(result.introSeen).toBe(true);
     expect(s.getIntroSeen()).toBe(true);
   });
@@ -344,7 +344,7 @@ describe('intro flag and reset', () => {
   it('setIntroSeen(true) round-trips and preserves history', () => {
     const s = createStore({ backend, key: KEY });
     const e = entry();
-    s.recordOutcome('女', e, NOW);
+    s.recordOutcome('女', e);
     s.setIntroSeen(true);
     expect(s.getIntroSeen()).toBe(true);
     expect(s.loadState().history['女']).toEqual(e);
@@ -360,7 +360,7 @@ describe('intro flag and reset', () => {
   it('resetToDefaults clears everything and removes the key', () => {
     const s = createStore({ backend, key: KEY });
     s.setIntroSeen(true);
-    s.recordOutcome('女', entry(), NOW);
+    s.recordOutcome('女', entry());
     s.resetToDefaults();
     expect(backend.data.has(KEY)).toBe(false);
     expect(s.loadState()).toEqual(DEFAULT_STATE);
@@ -410,7 +410,7 @@ describe('default module-level store on jsdom localStorage', () => {
 
   it('records outcomes and resets via the default functions', () => {
     const e = entry();
-    defaults.recordOutcome('女', e, NOW);
+    defaults.recordOutcome('女', e);
     expect(defaults.loadState().history['女']).toEqual(e);
     defaults.resetToDefaults();
     expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
@@ -424,6 +424,6 @@ describe('default module-level store on jsdom localStorage', () => {
     const e = entry();
     expect(() => defaults.saveState(DEFAULT_STATE)).not.toThrow();
     expect(() => defaults.setIntroSeen(true)).not.toThrow();
-    expect(defaults.recordOutcome('女', e, NOW).history['女']).toEqual(e);
+    expect(defaults.recordOutcome('女', e).history['女']).toEqual(e);
   });
 });

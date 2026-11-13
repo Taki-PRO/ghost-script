@@ -205,6 +205,16 @@
         "executionId": "7a728a7f-0ca1-4294-93bf-a483f4d7757f",
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794333855424
+      },
+      {
+        "executionId": "7ebe324e-a51d-4462-a090-f70f0d76f109",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794559180321
+      },
+      {
+        "executionId": "7ebe324e-a51d-4462-a090-f70f0d76f109",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794559488979
       }
     ],
     "5.1 Implement `selectSession` in `app/src/engine/scheduler.ts`": [
@@ -346,6 +356,42 @@
         "executionId": "7a728a7f-0ca1-4294-93bf-a483f4d7757f",
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794334470488
+      }
+    ],
+    "5.8 Implement pure `learningOrder` in `app/src/engine/learningOrder.ts`": [
+      {
+        "executionId": "7ebe324e-a51d-4462-a090-f70f0d76f109",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794559384676
+      },
+      {
+        "executionId": "7ebe324e-a51d-4462-a090-f70f0d76f109",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794559487950
+      }
+    ],
+    "5.9 Write unit tests `app/src/engine/learningOrder.test.ts`": [
+      {
+        "executionId": "7ebe324e-a51d-4462-a090-f70f0d76f109",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794559490184
+      },
+      {
+        "executionId": "7ebe324e-a51d-4462-a090-f70f0d76f109",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794559553005
+      }
+    ],
+    "5.10 Write property test `app/src/engine/learningOrder.property.test.ts`": [
+      {
+        "executionId": "7ebe324e-a51d-4462-a090-f70f0d76f109",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794559491027
+      },
+      {
+        "executionId": "7ebe324e-a51d-4462-a090-f70f0d76f109",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794559553054
       }
     ]
   }

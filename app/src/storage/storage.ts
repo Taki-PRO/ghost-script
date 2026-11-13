@@ -44,7 +44,7 @@ export interface Store {
   readonly defaultState: PersistedState;
   loadState(): PersistedState;
   saveState(state: PersistedState): void;
-  recordOutcome(char: string, entry: ReviewEntry, now: number): PersistedState;
+  recordOutcome(char: string, entry: ReviewEntry): PersistedState;
   getIntroSeen(): boolean;
   setIntroSeen(seen: boolean): void;
   resetToDefaults(): void;
@@ -176,10 +176,10 @@ export function createStore(options: StoreOptions = {}): Store {
   /**
    * Persist one character's new entry immediately and return the new state
    * (returned even if the write failed, so the UI keeps working in memory).
-   * `_now` is accepted for API parity with the design and is unused: the
-   * caller has already computed `entry` with applyReview.
+   * The caller computes `entry` with applyReview using the UI-injected clock,
+   * so no time argument is needed here.
    */
-  function recordOutcome(char: string, entry: ReviewEntry, _now: number): PersistedState {
+  function recordOutcome(char: string, entry: ReviewEntry): PersistedState {
     const prior = loadState();
     const next: PersistedState = {
       schemaVersion: version,
@@ -217,8 +217,8 @@ export const DEFAULT_STATE: PersistedState = defaultStore.defaultState;
 
 export const loadState = (): PersistedState => defaultStore.loadState();
 export const saveState = (state: PersistedState): void => defaultStore.saveState(state);
-export const recordOutcome = (char: string, entry: ReviewEntry, now: number): PersistedState =>
-  defaultStore.recordOutcome(char, entry, now);
+export const recordOutcome = (char: string, entry: ReviewEntry): PersistedState =>
+  defaultStore.recordOutcome(char, entry);
 export const getIntroSeen = (): boolean => defaultStore.getIntroSeen();
 export const setIntroSeen = (seen: boolean): void => defaultStore.setIntroSeen(seen);
 export const resetToDefaults = (): void => defaultStore.resetToDefaults();
