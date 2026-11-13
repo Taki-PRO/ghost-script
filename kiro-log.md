@@ -250,6 +250,21 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 - **Open decisions handed to the next task:** who moves on to the next ghost (WriteMode reports the outcome and keeps the answer on screen), and keyboard-only players (drawing needs a pointer).
 - **Next:** spec amendments, then task 14 (SeanceSession).
 
+## Nov 13, 2026: Spec amendments and task 14: the Séance flow
+
+- **What I did:** Amended the spec (approved by Takshil) and ran task 14, SeanceSession, which runs the 10 ghosts one after another.
+  - Req 5.1: the clue hides the answer character with ～.
+  - Req 5.2: input is mouse and touch events, not Pointer Events.
+  - Req 8.4: every button works by keyboard; drawing needs touch, pen, mouse or trackpad.
+  - Req 3.2: after each ghost the answer stays on screen with a "Next ghost" button, so the player sees the correct character before moving on.
+- **Kiro feature:** Spec-driven change (requirements, design and tasks updated together) plus spec task execution with parallel sub-agents.
+- **Result:** 16 new tests; **426 tests pass**; `tsc` clean for root and app; no `any`.
+  - Each outcome is saved the moment it happens, exactly once; a double-click can't skip a ghost; focus moves to "Next ghost" so Enter or Space advances.
+  - Kiro noticed the design's SeanceSession props were missing `dataset` and `config`, which WriteMode needs, and fixed the design.
+  - Added the missing test: give-up still records exactly once, with no unhandled error, when the reveal animation fails.
+- **Credits:** 375 of 4,000 used in total (110 since the last count: tasks 5–7, spec fixes, the six screens, and this run).
+- **Next:** task 16 (wire everything into the app) and 17 (full-suite checkpoint), then the first real play-through.
+
 ---
 
 ## Template for new entries
