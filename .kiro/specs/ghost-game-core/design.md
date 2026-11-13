@@ -40,6 +40,7 @@ flowchart TD
         CONFIG["config.ts\nALL tunable constants"]
         SCHED["scheduler.ts\napplyReview / nextDue / selectSession"]
         CLEAN["promptCleanup.ts\ncleanupMeaning (pure, idempotent)"]
+        LEARN["learningOrder.ts\nstrokeCount asc, codepoint tie-break"]
     end
 
     subgraph storage["app/src/storage/"]
@@ -70,6 +71,8 @@ flowchart TD
     WRITE -. strokeData adapter .-> LOADER
 
     APP -- "now = Date.now()" --> SCHED
+    APP -- "learningOrder(dataset)" --> LEARN
+    LEARN -- "character list" --> SCHED
     CONFIG --> SCHED
     CONFIG --> WRITE
     CONFIG --> SEANCE
@@ -79,6 +82,8 @@ flowchart TD
 ```
 
 **Reading the diagram.** The data loader reads and validates `characters.json`. The App layer owns all state and side effects: it reads the real clock (`Date.now()`), reads/writes the Storage module, and passes `now` plus the loaded Review history into the pure scheduler. The scheduler, cleanup, and config modules are pure and side-effect free. React screens flow Intro → Start/Menu → Séance (which hosts WriteMode per ghost) → Summary. The config module feeds both the engine and the UI, so thresholds live in exactly one place. Storage talks only to the App layer; the engine never touches `localStorage` (Requirement 6.1).
+
+The App builds the session character list with the pure `learningOrder(dataset)` and passes it to `selectSession`: `selectSession(history, learningOrder(dataset), Date.now(), DEFAULT_CONFIG)`. The scheduler therefore never sees the dataset's JSON key order; NEW characters and ties follow the Learning order.
 
 ### Directory layout (`app/src/`, consistent with the structure steering doc)
 
@@ -102,7 +107,8 @@ app/
 │   ├── engine/              # pure game logic (clock-injected, no I/O)
 │   │   ├── config.ts        # ALL tunable constants (Decision 5)
 │   │   ├── scheduler.ts     # haunting scheduler: applyReview / nextDue / selectSession
-│   │   └── promptCleanup.ts # display-only cleanupMeaning (pure, idempotent)
+│   │   ├── promptCleanup.ts # display-only cleanupMeaning (pure, idempotent)
+│   │   └── learningOrder.ts # pure learningOrder(dataset): strokeCount asc, codepoint tie-break
 │   ├── data/
 │   │   ├── types.ts         # existing shared types (CharacterRecord, Prompt, StrokeData)
 │   │   └── charDataLoader.ts# load + validate characters.json; hanzi-writer adapter
@@ -204,10 +210,10 @@ export function nextDue(entry: ReviewEntry): number;
 
 /**
  * Deterministically select up to `config.sessionSize` distinct characters for a
- * Nightly Séance given the Review history, the full character list (in
- * character-list order), the injected clock `now`, and config. Implements the
+ * Nightly Séance given the Review history, the full character list (the App
+ * passes `learningOrder(dataset)`), the injected clock `now`, and config. Implements the
  * ordering of Req 6.5 (due-overdue-first → new capped → soonest-due → extra new
- * uncapped), with all ties broken by character-list order. Pure. Req 6.5–6.7, 6.10.
+ * uncapped), with all ties broken by list (Learning) order. Pure. Req 6.5–6.7, 6.10.
  */
 export function selectSession(
   history: ReviewHistory,
@@ -245,6 +251,12 @@ export type LoadResult =
  */
 export async function loadDataset(url?: string): Promise<LoadResult>;
 
+/**
+ * Default dataset URL, built from Vite's BASE_URL (`${import.meta.env.BASE_URL}data/characters.json`)
+ * so the app also works when hosted under a sub-path (e.g. GitHub Pages).
+ */
+export function defaultDatasetUrl(): string;
+
 /** Typed lookup. Returns undefined when the character is absent. */
 export function getRecord(dataset: CharacterDataset, char: string): CharacterRecord | undefined;
 
@@ -255,15 +267,18 @@ export function getRecord(dataset: CharacterDataset, char: string): CharacterRec
 export function toHanziWriterData(strokeData: StrokeData): HanziWriterCharData;
 
 /**
- * Build the synchronous charDataLoader passed to HanziWriter.create(...).
- * hanzi-writer calls this with a character; we resolve it from OUR dataset
- * synchronously (no network). An unknown character resolves to undefined so the
- * caller can treat init as failed and fall back. Req 8.3.
+ * Build hanzi-writer 3.7.3's own `CharDataLoaderFn` (type imported from 'hanzi-writer'),
+ * whose real signature is
+ *   (char: string, onLoad: (data: CharacterJson) => void, onError: (err?: unknown) => void) => ...
+ * For a KNOWN char it calls `onLoad(toHanziWriterData(record.strokeData))` synchronously
+ * (no network). For an UNKNOWN char it does NOT call `onLoad`; it calls
+ * `onError(new Error(...))` so hanzi-writer fails cleanly and never falls back to the CDN. Req 8.3.
  */
-export function makeCharDataLoader(
-  dataset: CharacterDataset,
-): (char: string, onComplete: (data: HanziWriterCharData) => void) => void;
+export function makeCharDataLoader(dataset: CharacterDataset): CharDataLoaderFn;
+// import type { CharDataLoaderFn } from 'hanzi-writer';
 ```
+
+`loadDataset` reads the response body with `response.text()` and then `JSON.parse`s it (a body that is not valid JSON yields `parse-failed`). It validates EVERY record deeply against `CharacterRecord`, requires `record.character === key` for each entry, and rejects the keys `__proto__`, `constructor`, and `prototype`; any violation yields `invalid-shape`.
 
 **hanzi-writer quiz wiring (Decision 2).** `WriteMode` creates the writer with `HanziWriter.create(targetEl, char, { charDataLoader: makeCharDataLoader(dataset), showCharacter: false, showOutline: false, ... })` and calls `writer.quiz({ ... })`. Quiz callbacks map onto our outcome/threshold model:
 
@@ -286,6 +301,24 @@ export function cleanupMeaning(raw: string): string;
 ```
 
 Note patterns removed (Req 4.2): classifier notes `(CL:...)` and `CL:...`; bracketed pinyin references `[pin1 yin1]`; example clauses `(e.g. ...)`; and pronunciation notes `Taiwan pr. [...]`, `(Taiwan pr. ...)`, and `also pr. [...]`; and a note of a single word followed by `pr. [...]`, with or without parentheses (e.g. `colloquial pr. [nei4]`, `(colloquial pr. [nei4])`). After removals, surrounding whitespace is trimmed and internal runs collapsed to a single space. `prompt.pinyin` is displayed as stored and is never passed through cleanup (Req 4.7).
+
+### `app/src/engine/learningOrder.ts` (pure, Req 6.12)
+
+```typescript
+import type { CharacterRecord } from '../data/types';
+
+/**
+ * The Learning order: the dataset's keys sorted by `strokeCount` ascending, ties broken
+ * by `codePointAt(0)` ascending. Pure; does not mutate the input; independent of the
+ * Map's insertion order. A `CharacterDataset` is assignable to the parameter type.
+ * Req 6.12.
+ */
+export function learningOrder(
+  dataset: ReadonlyMap<string, Pick<CharacterRecord, 'strokeCount'>>,
+): string[];
+```
+
+The App passes `learningOrder(dataset)` as the character list to `selectSession`, so NEW characters are introduced, and ties broken, from the fewest-strokes characters upward.
 
 ### `app/src/storage/storage.ts` (wrapped localStorage, Req 7)
 
@@ -317,17 +350,58 @@ export function loadState(): PersistedState;
 /** Persist full state. On any write failure (quota, disabled) performs a no-op. Never throws. Req 7.5, 7.6. */
 export function saveState(state: PersistedState): void;
 
-/** Record one character's outcome immediately and persist. Returns the new state. Req 3.4, 7.6. */
-export function recordOutcome(char: string, entry: ReviewEntry, now: number): PersistedState;
+/**
+ * Record one character's entry immediately and persist. Returns the new state. Req 3.4, 7.6.
+ * No time argument: the caller already computed `entry` with `applyReview` using the UI-injected clock.
+ */
+export function recordOutcome(char: string, entry: ReviewEntry): PersistedState;
 
 export function getIntroSeen(): boolean;      // Req 1.1, 1.5
 export function setIntroSeen(seen: boolean): void; // Req 1.4
-export function resetToDefaults(): void;      // Req 7.4
+export function resetToDefaults(): void;      // Req 7.4 — removes the storage key
+
+/** localStorage key used by the module. */
+export const STORAGE_KEY = 'ghost-script:state';
+
+/** Minimal storage surface (getItem/setItem/removeItem) so a fake backend can be injected in tests. */
+export interface StorageLike {
+  getItem(key: string): string | null;
+  setItem(key: string, value: string): void;
+  removeItem(key: string): void;
+}
+
+/** migrations[v] migrates a blob FROM schema version v TO version v + 1. */
+export type MigrationMap = Readonly<Record<number, (old: unknown) => unknown>>;
+
+export interface StoreOptions {
+  /** A backend, or a thunk resolving one lazily (may return undefined when unavailable). */
+  backend?: StorageLike | (() => StorageLike | undefined);
+  currentVersion?: number;
+  migrations?: MigrationMap;
+  key?: string;
+}
+
+export interface Store {
+  defaultState: PersistedState;
+  loadState(): PersistedState;
+  saveState(state: PersistedState): void;
+  recordOutcome(char: string, entry: ReviewEntry): PersistedState;
+  getIntroSeen(): boolean;
+  setIntroSeen(seen: boolean): void;
+  resetToDefaults(): void;
+}
+
+/** Factory behind the module-level API; exists so migration/failure paths are testable with a fake backend. */
+export function createStore(options?: StoreOptions): Store;
 ```
+
+**`createStore` and the default store.** The module-level functions (`loadState`, `saveState`, `recordOutcome`, `getIntroSeen`, `setIntroSeen`, `resetToDefaults`) and `DEFAULT_STATE` are thin wrappers over a default store created by `createStore()`, which resolves `window.localStorage` lazily inside `try/catch` (so merely importing the module, or running with storage disabled, never throws). `createStore` exists so tests can exercise migration and failure paths with a fake backend, a custom `currentVersion`, and a custom `migrations` map.
+
+**Migrations.** `migrations[v]` migrates a blob FROM version `v` TO `v + 1`; `loadState` applies them in sequence until `currentVersion`. The SHIPPED migrations map is EMPTY because schema version 1 is the first version, so in production every non-current `schemaVersion` resets to defaults. Unknown, newer, zero, negative, or non-integer `schemaVersion` values always reset to defaults and are never migrated. A history object containing the keys `__proto__`, `constructor`, or `prototype` is treated as corrupt and the whole blob is reset to defaults. `resetToDefaults()` removes the storage key.
 
 ### UI components (`app/src/components/` + `app/src/modes/`)
 
-These hold no game logic; they read `Date.now()` and delegate to the engine (Requirements 6.11, 8.1). Colour is never the only signal and all interactive controls carry accessible labels (Requirements 5.9, 5.10, 8.5).
+These hold no game logic; they read `Date.now()` and delegate to the engine (Requirements 6.11, 8.1). App wiring: when a Séance starts, the App calls `selectSession(history, learningOrder(dataset), Date.now(), DEFAULT_CONFIG)`. When a ghost reaches a terminal Outcome, the App reads `now = Date.now()`, computes `entry = applyReview(history[char], outcome, now, DEFAULT_CONFIG)`, and persists it with `recordOutcome(char, entry)` (no time argument; the clock was already applied by `applyReview`). Colour is never the only signal and all interactive controls carry accessible labels (Requirements 5.9, 5.10, 8.5).
 
 - **`components/IntroScreen.tsx`** — props `{ onBegin: () => void }`. Renders the legend copy (Cangjie invented writing; legend of wailing ghosts; forgotten characters are ghosts laid to rest by writing), attributes the wailing-ghosts line to the Huainanzi (天雨粟，鬼夜哭), and nothing else historical (Req 1.2, 1.7, 1.8). A labelled "Begin the Séance" button fires `onBegin`; operable by touch and mouse/keyboard (Req 1.3, 1.6).
 - **`components/StartMenu.tsx`** — props `{ onStartSeance: () => void; onReviewLegend: () => void }`. The legend re-view entry point lives here (outside any active session) so it never interrupts a Séance (Req 1.5, 3.6).
@@ -391,7 +465,7 @@ export interface HanziWriterCharData {
 
 *A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
 
-The scheduler and prompt-cleanup functions are pure (no I/O, injected clock), which makes them ideal for property-based testing. The following eleven properties restate the targets of Requirement 8.7 as named design properties. Each is implemented by a single fast-check property test running at least 100 iterations.
+The scheduler and prompt-cleanup functions are pure (no I/O, injected clock), which makes them ideal for property-based testing. The following twelve properties restate the targets of Requirement 8.7 as named design properties. Each is implemented by a single fast-check property test running at least 100 iterations.
 
 ### Property 1: Cleanup never returns an empty string
 
@@ -441,15 +515,15 @@ The scheduler and prompt-cleanup functions are pure (no I/O, injected clock), wh
 
 **Validates: Requirements 6.3, 8.7**
 
-### Property 9: The new-per-session cap holds whenever something is due
+### Property 9: The new-per-session cap holds whenever something is due, unless band (d) was needed to fill the session
 
-*For any* Review history and character list where at least one character is due at `now`, the count of NEW (no-history) characters in the selected session SHALL NOT exceed `config.newPerSessionCap` (5).
+*For any* Review history and character list where at least one character is due at `now`, the count of NEW (no-history) characters in the selected session SHALL NOT exceed `config.newPerSessionCap`, UNLESS band (d) of Requirement 6.5 was needed to fill the session — in which case the session SHALL contain every non-new character of the list and have length min(sessionSize, distinct list length).
 
 **Validates: Requirements 6.5, 8.7**
 
 ### Property 10: Ties are broken by character-list order
 
-*For any* set of candidate characters that tie on their primary ordering key, `selectSession` SHALL order the tied characters by their position in the character list.
+*For any* set of candidate characters that tie on their primary ordering key, `selectSession` SHALL order the tied characters by their position in the character list passed to it (which the App supplies in Learning order).
 
 **Validates: Requirements 6.5, 6.6, 8.7**
 
@@ -458,6 +532,12 @@ The scheduler and prompt-cleanup functions are pure (no I/O, injected clock), wh
 *For any* Review history and character list with at least 10 characters, `selectSession` SHALL return exactly 10 characters with no duplicates; with fewer than 10 characters it SHALL return all of them, still without duplicates.
 
 **Validates: Requirements 3.1, 6.7, 8.7**
+
+### Property 12: The learning order is a deterministic, stroke-count-sorted permutation of the dataset
+
+*For any* dataset, `learningOrder` SHALL return a permutation of the dataset's keys (same elements, no duplicates), identical for identical input regardless of the Map's insertion order, with non-decreasing `strokeCount` along the list and ties in strokeCount ordered by Unicode codepoint ascending.
+
+**Validates: Requirements 6.12, 8.7**
 
 ---
 
@@ -479,13 +559,15 @@ The scheduler and prompt-cleanup functions are pure (no I/O, injected clock), wh
 | Quota exceeded on write | `saveState` catches the throw and no-ops; App keeps running. |
 | Corrupt or shape-mismatched blob | `loadState` returns `DEFAULT_STATE` (reset, no migration). |
 | Unknown or newer `schemaVersion` | `loadState` returns `DEFAULT_STATE` (reset, never migrate forward). Req 7.4. |
-| Known older `schemaVersion` with a defined migration | `loadState` migrates to `CURRENT_SCHEMA_VERSION`. Req 7.4. |
+| Zero, negative, or non-integer `schemaVersion` | `loadState` returns `DEFAULT_STATE` (reset, never migrate). Req 7.4. |
+| History containing `__proto__` / `constructor` / `prototype` keys | Blob treated as corrupt; whole state reset to `DEFAULT_STATE`. |
+| Known older `schemaVersion` with a defined migration | `loadState` migrates to `CURRENT_SCHEMA_VERSION` via `migrations[v]` (v → v+1). The shipped map is empty (version 1 is the first), so this path is exercised in tests via `createStore`. Req 7.4. |
 
 ### hanzi-writer init (Requirement 5, offline guarantee)
 
 | Condition | Behaviour |
 |---|---|
-| `charDataLoader` cannot resolve a character from the dataset | Treat quiz init as failed for that ghost; skip it with a `gave-up`-style fallback (record a missed review, continue to the next ghost) without crashing. |
+| `charDataLoader` cannot resolve a character from the dataset | `makeCharDataLoader` invokes `onError` (never `onLoad`, never the CDN); treat quiz init as failed for that ghost; skip it with a `gave-up`-style fallback (record a missed review, continue to the next ghost) without crashing. |
 | hanzi-writer throws during `create`/`quiz` | Caught in `WriteMode`; the ghost falls back to `gave-up`, the character is revealed, and the session continues. |
 | Player taps "Give up" mid-quiz | `WriteMode` calls `writer.cancelQuiz()` BEFORE `writer.animateCharacter()`, so cancelling the quiz first stops any further `onMistake`/`onComplete` events from being counted during the reveal; the ordering is strictly cancelQuiz → animateCharacter → resolve `gave-up`. |
 
@@ -539,6 +621,8 @@ export default [
 ];
 ```
 
+App tests may live anywhere under `app/`. The app project's vitest `include` is `**/*.test.{ts,tsx}` relative to `app/`; an earlier glob text `app/**/*.test.{ts,tsx}` is stale, because the `./app` workspace entry makes `app/` the project root. Also, `app/test/setup.ts` installs jsdom's `Storage` on the global when Node's own experimental `localStorage` shadows it (Node >= 22), so storage tests see jsdom's implementation.
+
 Because project A's glob (`tests/**/*.test.ts`) and project B's glob (`**/*.test.{ts,tsx}`, resolved from the `app/` project root) share no paths, the two projects are mutually exclusive: the node project collects only the data tests, the app project collects only the app tests.
 
 - **Project A (`tests/`, `environment: 'node'`)** — the existing 129 character-dataset tests, collected only by the root `vitest.config.ts`. They are NOT moved or modified; they keep passing exactly as before. The root `package.json` `test` script stays `vitest run` (now workspace-aware).
@@ -551,13 +635,14 @@ Dependencies install through the npm workspace: the root `package.json` declares
 Example-based tests, kept lean because property tests cover broad input ranges:
 
 - **`promptCleanup`** — each note pattern (`(CL:...)`, `CL:...`, `[pin1 yin1]`, `(e.g. ...)`, `Taiwan pr. [...]`, `(Taiwan pr. ...)`, `also pr. [...]`) removed on representative real meanings; whitespace collapse; the empty-result fallback.
-- **`scheduler`** — `applyReview` for clean (step 0 when new or after a miss, otherwise step up, capped at 5) and missed (reset + 10 min); `selectSession` ordering across the four bands of Req 6.5 with concrete fixtures.
-- **`storage`** — migration from a known older `schemaVersion`; reset on unknown/newer/corrupt; no-op on simulated write failure; `recordOutcome` persists immediately.
-- **`charDataLoader`** — `toHanziWriterData` projection; `loadDataset` failure results for fetch/parse/shape; `makeCharDataLoader` resolves known chars and returns undefined for unknown.
+- **`scheduler`** — `applyReview`: clean for a new character or after a miss lands on step 0, clean after a clean advances one step (capped at 5), and missed resets to step 0 + 10 min; `selectSession` ordering across the four bands of Req 6.5 with concrete fixtures.
+- **`storage`** — uses `createStore` with a fake backend (and a custom `currentVersion`/`migrations` map, since the shipped map is empty): migration from a known older `schemaVersion`; reset on unknown/newer/zero/negative/non-integer `schemaVersion` and on corrupt blobs, including histories with `__proto__`/`constructor`/`prototype` keys; no-op on simulated write failure; `recordOutcome(char, entry)` persists immediately; `resetToDefaults` removes the key.
+- **`charDataLoader`** — `toHanziWriterData` projection; `loadDataset` failure results for fetch/parse/shape (including `record.character !== key` and `__proto__`/`constructor`/`prototype` keys); `makeCharDataLoader` calls `onLoad` for known chars and `onError` (never `onLoad`) for unknown.
+- **`learningOrder`** — a small hand-built dataset (equal and different stroke counts, tie-break by codepoint); a real-data check against `app/public/data/characters.json` (first entry has the minimum `strokeCount`, last has the maximum, length 300); the empty dataset; the input Map is not mutated.
 
 ### Property tests (Vitest + fast-check, ≥100 iterations each)
 
-One property test per design property (Properties 1–11), each tagged with the feature and property number. Tag format:
+One property test per design property (Properties 1–12; Property 12 covers `learningOrder`), each tagged with the feature and property number. Tag format:
 
 ```
 // Feature: ghost-game-core, Property 7: The interval ladder never skips a step on a clean review

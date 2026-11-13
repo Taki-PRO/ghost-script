@@ -14,8 +14,8 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
   - Add `"workspaces": ["app"]` to the root `package.json`; keep the root `"test": "vitest run"` script unchanged
   - After the root `npm install`, run `npm ls` (and/or `npm ls --workspaces`) to check peer-dependency compatibility, and REPORT any peer-dependency warnings or conflicts (e.g. React version peers for testing-library, Vite plugin peers). Resolve or explicitly document any warning before moving on
   - Create root `vitest.config.ts` (NODE project): `include: ['tests/**/*.test.ts']`, `environment: 'node'`
-  - Create `app/vitest.config.ts` (APP project): `name: 'app'`, `include: ['**/*.test.{ts,tsx}']`, `exclude: ['node_modules/**']`, `environment: 'jsdom'`, `setupFiles: ['test/setup.ts']` (paths are relative to `app/`, because the `./app` workspace entry makes `app/` the project root)
-  - Create `app/test/setup.ts` importing `@testing-library/jest-dom/vitest`
+  - Create `app/vitest.config.ts` (APP project): `name: 'app'`, `include: ['**/*.test.{ts,tsx}']` (relative to `app/`), `exclude: ['node_modules/**']`, `environment: 'jsdom'`, `setupFiles: ['test/setup.ts']` (paths are relative to `app/`, because the `./app` workspace entry makes `app/` the project root)
+  - Create `app/test/setup.ts` importing `@testing-library/jest-dom/vitest`; it also installs jsdom's `Storage` on the global when Node's own experimental `localStorage` shadows it (Node >= 22)
   - Create root `vitest.workspace.ts` referencing BOTH projects (`'./vitest.config.ts'` and `'./app'`)
   - Add one trivial app test `app/src/smoke.test.ts` asserting `true` to prove the app jsdom project runs
   - Acceptance: a single root `npm install` installs root + app deps; `npm test` runs BOTH the existing 129 data tests (node project, unchanged) AND the trivial app test (jsdom project), all passing; the node project does NOT collect app tests and the app project does NOT collect data tests
@@ -29,7 +29,7 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
 
 - [x] 3. Prompt display cleanup
   - [x] 3.1 Implement `app/src/engine/promptCleanup.ts`
-    - `cleanupMeaning(raw: string): string` — pure, display-only; removes `(CL:...)`, `CL:...`, `[pin1 yin1]`, `(e.g. ...)`, `Taiwan pr. [...]`, `(Taiwan pr. ...)`, `also pr. [...]`; trims and collapses whitespace left by removals; falls back to the original string when cleanup would yield empty/whitespace-only output
+    - `cleanupMeaning(raw: string): string` — pure, display-only; removes `(CL:...)`, `CL:...`, `[pin1 yin1]`, `(e.g. ...)`, `Taiwan pr. [...]`, `(Taiwan pr. ...)`, `also pr. [...]`, and a single word followed by `pr. [...]` (with or without parentheses, e.g. `colloquial pr. [nei4]`); trims and collapses whitespace left by removals; falls back to the original string when cleanup would yield empty/whitespace-only output
     - Never mutates any input or persisted data; `prompt.pinyin` is never passed through cleanup
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.7_
 
@@ -58,7 +58,7 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
 - [x] 4. Haunting scheduler — review application and next-due
   - [x] 4.1 Implement review types and `applyReview` / `nextDue` in `app/src/engine/scheduler.ts`
     - Define `Outcome`, `AttemptRecord`, `ReviewEntry`, `ReviewHistory`
-    - `applyReview(prior, outcome, now, config)` — clean lands on step 0 for a new character or after a prior miss, otherwise advances step by 1 capped at ladder top, `nextDue = now + ladder[newStep]`; missed resets step to 0, `nextDue = now + relearnDelayMs`; pure, no `Date.now()`
+    - `applyReview(prior, outcome, now, config)` — clean => step 0 for a new character or after a prior miss, otherwise advances step by 1 capped at ladder top, `nextDue = now + ladder[newStep]`; missed resets step to 0, `nextDue = now + relearnDelayMs`; pure, no `Date.now()`
     - `nextDue(entry)` returns the entry's next-due timestamp
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.11_
 
@@ -74,7 +74,7 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
 
   - [x] 4.4 Write property test for the clean-review ladder step `app/src/engine/scheduler.ladder.property.test.ts`
     - `// Feature: ghost-game-core, Property 7: The interval ladder never skips a step on a clean review`
-    - fast-check, ≥100 runs; assert a clean review sets new step to `min(s+1, topStep)` after a prior clean, and step 0 when there is no prior or the prior was a miss, and that the ladder-interval sequence over consecutive clean reviews is non-decreasing
+    - fast-check, ≥100 runs; assert (Property 7, updated statement) a clean review sets new step to exactly `min(s+1, topStep)` after a prior clean, and step 0 when there is no prior or the prior was a miss, and that the ladder-interval sequence over consecutive clean reviews is non-decreasing
     - **Validates: Requirements 6.2, 6.8, 8.7**
     - _Requirements: 6.2, 6.8, 8.6, 8.7_
 
@@ -106,8 +106,8 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
     - _Requirements: 6.6, 8.6, 8.7_
 
   - [x] 5.5 Write property test for the new-per-session cap `app/src/engine/scheduler.newcap.property.test.ts`
-    - `// Feature: ghost-game-core, Property 9: The new-per-session cap holds whenever something is due`
-    - fast-check, ≥100 runs; when at least one character is due, new (no-history) characters in the session ≤ `newPerSessionCap`
+    - `// Feature: ghost-game-core, Property 9: The new-per-session cap holds whenever something is due, unless band (d) was needed to fill the session`
+    - fast-check, ≥100 runs; when at least one character is due, new (no-history) characters in the session ≤ `newPerSessionCap`, UNLESS band (d) of Req 6.5 was needed to fill the session, in which case the session contains every non-new character of the list and has length min(sessionSize, distinct list length)
     - **Validates: Requirements 6.5, 8.7**
     - _Requirements: 6.5, 8.6, 8.7_
 
@@ -123,23 +123,38 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
     - **Validates: Requirements 3.1, 6.7, 8.7**
     - _Requirements: 3.1, 6.7, 8.6, 8.7_
 
+  - [x] 5.8 Implement pure `learningOrder` in `app/src/engine/learningOrder.ts`
+    - `export function learningOrder(dataset: ReadonlyMap<string, Pick<CharacterRecord, 'strokeCount'>>): string[]` — returns the dataset's keys sorted by `strokeCount` ascending, ties broken by `codePointAt(0)` ascending; pure, does not mutate the input, independent of Map insertion order
+    - _Requirements: 6.12, 8.1, 8.2_
+
+  - [x] 5.9 Write unit tests `app/src/engine/learningOrder.test.ts`
+    - Hand-built dataset with equal and different stroke counts and tie-break by codepoint; empty dataset; input Map not mutated; real-data check importing `app/public/data/characters.json`: first element has the minimum `strokeCount`, last has the maximum, length 300, all keys present
+    - _Requirements: 6.12_
+
+  - [x] 5.10 Write property test `app/src/engine/learningOrder.property.test.ts`
+    - `// Feature: ghost-game-core, Property 12: The learning order is a deterministic, stroke-count-sorted permutation of the dataset`
+    - fast-check, ≥100 runs; assert permutation, determinism (including independence from Map insertion order), non-decreasing `strokeCount`, and codepoint tie-break
+    - **Validates: Requirements 6.12, 8.7**
+    - _Requirements: 6.12, 8.6, 8.7_
+
 - [x] 6. Storage module
   - [x] 6.1 Implement `app/src/storage/storage.ts`
-    - `CURRENT_SCHEMA_VERSION`, `PersistedState`, `DEFAULT_STATE`; `loadState` (migrate on known older version, reset on unknown/newer/corrupt/shape-mismatch, never throw), `saveState` (no-op on write failure, never throw), `recordOutcome` (persist one outcome immediately), `getIntroSeen`/`setIntroSeen`, `resetToDefaults`
+    - `CURRENT_SCHEMA_VERSION`, `PersistedState`, `DEFAULT_STATE`; `loadState` (migrate on known older version, reset on unknown/newer/corrupt/shape-mismatch, never throw), `saveState` (no-op on write failure, never throw), `recordOutcome(char, entry)` (persist one outcome immediately; it has no `now` parameter because the caller already computed the entry with `applyReview`), `getIntroSeen`/`setIntroSeen`, `resetToDefaults` (removes the key)
+    - Provide `createStore(options?: { backend?; currentVersion?; migrations?; key? }): Store` (plus `StorageLike`, `MigrationMap`, `StoreOptions`, `Store`, `STORAGE_KEY = 'ghost-script:state'`) for testability; the module-level functions are thin wrappers over a default store that resolves `window.localStorage` lazily inside try/catch. The shipped `migrations` map is EMPTY (schema version 1 is the first); unknown/newer/zero/negative/non-integer versions reset to defaults, and a history with `__proto__`/`constructor`/`prototype` keys is treated as corrupt
     - All reads/writes wrapped in `try/catch`; the rest of the app never touches `localStorage` keys directly
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7_
 
   - [x] 6.2 Write unit tests `app/src/storage/storage.test.ts`
-    - Migration from a known older `schemaVersion`; reset on unknown/newer/corrupt blob; no-op on simulated write failure (storage throws); `recordOutcome` persists immediately; intro-seen get/set round-trip
+    - Uses `createStore` with a fake backend. Migration from a known older `schemaVersion` (custom `migrations` map); reset on unknown/newer/corrupt blob; no-op on simulated write failure (storage throws); `recordOutcome` persists immediately; intro-seen get/set round-trip
     - _Requirements: 7.4, 7.5, 7.6_
 
 - [x] 7. Character data loader (offline hanzi-writer wiring)
   - [x] 7.1 Implement `app/src/data/charDataLoader.ts`
-    - `CharacterDataset`, `HanziWriterCharData`, `LoadResult`; `loadDataset(url?)` (fetch + validate each record against `CharacterRecord`; return `{ok:false, reason}` for fetch/parse/shape failures, never throw); `getRecord`; `toHanziWriterData` (pure projection of `StrokeData`); `makeCharDataLoader(dataset)` (synchronous loader resolving from our dataset, undefined for unknown chars — never the CDN)
+    - `CharacterDataset`, `HanziWriterCharData`, `LoadResult`; `loadDataset(url?)` (fetch + validate each record against `CharacterRecord`; return `{ok:false, reason}` for fetch/parse/shape failures, never throw); `getRecord`; `toHanziWriterData` (pure projection of `StrokeData`); `makeCharDataLoader(dataset)` (returns hanzi-writer's `CharDataLoaderFn` `(char, onLoad, onError)`: known char => synchronous `onLoad`; unknown char => `onError`, never `onLoad`, never the CDN); `loadDataset` reads the body via `response.text()` then `JSON.parse`, validates every record deeply, requires `record.character === key`, and rejects `__proto__`/`constructor`/`prototype` keys; `defaultDatasetUrl()` uses Vite `BASE_URL`
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 5.1, 8.3_
 
   - [x] 7.2 Write unit tests `app/src/data/charDataLoader.test.ts`
-    - `loadDataset` fetch-failed / parse-failed / invalid-shape results; `toHanziWriterData` projection correctness; `makeCharDataLoader` resolves known chars and returns undefined for unknown
+    - `loadDataset` fetch-failed / parse-failed / invalid-shape results; `toHanziWriterData` projection correctness; `makeCharDataLoader` calls `onLoad` for known chars and `onError` (not `onLoad`) for unknown
     - _Requirements: 2.4, 2.5, 5.1_
 
 - [ ] 8. Real-hanzi-writer offline integration test
@@ -212,12 +227,12 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
 
 - [ ] 16. App wiring and integration
   - [ ] 16.1 Implement `app/src/App.tsx` router/state and data load
-    - On mount, `loadDataset()`; on failure render a clear, non-technical error screen (no blank page, no crash); on success route Intro (first visit only, via `getIntroSeen`) → StartMenu → SeanceSession → SessionSummary; build the session with `selectSession` passing `now = Date.now()`; persist intro-seen on dismiss and `recordOutcome` immediately per ghost; pass `DEFAULT_CONFIG` to engine/UI; legend re-view only outside a session
-    - _Requirements: 1.1, 1.4, 1.5, 2.4, 3.1, 3.4, 6.1, 7.6, 8.7_
+    - On mount, `loadDataset()`; on failure render a clear, non-technical error screen (no blank page, no crash); on success route Intro (first visit only, via `getIntroSeen`) → StartMenu → SeanceSession → SessionSummary; build the session with `selectSession(history, learningOrder(dataset), Date.now(), DEFAULT_CONFIG)` — i.e. `selectSession` receives `learningOrder(dataset)`, NOT the dataset's JSON key order; persist intro-seen on dismiss and `recordOutcome` immediately per ghost; pass `DEFAULT_CONFIG` to engine/UI; legend re-view only outside a session
+    - _Requirements: 1.1, 1.4, 1.5, 2.4, 3.1, 3.4, 6.1, 6.12, 7.6, 8.7_
 
   - [ ] 16.2 Write integration test `app/src/App.test.tsx`
-    - Covers the main flow (intro on first visit → session → summary) with the dataset loaded and the error screen rendered when `loadDataset` fails; asserts outcomes persist via the storage API
-    - _Requirements: 1.1, 2.4, 3.3, 7.6_
+    - Covers the main flow (intro on first visit → session → summary) with the dataset loaded and the error screen rendered when `loadDataset` fails; asserts outcomes persist via the storage API; also asserts the first-ever session for an empty history consists of the lowest-strokeCount characters in Learning order
+    - _Requirements: 1.1, 2.4, 3.3, 6.12, 7.6_
 
 - [ ] 17. Checkpoint — full suite passes
   - Run `npm test` from the repo root: the 129 data tests plus all app unit, property, component, and integration tests pass; `tsc` is clean across root and app; no `any` in app source. Ask the user if any questions arise.
@@ -233,7 +248,7 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
 - The existing 129 character-dataset tests under `tests/` are never moved or modified; task 1 only adds the workspace and the app jsdom project around them, and the node project's `tests/**/*.test.ts` glob and the app project's `**/*.test.{ts,tsx}` glob (relative to `app/`) never overlap.
 - The engine (`config`, `promptCleanup`, `scheduler`) is pure and clock-injected: engine functions take `now: number` and never call `Date.now()`; only the UI (App) reads the real clock and performs I/O.
 - All tests are required — there are no optional tests and nothing is marked with `*`. Tests live next to the code they cover and are written in the same task group as that code.
-- Property tests use fast-check at ≥100 runs each and are tagged `// Feature: ghost-game-core, Property N: <title>`, one test per design Property (1–11).
+- Property tests use fast-check at ≥100 runs each and are tagged `// Feature: ghost-game-core, Property N: <title>`, one test per design Property (1–12). The property tests now cover design Properties 1–12, including Property 12 for the pure `learningOrder` function (tasks 5.8–5.10), whose output the App passes to `selectSession`.
 - `hanzi-writer` is pinned EXACT `3.7.3` in `app/package.json` and always loaded via our `makeCharDataLoader` from `characters.json` — never the CDN. Task 8 proves this against the real library offline.
 - The writing surface uses `touch-action: none` with Pointer Events; Give-up ordering is strictly `cancelQuiz` → `animateCharacter` → resolve `'gave-up'`; `hintShown` is derived inside `onMistake` at the stroke-hint threshold.
 - Task 18 is the ONLY manual, non-coding task; every other task is a coding task. Task 18 is performed by a human — Kiro does not run it and does not write that `kiro-log.md` entry; the human tester records it.
@@ -247,8 +262,8 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
   "waves": [
     { "id": 0, "tasks": ["1"] },
     { "id": 1, "tasks": ["2.1", "9.1"] },
-    { "id": 2, "tasks": ["3.1", "4.1", "6.1", "7.1"] },
-    { "id": 3, "tasks": ["3.2", "3.3", "3.4", "3.5", "4.2", "4.3", "4.4", "4.5", "5.1", "6.2", "7.2"] },
+    { "id": 2, "tasks": ["3.1", "4.1", "5.8", "6.1", "7.1"] },
+    { "id": 3, "tasks": ["3.2", "3.3", "3.4", "3.5", "4.2", "4.3", "4.4", "4.5", "5.1", "5.9", "5.10", "6.2", "7.2"] },
     { "id": 4, "tasks": ["5.2", "5.3", "5.4", "5.5", "5.6", "5.7", "8.1", "10.1", "12.1", "13.1", "15.1"] },
     { "id": 5, "tasks": ["10.2", "11.1", "12.2", "13.2", "15.2"] },
     { "id": 6, "tasks": ["11.2", "14.1"] },
