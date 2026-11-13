@@ -228,6 +228,14 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   - Matched hanzi-writer 3.7.3's real loader signature `(char, onLoad, onError)` instead of the two-argument version in the design.
 - **Next:** fix the Property 9 wording and stale design text, settle the learning order, then the UI tasks.
 
+## Nov 13, 2026: Spec fixes and learning order (fewest strokes first)
+
+- **What I did:** Fixed the Property 9 wording, brought the design up to date with what was actually built, removed an unused parameter from the save-data API, and added a new requirement: new characters are introduced fewest strokes first. Approved by Takshil.
+- **Kiro feature:** Spec-driven change: requirements (AC 6.12, AC 8.7), design, tasks and code updated in one pass; property-based test (Property 12).
+- **Why:** The dataset is stored in Unicode order and the HSK list is alphabetical by pinyin, so neither is a sensible order to learn in. Fewest strokes first suits a handwriting game: a learner writes 一, 二, 十, 人, 口 before anything complex, and all 300 characters are beginner level anyway. It uses stroke counts we already have, so no new data source.
+- **Result:** `learningOrder(dataset)` is a pure function: stroke count ascending, ties by codepoint, and a missing or broken stroke count sorts last instead of crashing. Task 16 now states the session picker must receive `learningOrder(dataset)`, not the file's key order. `recordOutcome` no longer takes an unused time argument. **341 tests pass**; `tsc` clean for root and app.
+- **Next:** the UI components: the real-hanzi-writer offline test (8), GhostPrompt (10), WriteMode (11), IntroScreen (12), StartMenu (13) and SessionSummary (15).
+
 ---
 
 ## Template for new entries
