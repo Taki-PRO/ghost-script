@@ -23,7 +23,8 @@ Judges may not read Chinese, so they cannot spot a wrong character. Correctness 
 - Stroke data: `hanzi-writer-data` (derived from Make Me a Hanzi).
 - Component decomposition: Make Me a Hanzi `dictionary.txt` (decomposition / radical fields). Check its licence.
 - Pinyin and meanings: CC-CEDICT.
-- Cangjie codes (traditional, for Type mode later): Unicode Unihan `kCangjie` field.
+- Cangjie codes: Unicode Unihan `kCangjie` field (Unicode 18.0.0, Unicode License V3). Unihan codes simplified forms directly, so no traditional mapping is needed.
+- Cangjie history: only these claims may appear in the app, each citing the English Wikipedia articles "Cangjie input method" and "Chu Bong-Foo": invented in 1976 by Chu Bong-Foo; named after Cangjie, the legendary inventor of Chinese writing; the first Chinese input method to use the standard QWERTY keyboard; released to the public in 1982. Nothing else (no usage statistics, no claims that it is "dying") without a new source.
 - Character selection: HSK 3.0 handwriting characters (书写字), writing level 1 (exactly 300), from `ivankra/hsk30` `hsk30-chars.csv`, column `WritingLevel`.
 
 ## Required property-based tests on the dataset

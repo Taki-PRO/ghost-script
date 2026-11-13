@@ -16,7 +16,7 @@ ghost-script/
 │   └── src/
 │       ├── engine/      # pure game logic: scheduler (haunting), scoring, hints, session builder
 │       ├── components/  # React UI components
-│       ├── modes/       # WriteMode, BuildMode (later: TypeMode)
+│       ├── modes/       # WriteMode, CangjieMode
 │       ├── data/        # typed loaders for characters.json
 │       ├── storage/     # localStorage wrapper
 │       └── styles/

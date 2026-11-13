@@ -34,7 +34,7 @@ Many people can **read** Chinese but can no longer **write** it by hand, because
 ### Must-have (MVP, target: deployed by Nov 17)
 - Simplified characters + Mandarin pinyin (default script).
 - Write mode with live stroke checking.
-- Build mode for laptops.
+- Cangjie Séance (spec `cangjie-seance`): summon each ghost by typing its Cangjie code on a physical or on-screen keyboard. This is the Resurrection core and replaces the earlier "Build mode" idea; it is how laptop and keyboard players play.
 - Structure hints based on component breakdowns.
 - Haunting engine (spaced repetition), progress saved locally in the browser.
 - Nightly Séance: a short daily session (about 10 ghosts) drawn from about 300 checked characters.
@@ -42,12 +42,11 @@ Many people can **read** Chinese but can no longer **write** it by hand, because
 - Cangjie Oracle MCP server (verified character-data lookups) + property-based tests.
 
 ### If time allows (strictly in this order, only after MVP is deployed and working)
-1. Traditional character toggle.
-2. Type mode: Cangjie keyboard input (traditional characters only).
-3. Package the Cangjie Oracle as a Kiro Power.
-4. Graveyard progress screen.
-5. Exam Crypt mode using public learner exam lists (e.g. HSK).
-6. Cantonese pronunciation.
+1. Package the Cangjie Oracle as a Kiro Power, plus agent hooks.
+2. Graveyard progress screen and visual polish (practice grid, favicon).
+3. Traditional character toggle.
+4. Exam Crypt mode using public learner exam lists (e.g. HSK).
+5. Cantonese pronunciation.
 7. Phone-as-pen (write on phone, appears on laptop; needs a realtime server).
 
 ### Out of scope
