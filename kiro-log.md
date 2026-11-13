@@ -276,6 +276,24 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   - Not yet run in a real browser: drawing, the hint and the give-up animation have only been tested in jsdom. That is task 18.
 - **Next:** task 18, one full Séance played by hand with a mouse.
 
+## Nov 13, 2026: Spec 2, task 18: first real play-through (manual, by a human)
+
+- **What I did:** Played one full Nightly Séance by hand with a mouse in a real browser, running the app locally only (`npm run dev -w app`, no network exposure). Kiro did not run or write up this check.
+- **Kiro feature:** None. This is the human check that closes the spec.
+- **Result:** All 9 checks passed:
+  1. The intro and legend appear, and "Begin the Séance" starts a session.
+  2. Each clue shows a meaning and pinyin, never the character.
+  3. A clean write gives "Laid to rest" and "Next ghost".
+  4. Three misses on the same stroke light up exactly one stroke, and the ghost "will return soon".
+  5. Give up animates the character stroke by stroke.
+  6. "Next ghost" works from the keyboard.
+  7. The summary count matches what happened.
+  8. After a reload the app opens on the menu, so progress was saved.
+  9. In a phone-width window the writing box still fits and the page doesn't scroll while drawing.
+- **Feedback:** Everything works, but the look is plain. That is expected at this stage and goes into Spec 5 (visual design).
+- **Spec 2 (ghost-game-core) is complete.**
+- **Next:** Spec 3: Build mode for laptops, and Cangjie structure hints.
+
 ---
 
 ## Template for new entries
