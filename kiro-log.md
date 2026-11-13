@@ -290,6 +290,7 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   7. The summary count matches what happened.
   8. After a reload the app opens on the menu, so progress was saved.
   9. In a phone-width window the writing box still fits and the page doesn't scroll while drawing.
+- **Second check, automated in headless Chrome:** a script played the production build with real mouse strokes traced from the stroke data. It drew 8 ghosts cleanly, made 3 wrong strokes on 七 (exactly one hint stroke lit up, and the result was "will return soon"), gave up on 九, and advanced one ghost with Enter. The summary read "9 of 10 ghosts laid to rest". The menu showed after a reload. At 375px wide the writing box was 300px with no sideways scroll, and `touch-action: none` was set. No clue showed its own character, and no request left localhost. Only a missing favicon (404) appeared in the console.
 - **Feedback:** Everything works, but the look is plain. That is expected at this stage and goes into Spec 5 (visual design).
 - **Spec 2 (ghost-game-core) is complete.**
 - **Next:** Spec 3: Build mode for laptops, and Cangjie structure hints.
