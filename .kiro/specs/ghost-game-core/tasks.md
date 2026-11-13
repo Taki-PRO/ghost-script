@@ -157,8 +157,8 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
     - `loadDataset` fetch-failed / parse-failed / invalid-shape results; `toHanziWriterData` projection correctness; `makeCharDataLoader` calls `onLoad` for known chars and `onError` (not `onLoad`) for unknown
     - _Requirements: 2.4, 2.5, 5.1_
 
-- [ ] 8. Real-hanzi-writer offline integration test
-  - [ ] 8.1 Write `app/src/data/charDataLoader.hanziwriter.integration.test.ts` (real library — NOT mocked)
+- [x] 8. Real-hanzi-writer offline integration test
+  - [x] 8.1 Write `app/src/data/charDataLoader.hanziwriter.integration.test.ts` (real library — NOT mocked)
     - hanzi-writer MUST NOT be mocked in this test; the whole point is to exercise the real library against our data. Load the real `characters.json`, build `makeCharDataLoader(dataset)`, and call the real `HanziWriter.create` for 我, 口, 爱 in jsdom
     - jsdom does not implement some SVG/DOM APIs hanzi-writer may touch. IF (and only if) the real library needs browser APIs jsdom lacks, add MINIMAL polyfills for ONLY those specific APIs (e.g. `SVGElement.prototype.getBBox`, `getScreenCTM`/`getCTM`, `requestAnimationFrame` if missing) in the test's setup, and DOCUMENT in the test file exactly which APIs were polyfilled and why. Do not mock hanzi-writer itself; polyfill only the missing host APIs
     - Success criterion: using `makeCharDataLoader(dataset)` built from the real `characters.json`, hanzi-writer reports the character data LOADED for 我, 口, and 爱 (e.g. via its char-data-loaded signal / the loader resolving each to a non-empty `strokes` array and the writer reaching a ready state). Do NOT assert pixel/SVG paint
@@ -169,41 +169,41 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
     - A small, contrast-checked token set (background, surface, text, accent, success/accepted, error/rejected) wired into `app/tailwind.config.ts`; colour is never the only signal (tokens pair with text/icon cues used by components)
     - _Requirements: 8.5_
 
-- [ ] 10. GhostPrompt component
-  - [ ] 10.1 Implement `app/src/components/GhostPrompt.tsx`
+- [x] 10. GhostPrompt component
+  - [x] 10.1 Implement `app/src/components/GhostPrompt.tsx`
     - Props `{ record: CharacterRecord }`; renders `cleanupMeaning(record.prompt.meaning)` and `record.prompt.pinyin` (as stored); hides the glyph
     - _Requirements: 4.1, 5.1_
 
-  - [ ] 10.2 Write component test `app/src/components/GhostPrompt.test.tsx`
+  - [x] 10.2 Write component test `app/src/components/GhostPrompt.test.tsx`
     - Asserts the cleaned meaning and stored pinyin render and the target glyph is not shown
     - _Requirements: 4.1, 4.7, 5.1_
 
-- [ ] 11. WriteMode
-  - [ ] 11.1 Implement `app/src/modes/WriteMode.tsx`
+- [x] 11. WriteMode
+  - [x] 11.1 Implement `app/src/modes/WriteMode.tsx`
     - Props `{ record; dataset; config; onOutcome }`; hosts hanzi-writer quiz on a `touch-action: none` Pointer-Event surface sized `min(80vw, 420px)` (375px→1440px+); state `mistakeCount`, `consecutiveMissesByStroke`, `hintShown`, `status`
     - `onMistake` increments total mistakes per rejected stroke and derives `hintShown = true` when `mistakesOnStroke >= config.strokeHintAfterConsecutiveMisses`; `showHintAfterMisses` set to the same threshold; `onComplete` resolves `clean` (no hint AND mistakes ≤ `cleanMistakeThreshold`) else `struggled`
     - Labelled "Give up" control resolves `gave-up` in strict order: `cancelQuiz()` → `animateCharacter()` → resolve `'gave-up'`; non-colour accept/reject cues; accessible labels
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 5.10_
 
-  - [ ] 11.2 Write component tests `app/src/modes/WriteMode.test.tsx` (hanzi-writer MOCKED)
+  - [x] 11.2 Write component tests `app/src/modes/WriteMode.test.tsx` (hanzi-writer MOCKED)
     - Mock hanzi-writer so `onMistake`/`showHintAfterMisses`/`onComplete` callbacks can be simulated: verify mistake counting, the stroke-hint threshold sets `hintShown`, `clean` vs `struggled` resolution, and "Give up" yields `gave-up` with cancelQuiz→animateCharacter→resolve ordering; assert accessible labels and a non-colour cue
     - _Requirements: 5.3, 5.4, 5.5, 5.6, 5.7, 5.9, 5.10_
 
-- [ ] 12. IntroScreen
-  - [ ] 12.1 Implement `app/src/components/IntroScreen.tsx`
+- [x] 12. IntroScreen
+  - [x] 12.1 Implement `app/src/components/IntroScreen.tsx`
     - Props `{ onBegin }`; renders the legend copy (Cangjie invented writing; legend of wailing ghosts; forgotten characters are ghosts laid to rest by writing), attributes the wailing-ghosts line to the Huainanzi (天雨粟，鬼夜哭) and makes no other historical claim; labelled "Begin the Séance" control operable by touch and mouse/keyboard
     - _Requirements: 1.2, 1.3, 1.6, 1.7, 1.8_
 
-  - [ ] 12.2 Write component test `app/src/components/IntroScreen.test.tsx`
+  - [x] 12.2 Write component test `app/src/components/IntroScreen.test.tsx`
     - Asserts the legend copy and Huainanzi attribution render, the begin control is labelled and keyboard-operable, and `onBegin` fires on activation
     - _Requirements: 1.2, 1.6, 1.8_
 
-- [ ] 13. StartMenu
-  - [ ] 13.1 Implement `app/src/components/StartMenu.tsx`
+- [x] 13. StartMenu
+  - [x] 13.1 Implement `app/src/components/StartMenu.tsx`
     - Props `{ onStartSeance; onReviewLegend }`; offers starting a Séance and a re-view-legend entry point that exists only outside an active session
     - _Requirements: 1.5, 3.6_
 
-  - [ ] 13.2 Write component test `app/src/components/StartMenu.test.tsx`
+  - [x] 13.2 Write component test `app/src/components/StartMenu.test.tsx`
     - Asserts start and re-view-legend controls render with accessible labels and fire their callbacks
     - _Requirements: 1.5, 3.6_
 
@@ -216,12 +216,12 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
     - Asserts advance only on terminal Outcome, no character repeats, and each Outcome reported immediately (WriteMode mocked/stubbed to emit outcomes)
     - _Requirements: 3.2, 3.4, 3.5_
 
-- [ ] 15. SessionSummary
-  - [ ] 15.1 Implement `app/src/components/SessionSummary.tsx`
+- [x] 15. SessionSummary
+  - [x] 15.1 Implement `app/src/components/SessionSummary.tsx`
     - Props `{ results; onPlayAgain }`; shows how many ghosts were laid to rest and offers another Séance
     - _Requirements: 3.3, 3.6_
 
-  - [ ] 15.2 Write component test `app/src/components/SessionSummary.test.tsx`
+  - [x] 15.2 Write component test `app/src/components/SessionSummary.test.tsx`
     - Asserts the laid-to-rest count renders and the play-again control fires `onPlayAgain`
     - _Requirements: 3.3, 3.6_
 
