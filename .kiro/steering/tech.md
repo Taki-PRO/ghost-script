@@ -9,7 +9,7 @@ inclusion: always
 - **App:** React + Vite, single-page web app. No backend for the MVP.
 - **Styling:** Tailwind CSS.
 - **Handwriting:** `hanzi-writer` (MIT) with stroke data from `hanzi-writer-data` (Arphic Public License). Use its quiz mode for live per-stroke checking.
-- **Input:** Pointer Events so finger, Apple Pencil, mouse and trackpad all work. Pages must be usable with touch and with mouse/keyboard.
+- **Input:** hanzi-writer 3.7.3 listens for mouse and touch events (not Pointer Events); finger, Apple Pencil, mouse and trackpad all work through those, and the writing surface sets `touch-action: none`. Drawing needs a pointer; every other control must work with touch and with mouse/keyboard.
 - **Storage:** `localStorage` (wrapped in a small storage module with try/catch). No accounts, no server.
 - **Testing:** Vitest for unit tests, **fast-check** for property-based tests.
 - **Data pipeline:** Node + TypeScript scripts in `scripts/` that build one JSON dataset from the raw sources. The app never calls external APIs at runtime.
