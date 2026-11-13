@@ -265,6 +265,17 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 - **Credits:** 375 of 4,000 used in total (110 since the last count: tasks 5–7, spec fixes, the six screens, and this run).
 - **Next:** task 16 (wire everything into the app) and 17 (full-suite checkpoint), then the first real play-through.
 
+## Nov 13, 2026: Spec 2, tasks 16 and 17: the playable app
+
+- **What I did:** Ran task 16 (wire every screen, the scheduler and saving into `App.tsx`) and task 17 (full-suite checkpoint), and asked Kiro to confirm the production build.
+- **Kiro feature:** Spec task execution.
+- **Result:** Every coding task in ghost-game-core is complete. **438 tests pass**; `tsc` clean for root and app; `npm run build -w app` succeeds. The JS bundle is 197 kB (63 kB gzipped), and the same build on Linux produced the identical file hash as on his Mac.
+  - The app is the only place that reads the clock; the first Séance is the 10 fewest-stroke characters, starting with 一.
+  - App tests play a full 10-ghost Séance end to end, check each result is saved before "Next ghost" is pressed, check missed characters come back first 11 minutes later, and check the game still works with browser storage disabled.
+  - Kiro noted the bundle still contains hanzi-writer's built-in CDN address. It is never used: we always pass our own loader, and the real-library test proves no request is made.
+  - Not yet run in a real browser: drawing, the hint and the give-up animation have only been tested in jsdom. That is task 18.
+- **Next:** task 18, one full Séance played by hand with a mouse.
+
 ---
 
 ## Template for new entries
