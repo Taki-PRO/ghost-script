@@ -393,6 +393,180 @@
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794559553054
       }
+    ],
+    "8.1 Write `app/src/data/charDataLoader.hanziwriter.integration.test.ts` (real library — NOT mocked)": [
+      {
+        "executionId": "f1cc6a52-40de-4bde-aabd-24b66ad3d5bf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794559947283
+      },
+      {
+        "executionId": "f1cc6a52-40de-4bde-aabd-24b66ad3d5bf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794560155185
+      }
+    ],
+    "10.1 Implement `app/src/components/GhostPrompt.tsx`": [
+      {
+        "executionId": "f1cc6a52-40de-4bde-aabd-24b66ad3d5bf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794559947324
+      },
+      {
+        "executionId": "f1cc6a52-40de-4bde-aabd-24b66ad3d5bf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794560155257
+      }
+    ],
+    "12.1 Implement `app/src/components/IntroScreen.tsx`": [
+      {
+        "executionId": "f1cc6a52-40de-4bde-aabd-24b66ad3d5bf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794559948385
+      },
+      {
+        "executionId": "f1cc6a52-40de-4bde-aabd-24b66ad3d5bf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794560156223
+      }
+    ],
+    "13.1 Implement `app/src/components/StartMenu.tsx`": [
+      {
+        "executionId": "f1cc6a52-40de-4bde-aabd-24b66ad3d5bf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794559949444
+      },
+      {
+        "executionId": "f1cc6a52-40de-4bde-aabd-24b66ad3d5bf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794560157261
+      }
+    ],
+    "15.1 Implement `app/src/components/SessionSummary.tsx`": [
+      {
+        "executionId": "f1cc6a52-40de-4bde-aabd-24b66ad3d5bf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794559950385
+      },
+      {
+        "executionId": "f1cc6a52-40de-4bde-aabd-24b66ad3d5bf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794560158552
+      }
+    ],
+    "8. Real-hanzi-writer offline integration test": [
+      {
+        "executionId": "f1cc6a52-40de-4bde-aabd-24b66ad3d5bf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794560155217
+      }
+    ],
+    "11.1 Implement `app/src/modes/WriteMode.tsx`": [
+      {
+        "executionId": "f1cc6a52-40de-4bde-aabd-24b66ad3d5bf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794560159652
+      },
+      {
+        "executionId": "f1cc6a52-40de-4bde-aabd-24b66ad3d5bf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794560372881
+      }
+    ],
+    "10.2 Write component test `app/src/components/GhostPrompt.test.tsx`": [
+      {
+        "executionId": "f1cc6a52-40de-4bde-aabd-24b66ad3d5bf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794560160622
+      },
+      {
+        "executionId": "f1cc6a52-40de-4bde-aabd-24b66ad3d5bf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794560368955
+      }
+    ],
+    "12.2 Write component test `app/src/components/IntroScreen.test.tsx`": [
+      {
+        "executionId": "f1cc6a52-40de-4bde-aabd-24b66ad3d5bf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794560161659
+      },
+      {
+        "executionId": "f1cc6a52-40de-4bde-aabd-24b66ad3d5bf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794560369124
+      }
+    ],
+    "13.2 Write component test `app/src/components/StartMenu.test.tsx`": [
+      {
+        "executionId": "f1cc6a52-40de-4bde-aabd-24b66ad3d5bf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794560163054
+      },
+      {
+        "executionId": "f1cc6a52-40de-4bde-aabd-24b66ad3d5bf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794560370331
+      }
+    ],
+    "15.2 Write component test `app/src/components/SessionSummary.test.tsx`": [
+      {
+        "executionId": "f1cc6a52-40de-4bde-aabd-24b66ad3d5bf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794560163757
+      },
+      {
+        "executionId": "f1cc6a52-40de-4bde-aabd-24b66ad3d5bf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794560371546
+      }
+    ],
+    "10. GhostPrompt component": [
+      {
+        "executionId": "f1cc6a52-40de-4bde-aabd-24b66ad3d5bf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794560368984
+      }
+    ],
+    "12. IntroScreen": [
+      {
+        "executionId": "f1cc6a52-40de-4bde-aabd-24b66ad3d5bf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794560369149
+      }
+    ],
+    "13. StartMenu": [
+      {
+        "executionId": "f1cc6a52-40de-4bde-aabd-24b66ad3d5bf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794560370366
+      }
+    ],
+    "15. SessionSummary": [
+      {
+        "executionId": "f1cc6a52-40de-4bde-aabd-24b66ad3d5bf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794560371573
+      }
+    ],
+    "11.2 Write component tests `app/src/modes/WriteMode.test.tsx` (hanzi-writer MOCKED)": [
+      {
+        "executionId": "f1cc6a52-40de-4bde-aabd-24b66ad3d5bf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794560373906
+      },
+      {
+        "executionId": "f1cc6a52-40de-4bde-aabd-24b66ad3d5bf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794560569386
+      }
+    ],
+    "11. WriteMode": [
+      {
+        "executionId": "f1cc6a52-40de-4bde-aabd-24b66ad3d5bf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794560569422
+      }
     ]
   }
 }
