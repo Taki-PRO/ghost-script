@@ -226,16 +226,16 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
     - Asserts the laid-to-rest count renders and the play-again control fires `onPlayAgain`
     - _Requirements: 3.3, 3.6_
 
-- [ ] 16. App wiring and integration
-  - [ ] 16.1 Implement `app/src/App.tsx` router/state and data load
+- [x] 16. App wiring and integration
+  - [x] 16.1 Implement `app/src/App.tsx` router/state and data load
     - On mount, `loadDataset()`; on failure render a clear, non-technical error screen (no blank page, no crash); on success route Intro (first visit only, via `getIntroSeen`) → StartMenu → SeanceSession → SessionSummary; build the session with `selectSession(history, learningOrder(dataset), Date.now(), DEFAULT_CONFIG)` — i.e. `selectSession` receives `learningOrder(dataset)`, NOT the dataset's JSON key order; persist intro-seen on dismiss and `recordOutcome` immediately per ghost; pass `DEFAULT_CONFIG` to engine/UI; legend re-view only outside a session
     - _Requirements: 1.1, 1.4, 1.5, 2.4, 3.1, 3.4, 6.1, 6.12, 7.6, 8.7_
 
-  - [ ] 16.2 Write integration test `app/src/App.test.tsx`
+  - [x] 16.2 Write integration test `app/src/App.test.tsx`
     - Covers the main flow (intro on first visit → session → summary) with the dataset loaded and the error screen rendered when `loadDataset` fails; asserts outcomes persist via the storage API; also asserts the first-ever session for an empty history consists of the lowest-strokeCount characters in Learning order
     - _Requirements: 1.1, 2.4, 3.3, 6.12, 7.6_
 
-- [ ] 17. Checkpoint — full suite passes
+- [x] 17. Checkpoint — full suite passes
   - Run `npm test` from the repo root: the 129 data tests plus all app unit, property, component, and integration tests pass; `tsc` is clean across root and app; no `any` in app source. Ask the user if any questions arise.
 
 - [ ] 18. Manual verification — one full Nightly Séance with a mouse (NON-CODING, performed by a human)
