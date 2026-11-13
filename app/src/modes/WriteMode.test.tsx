@@ -41,6 +41,8 @@ const h = vi.hoisted(() => ({
   log: [] as string[],
   calls: [] as unknown[],
   throwOnCreate: false,
+  /** Per-test override of what animateCharacter does after logging (default: resolve). */
+  animateImpl: null as null | (() => Promise<void>),
 }));
 
 vi.mock('hanzi-writer', () => {
@@ -56,7 +58,7 @@ vi.mock('hanzi-writer', () => {
     });
     writer.animateCharacter = vi.fn(() => {
       h.log.push('animateCharacter');
-      return Promise.resolve();
+      return h.animateImpl ? h.animateImpl() : Promise.resolve();
     });
     writer.showCharacter = vi.fn(() => Promise.resolve());
     writer.hideCharacter = vi.fn(() => Promise.resolve());
@@ -105,6 +107,7 @@ beforeEach(() => {
   h.log.length = 0;
   h.calls.length = 0;
   h.throwOnCreate = false;
+  h.animateImpl = null;
 });
 
 // ---------------------------------------------------------------------------
@@ -254,6 +257,77 @@ describe('WriteMode give up (Req 5.7)', () => {
     expectOnce(onOutcome, 'gave-up');
     expect(btn).toBeDisabled();
   });
+});
+
+describe('WriteMode give up when the reveal animation fails (Req 5.7, 3.4)', () => {
+  const unhandled: unknown[] = [];
+  const onNode = (reason: unknown) => {
+    unhandled.push(reason);
+  };
+  const onWindow = (e: Event) => {
+    unhandled.push(e);
+  };
+
+  beforeEach(() => {
+    unhandled.length = 0;
+    process.on('unhandledRejection', onNode);
+    window.addEventListener('unhandledrejection', onWindow);
+  });
+  afterEach(() => {
+    process.removeListener('unhandledRejection', onNode);
+    window.removeEventListener('unhandledrejection', onWindow);
+    h.animateImpl = null;
+  });
+
+  const flush = () =>
+    act(async () => {
+      await Promise.resolve();
+      await new Promise((r) => setTimeout(r, 0));
+      await new Promise((r) => setTimeout(r, 0));
+    });
+
+  const failures: Array<[string, () => Promise<void>]> = [
+    ['rejects', () => Promise.reject(new Error('animation failed'))],
+    [
+      'throws synchronously',
+      () => {
+        throw new Error('animation threw');
+      },
+    ],
+  ];
+
+  for (const [label, impl] of failures) {
+    it(`records gave-up exactly once and raises no unhandled rejection when animateCharacter ${label}`, async () => {
+      h.animateImpl = impl;
+      const user = userEvent.setup();
+      const { onOutcome } = setup();
+      const btn = screen.getByRole('button', { name: 'Give up' });
+      await user.click(btn);
+      await flush();
+
+      expect(h.log).toEqual(['cancelQuiz', 'animateCharacter', 'outcome:gave-up']);
+      expectOnce(onOutcome, 'gave-up');
+      expect(btn).toBeDisabled();
+      expect(screen.getByRole('status')).toHaveTextContent('The ghost reveals itself');
+      expect(unhandled).toEqual([]);
+    });
+
+    it(`late onComplete/onMistake after a failed animation (${label}) add no outcome`, async () => {
+      h.animateImpl = impl;
+      const user = userEvent.setup();
+      const { onOutcome } = setup();
+      await user.click(screen.getByRole('button', { name: 'Give up' }));
+      await flush();
+      complete(0);
+      mistake(1);
+      complete(3);
+      await flush();
+      expectOnce(onOutcome, 'gave-up');
+      expect(h.log.filter((e) => e.startsWith('outcome:'))).toEqual(['outcome:gave-up']);
+      expect(screen.getByText('Mistakes: 0')).toBeInTheDocument();
+      expect(unhandled).toEqual([]);
+    });
+  }
 });
 
 describe('WriteMode exactly-once (Req 3.4)', () => {

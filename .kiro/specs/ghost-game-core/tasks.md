@@ -171,22 +171,23 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
 
 - [x] 10. GhostPrompt component
   - [x] 10.1 Implement `app/src/components/GhostPrompt.tsx`
-    - Props `{ record: CharacterRecord }`; renders `cleanupMeaning(record.prompt.meaning)` and `record.prompt.pinyin` (as stored); hides the glyph
+    - Props `{ record: CharacterRecord }`; renders `maskTarget(cleanupMeaning(record.prompt.meaning), record.character)` and `record.prompt.pinyin` (as stored); hides the glyph. Exports the pure helper `maskTarget(text, char)` (split/join on the exact character, replacing every occurrence with "～" U+FF5E; display only; needed for 么 and 第)
     - _Requirements: 4.1, 5.1_
 
   - [x] 10.2 Write component test `app/src/components/GhostPrompt.test.tsx`
-    - Asserts the cleaned meaning and stored pinyin render and the target glyph is not shown
+    - Asserts the cleaned meaning and stored pinyin render and the target glyph is not shown; unit tests for `maskTarget`; a leak test over all 300 real records asserting the target character never appears in the displayed meaning
     - _Requirements: 4.1, 4.7, 5.1_
 
 - [x] 11. WriteMode
   - [x] 11.1 Implement `app/src/modes/WriteMode.tsx`
-    - Props `{ record; dataset; config; onOutcome }`; hosts hanzi-writer quiz on a `touch-action: none` Pointer-Event surface sized `min(80vw, 420px)` (375px→1440px+); state `mistakeCount`, `consecutiveMissesByStroke`, `hintShown`, `status`
+    - Props `{ record; dataset; config; onOutcome }`; hosts hanzi-writer quiz on a `touch-action: none` surface (hanzi-writer 3.7.3 mouse and touch events) sized `min(80vw, 420px)` (375px→1440px+); state `mistakeCount`, `consecutiveMissesByStroke`, `hintShown`, `status`
     - `onMistake` increments total mistakes per rejected stroke and derives `hintShown = true` when `mistakesOnStroke >= config.strokeHintAfterConsecutiveMisses`; `showHintAfterMisses` set to the same threshold; `onComplete` resolves `clean` (no hint AND mistakes ≤ `cleanMistakeThreshold`) else `struggled`
     - Labelled "Give up" control resolves `gave-up` in strict order: `cancelQuiz()` → `animateCharacter()` → resolve `'gave-up'`; non-colour accept/reject cues; accessible labels
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 5.10_
 
   - [x] 11.2 Write component tests `app/src/modes/WriteMode.test.tsx` (hanzi-writer MOCKED)
     - Mock hanzi-writer so `onMistake`/`showHintAfterMisses`/`onComplete` callbacks can be simulated: verify mistake counting, the stroke-hint threshold sets `hintShown`, `clean` vs `struggled` resolution, and "Give up" yields `gave-up` with cancelQuiz→animateCharacter→resolve ordering; assert accessible labels and a non-colour cue
+    - give-up still records `gave-up` exactly once (and causes no unhandled rejection) when `animateCharacter` rejects or throws
     - _Requirements: 5.3, 5.4, 5.5, 5.6, 5.7, 5.9, 5.10_
 
 - [x] 12. IntroScreen
@@ -207,14 +208,14 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
     - Asserts start and re-view-legend controls render with accessible labels and fire their callbacks
     - _Requirements: 1.5, 3.6_
 
-- [ ] 14. SeanceSession
-  - [ ] 14.1 Implement `app/src/components/SeanceSession.tsx`
-    - Props `{ ghosts; onOutcome; onComplete }`; presents ghosts one at a time (GhostPrompt + WriteMode), advances only on a terminal Outcome, never repeats a character within the session, reports each Outcome immediately, and calls `onComplete` with `SessionResults` when all ghosts are resolved
-    - _Requirements: 3.2, 3.4, 3.5_
+- [x] 14. SeanceSession
+  - [x] 14.1 Implement `app/src/components/SeanceSession.tsx`
+    - Props `{ ghosts; dataset; config; onOutcome; onComplete }`; shows "Ghost N of M" and GhostPrompt + WriteMode for the current ghost; when WriteMode reports an outcome, call `onOutcome(char, outcome, Date.now())` immediately and exactly once for that ghost, keep the revealed character on screen, and show a native "Next ghost" button (moving keyboard focus to it); advance only when that button is activated; on the last ghost the button is labelled "Finish the séance" and calls `onComplete({ total, laidToRest })` (laidToRest = clean + struggled); ignore duplicates in `ghosts` (first kept); an empty list calls `onComplete({ total: 0, laidToRest: 0 })` once; no legend access mid-session; all controls keyboard operable
+    - _Requirements: 3.2, 3.3, 3.4, 3.5, 8.4_
 
-  - [ ] 14.2 Write component test `app/src/components/SeanceSession.test.tsx`
-    - Asserts advance only on terminal Outcome, no character repeats, and each Outcome reported immediately (WriteMode mocked/stubbed to emit outcomes)
-    - _Requirements: 3.2, 3.4, 3.5_
+  - [x] 14.2 Write component test `app/src/components/SeanceSession.test.tsx`
+    - With WriteMode mocked to emit outcomes: no Next button before an outcome; outcome reported immediately with the time; revealed state kept until Next; Next advances; the last button finishes with correct tallies (gave-up not counted); repeated outcome emissions ignored; duplicates and empty list; keyboard Enter/Space on Next; focus moves to Next
+    - _Requirements: 3.2, 3.3, 3.4, 3.5, 8.4_
 
 - [x] 15. SessionSummary
   - [x] 15.1 Implement `app/src/components/SessionSummary.tsx`
@@ -250,7 +251,7 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
 - All tests are required — there are no optional tests and nothing is marked with `*`. Tests live next to the code they cover and are written in the same task group as that code.
 - Property tests use fast-check at ≥100 runs each and are tagged `// Feature: ghost-game-core, Property N: <title>`, one test per design Property (1–12). The property tests now cover design Properties 1–12, including Property 12 for the pure `learningOrder` function (tasks 5.8–5.10), whose output the App passes to `selectSession`.
 - `hanzi-writer` is pinned EXACT `3.7.3` in `app/package.json` and always loaded via our `makeCharDataLoader` from `characters.json` — never the CDN. Task 8 proves this against the real library offline.
-- The writing surface uses `touch-action: none` with Pointer Events; Give-up ordering is strictly `cancelQuiz` → `animateCharacter` → resolve `'gave-up'`; `hintShown` is derived inside `onMistake` at the stroke-hint threshold.
+- The writing surface uses `touch-action: none` and hanzi-writer 3.7.3's mouse and touch events (not Pointer Events); Give-up ordering is strictly `cancelQuiz` → `animateCharacter` → resolve `'gave-up'`; `hintShown` is derived inside `onMistake` at the stroke-hint threshold.
 - Task 18 is the ONLY manual, non-coding task; every other task is a coding task. Task 18 is performed by a human — Kiro does not run it and does not write that `kiro-log.md` entry; the human tester records it.
 - Do not add `.kiro/` to `.gitignore`; it must stay in the repo for judging.
 - Run tasks one at a time and review each result. Do not use "Run All Tasks".
