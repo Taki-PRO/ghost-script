@@ -613,6 +613,49 @@
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794561206270
       }
+    ],
+    "16.1 Implement `app/src/App.tsx` router/state and data load": [
+      {
+        "executionId": "874f4116-209e-4978-9184-03cadcc739a8",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794561489142
+      },
+      {
+        "executionId": "874f4116-209e-4978-9184-03cadcc739a8",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794561643657
+      }
+    ],
+    "16.2 Write integration test `app/src/App.test.tsx`": [
+      {
+        "executionId": "874f4116-209e-4978-9184-03cadcc739a8",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794561643866
+      },
+      {
+        "executionId": "874f4116-209e-4978-9184-03cadcc739a8",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794561797547
+      }
+    ],
+    "16. App wiring and integration": [
+      {
+        "executionId": "874f4116-209e-4978-9184-03cadcc739a8",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794561797586
+      }
+    ],
+    "17. Checkpoint — full suite passes": [
+      {
+        "executionId": "874f4116-209e-4978-9184-03cadcc739a8",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794561798346
+      },
+      {
+        "executionId": "874f4116-209e-4978-9184-03cadcc739a8",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794561825866
+      }
     ]
   }
 }
