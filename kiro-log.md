@@ -236,6 +236,20 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 - **Result:** `learningOrder(dataset)` is a pure function: stroke count ascending, ties by codepoint, and a missing or broken stroke count sorts last instead of crashing. Task 16 now states the session picker must receive `learningOrder(dataset)`, not the file's key order. `recordOutcome` no longer takes an unused time argument. **341 tests pass**; `tsc` clean for root and app.
 - **Next:** the UI components: the real-hanzi-writer offline test (8), GhostPrompt (10), WriteMode (11), IntroScreen (12), StartMenu (13) and SessionSummary (15).
 
+## Nov 13, 2026: Spec 2, tasks 8, 10–13, 15: the game screens
+
+- **What I did:** Ran six tasks in parallel waves: a real-hanzi-writer offline test (8), the ghost's clue (10), WriteMode, the core writing game (11), the legend intro (12), the start menu (13) and the end-of-séance summary (15), each with its tests.
+- **Kiro feature:** Spec task execution with parallel sub-agents (five implementations at once, then their tests).
+- **Result:** 69 new tests; **410 tests pass** (129 data + 281 app); `tsc` clean for root and app; no `any`.
+  - **Kiro corrected my prompt:** I wrote that the outcome rules were in "Req 1–3"; Kiro checked the spec, found they are Requirement 5, and built to that.
+  - **Answer leak caught and fixed:** a test that renders all 300 clues found two that showed their own character: 么 (its meaning quotes 什么 and 这么) and 第 (quotes 第六). The clue now replaces the target character with ～ on screen only; the data is unchanged.
+  - **Verified against the library source, not assumed:** hanzi-writer counts the current miss before calling `onMistake` and shows its hint on the same threshold, so our "hint shown" flag is true exactly when a hint really appears.
+  - **The real, unmocked hanzi-writer** loads 我, 口 and 爱 from our own data with zero network requests, and a missing character (龘) goes to the error path.
+  - **Spec wording was wrong:** hanzi-writer 3.7.3 uses mouse and touch events, not Pointer Events. Finger, Pencil, mouse and trackpad all still work. Steering doc `tech.md` corrected; the requirement is next.
+  - Give-up is tested to run exactly `cancelQuiz` → `animateCharacter` → record `gave-up`.
+- **Open decisions handed to the next task:** who moves on to the next ghost (WriteMode reports the outcome and keeps the answer on screen), and keyboard-only players (drawing needs a pointer).
+- **Next:** spec amendments, then task 14 (SeanceSession).
+
 ---
 
 ## Template for new entries
