@@ -32,7 +32,7 @@ Judges may not read Chinese, so they cannot spot a wrong character. Correctness 
 - Every character has stroke data, at least one pinyin reading and at least one meaning.
 - Every component listed for a character is a valid single character or recognised component.
 - Hint order is consistent with the decomposition (hints never reveal a component that is not part of the character).
-- In Build mode, the correct component set for a character is always present among the offered options, and decoys never include an exact duplicate of a correct component.
+- In the Cangjie Séance, the expected code is always the verbatim Unihan `kCangjie` value; the app never derives or guesses a code.
 - The dataset build is deterministic: running the pipeline twice produces identical output.
 
 ## Manual review

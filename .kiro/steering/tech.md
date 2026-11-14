@@ -19,7 +19,7 @@ inclusion: always
 
 ## Device targets
 - iPad Safari (with Apple Pencil) and iPhone/Android browsers: Write mode is primary.
-- Laptop Chrome/Safari/Edge with mouse or trackpad: Build mode is primary.
+- Laptop Chrome/Safari/Edge with mouse or trackpad: the Cangjie Séance (physical keyboard) is primary; Write mode also works with a mouse.
 - Layout must be responsive from 375px wide phones to 1440px+ laptops.
 
 ## Code conventions

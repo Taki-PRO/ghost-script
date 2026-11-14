@@ -509,7 +509,7 @@ Keys are sorted by Unicode codepoint ascending. Key order within each record is 
 
 *For any* `character-list.txt` with N valid (non-empty, non-comment) lines, a successful pipeline run SHALL produce a `characters.json` containing exactly N top-level keys.
 
-**Validates: Requirements 4.11**
+**Validates: Requirements 4.12**
 
 ---
 
@@ -557,7 +557,7 @@ Keys are sorted by Unicode codepoint ascending. Key order within each record is 
 
 *For any* `CharacterRecord` with a valid `decomposition`, the sequence of component strings returned by the hint engine (`getHintSequence(record)` in `src/engine/hints.ts`) SHALL be a subsequence of the leaf-component list extracted from `record.decomposition` by `getLeafComponents(record.decomposition)`.
 
-**Validates: Requirements 5.6**
+**Validates: Requirements 5.7**
 
 ---
 
@@ -587,7 +587,7 @@ Keys are sorted by Unicode codepoint ascending. Key order within each record is 
 
 ### Property 21: every override index is in range and reviewer-attributed
 
-*For any* parsed prompt-override applied in a successful build, `meaningIndex` SHALL be a valid index into the character's `meanings`, `readingIndex` SHALL be a valid index into the character's `pinyin`, and `reviewedBy` SHALL be non-empty.
+*For any* parsed prompt-override applied in a successful build, `meaningIndex` SHALL be a valid index into the character's `meanings`, `entryIndex` SHALL be a valid index into the character's CC-CEDICT entries, and `reviewedBy` SHALL be non-empty.
 
 **Validates: Requirements 6.6, 6.7**
 
