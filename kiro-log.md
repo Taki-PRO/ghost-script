@@ -108,7 +108,7 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 - **What I did:** Ran tasks 11.1–11.2 (`buildDataset` + `main()`) and 12 (unit-test checkpoint), then the first `npm run build:data` on the real data, with the instruction not to change the character list to make it pass.
 - **Kiro feature:** Spec task execution.
 - **Result:** Build succeeded first time: all 300 characters complete, 9 atomic (一人八又女手牛而身), 0 components outside the allowed Unicode ranges. 35/35 tests pass. `characters.json` is 1.6 MB.
-  - **Independent checks:** rebuilt twice on a different machine (Linux vs his Mac). The output was byte-for-byte identical to the committed file, so the determinism requirement holds across platforms.
+  - **Independent checks:** rebuilt twice on a different machine (Linux vs my Mac). The output was byte-for-byte identical to the committed file, so the determinism requirement holds across platforms.
   - **Content check found a gap the spec didn't cover:** CC-CEDICT's first meaning is often unusable as a game prompt. 88 of 300 start with "surname …", "variant of …", "used in …", "abbr. …" or "(bound form)". For example 三 → "surname San" and 东 → "surname Dong". Pinyin is in numbered form (shang3) with capitalised surname readings, so it isn't ready to display. A simple filter rule fixed most cases but still chose wrong senses for some (后 → "empress", 号 → "to wail", 体 → "Taiwan pr."), because CC-CEDICT doesn't order senses by how common they are.
 - **Decision:** add a "game prompt" requirement to the spec before writing the property tests. A rule picks a default meaning and reading for each character; a small human-reviewed override file corrects the rest. Every prompt must be chosen *from* the source data, never written freely, and property tests will enforce that.
 
@@ -221,7 +221,7 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 
 - **What I did:** Ran tasks 5 (5.1–5.7: choosing the 10 characters for a Séance), 6 (6.1–6.2: saving progress in the browser) and 7 (7.1–7.2: loading our own stroke data into hanzi-writer), with their tests.
 - **Kiro feature:** Spec task execution with parallel sub-agents; property-based tests (Properties 4, 6, 9, 10, 11).
-- **Result:** 137 new app tests; **329 tests pass** (129 data + 200 app); `tsc` clean for root and app; no `any`. Also passes on Linux with Node 22, not just his Mac's Node 26. No property test found a code bug.
+- **Result:** 137 new app tests; **329 tests pass** (129 data + 200 app); `tsc` clean for root and app; no `any`. Also passes on Linux with Node 22, not just my Mac's Node 26. No property test found a code bug.
   - **Spec bug Kiro caught:** Property 9 ("at most 5 new characters whenever something is due") contradicts Req 6.5(d), which tops up a short session with extra new characters so it still has 10. The code follows the requirement; the property wording needs fixing.
   - **Ordering gap Kiro caught:** the app only sees `characters.json`, which is sorted by codepoint, so new characters would be introduced in Unicode order. The HSK list is alphabetical by pinyin, so neither is a learning order. Needs a decision before task 16.
   - **Test-environment bug Kiro caught:** on Node 26 the built-in `localStorage` hid jsdom's, and its first fix (a Node flag in the app's Vitest config) never reached the test workers, because Vitest 2.1.9 ignores that setting inside a workspace project. 3 storage tests failed under the real `npm test` while passing when run alone. Fixed with a small typed shim in `app/test/setup.ts`.
@@ -269,7 +269,7 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 
 - **What I did:** Ran task 16 (wire every screen, the scheduler and saving into `App.tsx`) and task 17 (full-suite checkpoint), and asked Kiro to confirm the production build.
 - **Kiro feature:** Spec task execution.
-- **Result:** Every coding task in ghost-game-core is complete. **438 tests pass**; `tsc` clean for root and app; `npm run build -w app` succeeds. The JS bundle is 197 kB (63 kB gzipped), and the same build on Linux produced the identical file hash as on his Mac.
+- **Result:** Every coding task in ghost-game-core is complete. **438 tests pass**; `tsc` clean for root and app; `npm run build -w app` succeeds. The JS bundle is 197 kB (63 kB gzipped), and the same build on Linux produced the identical file hash as on my Mac.
   - The app is the only place that reads the clock; the first Séance is the 10 fewest-stroke characters, starting with 一.
   - App tests play a full 10-ghost Séance end to end, check each result is saved before "Next ghost" is pressed, check missed characters come back first 11 minutes later, and check the game still works with browser storage disabled.
   - Kiro noted the bundle still contains hanzi-writer's built-in CDN address. It is never used: we always pass our own loader, and the real-library test proves no request is made.
