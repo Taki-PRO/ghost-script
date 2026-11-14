@@ -2,7 +2,7 @@
 
 ## Overview
 
-The character-dataset feature is a Node.js + TypeScript data pipeline that transforms three open-source raw datasets into a single `app/public/data/characters.json` file consumed by the Ghost Script app and the Cangjie Oracle MCP server. The pipeline is offline-first, fully deterministic, and validates every record before writing any output. No AI-generated data is ever introduced at any stage.
+The character-dataset feature is a Node.js + TypeScript data pipeline that transforms four open-source raw datasets (hanzi-writer-data, Make Me a Hanzi, CC-CEDICT, and Unihan for Cangjie codes; amended by cangjie-seance Requirement 1) into a single `app/public/data/characters.json` file consumed by the Ghost Script app and the Cangjie Oracle MCP server. The pipeline is offline-first, fully deterministic, and validates every record before writing any output. No AI-generated data is ever introduced at any stage.
 
 The pipeline is invoked once (or whenever the source data changes) via `npm run build:data` from the repository root. The app itself never calls any external API at runtime.
 
@@ -17,17 +17,19 @@ flowchart TD
     MMH["data/raw/make-me-a-hanzi/dictionary.txt\n(newline-delimited JSON)"]
     CCD["data/raw/cc-cedict/cedict_ts.u8\n(text, CC-CEDICT format)"]
     OVR["data/prompt-overrides.csv\n(optional human overrides, by index)"]
+    UNI["data/raw/unihan/\n(Unihan data file, kCangjie field)"]
 
     CL --> P
     HWD --> P
     MMH --> P
     CCD --> P
     OVR --> P
+    UNI --> P
 
     subgraph P["scripts/build-data.ts  (Pipeline)"]
         direction TB
         V["1. Validate inputs\n(file presence, CJK range check)"]
-        PA["2. Parse datasets into Maps\n(parseHanziWriterData)\n(parseMakeMeAHanzi)\n(parseCcCedict)\n(parsePromptOverrides)"]
+        PA["2. Parse datasets into Maps\n(parseHanziWriterData)\n(parseMakeMeAHanzi)\n(parseCcCedict)\n(parseUnihanCangjie)\n(parsePromptOverrides)"]
         MG["3. Merge records per character\n(mergeCharacter)\n(selectPrompt)"]
         ER["4. Collect errors\n(fail-slow pass)"]
         SV["5. Sort by codepoint\nSerialise deterministically\nWrite output atomically\nWrite prompt-review.csv"]
@@ -37,6 +39,8 @@ flowchart TD
     SV --> OUT["app/public/data/characters.json"]
     SV --> REV["data/prompt-review.csv\n(human-review output)"]
 ```
+
+*(Amended by cangjie-seance Requirement 1)* The Unihan input is read by `scripts/lib/parse-unihan.ts`; the merge step adds the `cangjie` field. A malformed or duplicated `kCangjie` value is a build-level failure (stderr, non-zero exit, no output), while an absent value is not: it yields `cangjie: null` and `sources.cangjie: "missing"`.
 
 The build also reads `data/prompt-overrides.csv` when present (an absent file means no overrides), calls `selectPrompt` per character during the merge/assembly pass, and treats a prompt-selection failure (and an out-of-range override index) exactly like a missing-required-field failure: fail-slow, aggregated across all characters, no output written, non-zero exit. On full success it writes `data/prompt-review.csv` next to `data/` as an output artefact for human spot-checking; `app/public/data/characters.json` remains the primary output.
 
@@ -64,13 +68,20 @@ interface BuildOptions {
   hanziWriterDataDir:   string;  // path to hanzi-writer-data directory
   makeMeAHanziPath:     string;    // path to dictionary.txt
   ccCedictPath:         string;        // path to cedict_ts.u8
+  unihanPath:           string;        // path to the Unihan data file under data/raw/unihan/ (amended by cangjie-seance Requirement 1)
   promptOverridesPath?: string;  // path to prompt-overrides.csv (optional; absent = no overrides)
   promptReviewPath?:    string;  // path to write prompt-review.csv on success
 }
 
 type BuildResult =
-  | { ok: true;  output: string }           // serialised JSON string
-  | { ok: false; errors: MissingFieldError[] }
+  | { ok: true;  output: string; cangjieMissing: string[] }  // serialised JSON string; characters with cangjie === null (for the summary)
+  | { ok: false; errors: MissingFieldError[]; cangjieErrors?: CangjieError[] }
+
+interface CangjieError {            // amended by cangjie-seance Requirement 1
+  character: string;
+  values: string[];                 // every kCangjie value found for the character
+  reason: 'invalid-format' | 'multiple-values';
+}
 
 interface MissingFieldError {
   character: string;
@@ -178,6 +189,14 @@ Traditional Simplified [pin1 yin1] /meaning1/meaning2/
 ```
 Lines starting with `#` are comment lines and skipped. For each simplified character, all matching entries are collected; `pinyin` and `meanings` are deduplicated (preserving first-occurrence order). In addition to building the flat deduplicated `pinyin`/`meanings`, the parser pushes one `CcCedictSense { reading, meanings }` per source line (in file order, no dedup across entries) into `entries`. The flat lists are unchanged for the record; `entries` is what prompt selection consumes so a meaning and its reading stay paired.
 
+### `scripts/lib/parse-unihan.ts` *(Added by cangjie-seance Requirement 1)*
+
+```typescript
+export function parseUnihanCangjie(rawText: string): Map<string, string[]>
+```
+
+Parses the Unihan data file (tab-separated `U+XXXX<TAB>field<TAB>value` lines; `#` lines skipped), keeps only lines whose field is `kCangjie`, converts the `U+XXXX` codepoint to its character, and collects ALL `kCangjie` values per character in source order (a `string[]`, not a single string) so the build can detect duplicates. The parser does no validation of the values; the build checks each collected value against `^[A-Y]{1,5}$` and fails on a mismatch or when a character has more than one value. A character absent from the map yields `cangjie: null`. The parser never infers or derives a code.
+
 ### `scripts/lib/merge.ts`
 
 ```typescript
@@ -186,6 +205,7 @@ export function mergeCharacter(
   hanziWriter: HanziWriterEntry | undefined,
   makeMeAHanzi: MakeMeAHanziEntry | undefined,
   ccCedict: CcCedictEntry | undefined,
+  cangjie: string | null,           // validated single kCangjie value, or null (amended by cangjie-seance Requirement 1)
 ): MergeResult
 
 type MergeResult =
@@ -193,7 +213,7 @@ type MergeResult =
   | { ok: false; missingFields: RequiredField[] }
 ```
 
-Pure function. Assembles a `CharacterRecord` from the three parsed entries. Returns a failure result listing every missing required field rather than throwing.
+Pure function. Assembles a `CharacterRecord` from the parsed entries. Returns a failure result listing every missing required field rather than throwing. `cangjie` is not a required field: a `null` input never causes a failure and yields `cangjie: null` with `sources.cangjie: "missing"`; a non-null input yields `sources.cangjie: "unihan"`.
 
 ### `scripts/lib/prompt.ts`
 
@@ -258,7 +278,7 @@ export function serialiseDataset(
 ): string
 ```
 
-Sorts records by Unicode codepoint (`char.codePointAt(0)`) ascending, then serialises to JSON with a fixed key order per record (`character`, `pinyin`, `meanings`, `strokeCount`, `strokeData`, `decomposition`, `prompt`, `sources`). Uses `JSON.stringify(sorted, null, 2)` for a human-readable, deterministic output.
+Sorts records by Unicode codepoint (`char.codePointAt(0)`) ascending, then serialises to JSON with a fixed key order per record (`character`, `pinyin`, `meanings`, `strokeCount`, `strokeData`, `decomposition`, `prompt`, `cangjie`, `sources`), and a fixed key order within `sources` (`pinyin`, `meanings`, `strokeCount`, `strokeData`, `decomposition`, `cangjie` last). *(Amended by cangjie-seance Requirement 1)* Uses `JSON.stringify(sorted, null, 2)` for a human-readable, deterministic output.
 
 ---
 
@@ -276,6 +296,7 @@ export interface CharacterRecord {
   strokeData:   StrokeData;      // verbatim hanzi-writer path object
   decomposition: Decomposition;  // always non-null; atomic=true when character is indivisible
   prompt:       Prompt;          // always non-null; chosen ghost clue (see Requirement 6)
+  cangjie:      string | null;   // verbatim Unihan kCangjie, matches ^[A-Y]{1,5}$; the only nullable field (amended by cangjie-seance Requirement 1)
   sources:      FieldSources;
 }
 
@@ -302,7 +323,7 @@ export interface Prompt {
   pinyin:  string;   // chosen reading rendered with tone marks, e.g. "shàng"; non-empty
 }
 
-export type DatasetId = 'cc-cedict' | 'hanzi-writer-data' | 'make-me-a-hanzi';
+export type DatasetId = 'cc-cedict' | 'hanzi-writer-data' | 'make-me-a-hanzi' | 'unihan';  // 'unihan' added by cangjie-seance Requirement 1
 
 export interface FieldSources {
   pinyin:        DatasetId;   // always "cc-cedict"
@@ -310,6 +331,7 @@ export interface FieldSources {
   strokeCount:   DatasetId;   // always "hanzi-writer-data"
   strokeData:    DatasetId;   // always "hanzi-writer-data"
   decomposition: DatasetId;   // always "make-me-a-hanzi"
+  cangjie:       DatasetId | 'missing';  // "unihan" when cangjie is non-null, else "missing" (the only key that may be "missing")
 }
 ```
 
@@ -340,12 +362,14 @@ The top-level value is a JSON object:
       "components": ["戈"]
     },
     "prompt": { "meaning": "I; me; my", "pinyin": "wǒ" },
+    "cangjie": "HQI",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "口": {
@@ -363,18 +387,22 @@ The top-level value is a JSON object:
       "components": ["口"]
     },
     "prompt": { "meaning": "mouth", "pinyin": "kǒu" },
+    "cangjie": "R",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   }
 }
 ```
 
-Keys are sorted by Unicode codepoint ascending. Key order within each record is fixed: `character`, `pinyin`, `meanings`, `strokeCount`, `strokeData`, `decomposition`, `prompt`, `sources`. This guarantees byte-for-byte determinism across runs.
+When Unihan has no `kCangjie` value for a character, `cangjie` is `null` and `sources.cangjie` is `"missing"`; in the current data all 300 characters have a value.
+
+Keys are sorted by Unicode codepoint ascending. Key order within each record is fixed: `character`, `pinyin`, `meanings`, `strokeCount`, `strokeData`, `decomposition`, `prompt`, `cangjie`, `sources`; within `sources` it is `pinyin`, `meanings`, `strokeCount`, `strokeData`, `decomposition`, `cangjie` (amended by cangjie-seance Requirement 1). This guarantees byte-for-byte determinism across runs.
 
 ### `data/character-list.txt` format
 
@@ -423,7 +451,7 @@ Keys are sorted by Unicode codepoint ascending. Key order within each record is 
 
 ### Property 4: CharacterRecord schema completeness
 
-*For any* `CharacterRecord` produced by the pipeline, the record SHALL contain exactly the five data fields (`pinyin`, `meanings`, `strokeCount`, `strokeData`, `decomposition`) and the `sources` object, and no unrecognised keys SHALL be present.
+*For any* `CharacterRecord` produced by the pipeline, the record SHALL contain exactly the fields `character`, `pinyin`, `meanings`, `strokeCount`, `strokeData`, `decomposition`, `prompt`, `cangjie`, and `sources`, with `cangjie` either `null` or a string and every other field non-null, and no unrecognised keys SHALL be present. *(Amended by cangjie-seance Requirement 1)*
 
 **Validates: Requirements 4.2**
 
@@ -471,9 +499,9 @@ Keys are sorted by Unicode codepoint ascending. Key order within each record is 
 
 ### Property 10: sources object has exactly the required keys with valid values
 
-*For any* `CharacterRecord`, the `sources` object SHALL have exactly five keys (`pinyin`, `meanings`, `strokeCount`, `strokeData`, `decomposition`) and each value SHALL be one of `"cc-cedict"`, `"hanzi-writer-data"`, or `"make-me-a-hanzi"`.
+*For any* `CharacterRecord`, the `sources` object SHALL have exactly six keys (`pinyin`, `meanings`, `strokeCount`, `strokeData`, `decomposition`, `cangjie`) and each value SHALL be one of the four dataset ids `"cc-cedict"`, `"hanzi-writer-data"`, `"make-me-a-hanzi"`, or `"unihan"`, except that `sources.cangjie` MAY instead be `"missing"`; no other key SHALL ever have the value `"missing"`. *(Amended by cangjie-seance Requirement 1)*
 
-**Validates: Requirements 4.10**
+**Validates: Requirements 4.11**
 
 ---
 
@@ -573,13 +601,21 @@ Keys are sorted by Unicode codepoint ascending. Key order within each record is 
 
 ---
 
+### Property 23: Cangjie codes are well-formed, attributed, and verbatim from Unihan
+
+*For any* `CharacterRecord` in a successfully built `characters.json`: (a) if `cangjie` is non-null, it SHALL match `^[A-Y]{1,5}$`; (b) `sources.cangjie` SHALL equal `"unihan"` if and only if `cangjie` is non-null (otherwise it SHALL equal `"missing"`); and (c) if `cangjie` is non-null, it SHALL equal the single raw Unihan `kCangjie` value for that character as returned by `parseUnihanCangjie`. *(Added by cangjie-seance Requirement 1)*
+
+**Validates: Requirements 4.13, 5.10, 5.11, 5.12**
+
+---
+
 ## Error Handling
 
 ### Input validation errors (before processing)
 
 | Condition | Behaviour |
 |---|---|
-| Any required raw dataset file is absent | Emit path(s) to stderr, exit non-zero, no output file written |
+| Any required raw dataset file (including the Unihan data file) is absent | Emit path(s) to stderr, exit non-zero, no output file written |
 | `character-list.txt` is absent | Emit path to stderr, exit non-zero |
 | A character in the list is not a CJK codepoint | Emit character + line number to stderr, exit non-zero after validating all lines |
 | Duplicate character in the list | Emit character + duplicate line number to stderr, exit non-zero |
@@ -593,6 +629,8 @@ Keys are sorted by Unicode codepoint ascending. Key order within each record is 
 | Make Me a Hanzi has NO entry for a character | Record `decomposition` as missing; continue |
 | Make Me a Hanzi entry has `decomposition` starting with `？` | Classify as atomic: `atomic=true`, `components=[character]`; NOT a missing-field error |
 | Make Me a Hanzi IDS string contains interior `？` (e.g. `⿱逢？`) | Strip `？` from leaf extraction; keep other recognised CJK components |
+| Unihan has no `kCangjie` value for a character *(amended by cangjie-seance Requirement 1)* | Set `cangjie: null` and `sources.cangjie: "missing"`; NOT a build failure; the character is listed in the success summary |
+| A `kCangjie` value does not match `^[A-Y]{1,5}$`, or a character has more than one value *(amended by cangjie-seance Requirement 1)* | Write each affected character and value to stderr, exit non-zero, write no output file |
 | One or more characters have missing required fields | After processing all characters, emit full missing-field report to stderr, exit non-zero, do not write output file |
 
 ### Output integrity errors
@@ -618,6 +656,7 @@ Concrete example-based tests for:
 - `parseCharacterList`: rejects non-CJK characters, handles comment lines, rejects duplicates, accepts valid input.
 - `parseCcCedict`: correctly parses a sample multi-entry block; deduplicated output matches expected arrays; and that `entries` preserves per-source-line reading+glosses in order (e.g. 了 yields a `liao3` entry and a `le` entry, each with its own glosses).
 - `parseMakeMeAHanzi`: correctly parses a sample `dictionary.txt` line with and without etymology.
+- `parseUnihanCangjie` *(added by cangjie-seance Requirement 1)*: collects every `kCangjie` value per character in source order, ignores other fields and comment lines, and returns two values for a character that appears twice. Fixture lines are taken from the real Unihan file under `data/raw/unihan/` (for example 别 `XRSLN`, 错 `XCTA`, 身 `HXH`); no invented entries. Build-level tests cover a malformed value, a duplicate value, and a missing value (null, build succeeds, summary lists the character).
 - `parseHanziWriterData`: correctly extracts `strokeCount` from a known JSON fixture.
 - `mergeCharacter`: returns failure when any required field is missing; returns success with correct `sources` when all fields present.
 - `selectPrompt`: entry-based selection — real cases such as 三 (skips the `San` proper-noun entry), 后 (walks to a usable entry), 号, 了 (picks a usable entry whose reading pairs with its gloss), and 中; override precedence over the default rule (override selects an entry + a gloss within it); the single `no-usable-sense` failure result; and that the chosen meaning and reading share an entry. Fixture lines are taken from the real CC-CEDICT data in `data/raw/cc-cedict/cedict_ts.u8`; no invented entries.
@@ -635,7 +674,8 @@ Each property corresponds to a design correctness property. All property tests r
 | `character-list.test.ts` | Property 1 (CJK validation) |
 | `pipeline-determinism.test.ts` | Property 2 (determinism) |
 | `pipeline-errors.test.ts` | Property 3 (fail-slow error aggregation) |
-| `character-record-schema.test.ts` | Properties 4, 10, 13, 14, 15 |
+| `character-record-schema.test.ts` | Properties 4, 10, 13, 14, 15 (4 and 10 amended by cangjie-seance Requirement 1) |
+| `cangjie.test.ts` | Property 23 (Cangjie format, attribution, and verbatim match with raw Unihan; added by cangjie-seance Requirement 1) |
 | `cc-cedict-parser.test.ts` | Property 5 (deduplication preserves order) |
 | `hanzi-writer-parser.test.ts` | Property 6 (stroke data round-trip) |
 | `make-me-a-hanzi-parser.test.ts` | Property 7 (decomposition verbatim pass-through) |
@@ -658,7 +698,7 @@ it.prop([arbitraryBuildInputs])('determinism', (inputs) => {
 
 ### Smoke tests (`tests/smoke/`)
 
-- `dataset-files.test.ts`: asserts that all required raw dataset files and licence files exist on disk.
+- `dataset-files.test.ts`: asserts that all required raw dataset files and licence files exist on disk, including the Unihan data file and its Unicode License V3 text under `data/raw/unihan/` (amended by cangjie-seance Requirement 1).
 - `character-list-bounds.test.ts`: asserts character-list.txt has 280–320 non-comment lines, no duplicates, first line is a `#` comment.
 - `npm-script.test.ts`: asserts `package.json` has a `build:data` script entry.
 
@@ -676,5 +716,7 @@ arbitraryCcCedictEntry()  // random pinyin syllables + meanings
 arbitraryStrokeData()     // random strokes array with at least one entry
 arbitraryDecomposition()  // random IDS strings using valid CJK codepoints (U+4E00–U+9FFF,
                           // U+3400–U+4DBF, U+2E80–U+2EFF, U+2F00–U+2FDF, U+31C0–U+31EF) + IDCs
-arbitraryCharacterRecord() // full record with all fields present
+arbitraryCharacterRecord() // full record with all fields present (cangjie either null or ^[A-Y]{1,5}$, with matching sources.cangjie)
 ```
+
+The Cangjie fixtures and the raw-value comparison in Property 23 use lines from the real Unihan file in `data/raw/unihan/`, not hand-written codes (amended by cangjie-seance Requirement 1).

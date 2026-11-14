@@ -350,6 +350,7 @@ Build the data pipeline that transforms three open-source raw datasets into `app
 - The `buildDataset` function is kept pure (accepts paths as parameters) so property tests can exercise it with in-memory fixtures rather than touching the real `data/raw/` files.
 - Each property test is tagged with a comment: `// Feature: character-dataset, Property N: <title>`.
 - Run tasks one at a time and review each result. Do not use "Run All Tasks".
+- The Cangjie field (Unihan) is implemented by the `cangjie-seance` spec's tasks, which also update this spec's affected tests (Properties 4 and 10, schema and integration tests).
 
 ## Task Dependency Graph
 
