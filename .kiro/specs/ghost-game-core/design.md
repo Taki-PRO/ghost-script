@@ -85,6 +85,8 @@ flowchart TD
 
 The App builds the session character list with the pure `learningOrder(dataset)` and passes it to `selectSession`: `selectSession(history, learningOrder(dataset), Date.now(), DEFAULT_CONFIG)`. The scheduler therefore never sees the dataset's JSON key order; NEW characters and ties follow the Learning order.
 
+> **Amended by cangjie-seance** (implemented by cangjie-seance tasks, not by reopening tasks here): the App wiring above becomes `selectSession(history[mode], order, Date.now(), DEFAULT_CONFIG)`, where `order` is `learningOrder(dataset)` for `write` and `learningOrder(dataset).filter(isPlayableInCangjie)` for `cangjie`, and `history` is the per-Mode history `{ write, cangjie }`. Requirements 6.12 and 7.
+
 ### Directory layout (`app/src/`, consistent with the structure steering doc)
 
 ```
@@ -284,7 +286,7 @@ export function makeCharDataLoader(dataset: CharacterDataset): CharDataLoaderFn;
 
 - `onMistake({ strokeNum, mistakesOnStroke })` → increment the total mistake count by one per rejected stroke (Req 5.3); track consecutive misses of the same `strokeNum`. hanzi-writer quiz mode has NO dedicated "hint shown" callback, so `hintShown` is DERIVED here: hanzi-writer passes `mistakesOnStroke` to `onMistake`, and when `mistakesOnStroke >= config.strokeHintAfterConsecutiveMisses` (default 3) `WriteMode` sets `hintShown = true` — that threshold is exactly the point at which hanzi-writer's `showHintAfterMisses` reveals the next stroke. Once `hintShown` is `true` the ghost can no longer resolve as `clean`.
 - `showHintAfterMisses: config.strokeHintAfterConsecutiveMisses` → the quiz option that actually triggers the reveal: hanzi-writer shows the next expected stroke after that many consecutive misses of the same stroke, one stroke at a time, never the whole glyph (Req 5.4). The `onMistake` handler above mirrors this same threshold to set `hintShown`.
-- `onComplete({ totalMistakes })` → resolve the ghost: `clean` when `hintShown` is `false` AND `totalMistakes <= config.cleanMistakeThreshold`, else `struggled` (Req 5.5, 5.6).
+- `onComplete({ totalMistakes })` → resolve the ghost: `clean` when `hintShown` is `false` AND `totalMistakes <= config.cleanMistakeThreshold`, else `struggled` (Req 5.5, 5.6). *(Amended by cangjie-seance, implemented by its tasks: `clean` additionally requires `structureHintUsed` to be `false`, i.e. no hint of any kind.)*
 
 ### `app/src/engine/promptCleanup.ts` (display-only, pure)
 
@@ -328,9 +330,9 @@ A small typed API; the rest of the app never touches `localStorage` keys directl
 import type { ReviewHistory } from '../engine/scheduler';
 
 /** Current persisted-data schema version. Bump when the blob shape changes. Req 7.2. */
-export const CURRENT_SCHEMA_VERSION = 1;
+export const CURRENT_SCHEMA_VERSION = 1; // Amended by cangjie-seance: becomes 2 (see "Amended storage shape (schema v2)" below)
 
-/** The persisted blob. Req 7.1, 7.2. */
+/** The persisted blob. Req 7.1, 7.2. (Schema v1 shape; amended to v2 below.) */
 export interface PersistedState {
   readonly schemaVersion: number;
   readonly introSeen: boolean;
@@ -354,7 +356,7 @@ export function saveState(state: PersistedState): void;
  * Record one character's entry immediately and persist. Returns the new state. Req 3.4, 7.6.
  * No time argument: the caller already computed `entry` with `applyReview` using the UI-injected clock.
  */
-export function recordOutcome(char: string, entry: ReviewEntry): PersistedState;
+export function recordOutcome(char: string, entry: ReviewEntry): PersistedState; // Amended by cangjie-seance: recordOutcome(mode, char, entry)
 
 export function getIntroSeen(): boolean;      // Req 1.1, 1.5
 export function setIntroSeen(seen: boolean): void; // Req 1.4
@@ -397,22 +399,42 @@ export function createStore(options?: StoreOptions): Store;
 
 **`createStore` and the default store.** The module-level functions (`loadState`, `saveState`, `recordOutcome`, `getIntroSeen`, `setIntroSeen`, `resetToDefaults`) and `DEFAULT_STATE` are thin wrappers over a default store created by `createStore()`, which resolves `window.localStorage` lazily inside `try/catch` (so merely importing the module, or running with storage disabled, never throws). `createStore` exists so tests can exercise migration and failure paths with a fake backend, a custom `currentVersion`, and a custom `migrations` map.
 
-**Migrations.** `migrations[v]` migrates a blob FROM version `v` TO `v + 1`; `loadState` applies them in sequence until `currentVersion`. The SHIPPED migrations map is EMPTY because schema version 1 is the first version, so in production every non-current `schemaVersion` resets to defaults. Unknown, newer, zero, negative, or non-integer `schemaVersion` values always reset to defaults and are never migrated. A history object containing the keys `__proto__`, `constructor`, or `prototype` is treated as corrupt and the whole blob is reset to defaults. `resetToDefaults()` removes the storage key.
+**Migrations.** `migrations[v]` migrates a blob FROM version `v` TO `v + 1`; `loadState` applies them in sequence until `currentVersion`. The SHIPPED migrations map is EMPTY because schema version 1 is the first version, so in production every non-current `schemaVersion` resets to defaults. *(Amended by cangjie-seance: the shipped map gains its first entry, `migrations[1]`, the v1→v2 migration described below; before that change the map is empty.)* Unknown, newer, zero, negative, or non-integer `schemaVersion` values always reset to defaults and are never migrated. A history object containing the keys `__proto__`, `constructor`, or `prototype` is treated as corrupt and the whole blob is reset to defaults. `resetToDefaults()` removes the storage key.
+
+**Amended storage shape (schema v2).** *Amended by cangjie-seance; implemented by cangjie-seance tasks (its Requirements 4.5 and 8).*
+
+```typescript
+export type Mode = 'write' | 'cangjie';
+export const CURRENT_SCHEMA_VERSION = 2;
+
+export interface PersistedState {
+  readonly schemaVersion: number;
+  readonly introSeen: boolean;
+  readonly cangjieIntroSeen: boolean;
+  readonly history: { readonly write: ReviewHistory; readonly cangjie: ReviewHistory };
+}
+
+export function recordOutcome(mode: Mode, char: string, entry: ReviewEntry): PersistedState; // writes into history[mode]
+export function getCangjieIntroSeen(): boolean;
+export function setCangjieIntroSeen(seen: boolean): void;
+```
+
+The same three functions are added to the `Store` interface. The shipped `migrations` map gains its first entry: `migrations[1]` takes a v1 blob `{ schemaVersion: 1, introSeen, history }` and returns `{ schemaVersion: 2, introSeen, cangjieIntroSeen: false, history: { write: <v1 history>, cangjie: {} } }`. The reset rules above (unknown, newer, zero, negative or non-integer version; corrupt blob; `__proto__`/`constructor`/`prototype` keys, now checked in both histories) are unchanged.
 
 ### UI components (`app/src/components/` + `app/src/modes/`)
 
-These hold no game logic; they read `Date.now()` and delegate to the engine (Requirements 6.11, 8.1). App wiring: when a Séance starts, the App calls `selectSession(history, learningOrder(dataset), Date.now(), DEFAULT_CONFIG)`. When a ghost reaches a terminal Outcome, the App reads `now = Date.now()`, computes `entry = applyReview(history[char], outcome, now, DEFAULT_CONFIG)`, and persists it with `recordOutcome(char, entry)` (no time argument; the clock was already applied by `applyReview`). Colour is never the only signal and all interactive controls carry accessible labels (Requirements 5.9, 5.10, 8.5).
+These hold no game logic; they read `Date.now()` and delegate to the engine (Requirements 6.11, 8.1). App wiring: when a Séance starts, the App calls `selectSession(history, learningOrder(dataset), Date.now(), DEFAULT_CONFIG)`. When a ghost reaches a terminal Outcome, the App reads `now = Date.now()`, computes `entry = applyReview(history[char], outcome, now, DEFAULT_CONFIG)`, and persists it with `recordOutcome(char, entry)` (no time argument; the clock was already applied by `applyReview`). *(Amended by cangjie-seance, implemented by its tasks: `recordOutcome(mode, char, entry)` writes into that Mode's history, and `entry` is computed from `history[mode][char]`.)* Colour is never the only signal and all interactive controls carry accessible labels (Requirements 5.9, 5.10, 8.5).
 
 - **`components/IntroScreen.tsx`** — props `{ onBegin: () => void }`. Renders the legend copy (Cangjie invented writing; legend of wailing ghosts; forgotten characters are ghosts laid to rest by writing), attributes the wailing-ghosts line to the Huainanzi (天雨粟，鬼夜哭), and nothing else historical (Req 1.2, 1.7, 1.8). A labelled "Begin the Séance" button fires `onBegin`; operable by touch and mouse/keyboard (Req 1.3, 1.6).
-- **`components/StartMenu.tsx`** — props `{ onStartSeance: () => void; onReviewLegend: () => void }`. The legend re-view entry point lives here (outside any active session) so it never interrupts a Séance (Req 1.5, 3.6).
+- **`components/StartMenu.tsx`** — props `{ onStartSeance: () => void; onReviewLegend: () => void }`. The legend re-view entry point lives here (outside any active session) so it never interrupts a Séance (Req 1.5, 3.6). *(Amended by cangjie-seance, implemented by its tasks: props become `{ onStartSeance: (mode: Mode) => void; onReviewLegend: () => void; onReviewCangjieGuide: () => void }`, with one control per Mode, one for the legend, and one for "How Cangjie works".)*
 - **`components/SeanceSession.tsx`** — props `{ ghosts: readonly CharacterRecord[]; dataset: CharacterDataset; config: EngineConfig; onOutcome: (char: string, outcome: Outcome, now: number) => void; onComplete: (results: SessionResults) => void }` (`SessionResults` is exported from `SessionSummary.tsx`). Flow (Req 3.2, 3.3, 3.4, 3.5, 8.4):
-  - Shows "Ghost N of M" progress, and `GhostPrompt` + `WriteMode` for the current ghost.
+  - Shows "Ghost N of M" progress, and `GhostPrompt` + `WriteMode` for the current ghost. *(Amended by cangjie-seance, implemented by its tasks: `SeanceSession` takes a `mode: Mode` prop and renders `WriteMode` for `write` or `CangjieMode` for `cangjie`; "Begin another Séance" on the summary restarts in the same Mode.)*
   - When `WriteMode` reports an outcome, `SeanceSession` immediately calls `onOutcome(char, outcome, Date.now())` exactly once for that ghost (the UI layer reads the clock), keeps the revealed character on screen, shows a native `<button>` "Next ghost", and moves keyboard focus to it. Repeated outcome emissions for the same ghost are ignored.
   - Advancing happens only when the player activates "Next ghost". On the last ghost the button is labelled "Finish the séance" and calls `onComplete({ total, laidToRest })`, where `laidToRest` = count of `clean` + `struggled` outcomes (`gave-up` is not counted).
   - Duplicates in `ghosts` are ignored (first occurrence kept, Req 3.5). An empty `ghosts` list calls `onComplete({ total: 0, laidToRest: 0 })` once.
   - No legend access mid-session (Req 1.5). Every control is a native button, operable by keyboard.
 - **`components/GhostPrompt.tsx`** — props `{ record: CharacterRecord }`. Displays `maskTarget(cleanupMeaning(record.prompt.meaning), record.character)` and `record.prompt.pinyin` (as stored), hiding the glyph (Req 4.1, 5.1). The module also exports the pure helper `maskTarget(text: string, char: string): string`, which splits and joins on the exact character string (codepoint-safe) to replace every occurrence of `char` with the full-width tilde "～" (U+FF5E). It is applied AFTER `cleanupMeaning` and is display only: the dataset and `cleanupMeaning` output are unchanged. Real data needs it for 么 and 第, whose meanings contain the target glyph.
-- **`modes/WriteMode.tsx`** — props `{ record: CharacterRecord; dataset: CharacterDataset; config: EngineConfig; onOutcome: (outcome: Outcome) => void }`. State: `mistakeCount`, `consecutiveMissesByStroke`, `hintShown`, `status`. `hintShown` is not reported directly by hanzi-writer; it is derived inside the `onMistake` handler when `mistakesOnStroke >= config.strokeHintAfterConsecutiveMisses` (the point at which `showHintAfterMisses` reveals the next stroke), and once `true` it rules out a `clean` outcome. Hosts the hanzi-writer quiz on a `touch-action: none` surface (Decision 3) and wires `onMistake`/`showHintAfterMisses`/`onComplete` to the outcome/threshold model. The clearly labelled "Give up" control resolves `gave-up` with a strict ordering: it SHALL call `writer.cancelQuiz()` FIRST (so no further `onMistake`/`onComplete` events are counted during the reveal), THEN `writer.animateCharacter()` to play the animated stroke-order reveal, THEN resolve the `gave-up` Outcome (cancelQuiz → animateCharacter → resolve `gave-up`) (Req 5.3–5.10). `animateCharacter` plays the stroke order once (it also calls `cancelQuiz` internally). `WriteMode` never advances by itself: it reports the outcome once, immediately, and keeps the revealed character on screen until its `record` prop changes. Keyboard users can operate every control (including "Give up") but cannot draw. Non-colour cues (text/icon) accompany accept/reject feedback (Req 5.9).
+- **`modes/WriteMode.tsx`** — props `{ record: CharacterRecord; dataset: CharacterDataset; config: EngineConfig; onOutcome: (outcome: Outcome) => void }`. State: `mistakeCount`, `consecutiveMissesByStroke`, `hintShown`, `status`. `hintShown` is not reported directly by hanzi-writer; it is derived inside the `onMistake` handler when `mistakesOnStroke >= config.strokeHintAfterConsecutiveMisses` (the point at which `showHintAfterMisses` reveals the next stroke), and once `true` it rules out a `clean` outcome. Hosts the hanzi-writer quiz on a `touch-action: none` surface (Decision 3) and wires `onMistake`/`showHintAfterMisses`/`onComplete` to the outcome/threshold model. The clearly labelled "Give up" control resolves `gave-up` with a strict ordering: it SHALL call `writer.cancelQuiz()` FIRST (so no further `onMistake`/`onComplete` events are counted during the reveal), THEN `writer.animateCharacter()` to play the animated stroke-order reveal, THEN resolve the `gave-up` Outcome (cancelQuiz → animateCharacter → resolve `gave-up`) (Req 5.3–5.10). `animateCharacter` plays the stroke order once (it also calls `cancelQuiz` internally). `WriteMode` never advances by itself: it reports the outcome once, immediately, and keeps the revealed character on screen until its `record` prop changes. Keyboard users can operate every control (including "Give up") but cannot draw. Non-colour cues (text/icon) accompany accept/reject feedback (Req 5.9). *(Amended by cangjie-seance, implemented by its tasks: `WriteMode` gains a second flag `structureHintUsed`, set when the "Reveal its shape" structure hint is used; the completion rule `resolveCompletion` takes "any hint used" (`hintShown || structureHintUsed`), so `clean` requires no hint of any kind and total mistakes within `cleanMistakeThreshold`.)*
 - **`components/SessionSummary.tsx`** — props `{ results: SessionResults; onPlayAgain: () => void }`. Shows how many ghosts were laid to rest and offers another Séance (Req 3.3, 3.6).
 
 ```typescript
@@ -453,6 +475,8 @@ export interface PersistedState {
   readonly introSeen: boolean;           // Req 1.4, 1.5
   readonly history: ReviewHistory;       // Req 6, 7.1
 }
+// Amended by cangjie-seance (schema v2): history becomes { write: ReviewHistory; cangjie: ReviewHistory }
+// and a `cangjieIntroSeen: boolean` field is added; see "Amended storage shape (schema v2)".
 
 // hanzi-writer quiz adapter data shape (app/src/data/charDataLoader.ts)
 export interface HanziWriterCharData {

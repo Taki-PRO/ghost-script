@@ -255,6 +255,7 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
 - Task 18 is the ONLY manual, non-coding task; every other task is a coding task. Task 18 is performed by a human — Kiro does not run it and does not write that `kiro-log.md` entry; the human tester records it.
 - Do not add `.kiro/` to `.gitignore`; it must stay in the repo for judging.
 - Run tasks one at a time and review each result. Do not use "Run All Tasks".
+- cangjie-seance amends Requirements 1.5, 3.6, 5.5, 5.6, 6.12 and 7 of this spec; the code and test changes are implemented by cangjie-seance's tasks, not by reopening tasks here.
 
 ## Task Dependency Graph
 
