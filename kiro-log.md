@@ -295,6 +295,18 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 - **Spec 2 (ghost-game-core) is complete.**
 - **Next:** Spec 3: Build mode for laptops, and Cangjie structure hints.
 
+## Nov 13–15, 2026: Spec 3 planning: the Cangjie Séance
+
+- **What I did:** Started Spec 3, `cangjie-seance`, after an honest review: the app worked but was a well-built flashcard game, and the Resurrection theme existed only in the legend text. The fix is to make the dying technology playable: you summon each ghost by typing its Cangjie code (倉頡輸入法), the shape-based input method from 1976 that builds every character from 24 basic shapes on the QWERTY keys.
+- **Kiro feature:** Spec workflow (requirements, then design) with a data check before any requirements were written; cross-spec amendments.
+- **Result:**
+  - **Data check first:** Kiro downloaded Unicode's Unihan 18.0.0 (Unicode License V3) and found a Cangjie code for **all 300** characters, coded for the simplified forms directly (e.g. 们 = OLS). 别 and 错 have an undocumented leading X, so they are left out of Cangjie mode: **298 playable**. 身 (HXH) stays, so the on-screen keyboard has 25 keys.
+  - **Decisions (approved by Takshil):** a separate review history per mode (writing by hand and knowing a code are different skills), so saved data moves to schema v2 with the first real migration. Single-key characters such as 口 get a letters-only keyboard, because the key face would be the answer. Empty slots show the code length. The hint stays automatic after 3 misses. Keys are ignored while a system input method is composing.
+  - **History claims are whitelisted:** the "How Cangjie works" screen may say only four things, each cited to Wikipedia: invented in 1976 by Chu Bong-Foo; named after Cangjie, the legendary inventor of writing; the first Chinese input method on a standard QWERTY keyboard; released to the public in 1982. No usage statistics and no "dying" claims.
+  - **Write mode gains "Reveal its shape":** an optional layout hint built from the component breakdown, for the 259 characters that have one. It counts as a hint.
+  - Kiro amended the two earlier specs to match: the dataset gains a `cangjie` field (the only one allowed to be missing) and a fourth source, and "clean" now means no hint of any kind. Steering docs and a few stale property references were also brought up to date.
+- **Next:** tasks.md for cangjie-seance, then implementation.
+
 ---
 
 ## Template for new entries
