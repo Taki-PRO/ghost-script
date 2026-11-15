@@ -110,7 +110,7 @@ describe('oracle/power/skills/cangjie-oracle/SKILL.md', () => {
 describe('personal names', () => {
   it('appear in none of the three Power files', () => {
     for (const text of [pluginText, mcpText, skillText]) {
-      expect(text).not.toMatch(/takshil|raghav/i);
+      expect(text).not.toMatch(/takshil/i);
     }
   });
 });

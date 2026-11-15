@@ -391,6 +391,23 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   - The formed character appears below the slots and pushes the keyboard down.
 - **Next:** the human check (group 8), then visual identity.
 
+## Nov 16, 2026: kiro-tooling: data hook, accuracy reviewer, Cangjie Oracle MCP and Power
+
+- **What I did:** Wrote and built a `kiro-tooling` spec in one pass, so that hooks, a custom agent, MCP and a Power do real work for the rest of the build, not just appear in the write-up.
+- **Kiro features:** agent hooks, custom agents, MCP, Powers, specs, steering.
+- **Result:**
+  - **Data check hook** (`.kiro/hooks/data-check-on-save.json`): on saving `data/character-list.txt`, `data/prompt-overrides.csv` or anything under `data/raw/`, it runs `npm run check:data`. That rebuilds the dataset, runs the dataset tests and prints `DATA CHECK PASSED` or `DATA CHECK FAILED`. Its pattern skips the build's own outputs, so it can't trigger itself.
+    - Changing 吧's override to entry 9 fails with: "吧: override entry-index-out-of-range … Fix this row in data/prompt-overrides.csv (column entryIndex). No output written." Reverting it passes.
+    - **Not yet confirmed:** the hook did not visibly fire when Kiro's own agent saved the file, even though the docs say agent saves trigger it. To be checked by hand in the IDE.
+  - **`accuracy-reviewer` agent** (`.kiro/agents/`): read-only, with file writes and shell commands denied. It checks text against `content-accuracy.md` and reports `path:line [rule] "quote"`.
+    - **Its first review found a real answer leak.** The "How Cangjie works" guide used 七 (JU) as its example, and 七 is the second ghost a new player meets, so the guide gave away that ghost's code.
+    - It also flagged an uncited history line in the README and three unsourced sentences in the guide.
+  - **Cangjie Oracle MCP server** (`oracle/`, stdio, SDK 1.32.2, no network): `lookup`, `verify` and `decompose` answer only from the committed dataset. Called over real stdio: 我 → HQI from Unihan 18.0.0 `kCangjie` (marked provisional), playable; "hqi" verifies as HQI; 好 → ⿰女子 from Make Me a Hanzi.
+    - Registered in `.kiro/settings/mcp.json`. Kiro is blocked from writing its own settings folder, so I created that file myself.
+  - **Oracle Power** (`oracle/power/`): manifest, MCP config and a skill telling Kiro never to state codes from memory. Importing it into Kiro is still to be tried.
+  - **Tests:** 128 unit tests, including the Oracle checked against all 300 records and a scan proving it has no network code. **1033 tests pass**; `tsc` clean for root, app and oracle.
+- **Next:** fix the leak and the unsourced lines, confirm the hook by hand, then visual identity.
+
 ---
 
 ## Template for new entries
