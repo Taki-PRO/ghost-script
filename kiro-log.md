@@ -367,6 +367,30 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   - **Tests:** 52 new, none of them property tests. **555 tests pass**; `tsc` clean for root and app. The live site redeployed.
 - **Next:** groups 5–6: the summon screen, the guide, and wiring the two-step rite into the Séance.
 
+## Nov 15, 2026: Cangjie Séance groups 5–7: the rite is playable
+
+- **What I did:** Ran groups 5, 6 and 7 of `cangjie-seance`: the summon screen, the "How Cangjie works" guide, a third menu button, wiring the two-step rite into the Séance and the App, and the final checkpoint.
+- **Kiro feature:** Spec task execution with parallel sub-agents, plus an exhaustive never-reveal test generated over the real dataset.
+- **Result:**
+  - **The rite:** "Step 1 of 2: Summon" shows empty slots, one per key in the code. Each correct key fills a slot with its shape, then the character draws itself, holds and fades. "Step 2 of 2: Lay to rest" is written from memory. 别 and 错 go straight to writing.
+  - **The guide** shows all 25 keys and an example taken from the dataset (七 = JU: 十 then 山). It makes only the four sourced history claims, cites both Wikipedia articles, and says the codes follow Unihan `kCangjie`, which Unicode marks provisional.
+  - **Never-reveal test:** for each of the 298 playable characters, it renders the clue and the summon step, then searches every text node and attribute for the character, before any key and again after a key hint. No leaks.
+  - **Kiro fixed two gaps between its code and the design while writing tests.** The mistake count now sits inside the screen-reader status line, and the on-screen keys are labelled with their shape.
+  - **Tests:** 350 new (299 of them are the never-reveal sweep), none of them property tests. **905 tests pass**; `tsc` clean; the build succeeds.
+- **Automated play-through in headless Chrome** of the production build, with real key presses and mouse strokes traced from the stroke data:
+  - The guide appeared before the first Séance.
+  - 一 (M): typed cleanly, then written: clean.
+  - 七 (JU): three wrong keys showed "Hint: press J (十)" and the J key lit up. Correct keys, then a clean write, gave **struggled**.
+  - 九: gave up during the summon. The code was revealed, writing still followed, and the result was **gave-up**.
+  - 了 (NN) was summoned by clicking the on-screen keys.
+  - The summary read "9 of 10 ghosts laid to rest", which is correct.
+  - The character never appeared in the page text or attributes during the summon step, or after it faded during writing.
+  - No console errors. At 375px wide there was no sideways scroll.
+- **Notes for the visual work:**
+  - On a phone the key rows wrap unevenly (6 + 4, 6 + 3, 6), losing the keyboard shape.
+  - The formed character appears below the slots and pushes the keyboard down.
+- **Next:** the human check (group 8), then visual identity.
+
 ---
 
 ## Template for new entries
