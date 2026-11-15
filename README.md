@@ -40,7 +40,7 @@ One-time repository setting: Settings → Pages → Build and deployment → Sou
 
 ## Data and licences
 
-The character dataset is assembled from three open-source raw datasets plus a published character list. Each source and its licence:
+The character dataset is assembled from four open-source raw datasets plus a published character list. Each source and its licence:
 
 | Source | Version / commit | Used for | Licence | URL |
 | --- | --- | --- | --- | --- |
@@ -69,7 +69,7 @@ Prerequisites: Node and npm, and the raw datasets present under `data/raw/` (the
 npm run build:data
 ```
 
-This reads `data/character-list.txt`, the three raw datasets under `data/raw/`, and `data/prompt-overrides.csv`, and writes `app/public/data/characters.json` and `data/prompt-review.csv`. It runs fully offline — no network access, no API keys, no runtime LLM calls — and is deterministic: the same inputs always produce byte-for-byte identical output.
+This reads `data/character-list.txt`, the four raw datasets under `data/raw/`, and `data/prompt-overrides.csv`, and writes `app/public/data/characters.json` and `data/prompt-review.csv`. It runs fully offline — no network access, no API keys, no runtime LLM calls — and is deterministic: the same inputs always produce byte-for-byte identical output.
 
 ### Run the tests
 

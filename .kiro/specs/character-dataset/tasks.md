@@ -210,7 +210,7 @@ Build the data pipeline that transforms three open-source raw datasets into `app
 
   - [x] 13.3 Write property test: pipeline determinism (Property 2)
     - **Property 2: Pipeline determinism**
-    - **Validates: Requirements 3.4, 5.7**
+    - **Validates: Requirements 3.4, 5.8**
     - Generate random `BuildOptions`-shaped inputs; call `buildDataset` twice; assert results are deeply equal
     - numRuns: 100
     - _Requirements: 3.4, 5.8_

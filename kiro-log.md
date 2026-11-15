@@ -338,6 +338,20 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 - **Credits:** 490 of 4,000 used in total (115 since the last count: Spec 3 planning, the deploy spec, and this re-scope).
 - **Next:** align the two earlier specs, then build the data pipeline group.
 
+## Nov 15, 2026: Cangjie Séance groups 1–2: Cangjie codes in the dataset
+
+- **What I did:** Aligned the two earlier specs with the one-rite plan, then ran groups 1 and 2 of `cangjie-seance`: the data pipeline and its checkpoint.
+- **Kiro feature:** Spec task execution with parallel sub-agents in waves (19 tasks across six waves), plus cross-spec amendments.
+- **Result:**
+  - **The data:** Unicode's Unihan 18.0.0 file (Unicode License V3) is committed under `data/raw/unihan/` with its licence. The build checks the file's SHA-256 against `SOURCES.md` before reading it, and refuses to build on a mismatch, a malformed code or a character with two codes.
+  - **Build summary:** "Cangjie code: 300 of 300 characters have one. Playable in Cangjie: 298 of 300. Not playable: 别 错."
+  - **Spot checks:** 我 = HQI, 口 = R, 爱 = BBKE, 们 = OLS, 身 = HXH.
+  - **Determinism:** rebuilding on Linux reproduced the Mac's `characters.json` with zero differences.
+  - **Kiro caught a flaw in its own plan:** wave 3 ran a test that reads `characters.json` alongside the task that regenerates it. Kiro reordered them instead of risking a test against stale data.
+  - **Tests:** 65 new, none of them property tests, as decided. That includes an exhaustive check of all 300 codes against the raw Unihan file. **503 tests pass**; `tsc` clean for root and app. The loader now rejects a malformed code.
+  - The earlier specs no longer mention the withdrawn mode choice, per-mode history or shape hint. Req 5.1 now says the character stays hidden until the summon completes and fades before writing.
+- **Next:** groups 3–4: the summon engine and save-data schema 2.
+
 ---
 
 ## Template for new entries

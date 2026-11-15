@@ -437,7 +437,7 @@ Keys are sorted by Unicode codepoint ascending. Key order within each record is 
 
 *For any* set of valid pipeline inputs (character list + raw dataset content), running the `buildDataset` function twice with identical inputs SHALL produce byte-for-byte identical output strings.
 
-**Validates: Requirements 3.4, 5.7**
+**Validates: Requirements 3.4, 5.8**
 
 ---
 
