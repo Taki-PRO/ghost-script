@@ -2,29 +2,33 @@
 
 ## Overview
 
-The cangjie-seance feature adds a second way to lay a ghost to rest: typing the character's Cangjie code instead of drawing it. It has five parts, each traced to `requirements.md`:
+The cangjie-seance feature turns every ghost into a two-step rite inside the existing Nightly Séance. First the player SUMMONS the ghost by typing its Cangjie code, and the character forms in ink and fades out. Then the player LAYS IT TO REST by writing the character from memory in the existing Write mode. There is no mode choice. Each part is traced to `requirements.md`:
 
-1. **Pipeline (Requirement 1).** Cangjie codes enter `characters.json` from the Unicode 18.0.0 Unihan `kCangjie` field, read from a committed, hash-verified file `data/raw/unihan/Unihan_DictionaryLikeData.txt` (Unicode License V3). All 300 characters have a code; every code matches `^[A-Y]{1,5}$`; each character has a single value.
-2. **Cangjie mode (Requirements 2, 4, 5).** A pure engine (`cangjie.ts`) and a UI (`CangjieMode.tsx`) with Code slots, an On-screen Cangjie keyboard, a Key hint and Give up. 298 of 300 characters are Playable; 别 (`XRSLN`) and 错 (`XCTA`) are excluded because their codes start with X.
-3. **"How Cangjie works" screen (Requirement 3).** A one-time guide whose only historical claims are the four whitelisted in content-accuracy.md, each cited to two English Wikipedia articles.
-4. **Structure hint (Requirement 6).** A pure IDS-to-layout function and a `StructureHint` component behind a "Reveal its shape" button in Write mode. 259 of 300 characters are eligible.
-5. **Masking and storage (Requirements 7, 8).** One masking helper used in both modes, and storage schema version 2 with one Review history per Mode.
+1. **Pipeline (Requirement 1).** Cangjie codes enter `characters.json` from the Unicode 18.0.0 Unihan `kCangjie` field, read from a committed, hash-verified file `data/raw/unihan/Unihan_DictionaryLikeData.txt` (Unicode License V3). All 300 characters have a code; every code matches `^[A-Y]{1,5}$`; each character has one value.
+2. **The rite (Requirement 2).** `SeanceSession` walks each ghost through a Summon step (`SummonStep`) and then a Lay-to-rest step (`WriteMode`, unchanged). 298 of 300 characters have a Summon step; 别 (`XRSLN`) and 错 (`XCTA`) skip it because their codes start with X.
+3. **Summoning (Requirement 3).** A pure reducer in `cangjie.ts` handles key entries, mistakes, the automatic Key hint and Give up. `SummonStep` renders Code slots and a 25-key On-screen Cangjie keyboard, forms the character in ink, and fades it.
+4. **Combined outcome (Requirement 4).** `combineOutcomes` in `outcome.ts` merges the two Step results into one Outcome, recorded once at the end of the Lay-to-rest step with the existing `applyReview` and `recordOutcome(char, entry)`. The scheduler and Learning order are unchanged.
+5. **Never reveal (Requirement 5).** One `maskTarget` helper, letters-only keys for key-face characters, and a Summon step that unmounts completely (hanzi-writer instance destroyed) before the Lay-to-rest step starts.
+6. **Guide, menu, storage (Requirements 6, 7, 8).** `CangjieGuide`, a three-button `StartMenu`, an App `cangjie-guide` screen, and storage schema version 2 with `cangjieIntroSeen` and no migration.
 
-The design reuses the ghost-game-core engine unchanged where possible: `selectSession`, `applyReview`, `learningOrder`, `EngineConfig`, and the Séance flow. Game logic stays in `app/src/engine/` (pure, injected clock, no I/O); UI stays in `app/src/components/` and `app/src/modes/`. TypeScript is `strict: true` with no `any`. The shipped app makes no network request for Cangjie codes or stroke data (Requirement 9.1).
+The shipped app makes no network request for Cangjie codes or stroke data (Requirement 9.1). Game logic stays in `app/src/engine/` (pure, no I/O, injected clock); UI stays in `app/src/components/` and `app/src/modes/`. TypeScript is `strict: true` with no `any`.
 
 ### Key design decisions
 
 | # | Decision | Rationale | Requirements |
 | --- | --- | --- | --- |
-| D1 | `parseUnihanCangjie` returns `Map<string, string[]>` (every value per character). | The build can detect duplicates; the parser itself validates nothing and never infers a code. | 1.3, 1.4 |
-| D2 | The committed file's SHA-256 is checked before it is parsed. | Pins the exact data; a changed file stops the build with no output. | 1.1, 1.10 |
-| D3 | `isPlayableInCangjie` lives in `app/src/engine/cangjieRules.ts`, imported by both the app engine and `scripts/` by relative path (as `scripts/` already imports `app/src/data/types.ts`). | One definition of "Playable" for the build summary and the session filter. | 1.11, 4.2 |
-| D4 | `resolveCompletion` moves to `app/src/engine/outcome.ts`. | Write and Cangjie modes classify Outcomes with one function. | 5.8, 6.4, 9.2 case 4 |
-| D5 | The Cangjie reducer is a pure state machine with no ambient time or I/O. | Property-testable. | 5.12, 9.2 |
-| D6 | Masking is one helper, `maskTarget`, in `app/src/engine/mask.ts`. | One rule for every displayed string; one place to test. | 7.1, 7.2 |
-| D7 | Storage schema v2 stores `history: { write, cangjie }` and moves v1 history under `write`. | Separate scheduling per Mode. | 4.5, 8.2 |
-| D8 | The key-face rule is "letters only when the target is any key's face" (`KEY_FACE_CHARACTERS`), not a list of 14 characters. | Correct for any dataset; the 14 current characters are one instance. | 7.3 |
-| D9 | `BuildOptions` gains `unihanPath` and `unihanSha256`; `main()` reads the hash from `data/raw/SOURCES.md`. | `buildDataset` stays free of repository paths, so tests pass fixture files and hashes. | 1.10 |
+| D1 | `parseUnihanCangjie` returns `Map<string, string[]>` (every value per character). | The build can detect duplicates; the parser validates nothing and never infers a code. | 1.3, 1.4 |
+| D2 | The committed file's SHA-256 is checked before it is parsed. | Pins the exact data; a changed file stops the build with no output. | 1.1, 1.9 |
+| D3 | `isPlayableInCangjie` lives in `app/src/engine/cangjieRules.ts`, imported by the engine, the loader and `scripts/` by relative path (as `scripts/` already imports `app/src/data/types.ts`). | One definition of "Playable" for the build summary and the ghost flow. | 1.10, 1.11, 2.3 |
+| D4 | `resolveCompletion` moves from `WriteMode.tsx` to `outcome.ts` (re-exported from `WriteMode.tsx`), next to the new `combineOutcomes`. | One place for Outcome rules; existing WriteMode tests stay green. | 3.8, 4.1–4.4, 4.9 |
+| D5 | A Step result is an `Outcome` (`clean`, `struggled`, `gave-up`) for each step, so `combineOutcomes(summon, write)` is a small pure function: any `gave-up` wins, then any `struggled`, else `clean`. | Each step already compares its own mistakes to the threshold, which is the "compared separately" rule. | 4.1–4.4 |
+| D6 | The Summon reducer is a pure state machine with no ambient time or I/O. | Unit-testable. | 3.12 |
+| D7 | Masking is one helper, `maskTarget`, in `app/src/engine/mask.ts`, shared by `GhostPrompt` and `SummonStep`. | One rule for every displayed string. | 5.2 |
+| D8 | The key-face rule is "letters only when the target is any key's face" (`KEY_FACE_CHARACTERS`), not a hard-coded list of 14 characters. | Correct for any dataset; the 14 current characters are one instance. | 5.3 |
+| D9 | `SeanceSession` keeps its props and callback; the Summon Step result is held in a ref and combined when the Lay-to-rest step reports. `App` and `recordOutcome` see one Outcome per ghost. | Smallest change to the recording path; the outcome is recorded once. | 4.5 |
+| D10 | The Summon step ends only after the character has formed (hanzi-writer `animateCharacter()` settled), been held for `SUMMON_HOLD_MS`, and faded for `SUMMON_FADE_MS`; then the component unmounts. | The fade is the only guard against copying the character; unmounting removes every trace before writing starts. | 2.4, 5.5 |
+| D11 | Schema version 2 ships with NO migration; version-1 blobs reset through the existing rule. | Smaller code and tests; the cost (one-time progress loss) is listed for review. | 8.3 |
+| D12 | `BuildOptions` gains `unihanPath` and `unihanSha256`; `main()` reads the hash from `data/raw/SOURCES.md`. | `buildDataset` stays free of repository paths, so tests pass fixture files and hashes. | 1.9 |
 
 ---
 
@@ -47,54 +51,50 @@ flowchart TD
 
     subgraph ENGINE["app/src/engine/ (pure)"]
         RULES
-        CJ["cangjie.ts\nkeys, parseKeyEvent, reducer"]
-        OUT["outcome.ts\nresolveCompletion"]
-        SL["structureLayout.ts\nparseIds, leaves"]
+        CJ["cangjie.ts\nCANGJIE_KEYS, KEY_FACE_CHARACTERS,\nparseKeyEvent, Summon reducer"]
+        OUT["outcome.ts\nresolveCompletion, combineOutcomes"]
         MASK["mask.ts\nmaskTarget"]
-        LO["learningOrder.ts, scheduler.ts"]
+        LO["learningOrder.ts, scheduler.ts\n(unchanged)"]
     end
 
     RULES --> CJ
     OUT --> CJ
-    LOAD --> APP
 
     subgraph UI["app/src (UI)"]
-        CM["modes/CangjieMode.tsx"]
+        SUM["modes/SummonStep.tsx"]
         WM["modes/WriteMode.tsx"]
-        SH["components/StructureHint.tsx"]
         GP["components/GhostPrompt.tsx"]
         GUIDE["components/CangjieGuide.tsx"]
-        SS["components/SeanceSession.tsx"]
-        MENU["components/StartMenu.tsx"]
+        SS["components/SeanceSession.tsx\ntwo-step ghost flow"]
+        MENU["components/StartMenu.tsx\n3 buttons"]
     end
 
-    CJ --> CM
-    OUT --> CM
-    OUT --> WM
-    SL --> SH --> WM
-    MASK --> CM
+    CJ --> SUM
+    MASK --> SUM
     MASK --> GP
-    MASK --> SH
-    CJ --> GUIDE
-    CM --> SS
+    OUT --> WM
+    OUT --> SS
+    SUM --> SS
     WM --> SS
     GP --> SS
+    CJ --> GUIDE
 
+    LOAD --> APP
     subgraph APPG["App screens"]
         APP["App.tsx"]
         APP --> S1["loading / error"]
         APP --> S2["intro"]
         APP --> S3["menu"]
         APP --> S4["cangjie-guide"]
-        APP --> S5["seance, mode = write or cangjie"]
-        APP --> S6["summary, keeps mode"]
+        APP --> S5["seance"]
+        APP --> S6["summary"]
     end
 
     S3 --> MENU
     S4 --> GUIDE
     S5 --> SS
     LO --> APP
-    APP <--> ST["storage v2\nhistory.write, history.cangjie,\nintroSeen, cangjieIntroSeen"]
+    APP <--> ST["storage schema 2\nintroSeen, cangjieIntroSeen, history"]
 ```
 
 ### Screen flow
@@ -105,29 +105,43 @@ stateDiagram-v2
     loading --> error: dataset invalid
     loading --> intro: introSeen is false
     loading --> menu: introSeen is true
-    intro --> seance_write: Begin (Requirement 2.4)
-    menu --> seance_write: Begin a Write Séance
-    menu --> cangjie_guide: Begin a Cangjie Séance and guide not seen
-    menu --> seance_cangjie: Begin a Cangjie Séance and guide seen
-    menu --> cangjie_guide: How Cangjie works
+    intro --> guide_before: Begin and guide not seen
+    intro --> seance: Begin and guide seen
+    menu --> guide_before: Begin a Nightly Seance and guide not seen
+    menu --> seance: Begin a Nightly Seance and guide seen
+    menu --> guide_review: How Cangjie works
     menu --> intro: Read the legend again
-    cangjie_guide --> seance_cangjie: Continue (started from Begin)
-    cangjie_guide --> menu: Continue (started from re-view)
-    seance_write --> summary
-    seance_cangjie --> summary
-    summary --> seance_write: Begin another Séance (Write)
-    summary --> seance_cangjie: Begin another Séance (Cangjie)
+    guide_before --> seance: Continue
+    guide_review --> menu: Continue
+    seance --> summary
+    summary --> guide_before: Begin another Seance and guide not seen
+    summary --> seance: Begin another Seance
+```
+
+`guide_before` and `guide_review` are the same `cangjie-guide` screen with `origin: 'before-seance'` or `'review'`.
+
+### One ghost, two steps
+
+```mermaid
+stateDiagram-v2
+    [*] --> decide
+    decide --> summon: character is Playable in Cangjie mode
+    decide --> write: no code or code starts with X
+    summon --> forming: code complete or Give up
+    forming --> fading: character formed and held
+    fading --> write: faded and removed
+    write --> resolved: Lay-to-rest step ends
+    resolved --> [*]: combineOutcomes then recordOutcome once
 ```
 
 ### Directory layout of new and changed files
 
 ```
 data/raw/unihan/
-├── Unihan_DictionaryLikeData.txt        NEW  committed (4.1 MB), pinned
-└── LICENSE                              NEW  Unicode License V3 text, fetched from unicode.org
-data/raw/SOURCES.md                      CHANGED  Unihan section
+├── Unihan_DictionaryLikeData.txt        NEW  committed, pinned, verbatim
+└── LICENSE                              NEW  Unicode License V3 text from unicode.org
+data/raw/SOURCES.md                      CHANGED  Unihan section with both hashes
 README.md                                CHANGED  "Data and licences"
-kiro-log.md                              CHANGED  (steering rule)
 scripts/
 ├── build-data.ts                        CHANGED
 └── lib/
@@ -141,19 +155,17 @@ app/src/
 │   ├── cangjieRules.ts                  NEW  (shared with scripts/)
 │   ├── cangjie.ts                       NEW
 │   ├── outcome.ts                       NEW
-│   ├── structureLayout.ts               NEW
 │   └── mask.ts                          NEW
-├── storage/storage.ts                   CHANGED
+├── storage/storage.ts                   CHANGED  (schema 2, no migration)
 ├── modes/
-│   ├── CangjieMode.tsx                  NEW
-│   └── WriteMode.tsx                    CHANGED
+│   ├── SummonStep.tsx                   NEW
+│   └── WriteMode.tsx                    CHANGED  (re-exports resolveCompletion)
 ├── components/
 │   ├── CangjieGuide.tsx                 NEW
-│   ├── StructureHint.tsx                NEW
 │   ├── GhostPrompt.tsx                  CHANGED  (re-exports maskTarget)
-│   ├── StartMenu.tsx                    CHANGED
-│   └── SeanceSession.tsx                CHANGED
-└── App.tsx                              CHANGED
+│   ├── StartMenu.tsx                    CHANGED  (3 buttons)
+│   └── SeanceSession.tsx                CHANGED  (two-step flow)
+└── App.tsx                              CHANGED  ('cangjie-guide' screen)
 tests/fixtures/unihan/                   NEW  small fixture Unihan files
 ```
 
@@ -172,7 +184,7 @@ export function parseUnihanCangjie(rawText: string): Map<string, string[]>;
 
 Lines are `U+XXXX<TAB>kCangjie<TAB>value`. Lines starting with `#` and lines for other fields are skipped. The codepoint is converted to its character with `String.fromCodePoint`. Values are collected per character in source order. The parser does no validation and never infers a value.
 
-#### `scripts/lib/verify-sha256.ts` (Requirement 1.10)
+#### `scripts/lib/verify-sha256.ts` (Requirement 1.9)
 
 ```typescript
 export function sha256Hex(bytes: Uint8Array): string;
@@ -190,9 +202,9 @@ export class Sha256MismatchError extends Error {
 }
 ```
 
-`SOURCES.md` records two hashes in the Unihan section: the original `Unihan.zip` (`4c93ea9c1f636451729a840978f1667a53886af37ba854fdcce109721c63d43e`) and the committed file. `readRecordedSha256` matches a line of the form `- **SHA-256 (<label>):** <64 hex digits>`. The committed file's hash is computed when the file is added; it is not stated in this design.
+`SOURCES.md` records two hashes in its Unihan section as lines of the form `- **SHA-256 (<label>):** <64 hex digits>`: one for `Unihan.zip` (`4c93ea9c1f636451729a840978f1667a53886af37ba854fdcce109721c63d43e`) and one for `Unihan_DictionaryLikeData.txt`. The committed file's hash is computed when the file is added; it is not stated in this design.
 
-#### `app/src/engine/cangjieRules.ts` (shared by the app and `scripts/`)
+#### `app/src/engine/cangjieRules.ts` (shared by the app and `scripts/`; Requirements 1.8, 1.11)
 
 ```typescript
 export const CANGJIE_CODE_PATTERN: RegExp;           // /^[A-Y]{1,5}$/
@@ -201,9 +213,9 @@ export function isValidCangjieCode(value: string): boolean;
 export function isPlayableInCangjie(code: string | null): boolean;
 ```
 
-The module imports nothing. `cangjie.ts` re-exports `isPlayableInCangjie`.
+The module imports nothing, so `scripts/` can import it by relative path.
 
-#### `scripts/lib/merge.ts` (Requirement 1.3)
+#### `scripts/lib/merge.ts` and `scripts/lib/serialise.ts` (Requirements 1.3, 1.6)
 
 ```typescript
 export function mergeCharacter(
@@ -216,13 +228,9 @@ export function mergeCharacter(
 ): MergeResult;
 ```
 
-`cangjie` is not a required field: `null` never produces a failure. The record gets `cangjie` and `sources.cangjie = cangjie === null ? 'missing' : 'unihan'`.
+`cangjie` is not a required field: `null` never produces a failure. The record gets `cangjie` and `sources.cangjie = cangjie === null ? 'missing' : 'unihan'`. The serialiser's record key order becomes `character, pinyin, meanings, strokeCount, strokeData, decomposition, prompt, cangjie, sources`; its `sources` key order becomes `pinyin, meanings, strokeCount, strokeData, decomposition, cangjie`.
 
-#### `scripts/lib/serialise.ts` (Requirement 1.6)
-
-`OrderedRecord` gains `cangjie: string | null` between `prompt` and `sources`. Record key order is `character, pinyin, meanings, strokeCount, strokeData, decomposition, prompt, cangjie, sources`. `sources` key order is `pinyin, meanings, strokeCount, strokeData, decomposition, cangjie`.
-
-#### `scripts/build-data.ts` (Requirements 1.1, 1.4, 1.5, 1.10, 1.11)
+#### `scripts/build-data.ts` (Requirements 1.1, 1.4, 1.5, 1.9, 1.10)
 
 ```typescript
 interface BuildOptions {
@@ -246,46 +254,58 @@ interface CangjieError {
 
 Changes to `buildDataset`:
 
-1. The input-presence check includes `unihanPath`. A missing file throws, like the other inputs.
-2. `verifyFileSha256(opts.unihanPath, opts.unihanSha256)` runs before the file is read. A mismatch throws `Sha256MismatchError`; `main()` reports it on stderr, sets a non-zero exit code, and writes nothing.
+1. The input-presence check includes `unihanPath`; a missing file throws, like the other inputs.
+2. `verifyFileSha256(opts.unihanPath, opts.unihanSha256)` runs before the file is read; a mismatch throws `Sha256MismatchError`, which `main()` reports on stderr with a non-zero exit and no output.
 3. `parseUnihanCangjie` runs on the verified text.
-4. In the per-character pass (fail-slow, aggregated with the other errors), `values = unihan.get(char) ?? []`:
-   - more than one value gives `multiple-values`;
-   - a value failing `isValidCangjieCode` gives `invalid-format`;
-   - no value gives `cangjie = null`.
+4. In the per-character pass (fail-slow, aggregated with the other errors), `values = unihan.get(char) ?? []`: more than one value gives `multiple-values`; a value failing `isValidCangjieCode` gives `invalid-format`; no value gives `cangjie = null`.
 5. Any `MissingFieldError` or `CangjieError` returns `{ ok: false, … }` and writes no output.
-6. On success the result includes `cangjieMissing` and `notPlayable`.
+6. On success the result includes `cangjieMissing` and `notPlayable` (from `isPlayableInCangjie`).
 
-`main()` prints on success: the count of characters with a code (for example "300 of 300"), every character without one (or "none"), the count Playable in Cangjie mode, and every character that is not (in the current data: 别 错). On failure it prints each `CangjieError` as `character: values (reason)` to stderr.
+`main()` reads the recorded hash with `readRecordedSha256(sourcesMd, 'Unihan_DictionaryLikeData.txt')`; a missing hash is an error with a non-zero exit. Its success summary states the count of characters with a code ("300 of 300"), every character without one (or "none"), the count Playable in Cangjie mode (298), and every character that is not (别 错). On failure it prints each `CangjieError` as `character: values (reason)` to stderr.
 
 ### Engine
 
-#### `app/src/engine/outcome.ts` (Requirements 5.8, 6.4)
+#### `app/src/engine/outcome.ts` (Requirements 3.8, 4.1–4.4, 4.9)
 
 ```typescript
 import type { EngineConfig } from './config';
 import type { Outcome } from './scheduler';
 
-/** clean iff no hint of any kind was shown AND mistakes <= config.cleanMistakeThreshold. */
+/** clean iff no hint was shown AND mistakes <= config.cleanMistakeThreshold, else struggled. */
 export function resolveCompletion(
-  anyHintUsed: boolean,
+  hintShown: boolean,
   mistakes: number,
   config: Pick<EngineConfig, 'cleanMistakeThreshold'>,
 ): Outcome;
+
+/**
+ * The ghost's single Outcome. `summon` is null when the ghost has no Summon step.
+ * gave-up if either step gave up; else struggled if either struggled; else clean.
+ */
+export function combineOutcomes(summon: Outcome | null, write: Outcome): Outcome;
 ```
 
-`WriteMode.tsx` imports it and re-exports it (`export { resolveCompletion } from '../engine/outcome'`), so existing imports and tests keep working.
+`resolveCompletion` moves unchanged from `WriteMode.tsx`; `WriteMode.tsx` re-exports it (`export { resolveCompletion } from '../engine/outcome'`) so existing imports and tests keep working. A Step result of `struggled` already means "a hint appeared or this step's own mistakes exceeded the threshold", so combining Step results compares each step's mistakes to the threshold separately.
 
-#### `app/src/engine/mask.ts` (Requirements 7.1, 7.2)
+Truth table for `combineOutcomes(summon, write)`:
+
+| summon \ write | clean | struggled | gave-up |
+| --- | --- | --- | --- |
+| `null` | clean | struggled | gave-up |
+| clean | clean | struggled | gave-up |
+| struggled | struggled | struggled | gave-up |
+| gave-up | gave-up | gave-up | gave-up |
+
+#### `app/src/engine/mask.ts` (Requirement 5.2)
 
 ```typescript
 /** Replaces every occurrence of `char` in `text` with "～" (U+FF5E). Display only. */
 export function maskTarget(text: string, char: string): string;
 ```
 
-The body moves unchanged from `GhostPrompt.tsx`. `GhostPrompt.tsx` imports it and re-exports it so `GhostPrompt.test.tsx` keeps passing.
+The body moves unchanged from `GhostPrompt.tsx`, which re-exports it so `GhostPrompt.test.tsx` keeps passing.
 
-#### `app/src/engine/cangjie.ts` (Requirements 5.2, 5.4–5.8, 5.10, 5.12)
+#### `app/src/engine/cangjie.ts` (Requirements 3.2, 3.4–3.8, 3.10, 3.12, 5.3)
 
 ```typescript
 export type CangjieKey =
@@ -300,8 +320,6 @@ export const CANGJIE_KEYS: readonly CangjieKeyInfo[];
 /** Every key face: the 24 base shapes plus 難. */
 export const KEY_FACE_CHARACTERS: ReadonlySet<string>;
 
-export { isPlayableInCangjie } from './cangjieRules';
-
 export interface KeyEventLike {
   readonly key: string;
   readonly ctrlKey: boolean;
@@ -311,116 +329,59 @@ export interface KeyEventLike {
   readonly isComposing: boolean;
 }
 
-/** A single letter A–Y (case-insensitive); null for everything else (Z, "Process", modifiers, repeat, composition). */
+/** A single letter A–Y (either case); null for everything else (Z, "Process", modifiers, repeat, composition). */
 export function parseKeyEvent(e: KeyEventLike): CangjieKey | null;
 
-export type CangjieStatus = 'active' | Outcome;   // 'clean' | 'struggled' | 'gave-up'
+export type SummonStatus = 'active' | Outcome;   // 'clean' | 'struggled' | 'gave-up'
 
-export interface CangjieState {
+export interface SummonState {
   readonly code: string;             // the target code
   readonly filled: number;           // slots filled, 0..code.length
   readonly mistakes: number;         // total wrong entries
   readonly missesOnSlot: number;     // consecutive wrong entries for the current slot
   readonly hintShown: boolean;       // true once any Key hint has appeared (sticky)
-  readonly status: CangjieStatus;
+  readonly status: SummonStatus;     // the Step result once it is not 'active'
 }
 
-export function startCangjie(code: string): CangjieState;
-export function nextExpectedKey(state: CangjieState): CangjieKey | null;   // null once resolved
-export function isKeyHintVisible(state: CangjieState, config: Pick<EngineConfig, 'strokeHintAfterConsecutiveMisses'>): boolean;
+type SummonConfig = Pick<EngineConfig, 'cleanMistakeThreshold' | 'strokeHintAfterConsecutiveMisses'>;
 
-export function applyKeyEntry(
-  state: CangjieState,
-  key: CangjieKey,
-  config: Pick<EngineConfig, 'cleanMistakeThreshold' | 'strokeHintAfterConsecutiveMisses'>,
-): CangjieState;
-
-/** Composition of parseKeyEvent and applyKeyEntry; returns `state` itself when the event is ignored. */
-export function applyKeyEvent(state: CangjieState, e: KeyEventLike, config: …same as applyKeyEntry…): CangjieState;
-
-export function giveUp(state: CangjieState): CangjieState;
-export function pickGuideExample(dataset: ReadonlyMap<string, CharacterRecord>): { character: string; code: string } | null;
+export function startSummon(code: string): SummonState;
+export function nextExpectedKey(state: SummonState): CangjieKey | null;   // null once resolved
+export function isKeyHintVisible(
+  state: SummonState,
+  config: Pick<EngineConfig, 'strokeHintAfterConsecutiveMisses'>,
+): boolean;
+export function applyKeyEntry(state: SummonState, key: CangjieKey, config: SummonConfig): SummonState;
+/** parseKeyEvent then applyKeyEntry; returns `state` itself when the event is ignored. */
+export function applyKeyEvent(state: SummonState, e: KeyEventLike, config: SummonConfig): SummonState;
+export function giveUpSummon(state: SummonState): SummonState;
 ```
 
-Reducer rules for `applyKeyEntry`:
+`cangjie.ts` imports `resolveCompletion` from `outcome.ts`. Reducer rules for `applyKeyEntry`:
 
-- When `status !== 'active'`, return `state` unchanged (Requirement 5.10).
-- Correct key (equals `code[filled]`): `filled + 1`, `missesOnSlot = 0`. When `filled + 1 === code.length`, `status = resolveCompletion(hintShown, mistakes, config)` (Requirement 5.8).
-- Wrong key: `mistakes + 1`, `missesOnSlot + 1`, `hintShown = hintShown || missesOnSlot + 1 >= config.strokeHintAfterConsecutiveMisses`. Slots are unchanged (Requirements 5.6, 5.7).
-- `isKeyHintVisible` is true while `status === 'active'` and `missesOnSlot >= config.strokeHintAfterConsecutiveMisses`; the visible hint disappears when the slot is filled, but `hintShown` stays true for classification.
-- `giveUp` sets `status = 'gave-up'` when active, else returns `state`.
-
-`pickGuideExample` returns the first character in `learningOrder(dataset)` that is Playable and whose code has at least two keys, with its code taken from `record.cangjie`; it returns `null` when none exists. Nothing is hard-coded.
-
-#### `app/src/engine/structureLayout.ts` (Requirements 6.3, 6.6)
-
-```typescript
-export type LayoutNode =
-  | { kind: 'leaf'; component: string }
-  | { kind: 'compose'; idc: string; children: LayoutNode[] };
-
-export interface IdcInfo {
-  readonly arity: 2 | 3;
-  readonly groupLabel: string;                 // e.g. "left and right"
-  readonly childLabels: readonly string[];     // e.g. ['left', 'right']
-}
-
-/** ⿰ ⿱ ⿲ ⿳ ⿴ ⿵ ⿶ ⿷ ⿸ ⿹ ⿺ ⿻ (U+2FF0–U+2FFB). ⿲ and ⿳ have arity 3; the other ten have arity 2. */
-export const IDC_INFO: Readonly<Record<string, IdcInfo>>;
-export const IDC_ARITY: Readonly<Record<string, 2 | 3>>;
-
-/** Prefix-notation parse. null for atomic "？", any interior "？", an unknown IDC, leftover input, or missing operands. */
-export function parseIds(ids: string): LayoutNode | null;
-
-/** Leaf components in reading order (repeats kept). */
-export function leaves(node: LayoutNode): string[];
-
-/** Not atomic AND the IDS string contains no "？" (U+FF1F) AND parseIds succeeds. */
-export function isStructureHintEligible(record: Pick<CharacterRecord, 'decomposition'>): boolean;
-```
-
-`parseIds` iterates `Array.from(ids)` (codepoints). A codepoint in `IDC_INFO` consumes `arity` child nodes recursively; `？` or any codepoint in U+2FF0–U+2FFF that is not in `IDC_INFO` returns `null`; any other codepoint is a leaf. After parsing, remaining codepoints return `null`. The ⿲ layout is supported even though the data does not use it.
-
-#### `app/src/engine/cangjieRules.ts` and session selection
-
-`buildSession` in `App.tsx` becomes:
-
-```typescript
-export type Mode = 'write' | 'cangjie';   // defined in storage.ts, imported here
-
-export function buildSession(
-  dataset: CharacterDataset,
-  history: ReviewHistory,        // the history of `mode` only
-  now: number,
-  config: EngineConfig,
-  mode: Mode,
-): CharacterRecord[] {
-  const all = learningOrder(dataset);
-  const order = mode === 'cangjie'
-    ? all.filter((c) => isPlayableInCangjie(dataset.get(c)?.cangjie ?? null))
-    : all;
-  // selectSession(history, order, now, config) then map to records, as today
-}
-```
+- When `status !== 'active'`, return `state` unchanged (Requirement 3.10).
+- A correct key (equals `code[filled]`) gives `filled + 1` and `missesOnSlot = 0`. When `filled + 1 === code.length`, `status = resolveCompletion(hintShown, mistakes, config)` (Requirement 3.8).
+- A wrong key gives `mistakes + 1`, `missesOnSlot + 1`, and `hintShown = hintShown || missesOnSlot + 1 >= config.strokeHintAfterConsecutiveMisses`; slots are unchanged (Requirements 3.6, 3.7).
+- `isKeyHintVisible` is true while `status === 'active'` and `missesOnSlot >= config.strokeHintAfterConsecutiveMisses`. The visible hint disappears when the slot is filled, but `hintShown` stays true for classification.
+- `giveUpSummon` sets `status = 'gave-up'` when active, else returns `state`.
 
 ### Storage (`app/src/storage/storage.ts`, Requirement 8)
 
 ```typescript
 export const CURRENT_SCHEMA_VERSION = 2;
-export type Mode = 'write' | 'cangjie';
 
 export interface PersistedState {
   readonly schemaVersion: number;
   readonly introSeen: boolean;
   readonly cangjieIntroSeen: boolean;
-  readonly history: { readonly write: ReviewHistory; readonly cangjie: ReviewHistory };
+  readonly history: ReviewHistory;
 }
 
 export interface Store {
   readonly defaultState: PersistedState;
   loadState(): PersistedState;
   saveState(state: PersistedState): void;
-  recordOutcome(mode: Mode, char: string, entry: ReviewEntry): PersistedState;
+  recordOutcome(char: string, entry: ReviewEntry): PersistedState;   // unchanged signature
   getIntroSeen(): boolean;
   setIntroSeen(seen: boolean): void;
   getCangjieIntroSeen(): boolean;
@@ -429,96 +390,87 @@ export interface Store {
 }
 ```
 
-- `SHIPPED_MIGRATIONS[1]` takes `{ schemaVersion: 1, introSeen, history }` and returns `{ introSeen, cangjieIntroSeen: false, history: { write: history, cangjie: {} } }`; the loader sets `schemaVersion: 2` after the call, as it does today.
-- `validateState` checks `cangjieIntroSeen` is a boolean and that both histories pass `isValidHistory` (including the forbidden-key rule).
-- `recordOutcome` writes `history[mode] = { ...prior.history[mode], [char]: entry }` and leaves the other history and both flags unchanged.
-- `saveState`, `defaultState`, and the module-level wrappers (`recordOutcome`, `getCangjieIntroSeen`, `setCangjieIntroSeen`) follow the same pattern. All reset rules are unchanged (Requirement 8.3).
+`SHIPPED_MIGRATIONS` stays empty. `loadState` therefore resets a version-1 blob to defaults through the existing rule "older version without a migration resets". `validateState` additionally requires a boolean `cangjieIntroSeen`. `saveState` writes the four fields; `recordOutcome` and `setIntroSeen` preserve `cangjieIntroSeen`. Module-level wrappers `getCangjieIntroSeen` and `setCangjieIntroSeen` follow the existing pattern. All reset rules and the in-memory fallback are unchanged (Requirement 8.4).
 
 ### Data loader (`app/src/data/charDataLoader.ts`, Requirement 1.8)
 
-`isCharacterRecord` adds `isCangjieOrNull(v.cangjie)`: `v.cangjie === null || (typeof v.cangjie === 'string' && isValidCangjieCode(v.cangjie))`. A failing record gives `{ ok: false, reason: 'invalid-shape' }`, as for any other field. `CharacterRecord`, `DatasetId`, and `FieldSources` in `app/src/data/types.ts` change as in the Data Models section.
+`isCharacterRecord` adds `v.cangjie === null || (typeof v.cangjie === 'string' && isValidCangjieCode(v.cangjie))`. A failing record gives `{ ok: false, reason: 'invalid-shape' }`, as for any other field.
 
 ### UI
 
-#### `app/src/modes/CangjieMode.tsx` (Requirements 5, 7)
+#### `app/src/modes/SummonStep.tsx` (Requirements 2.4, 2.5, 3, 5)
 
 ```typescript
-export interface CangjieModeProps {
-  record: CharacterRecord;
+export const SUMMON_HOLD_MS = 1500;
+export const SUMMON_FADE_MS = 1500;
+
+export interface SummonStepProps {
+  record: CharacterRecord;          // must be Playable in Cangjie mode
   dataset: CharacterDataset;
   config: EngineConfig;
-  /** Called exactly once per record, at the moment the outcome is reached. */
-  onOutcome: (outcome: Outcome) => void;
+  /** Called exactly once, after the character has formed, been held, faded and been removed. */
+  onDone: (stepResult: Outcome) => void;
 }
-export function CangjieMode(props: CangjieModeProps): JSX.Element;
+export function SummonStep(props: SummonStepProps): JSX.Element;
 ```
 
-SeanceSession renders it with `key={record.character}`, so state resets per ghost. The component keeps the `CangjieState` in a ref plus React state (so handlers never read a stale value) and a `resolvedRef` guard.
+`SeanceSession` renders it with `key={record.character}`. The component keeps the `SummonState` in a ref plus React state (so handlers never read a stale value) and a `doneRef` guard. It has three phases: `typing`, `forming` and `fading`.
 
-- **Slots (5.1, 5.5).** One box per key of `record.cangjie`. An empty box shows nothing visible and has the accessible name "Slot N, empty". A filled box shows the key's letter and shape (難 for X) with `lang="zh"` on the shape. Before resolution each shape string passes through `maskTarget`, so a shape equal to the target shows "～".
-- **Physical keyboard (5.2).** While unresolved, a `keydown` listener on `window` calls `applyKeyEvent`. It skips events whose `target` is an `input`, `textarea`, `select`, or `contenteditable` element, and calls `preventDefault` only for accepted entries. Z and every other ignored event leave the state untouched.
-- **On-screen keyboard (5.4).** 25 `<button type="button">` elements in QWERTY rows without Z: `Q W E R T Y U I O P`, `A S D F G H J K L`, `X C V B N M`. Each has `aria-label` "Key A" (shape added to the label unless letters-only), a minimum size of 44 × 44 px, and the shape with `lang="zh"`. A click calls the same entry function as the physical keyboard. When `KEY_FACE_CHARACTERS.has(record.character)`, every button shows its letter only and its label has no shape (Requirement 7.3).
-- **Feedback (5.5, 5.6, 5.11).** A `role="status"` `aria-live="polite"` element shows text with a symbol, for example "✓ Key accepted" or "✗ Not that key". It also shows the mistake count.
-- **Key hint (5.7).** While `isKeyHintVisible` is true, the next slot gets a highlighted outline, the matching on-screen key gets a highlighted outline, and the status text says "Hint: press X" (the letter, with its shape unless letters-only). No control requests a hint.
-- **IME note (5.3).** A visible note: "If typed letters do not appear, turn off your system Chinese input method."
-- **Give up (5.9).** A "Give up" button, enabled only while unresolved. Its handler: (a) calls `giveUp`, so later entries are ignored; (b) shows the full code in the slots; (c) calls `onOutcome('gave-up')` once; (d) creates a hanzi-writer instance with `makeCharDataLoader(dataset)` and `showCharacter: false`, then calls `animateCharacter()`. If creation or animation throws or rejects, the outcome stands (Error Handling).
-- **Completion (5.8).** On `clean` or `struggled`, the component calls `onOutcome` once, shows the full code, and shows the character in ink with a hanzi-writer instance created with `makeCharDataLoader(dataset)` and `showCharacter()`. It never advances by itself; `SeanceSession` owns the "Next ghost" control.
-- **Unplayable record.** If `record.cangjie` is `null` or not Playable, the component renders an alert and reports `gave-up` once (SeanceSession already filters these out).
+- **Slots (3.1, 3.5).** One box per key of `record.cangjie`. An empty box shows nothing visible and has the accessible name "Slot N, empty". A filled box shows the key's letter and shape (難 for X) with `lang="zh"` on the shape. Each shape string passes through `maskTarget(shape, record.character)` before the step ends, so a shape equal to the target shows "～".
+- **Physical keyboard (3.2).** While `typing`, a `keydown` listener on `window` calls `applyKeyEvent`. It skips events whose `target` is an `input`, `textarea`, `select` or `contenteditable` element, and calls `preventDefault` only for accepted entries. Z and every other ignored event leave the state untouched.
+- **On-screen keyboard (3.4).** 25 `<button type="button">` elements in QWERTY rows without Z (`Q W E R T Y U I O P`, `A S D F G H J K L`, `X C V B N M`). Each has `aria-label` "Key A" (the shape is added to the label unless letters-only), a minimum size of 44 × 44 px, and the shape with `lang="zh"`. A click calls the same entry function as the physical keyboard. When `KEY_FACE_CHARACTERS.has(record.character)`, every button shows its letter only and its label has no shape (Requirement 5.3). Buttons are `disabled` once the step ends.
+- **Feedback (3.5, 3.6, 3.11).** A `role="status"` `aria-live="polite"` element shows text with a symbol ("✓ Key accepted", "✗ Not that key") and the mistake count.
+- **Key hint (3.7).** While `isKeyHintVisible` is true, the next slot and the matching on-screen key get a highlighted outline, and the status text says "Hint: press X" (the letter, with its shape unless letters-only). No control requests a hint.
+- **Notes (3.3, 3.13).** A visible IME note ("If typed letters do not appear, turn off your system Chinese input method.") and a visible source note ("Codes: Unicode Unihan kCangjie").
+- **Give up (3.9).** A "Give up" button, enabled only while `typing`. Its handler calls `giveUpSummon`, shows the full code in the slots, and enters `forming`.
+- **Completion (3.8).** When the reducer's status leaves `active`, the component shows the full code and enters `forming`. No hanzi-writer instance exists before this moment.
+- **Forming and fading (2.4, 2.5).** In `forming` the component creates a hanzi-writer instance in its container with `makeCharDataLoader(dataset)` and `showCharacter: false`, then calls `animateCharacter()`. When that promise settles, the component waits `SUMMON_HOLD_MS`, enters `fading` (a CSS opacity transition lasting `SUMMON_FADE_MS`, or no transition when `matchMedia('(prefers-reduced-motion: reduce)')` matches), waits `SUMMON_FADE_MS`, empties the container, and calls `onDone(status)` once. If creating the writer or the animation fails, the component shows the character as plain text with `lang="zh"` for the same hold and fade, so a hanzi-writer failure never blocks the ghost. Cleanup on unmount clears timers and empties the container, and `onDone` is not called after unmount.
 
-#### `app/src/components/StructureHint.tsx` (Requirements 6.3, 7.1)
-
-```typescript
-export interface StructureHintProps { layout: LayoutNode; target: string }
-export function StructureHint(props: StructureHintProps): JSX.Element;
-```
-
-Renders `layout` recursively as nested CSS-grid boxes. For `⿰ ⿲` the box is a row of 2 or 3 columns; for `⿱ ⿳` a column of 2 or 3 rows; for the surround IDCs `⿴ ⿵ ⿶ ⿷ ⿸ ⿹ ⿺` an outer box (`childLabels[0]`) containing an inner box (`childLabels[1]`) placed according to the opening direction; for `⿻` two stacked, offset boxes with the visible text "overlapping". Each compose box is `role="group"` with `aria-label` from `IDC_INFO[idc].groupLabel`. Each leaf box has an accessible text label `"<position>: <component>"` (for example "left: 女"), shows the component with `lang="zh"`, and passes the component through `maskTarget(component, target)`. The component never renders `target`. System fonts only (Requirement 6.7).
-
-#### `app/src/modes/WriteMode.tsx` changes (Requirements 6.1, 6.2, 6.4, 6.5, 6.8)
-
-- `resolveCompletion` moves to `outcome.ts` and is re-exported; `isHintTriggered` and `surfaceSize` stay.
-- New React state `strokeHintShown` (set when `isHintTriggered` is true) and `structureHintUsed`, plus a ref mirror for `structureHintUsed` so the `onComplete` closure reads the current value. Both reset when the record changes.
-- `layout = useMemo(() => parseIds(record.decomposition.decomposition))` and `eligible = isStructureHintEligible(record)`.
-- While `status === 'writing'`:
-  - eligible and `!strokeHintShown` and `!structureHintUsed`: a "Reveal its shape" button;
-  - eligible and `structureHintUsed`: `<StructureHint>` stays visible until resolution;
-  - not eligible: a text note "This ghost's shape cannot be revealed." with no active control;
-  - `strokeHintShown`: the button is withdrawn.
-- `onComplete` calls `resolveCompletion(hintShown || structureHintRef.current, total, config)`.
-- Existing `WriteMode.test.tsx` cases keep passing because the new behaviour only adds a button and one more input to `resolveCompletion`.
-
-#### `app/src/components/CangjieGuide.tsx` (Requirement 3)
+#### `app/src/components/CangjieGuide.tsx` (Requirement 6)
 
 ```typescript
 export interface CangjieGuideProps {
   dataset: CharacterDataset;
   onContinue: () => void;
 }
+
+/** First character in learningOrder(dataset) that is Playable and has a code of at least 2 keys; code read from the record. */
+export function pickGuideExample(dataset: CharacterDataset): { character: string; code: string } | null;
 ```
 
-Shows: the 25 keys from `CANGJIE_KEYS` (24 base-shape keys plus the X key with its explanation), an explanation that a code is one to five keys typed in order, an explanation that each key stands for a family of related shapes of which only the base shape is shown, an example from `pickGuideExample(dataset)` (character, code, and shapes; omitted when `null`), the four whitelisted claims (invented in 1976 by Chu Bong-Foo; named after Cangjie, the legendary inventor of Chinese writing; the first Chinese input method to use the standard QWERTY keyboard; released to the public in 1982), and a visible citation listing the article titles and URLs as text: "Cangjie input method" `https://en.wikipedia.org/wiki/Cangjie_input_method` and "Chu Bong-Foo" `https://en.wikipedia.org/wiki/Chu_Bong-Foo`. A "Continue" button has an accessible label; shapes carry `lang="zh"`. No other claims, statistics, or "dying" language.
+The screen shows the 25 keys from `CANGJIE_KEYS` (X as 難 with its explanation), that a code is one to five keys typed in order, that each key stands for a family of related shapes of which only the base shape is shown, an example from `pickGuideExample(dataset)` (omitted when `null`), the claim "developed in the 1970s by Chu Bong-Foo", the three other whitelisted claims (named after Cangjie, the legendary inventor of Chinese writing; the first Chinese input method to use the standard QWERTY keyboard; released to the public in 1982), the statement that the game's codes follow the Unicode Unihan `kCangjie` field, which Unihan marks provisional, so some typists know different codes for some characters, and a visible citation giving the article titles and URLs as text: "Cangjie input method" `https://en.wikipedia.org/wiki/Cangjie_input_method` and "Chu Bong-Foo" `https://en.wikipedia.org/wiki/Chu_Bong-Foo`. A "Continue" button has an accessible label; shapes carry `lang="zh"`. No other claims, statistics or "dying" language.
 
-#### `app/src/components/StartMenu.tsx` (Requirement 2)
+#### `app/src/components/StartMenu.tsx` (Requirement 7)
 
 ```typescript
 export interface StartMenuProps {
-  onStartSeance: (mode: Mode) => void;
+  onStartSeance: () => void;
   onReviewLegend: () => void;
   onReviewCangjieGuide: () => void;
 }
 ```
 
-Four buttons, each at least 44 px high with the existing focus ring: "Begin a Write Séance", "Begin a Cangjie Séance", "Read the legend again", "How Cangjie works".
+Three buttons, each at least 44 px high with the existing focus ring: "Begin a Nightly Séance", "Read the legend again", "How Cangjie works".
 
-#### `app/src/components/SeanceSession.tsx` and `App.tsx` (Requirements 2, 3, 4)
+#### `app/src/components/SeanceSession.tsx` (Requirements 2, 4)
 
-- `SeanceSessionProps` gains `mode: Mode`. It renders `WriteMode` or `CangjieMode` (with `key={record.character}`) after `GhostPrompt`; the rest of the flow (dedupe, one Outcome per ghost, "Next ghost", summary) is unchanged.
-- `View` gains `{ screen: 'cangjie-guide'; dataset; origin: 'start' | 'review' }`. The seance and summary views carry `mode`.
-- `startSeance(dataset, mode)` calls `buildSession(dataset, loadState().history[mode], Date.now(), DEFAULT_CONFIG, mode)`.
-- Menu "Begin a Cangjie Séance": if `getCangjieIntroSeen()` is false, show the guide with `origin: 'start'`; its continue calls `setCangjieIntroSeen(true)` and `startSeance(dataset, 'cangjie')`. Menu "How Cangjie works" shows the guide with `origin: 'review'`; its continue calls `setCangjieIntroSeen(true)` and returns to the menu.
-- The legend intro's begin control calls `startSeance(dataset, 'write')` (Requirement 2.4).
-- `handleOutcome(mode, char, outcome, now)` reads `priorEntry(loadState().history[mode], char)`, computes `applyReview(prior, outcome, now, DEFAULT_CONFIG)`, and calls `recordOutcome(mode, char, entry)`.
-- `SessionSummary` is unchanged; its "Begin another Séance" calls `startSeance(dataset, mode)` with the summary view's `mode`.
+Props are unchanged: `{ ghosts, dataset, config, onOutcome(char, outcome, now), onComplete }`. New state and flow:
+
+- `step: 'summon' | 'write'`, initialised for each ghost as `isPlayableInCangjie(record.cangjie) ? 'summon' : 'write'`, and reset in `handleAdvance` for the next ghost.
+- `summonResultRef: Outcome | null`, cleared when the ghost changes.
+- A text label above the step, "Step 1 of 2: Summon" or "Step 2 of 2: Lay to rest" (for a ghost without a Summon step, "Lay to rest").
+- `step === 'summon'` renders `<SummonStep key={record.character} … onDone={handleSummonDone} />`; `handleSummonDone(result)` stores the result in `summonResultRef` and sets `step` to `'write'`. The Summon step has unmounted by then.
+- `step === 'write'` renders `<WriteMode … onOutcome={handleWriteOutcome} />`. `handleWriteOutcome(writeResult)` computes `combineOutcomes(summonResultRef.current, writeResult)` and passes it to the existing `handleOutcome`, which keeps its `resolvedRef` guard so `onOutcome(char, combined, Date.now())` fires once.
+- "Next ghost" and the result text appear only after `handleOutcome` ran, as today.
+
+#### `app/src/App.tsx` (Requirements 2.8, 6, 7)
+
+- `buildSession` is unchanged (full Learning order, one history).
+- `View` gains `{ screen: 'cangjie-guide'; dataset; origin: 'before-seance' | 'review' }`.
+- A helper `beginSeance(dataset)`: if `getCangjieIntroSeen()` is false, show the guide with `origin: 'before-seance'`; otherwise `startSeance(dataset)`. The intro's `onBegin` calls `setIntroSeen(true)` then `beginSeance`. The menu's `onStartSeance` and the summary's `onPlayAgain` call `beginSeance`.
+- The menu's `onReviewCangjieGuide` shows the guide with `origin: 'review'`.
+- The guide's `onContinue` calls `setCangjieIntroSeen(true)`, then `startSeance(dataset)` for `before-seance` or shows the menu for `review`.
+- `handleOutcome(char, outcome, now)` is unchanged: `applyReview(prior, outcome, now, DEFAULT_CONFIG)` then `recordOutcome(char, entry)`.
 
 ---
 
@@ -543,9 +495,11 @@ export interface CharacterRecord {
 }
 ```
 
-`BuildOptions` gains `unihanPath: string` and `unihanSha256: string`. `BuildResult` and `CangjieError` are shown in the Pipeline section.
+`BuildOptions` gains `unihanPath: string` and `unihanSha256: string`. `BuildResult` and `CangjieError` are shown in the Pipeline section. The Pipeline writes `cangjie` for all 300 characters; the loader accepts `null` so a future dataset with a gap still loads, and the ghost then skips its Summon step.
 
-### Storage schema v2 (Requirement 8)
+Example records in `characters.json`: 我 has `"cangjie": "HQI"` and `"sources": { …, "cangjie": "unihan" }`; 口 has `"cangjie": "R"`; 别 has `"cangjie": "XRSLN"` (stored verbatim, not Playable).
+
+### Storage schema version 2 (Requirement 8)
 
 ```json
 {
@@ -553,145 +507,38 @@ export interface CharacterRecord {
   "introSeen": true,
   "cangjieIntroSeen": false,
   "history": {
-    "write":   { "我": { "step": 1, "lastOutcome": "clean", "nextDue": 0 } },
-    "cangjie": {}
+    "我": { "step": 1, "lastOutcome": "clean", "nextDue": 1790000000000 }
   }
 }
 ```
 
-The v1 blob `{ schemaVersion: 1, introSeen, history }` migrates to `{ schemaVersion: 2, introSeen, cangjieIntroSeen: false, history: { write: history, cangjie: {} } }`.
+A version-1 blob (`{ schemaVersion: 1, introSeen, history }`) is not migrated: it resets to the default state (`introSeen: false`, `cangjieIntroSeen: false`, empty `history`).
 
-### `LayoutNode` and `CangjieState`
+### `SummonState` (Requirement 3)
 
-Defined with their modules in Components and Interfaces. A `LayoutNode` is a tree whose leaves are components; a `CangjieState` is the immutable reducer state with `status: 'active' | 'clean' | 'struggled' | 'gave-up'`.
+`SummonState` is defined in the Engine section. Its `status` is `'active'` until the last slot is filled or Give up is used; afterwards it holds the Step result. It is never persisted.
+
+### Step results and the Combined outcome
+
+Both steps report an `Outcome`. `SeanceSession` keeps the Summon step's result in a ref until the Lay-to-rest step reports; only the Combined outcome reaches `App` and the Storage module.
 
 ---
 
 ## Correctness Properties
 
-*A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
+This re-scope adds NO new property-based tests (approved by the human; Requirement 9.2). The invariants below are stated as rules and are each covered by unit or component tests (see "Testing Strategy"). They keep the "Validates" traceability to the requirements.
 
-Properties 1–8 are the eight cases of Requirement 9.2, in order. The remaining properties cover the pipeline, storage, selection, and input parsing. Property reflection: the "mistake count" and "Z ignored" cases stay separate because one counts wrong entries and the other proves ignored events change nothing; the `sources`-iff and format checks are merged into Property 10; masking of the DOM is an example test (Testing Strategy), while Property 8 covers the pure function.
-
-### Property 1: Entering the code completes the ghost, and nothing shorter does
-
-*For any* valid Cangjie code `c` and config, applying the keys of `c` in order from `startCangjie(c)` SHALL leave `filled === c.length` and a non-`active` status, and *for any* proper prefix of `c` the status SHALL still be `active` with `filled` equal to the prefix length.
-
-**Validates: Requirements 5.5, 5.8, 9.2**
-
-### Property 2: Mistake count equals the number of wrong key entries
-
-*For any* code and *any* sequence of keys A–Y applied until resolution, `state.mistakes` SHALL equal the number of entries that differed from the next expected key at the moment of entry.
-
-**Validates: Requirements 5.6, 9.2**
-
-### Property 3: The Key hint appears exactly after the configured consecutive misses, and resets on a filled slot
-
-*For any* code, config, and sequence of key entries, `isKeyHintVisible(state)` SHALL be true exactly when the current slot has received at least `config.strokeHintAfterConsecutiveMisses` consecutive wrong entries, and `missesOnSlot` SHALL be 0 immediately after the slot is filled.
-
-**Validates: Requirements 5.7, 5.11, 9.2**
-
-### Property 4: Cangjie Outcome classification matches the shared rule
-
-*For any* code, config, and sequence of entries that fills every slot, the final status SHALL equal `resolveCompletion(hintShown, mistakes, config)`, that is `clean` exactly when no Key hint was shown and `mistakes <= config.cleanMistakeThreshold`, else `struggled`; and *for any* `anyHintUsed`, `mistakes`, and config, `resolveCompletion` SHALL return `struggled` when `anyHintUsed` is true.
-
-**Validates: Requirements 5.8, 6.4, 9.2**
-
-### Property 5: Nothing changes after resolution
-
-*For any* resolved state (`clean`, `struggled`, or `gave-up`) and *for any* key entry, key event, or `giveUp`, the returned state SHALL equal the input state.
-
-**Validates: Requirements 5.10, 9.2**
-
-### Property 6: Z and non-letter keys never change the state
-
-*For any* state and *for any* key event whose `key` is Z or z, a non-letter, a multi-character key name (for example `"Process"`, `"Enter"`, `"Shift"`), or any other key outside A–Y, `applyKeyEvent` SHALL return a state equal to the input (no slot filled, no mistake counted).
-
-**Validates: Requirements 5.2, 5.6, 9.2**
-
-### Property 7: The structure layout's leaves equal the IDS leaf codepoints
-
-*For any* well-formed IDS tree over the supported IDCs (generated), `leaves(parseIds(ids))` SHALL equal the non-IDC codepoints of `ids` in order; and *for any* character in the shipped dataset that is Eligible, removing repeats from `leaves(parseIds(decomposition.decomposition))` (first occurrences kept) SHALL equal `decomposition.components`, and the leaves SHALL NOT include the character itself.
-
-**Validates: Requirements 6.3, 6.6, 9.2**
-
-### Property 8: Masked display strings never contain the target
-
-*For any* target character and *for any* text, `maskTarget(text, target)` SHALL contain no occurrence of `target`, SHALL replace each occurrence with "～" (U+FF5E), and SHALL leave every other codepoint unchanged.
-
-**Validates: Requirements 7.1, 7.2, 9.2**
-
-### Property 9: Unihan parsing round trip
-
-*For any* generated map from characters to lists of `kCangjie` values, formatting it as Unihan lines (with interleaved comment lines and lines for other fields) and parsing the text with `parseUnihanCangjie` SHALL return the same map.
-
-**Validates: Requirements 1.1, 1.3, 1.4**
-
-### Property 10: Every non-null code is well-formed, and `sources.cangjie` is `unihan` exactly when the code is non-null
-
-*For any* `CharacterRecord` in the built dataset, `cangjie` SHALL be `null` or match `^[A-Y]{1,5}$`, and `sources.cangjie` SHALL be `"unihan"` when `cangjie` is non-null and `"missing"` when it is null.
-
-**Validates: Requirements 1.3, 1.9**
-
-### Property 11: Every non-null code equals the raw Unihan value
-
-*For any* character in the built dataset with a non-null `cangjie`, the value SHALL equal the single `kCangjie` value for that character in the committed Unihan file, and *for any* character with `cangjie === null`, the raw file SHALL have no `kCangjie` value for it.
-
-**Validates: Requirements 1.3, 1.9**
-
-### Property 12: Build determinism with Unihan input
-
-*For any* valid pipeline inputs including a Unihan file, running `buildDataset` twice SHALL produce byte-identical output.
-
-**Validates: Requirements 1.6**
-
-### Property 13: Invalid or duplicate Unihan values fail the build
-
-*For any* set of characters whose Unihan values are malformed (not matching `^[A-Y]{1,5}$`) or duplicated, `buildDataset` SHALL return a failure listing every such character with its values and reason, and SHALL produce no output; *for any* character with no value, the build SHALL still succeed with `cangjie: null`.
-
-**Validates: Requirements 1.4, 1.5**
-
-### Property 14: The loader accepts exactly null or well-formed codes
-
-*For any* otherwise-valid record with a `cangjie` value `v`, `loadDataset` SHALL accept the dataset exactly when `v` is `null` or a string matching `^[A-Y]{1,5}$`.
-
-**Validates: Requirements 1.8**
-
-### Property 15: Migrating a v1 blob preserves history under `write`
-
-*For any* valid v1 persisted blob, loading it with the shipped migration SHALL produce a valid v2 state in which `history.write` equals the v1 history, `history.cangjie` is empty, `introSeen` is unchanged, and `cangjieIntroSeen` is false.
-
-**Validates: Requirements 8.2, 8.3**
-
-### Property 16: Recording an Outcome in one Mode leaves the other Mode's history unchanged
-
-*For any* state, Mode, character, and entry, `recordOutcome(mode, char, entry)` SHALL change only `history[mode][char]`, and the other Mode's history and both seen flags SHALL be unchanged.
-
-**Validates: Requirements 4.4, 4.5**
-
-### Property 17: `isPlayableInCangjie` excludes exactly the null and X-prefixed codes
-
-*For any* string code, `isPlayableInCangjie(code)` SHALL be true exactly when the code is non-null and does not start with `X`; `isPlayableInCangjie(null)` SHALL be false. Over the shipped dataset the non-Playable characters SHALL be exactly 别 and 错, giving 298 Playable characters.
-
-**Validates: Requirements 1.11, 4.2**
-
-### Property 18: A Cangjie session contains only Playable, distinct ghosts
-
-*For any* Cangjie-mode history and clock, `buildSession(…, 'cangjie')` SHALL contain no duplicate characters, no more than `config.sessionSize` ghosts, and only characters for which `isPlayableInCangjie` holds.
-
-**Validates: Requirements 4.1, 4.2**
-
-### Property 19: `parseKeyEvent` accepts exactly single unmodified A–Y letters
-
-*For any* key event, `parseKeyEvent(e)` SHALL return the upper-case letter when `e.key` is a single letter A–Y in either case, `ctrlKey`, `altKey`, and `metaKey` are false, `repeat` is false, `isComposing` is false, and `key` is not `"Process"`; otherwise it SHALL return `null`.
-
-**Validates: Requirements 5.2**
-
-### Property 20: The On-screen Cangjie keyboard shows letters only for key-face characters
-
-*For any* target character in `KEY_FACE_CHARACTERS` (including each of 一 中 人 十 口 大 女 山 手 日 月 木 水 火), the rendered keyboard SHALL show no base shape on any key; *for any* other target, every key SHALL show its base shape.
-
-**Validates: Requirements 7.3**
+- **Rule 1: Completion.** Entering exactly the keys of a code, in order, fills every slot and leaves the state non-`active`; any proper prefix leaves it `active` with `filled` equal to the prefix length. **Validates: Requirements 3.5, 3.8**
+- **Rule 2: Mistake count.** `mistakes` equals the number of key entries that differed from the next expected key at entry time. **Validates: Requirements 3.6**
+- **Rule 3: Key hint.** The Key hint is visible exactly when the current slot has at least `strokeHintAfterConsecutiveMisses` consecutive wrong entries; the counter resets when the slot is filled; `hintShown` stays true afterwards. **Validates: Requirements 3.7**
+- **Rule 4: Step result classification.** After the last slot is filled, the status equals `resolveCompletion(hintShown, mistakes, config)`. **Validates: Requirements 3.8, 4.2, 4.3**
+- **Rule 5: Nothing changes after the Step result is fixed.** Any key entry, key event or Give up on a non-`active` state returns the same state. **Validates: Requirements 3.10, 4.7**
+- **Rule 6: Ignored keys.** Z, non-letters, multi-character key names (`"Process"`, `"Enter"`), modified keys, auto-repeat and composition events never change the state. **Validates: Requirements 3.2**
+- **Rule 7: Combination.** `combineOutcomes(summon, write)` follows the truth table above for every combination of `null | Outcome` and `Outcome`. **Validates: Requirements 4.1, 4.2, 4.3, 4.4, 4.9**
+- **Rule 8: Masking.** `maskTarget(text, char)` output never contains `char`, and replaces each occurrence with "～". **Validates: Requirements 5.2**
+- **Rule 9: Never reveal.** For every Playable ghost, the rendered Summon step in its unresolved state, and after a Key hint, contains the target character nowhere in DOM text, attributes or the document title. **Validates: Requirements 5.1, 5.3**
+- **Rule 10: Playability.** `isPlayableInCangjie` is false exactly for `null` and codes starting with X. **Validates: Requirements 1.10, 1.11, 2.3**
+- **Rule 11: Dataset codes.** Every record's `cangjie` is `null` or matches `^[A-Y]{1,5}$`; `sources.cangjie` is `"unihan"` exactly when `cangjie` is non-null; every non-null `cangjie` equals the single raw Unihan value. **Validates: Requirements 1.3, 1.8**
 
 ---
 
@@ -699,94 +546,82 @@ Properties 1–8 are the eight cases of Requirement 9.2, in order. The remaining
 
 | Situation | Behaviour | Requirements |
 | --- | --- | --- |
-| Committed Unihan file missing | `buildDataset` throws a missing-input error naming the path; `main()` writes it to stderr and exits non-zero; no output. | 1.2 |
-| Committed file's SHA-256 differs from the value in `SOURCES.md`, or no hash is recorded | `Sha256MismatchError` (or a missing-hash error) is thrown before the file is parsed; stderr shows expected and actual hashes; non-zero exit; no output. | 1.10 |
-| A `kCangjie` value does not match `^[A-Y]{1,5}$` | Recorded as `CangjieError { reason: 'invalid-format' }`; aggregated with all other per-character errors; stderr lists character and value; non-zero exit; no output. | 1.4 |
-| A character has more than one `kCangjie` value | `CangjieError { reason: 'multiple-values' }`, handled the same way. | 1.4 |
-| A character has no `kCangjie` value | Not an error: `cangjie: null`, `sources.cangjie: "missing"`; listed in the success summary. | 1.5 |
-| Dataset record has a malformed `cangjie` | `loadDataset` returns `{ ok: false, reason: 'invalid-shape' }`; the App shows its existing error screen. | 1.8 |
-| Record is null or not Playable when `CangjieMode` renders | Alert text "This ghost could not be summoned" and one `gave-up` Outcome. | 4.2 |
-| hanzi-writer fails while revealing the character (clean/struggled) or animating (Give up) in Cangjie mode | The Outcome has already been reported once and stands. The character is shown as text instead (allowed after resolution), together with the full code. | 5.8, 5.9, 5.10 |
-| Event from an editable element, composition event, `key === 'Process'`, Z, or a modified/repeated key | Ignored; no mistake counted. The IME note stays visible. | 5.2, 5.3 |
-| Stored blob is v1 | Migrated by `SHIPPED_MIGRATIONS[1]`. | 8.2 |
-| Migration throws, returns a non-object, or the result fails v2 validation; unknown, newer, zero, negative, or non-integer version; corrupt JSON; forbidden keys in either history | State resets to defaults; nothing is repaired; no exception escapes. | 8.3 |
-| `localStorage` unavailable or full | The App keeps working in memory; progress is not persisted. | 8.3 |
-| Structure hint requested for an ineligible or unparsable IDS | No active control; the text "This ghost's shape cannot be revealed." is shown. | 6.2 |
+| Committed Unihan file's SHA-256 differs from the recorded hash | Pipeline exits non-zero, writes no output, prints path, expected and actual hash | 1.9 |
+| No recorded hash in `SOURCES.md` | Pipeline exits non-zero, writes no output | 1.9 |
+| Unihan file missing | Pipeline throws "Missing required input path(s)", exits non-zero | 1.1 |
+| `kCangjie` value not matching `^[A-Y]{1,5}$` | Every affected character and value to stderr, non-zero exit, no output | 1.4 |
+| A character with more than one `kCangjie` value | Same as above, reason `multiple-values` | 1.4 |
+| A character with no `kCangjie` value | `cangjie: null`, `sources.cangjie: "missing"`, build succeeds, listed in the summary | 1.5 |
+| `cangjie` is `null` or starts with X at run time | Ghost skips the Summon step and begins with the Lay-to-rest step | 2.3 |
+| Loader finds an invalid `cangjie` | `{ ok: false, reason: 'invalid-shape' }`; the App shows its existing error state | 1.8 |
+| Player types Z, a modified key, a repeat or an IME composition | Ignored; no mistake counted | 3.2 |
+| hanzi-writer fails to form the character in the Summon step | The character is shown as plain text for the same hold and fade; the Step result stands; the ghost proceeds | 2.4 |
+| hanzi-writer fails to load in the Lay-to-rest step | The step resolves `gave-up` (existing behaviour), so the Combined outcome is `gave-up` | 4.8 |
+| Player leaves mid-ghost | Nothing is recorded for that ghost; completed ghosts are already saved | 4.5 |
+| Saved data has `schemaVersion` 1, an unknown or newer version, is corrupt, or has forbidden history keys | Reset to defaults, no migration, no crash | 8.3, 8.4 |
+| `localStorage` unavailable | In-memory fallback as today | 8.4 |
 
 ---
 
 ## Testing Strategy
 
-Property-based tests use **fast-check**, with at least 100 runs per property and one test per property. Each test carries a tag comment `// Feature: cangjie-seance, Property N: <title>`. Unit and component tests use Vitest and Testing Library; `hanzi-writer` is mocked in component tests. Pipeline tests live in `tests/` (node project); app tests live under `app/src/` (jsdom project). The root `npm test` (`vitest run`, workspaces `./vitest.config.ts` and `./app`) continues to run every suite; no config change is needed.
+This feature has no new property-based tests and no mutation tests (Requirement 9.2). The existing property tests for the scheduler, Display cleanup, Learning order and character dataset keep running; where they touch records or the pipeline, they are updated for the new field. The root `npm test` runs everything (one Vitest invocation across `tests/` and `app/`).
 
-### Property tests
+### New unit tests
 
-| Property | Location | Notes |
-| --- | --- | --- |
-| 1–6 | `app/src/engine/cangjie.*.property.test.ts` | Generators: codes `^[A-Y]{1,5}$`, key sequences over A–Y, key events including Z, `Process`, modifiers, `repeat`, composition; configs with small thresholds. |
-| 4 | same | Also exercises `outcome.ts` directly. |
-| 7 | `app/src/engine/structureLayout.property.test.ts` | Generated IDS trees for all 12 IDCs (including ⿲ and ⿳); a second test reads `app/public/data/characters.json` and checks all 259 Eligible characters. |
-| 8 | `app/src/engine/mask.property.test.ts` | Unicode strings and targets. |
-| 9, 11–13 | `tests/property/cangjie-*.test.ts` | Generated Unihan fixtures; Property 11 also reads the committed raw file. |
-| 10 | `tests/property/character-record-schema.test.ts` (extended) and a check on `characters.json` | |
-| 14 | `app/src/data/charDataLoader.cangjie.property.test.ts` | |
-| 15, 16 | `app/src/storage/storage.cangjie.property.test.ts` | Fake storage backend. |
-| 17, 18 | `app/src/engine/cangjieRules.property.test.ts`, `app/src/App.session.property.test.ts` | Property 17 also checks the shipped dataset (298 Playable; 别, 错 excluded). |
-| 19 | `app/src/engine/cangjie.parseKeyEvent.property.test.ts` | |
-| 20 | `app/src/modes/CangjieMode.keyboard.property.test.tsx` | Renders with a generated target drawn from the key-face set and from other characters. |
+| File | Covers |
+| --- | --- |
+| `app/src/engine/cangjieRules.test.ts` | valid and invalid codes; `isPlayableInCangjie` for `HXH`, `XRSLN`, `XCTA`, `null` |
+| `tests/unit/parse-unihan.test.ts` | comments, other fields, duplicate lines, empty input, verbatim fixture lines |
+| `tests/unit/verify-sha256.test.ts` | matching hash, one-byte change, `readRecordedSha256` found, absent and malformed |
+| `tests/unit/build-summary.test.ts` | build summary (coverage, missing, Playable count, not Playable list), malformed value, duplicate value, hash mismatch, absent recorded hash |
+| `tests/unit/cangjie-dataset.test.ts` | every record in `characters.json`: format, `sources.cangjie`, equality with the raw Unihan value; 298 Playable and 别 错 excluded |
+| `app/src/engine/outcome.test.ts` | `resolveCompletion` boundary; `combineOutcomes` truth table (12 cells) |
+| `app/src/engine/mask.test.ts` | no occurrence, several, empty text, surrogate pairs |
+| `app/src/engine/cangjie.keys.test.ts` | 25 keys, shapes, X is 難, no Z, `KEY_FACE_CHARACTERS`, `parseKeyEvent` examples |
+| `app/src/engine/cangjie.summon.test.ts` | reducer: fill, mistakes, automatic Key hint at 3 and its reset when the slot is filled, Give up, no change after the Step result, Z ignored |
 
-### Unit and component tests
+### New component tests (hanzi-writer mocked)
 
-- **Pipeline:** `parseUnihanCangjie` examples (comments, other fields, duplicate lines); `verifyFileSha256` passes for a matching hash and throws for a one-byte change; `readRecordedSha256`; `mergeCharacter` with and without a code; `serialiseDataset` key order; the success summary text (coverage, characters without a code, Playable count, excluded list); a smoke check that `data/raw/unihan/LICENSE` and the SOURCES.md Unihan section exist.
-- **Engine:** key-table checks (25 entries, X → 難); the verified examples 我 `HQI`, 口 `R`, 爱 `BBKE`, 们 `OLS`, 车 `JQ` read from the dataset; `parseIds` null cases (atomic, interior `？`, unknown IDC, leftover, missing operands); `pickGuideExample`.
-- **Components (hanzi-writer mocked):** `CangjieMode` (slots count, on-screen and physical entry, Key hint text, Give up animation and animation failure, exactly-once `onOutcome`, IME note, listener skips editable targets); `StructureHint` for each of the 12 IDCs; `WriteMode` (button shown only while unresolved, eligible, and without a stroke hint; stroke hint withdraws it; use forces `struggled`; ineligible note); `CangjieGuide` (25 keys, citation text and URLs, example from the dataset, continue control); `StartMenu` (four labelled buttons).
-- **Masking test (Requirement 7.4):** for every character in the shipped dataset that is playable in the mode, render the ghost unresolved in Write mode and in Cangjie mode, then again after a structure hint (Write) or after three consecutive wrong keys (Cangjie), and assert the target character appears in no DOM text, attribute, accessible name, or `document.title`.
+| File | Covers |
+| --- | --- |
+| `app/src/modes/SummonStep.test.tsx` | slot count; physical and on-screen keys; letters-only keys for key-face targets; IME note and source note; Key hint after 3 and no hint control; Give up; character forms then fades (fake timers); `onDone` once; never-reveal before completion |
+| `app/src/modes/SummonStep.neverReveal.test.tsx` | every Playable ghost in `characters.json`, unresolved and after a Key hint: target absent from DOM text, attributes and title |
+| `app/src/components/CangjieGuide.test.tsx` | 25 keys, the four whitelisted claims and no others, "developed in the 1970s", Unihan source statement, both citations with URLs as text, runtime example, `pickGuideExample` |
 
-### Updates to existing tests
+### Existing tests to update
 
-See "Impact on existing code and tests". Dataset tests change to six `sources` keys and the new key order; StartMenu, App, SeanceSession, and storage tests change as listed there.
+| File | Change |
+| --- | --- |
+| `tests/property/character-record-schema.test.ts` | Properties 4 and 10: nine record keys, six `sources` keys |
+| `tests/property/{record-fields,output-count,prompt-same-entry,pipeline-determinism,pipeline-errors,prompt-overrides,hanzi-writer-parser}.test.ts` | `BuildOptions` gains the Unihan inputs; expected records gain `cangjie` |
+| `tests/unit/merge.test.ts`, `tests/unit/serialise.test.ts` | new argument, new key orders, `cangjie: null` |
+| `tests/helpers/arbitraries.ts` | record arbitraries gain `cangjie` and `sources.cangjie` |
+| `tests/integration/full-pipeline.test.ts`, `tests/smoke/dataset-files.test.ts` | Unihan input, new field, new files and hashes |
+| `app/src/data/charDataLoader.test.ts`, `…hanziwriter.integration.test.ts` | `cangjie` fixtures; accept `null` and valid codes, reject malformed |
+| app tests with record fixtures (`App`, `GhostPrompt`, `SeanceSession`, `WriteMode`, others found by `tsc`) | fixtures gain `cangjie` and `sources.cangjie` |
+| `app/src/storage/storage.test.ts` | schema 2, `cangjieIntroSeen`, version-1 blob resets, forbidden keys, storage unavailable |
+| `app/src/components/StartMenu.test.tsx` | three buttons and callbacks |
+| `app/src/components/SeanceSession.test.tsx` | two-step flow, one combined Outcome recorded once, skip for 别 and 错, nothing recorded at the end of the Summon step |
+| `app/src/App.test.tsx` | first visit: intro, guide, Séance; returning: menu; guide re-view; version-1 data resets |
 
 ---
 
 ## Impact on existing code and tests
 
-### Existing source files that change
-
 | File | Change |
 | --- | --- |
-| `scripts/build-data.ts` | `unihanPath`, `unihanSha256`, hash check, Unihan parse and validation, `cangjieMissing`, `notPlayable`, summary output. |
-| `scripts/lib/merge.ts` | `cangjie` parameter; `sources.cangjie`. |
-| `scripts/lib/serialise.ts` | `cangjie` in record order; `cangjie` last in `sources`. |
-| `app/src/data/types.ts` | `DatasetId`, `FieldSources.cangjie`, `CharacterRecord.cangjie`, `BuildOptions`, `BuildResult`, `CangjieError`. |
-| `app/src/data/charDataLoader.ts` | Validate `cangjie`. |
-| `app/src/storage/storage.ts` | Schema v2, `Mode`, `cangjieIntroSeen`, per-Mode history, `migrations[1]`, new accessors, `recordOutcome(mode, …)`. |
-| `app/src/modes/WriteMode.tsx` | Import and re-export `resolveCompletion`; structure hint state and UI. |
-| `app/src/components/GhostPrompt.tsx` | Import and re-export `maskTarget` from `engine/mask.ts`. |
-| `app/src/components/StartMenu.tsx` | New props and four buttons. |
-| `app/src/components/SeanceSession.tsx` | `mode` prop; renders `CangjieMode`. |
-| `app/src/App.tsx` | `buildSession(…, mode)`, `cangjie-guide` screen, per-Mode outcome saving, summary keeps the Mode. |
-| `README.md` | Unihan in "Data and licences"; statement that `characters.json` also contains data under the Unicode License V3. |
-| `data/raw/SOURCES.md` | Unihan section (version 18.0.0, file date 2026-07-31, URL, both SHA-256 values, file and field, licence `Unicode-3.0`). |
-| `kiro-log.md` | Entry for this spec. |
-
-### Existing test files that change
-
-The first group was found by searching for the changed symbols; the implementation tasks confirm the list with `tsc` and a full test run.
-
-| File | Change |
-| --- | --- |
-| `tests/unit/merge.test.ts` | New `cangjie` argument; `sources.cangjie` cases. |
-| `tests/unit/serialise.test.ts` | Six `sources` keys; key order with `cangjie`. |
-| `tests/property/character-record-schema.test.ts` | Record has nine keys; `sources` has six keys with `cangjie` allowed to be `"missing"`. |
-| `tests/property/record-fields.test.ts`, `tests/property/output-count.test.ts`, `tests/property/prompt-same-entry.test.ts`, `tests/property/pipeline-determinism.test.ts`, `tests/property/pipeline-errors.test.ts`, `tests/property/hanzi-writer-parser.test.ts` | Fixtures and `BuildOptions` gain `unihanPath` and `unihanSha256`; records gain `cangjie`. |
-| `tests/helpers/arbitraries.ts` | `cangjie` and `sources.cangjie` arbitraries. |
-| `tests/integration/full-pipeline.test.ts`, `tests/smoke/dataset-files.test.ts` | Unihan input and `cangjie` field; Unihan files present. |
-| `app/src/App.test.tsx` | `buildSession` with `mode`; menu with two Begin buttons; guide gating; summary keeps the Mode. |
-| `app/src/components/StartMenu.test.tsx` | New props and four controls. |
-| `app/src/components/SeanceSession.test.tsx` | `mode` prop; Cangjie rendering. |
-| `app/src/components/GhostPrompt.test.tsx` | Keeps importing `maskTarget` from `GhostPrompt` (re-export). |
-| `app/src/modes/WriteMode.test.tsx` | Keeps importing `resolveCompletion` (re-export); adds structure-hint cases. |
-| `app/src/storage/storage.test.ts` | Version 2, per-Mode history, `cangjieIntroSeen`, migration. |
-| `app/src/data/charDataLoader.test.ts`, `app/src/data/charDataLoader.hanziwriter.integration.test.ts` | Record fixtures gain `cangjie`; `cangjie` validation cases. |
-
-New fixtures: `tests/fixtures/unihan/` with small Unihan files (valid, malformed value, duplicate value, missing character).
+| `data/raw/unihan/*`, `data/raw/SOURCES.md`, `README.md` | new data file, licence, recorded hashes, README licence text |
+| `app/public/data/characters.json` | regenerated by the Pipeline only |
+| `app/src/data/types.ts` | `DatasetId`, `FieldSources`, `CharacterRecord`, `BuildOptions`, `BuildResult`, `CangjieError` |
+| `app/src/data/charDataLoader.ts` | validates `cangjie` |
+| `scripts/build-data.ts`, `scripts/lib/{merge,serialise}.ts` | Unihan input, hash check, summary |
+| `app/src/engine/{cangjieRules,cangjie,outcome,mask}.ts` | new modules |
+| `app/src/modes/WriteMode.tsx` | imports and re-exports `resolveCompletion`; no behaviour change |
+| `app/src/components/GhostPrompt.tsx` | imports and re-exports `maskTarget`; no behaviour change |
+| `app/src/modes/SummonStep.tsx`, `app/src/components/CangjieGuide.tsx` | new components |
+| `app/src/components/StartMenu.tsx` | third button and prop |
+| `app/src/components/SeanceSession.tsx` | two-step ghost flow |
+| `app/src/storage/storage.ts` | schema 2, `cangjieIntroSeen`, no migration |
+| `app/src/App.tsx` | `cangjie-guide` screen, `beginSeance` |
+| Unchanged | `scheduler.ts`, `learningOrder.ts`, `config.ts`, `promptCleanup.ts`, `SessionSummary.tsx`, `IntroScreen.tsx` |

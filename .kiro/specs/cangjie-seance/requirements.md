@@ -2,31 +2,38 @@
 
 ## Introduction
 
-The cangjie-seance feature is the Resurrection-category core of Ghost Script. It revives Cangjie (倉頡輸入法), an input method that composes every character from base shapes on the keys A–Y, as a second way to lay ghosts to rest: instead of drawing a forgotten character, the player types its Cangjie code. The feature has five parts: (1) Cangjie codes added to the character dataset from the Unicode Unihan database; (2) a Cangjie Séance mode, chosen on the start menu next to Write mode; (3) a one-time "How Cangjie works" screen; (4) an optional "Reveal its shape" structure hint in Write mode; and (5) a stronger rule that the target character is never shown before its ghost is resolved.
+The cangjie-seance feature is the Resurrection-category core of Ghost Script. It revives Cangjie (倉頡輸入法), an input method that composes every character from base shapes on the keys A–Y, as part of every ghost's Séance. There is one rite and no mode choice. Each ghost goes through two steps in a single Nightly Séance: (a) SUMMON, where the player types the ghost's Cangjie code on a physical keyboard or a 25-key on-screen keyboard and the character forms in ink and then fades out; and (b) LAY TO REST, where the player writes the character from memory in the existing Write mode. Ghosts without a playable code skip the summon step and go straight to writing.
 
-The feature builds on the character-dataset and ghost-game-core specs and amends parts of both (see "Amendments to other specs"). It reuses the ghost-game-core engine where possible: the Haunting scheduler, the Learning order, the thresholds in `app/src/engine/config.ts`, immediate saving, and the Séance flow.
+The feature has five parts: (1) Cangjie codes added to the character dataset from the Unicode Unihan database; (2) the two-step rite inside the Séance; (3) one combined Outcome per ghost, recorded once into the existing Review history; (4) a one-time "How Cangjie works" screen that can be re-read from the start menu; and (5) a strict rule that the target character is never shown before the ghost's rite has run its course. Saved-data schema version 2 adds the flag that records whether "How Cangjie works" has been seen.
 
-### Data finding this spec relies on
+The feature builds on the character-dataset and ghost-game-core specs and amends parts of both (see "Amendments to other specs"). It reuses the ghost-game-core engine unchanged: the Haunting scheduler, the Learning order over all 300 characters, the thresholds in `app/src/engine/config.ts`, immediate saving, and the Séance flow.
 
-A read-only probe (13 Nov 2026, no repository changes) of the Unicode 18.0.0 Unihan database (`Unihan.zip`, file date 2026-07-31, SHA-256 `4c93ea9c1f636451729a840978f1667a53886af37ba854fdcce109721c63d43e`) found a `kCangjie` value for all 300 characters in `data/character-list.txt` (0 missing). Every value matches `^[A-Y]{1,5}$` (code lengths: 1 key ×14, 2 ×55, 3 ×104, 4 ×90, 5 ×37). No character has more than one value. Three codes use the X (難) key: 别 `XRSLN`, 错 `XCTA`, 身 `HXH`. 55 of the 300 simplified characters have a different traditional form, and Unihan gives a code for the simplified character itself in every case (for example 们 `OLS`). UAX #38 lists `kCangjie` as Provisional with syntax `[A-Z]+`, and says only that it "incorporates data from the file cangjie-table.b5 by Christian Wittern"; it does not explain what a leading X means. Because of that, 298 of the 300 characters are Playable in Cangjie mode: 别 (`XRSLN`) and 错 (`XCTA`) are excluded because their codes start with X, which UAX #38 does not document. 身 (`HXH`) stays playable because its X is not the first key. The X (難) key stays on the On-screen Cangjie keyboard (25 keys) because 身 needs it. The dataset still stores the codes of 别 and 错 verbatim; the exclusion happens in the app's engine, not in the data. The Pipeline re-verifies these facts at build time (Requirement 1); they are recorded here only to justify the scope.
+### Data facts this spec relies on
 
-Out of scope: traditional characters and the traditional toggle, Build mode, Cantonese, other input methods, Cangjie codes from any source other than Unihan, typing whole words, teaching the auxiliary shapes behind each key, and the Cangjie Oracle MCP server.
+A read-only probe of the Unicode 18.0.0 Unihan database (`Unihan.zip`, file date 2026-07-31, SHA-256 `4c93ea9c1f636451729a840978f1667a53886af37ba854fdcce109721c63d43e`) found a `kCangjie` value for all 300 characters in `data/character-list.txt` (0 missing). Every value matches `^[A-Y]{1,5}$`. Code lengths are 1 key ×14, 2 keys ×55, 3 keys ×104, 4 keys ×90 and 5 keys ×37. No character has more than one value. The X (難) key appears in exactly three codes: 别 `XRSLN`, 错 `XCTA` and 身 `HXH`. UAX #38 lists `kCangjie` as Provisional with syntax `[A-Z]+`; it does not explain what a leading X means. For that reason 298 of the 300 characters are Playable in Cangjie mode: 别 and 错 are excluded because their codes start with X. 身 stays playable because its X is not the first key. The X (難) key stays on the On-screen Cangjie keyboard (25 keys) because 身 needs it. The dataset still stores the codes of 别 and 错 verbatim; the exclusion happens in the app's engine, not in the data. The Pipeline re-verifies these facts at build time (Requirement 1).
+
+Out of scope: traditional characters and the traditional toggle, any choice of mode, a separate Cangjie-only Séance, a structure ("Reveal its shape") hint, Cantonese, other input methods, Cangjie codes from any source other than Unihan, typing whole words, teaching the auxiliary shapes behind each key, and the Cangjie Oracle MCP server.
 
 ## Glossary
 
+- **App**: The React + Vite single-page web application in `app/`.
+- **Pipeline**: The data pipeline in `scripts/` that builds `characters.json` (character-dataset spec).
+- **Storage module**: The wrapped `localStorage` layer in `app/src/storage/` (ghost-game-core Requirement 7).
+- **Test_Suite**: The Vitest tests run by the repository's root `npm test`.
+- **Unihan**: The Unicode Han Database (`Unihan.zip`, Unicode 18.0.0), distributed under the Unicode License V3 (SPDX `Unicode-3.0`). Its `kCangjie` field supplies the Cangjie codes.
 - **Cangjie code**: The sequence of 1–5 key letters (A–Y) that Cangjie uses to input a character, copied verbatim from the Unihan `kCangjie` field. Stored in the dataset as `cangjie: string | null`.
-- **Playable in Cangjie mode**: A character whose `cangjie` is non-null and does not start with `X`.
 - **Base shape**: The single shape shown for each Cangjie key: A日 B月 C金 D木 E水 F火 G土 H竹 I戈 J十 K大 L中 M一 N弓 O人 P心 Q手 R口 S尸 T廿 U山 V女 W田 Y卜. Each key also stands for a family of related shapes, which this feature does not teach one by one.
-- **X key (難)**: The special Cangjie key X (難, "difficult"). It has no base shape in the list above and appears in some codes (in our data: 别, 错, 身).
-- **Mode**: Either Write (draw the character, ghost-game-core Requirement 5) or Cangjie (type its code, Requirement 5 of this spec).
-- **Cangjie Séance**: A Nightly Séance played in Cangjie mode. It follows the ghost-game-core session flow, but each ghost is laid to rest by typing its Cangjie code.
+- **X key**: The special Cangjie key X, labelled 難 ("difficult"). It has no base shape in the list above and appears in some codes (in the current data: 别, 错 and 身).
+- **Playable in Cangjie mode**: A character whose `cangjie` is non-null and does not start with `X`. Only a Playable character has a Summon step.
+- **Rite**: The two steps every ghost goes through in a Séance: the Summon step, then the Lay-to-rest step. A ghost that is not Playable in Cangjie mode has only the Lay-to-rest step.
+- **Summon step**: The first step of the Rite. The player types the ghost's Cangjie code; when the code is complete (or the player gives up) the character forms in ink and then fades out.
+- **Lay-to-rest step**: The second step of the Rite. The player writes the character from memory in Write mode (ghost-game-core Requirement 5), unchanged.
 - **Code slot**: One placeholder per key of the target code, shown in order. A slot is empty until its key is entered correctly; it then shows that key's letter and base shape (難 for X).
-- **On-screen Cangjie keyboard**: 25 buttons, the 24 base-shape keys A–Y plus X (難), usable with touch, mouse, and keyboard focus.
-- **Key hint**: In Cangjie mode, the reveal of the next expected key after repeated wrong keys for the same slot.
-- **Structure hint ("Reveal its shape")**: In Write mode, an optional control that shows the character's layout from its IDS decomposition as nested boxes labelled with its components, never the character itself.
-- **Eligible for the structure hint**: A character whose decomposition is not atomic and whose IDS string contains no `？` (U+FF1F). In the current data, 259 of 300 characters are eligible (9 are atomic and 32 contain an interior `？`).
-- **Unihan**: The Unicode Han Database (`Unihan.zip`), distributed under the Unicode License V3 (SPDX `Unicode-3.0`).
-- Terms not defined here (Ghost, Outcome, `clean`/`struggled`/`gave-up`, Interval ladder, Learning order, Review history, Storage module, Display cleanup, Stroke hint, Haunting scheduler) have the meanings given in the ghost-game-core requirements.
+- **On-screen Cangjie keyboard**: 25 buttons, the 24 base-shape keys A–Y plus X (難), usable with touch, mouse and keyboard focus.
+- **Key hint**: In the Summon step, the reveal of the next expected key after repeated wrong keys for the same slot.
+- **Step result**: The Outcome of one step on its own: `clean`, `struggled` or `gave-up`, classified by the step's own hints, mistakes and Give up.
+- **Combined outcome**: The single Outcome of a ghost, computed from the Summon step's Step result (when there is one) and the Lay-to-rest step's Step result (Requirement 4).
+- Terms not defined here (Ghost, Outcome, `clean`/`struggled`/`gave-up`, Nightly Séance, Interval ladder, Learning order, Review history, Display cleanup, Stroke hint, Haunting scheduler, Write mode) have the meanings given in the ghost-game-core requirements.
 
 ---
 
@@ -34,162 +41,207 @@ Out of scope: traditional characters and the traditional toggle, Build mode, Can
 
 ### Requirement 1: Cangjie Codes in the Character Dataset
 
-**User Story:** As a developer, I want each character's Cangjie code added to `characters.json` from a pinned, licensed source, so that Cangjie mode never relies on guessed or AI-generated codes.
+**User Story:** As a developer, I want each character's Cangjie code added to `characters.json` from a pinned, licensed source, so that the Summon step never relies on guessed or AI-generated codes.
 
 #### Acceptance Criteria
 
 1. THE Pipeline SHALL read Cangjie codes only from the `kCangjie` field of the Unihan database, Unicode version 18.0.0, obtained from `https://www.unicode.org/Public/18.0.0/ucd/Unihan.zip` and checked against the SHA-256 recorded in `data/raw/SOURCES.md` (`4c93ea9c1f636451729a840978f1667a53886af37ba854fdcce109721c63d43e`).
-2. THE repository SHALL store the Unihan data file the Pipeline reads under `data/raw/unihan/`, with the Unicode License V3 text in the same directory; `data/raw/SOURCES.md` SHALL record the Unicode version, file date, download URL, SHA-256, the file and field used, and the licence (SPDX `Unicode-3.0`).
-3. EACH CharacterRecord SHALL gain a `cangjie` field holding the character's `kCangjie` value copied verbatim, or `null` when Unihan has no value; `sources.cangjie` SHALL be `"unihan"` when the value is non-null and `"missing"` when it is null. THE Pipeline SHALL NEVER infer, derive, or generate a code (for example from a traditional variant or from components).
+2. THE repository SHALL store the Unihan data file the Pipeline reads (`Unihan_DictionaryLikeData.txt`, a verbatim copy) under `data/raw/unihan/`, with the Unicode License V3 text in the same directory; `data/raw/SOURCES.md` SHALL record the Unicode version, file date, download URL, both SHA-256 values (the zip and the committed file), the file and field used, and the licence (SPDX `Unicode-3.0`).
+3. EACH CharacterRecord SHALL gain a `cangjie` field holding the character's `kCangjie` value copied verbatim, or `null` when Unihan has no value; `sources.cangjie` SHALL be `"unihan"` when the value is non-null and `"missing"` when it is null. THE Pipeline SHALL NEVER infer, derive or generate a code (for example from a traditional variant or from components).
 4. IF a `kCangjie` value does not match `^[A-Y]{1,5}$`, or a character has more than one `kCangjie` value, THEN THE Pipeline SHALL write the affected characters and values to stderr, exit with a non-zero status, and write no output.
-5. A null Cangjie code SHALL NOT fail the build; THE Pipeline's success summary SHALL state how many characters have a code and list every character without one.
+5. IF a character has no `kCangjie` value, THEN THE Pipeline SHALL set its `cangjie` to `null`, SHALL NOT fail the build, and SHALL state in its success summary how many characters have a code and list every character without one.
 6. THE Pipeline SHALL stay deterministic: identical inputs, including the Unihan file, SHALL produce a byte-identical `characters.json`.
-7. THE README "Data and licences" section SHALL list Unihan with its version, URL, and licence, and SHALL state that `characters.json` also contains data under the Unicode License V3.
+7. THE README "Data and licences" section SHALL list Unihan with its version, URL and licence, and SHALL state that `characters.json` also contains data under the Unicode License V3.
 8. THE shared `CharacterRecord` type and the app's dataset loader SHALL accept the `cangjie` field, and THE loader SHALL reject a record whose `cangjie` is neither `null` nor a string matching `^[A-Y]{1,5}$`.
-9. THE Test_Suite SHALL include property tests asserting that every non-null `cangjie` matches `^[A-Y]{1,5}$`, that `sources.cangjie` is `"unihan"` exactly when `cangjie` is non-null, and that every non-null `cangjie` equals the raw Unihan value for that character.
-10. THE `data/raw/SOURCES.md` file SHALL record the SHA-256 of the committed Unihan data file as well as the SHA-256 of the original `Unihan.zip`; WHEN the Pipeline starts, THE Pipeline SHALL verify the committed file's SHA-256 against the recorded value before reading it, and IF the hashes differ, THEN THE Pipeline SHALL exit with a non-zero status and write no output.
-11. THE Pipeline's success summary SHALL also state how many characters are Playable in Cangjie mode and list every character that is not (in the current data: 别 and 错); THE dataset SHALL keep storing those characters' codes verbatim.
+9. WHEN the Pipeline starts, THE Pipeline SHALL verify the committed Unihan file's SHA-256 against the value recorded in `data/raw/SOURCES.md` before reading it, and IF the hashes differ or no recorded hash is found, THEN THE Pipeline SHALL exit with a non-zero status and write no output.
+10. THE Pipeline's success summary SHALL also state how many characters are Playable in Cangjie mode (298 in the current data) and list every character that is not (in the current data: 别 and 错); THE dataset SHALL keep storing those characters' codes verbatim.
+11. THE function `isPlayableInCangjie(code)` SHALL have exactly one definition, in `app/src/engine/cangjieRules.ts`, used by both the Pipeline summary and the App, and SHALL return true exactly when `code` is non-null and does not start with `X`.
 
 ---
 
-### Requirement 2: Choosing a Mode
+### Requirement 2: The Rite, One Flow per Ghost
 
-**User Story:** As a player, I want to choose between Write and Cangjie on the start menu, so that I can practise on whatever device and keyboard I have.
+**User Story:** As a player, I want every ghost to ask me to summon it by its Cangjie code and then write it from memory, so that I learn how each character is built and then prove I can write it.
 
 #### Acceptance Criteria
 
-1. THE StartMenu SHALL offer two clearly labelled controls to begin a Nightly Séance, one in Write mode and one in Cangjie mode, each operable by touch, mouse, and keyboard.
-2. THE StartMenu SHALL also offer a control to re-view "How Cangjie works" (Requirement 3), next to the existing control to re-view the legend.
-3. THE player SHALL choose the Mode only outside an active Séance; a Séance SHALL keep the Mode it was started in until it ends.
-4. WHEN the player uses the legend intro's begin control on a first visit, THE App SHALL start a Write-mode Séance, as in ghost-game-core.
+1. WHEN a ghost is presented in a Séance, THE App SHALL run the Rite for that ghost in this order: first the Summon step, then the Lay-to-rest step, with no choice of mode anywhere in the App.
+2. WHEN the ghost's character is Playable in Cangjie mode, THE App SHALL begin the ghost with the Summon step.
+3. IF the ghost's character is not Playable in Cangjie mode (a null code, or a code starting with X; in the current data 别 `XRSLN` and 错 `XCTA`), THEN THE App SHALL skip the Summon step and begin the ghost with the Lay-to-rest step. 身 (`HXH`) SHALL have a Summon step.
+4. WHEN the Summon step's code is complete, or the player gives up in the Summon step, THE App SHALL form the character in ink, hold it on screen for `SUMMON_HOLD_MS` (1500 ms), fade it out over `SUMMON_FADE_MS` (1500 ms), remove it from the page, and only then begin the Lay-to-rest step.
+5. WHERE the player's system requests reduced motion, THE App SHALL replace the animated fade by an immediate removal after the same hold time.
+6. WHEN the player gives up in the Summon step, THE App SHALL still proceed to the Lay-to-rest step for that ghost after the character has formed and faded.
+7. THE Lay-to-rest step SHALL behave exactly as Write mode does in ghost-game-core (hanzi-writer quiz mode, live per-stroke checking, Stroke hint after 3 consecutive misses of the same stroke, "Give up" with stroke-order animation, clean-mistake threshold from the engine config).
+8. WHEN a Séance begins, THE App SHALL select its ghosts with the ghost-game-core session-selection algorithm (ghost-game-core AC 6.5) applied to the Learning order over all 300 characters, with the UI-read clock and the same `EngineConfig`; 298 of the 300 ghosts have a Summon step.
+9. THE Séance SHALL keep the ghost-game-core flow: "Ghost N of M", the cleaned and masked clue shown through both steps, a text label naming the active step ("Summon" or "Lay to rest"), a "Next ghost" control that appears only after the Lay-to-rest step ends (the last ghost leading to the summary), the session summary, and "Begin another Séance".
 
 ---
 
-### Requirement 3: "How Cangjie Works" Screen
-
-**User Story:** As a player new to Cangjie, I want a short explanation before my first Cangjie Séance, so that I know what the keys mean.
-
-#### Acceptance Criteria
-
-1. WHEN the player starts a Cangjie Séance and the Storage module has no record that "How Cangjie works" was seen, THE App SHALL show the "How Cangjie works" screen first; WHEN the player continues from it, THE App SHALL record that it was seen and start the Cangjie Séance.
-2. THE App SHALL let the player re-view the screen from the StartMenu, and only outside an active Séance.
-3. THE screen SHALL show all 24 keys A–Y with their base shapes, explain the X (難) key, explain that a code is a sequence of one to five keys typed in order, and explain that each key stands for a family of related shapes of which only the base shape is shown.
-4. ANY example code on the screen SHALL be taken from the dataset's `cangjie` field, not written by hand.
-5. THE screen SHALL make no historical claim other than these four, taken from content-accuracy.md: Cangjie was invented in 1976 by Chu Bong-Foo; it is named after Cangjie, the legendary inventor of Chinese writing; it was the first Chinese input method to use the standard QWERTY keyboard; it was released to the public in 1982. THE screen SHALL show a visible citation to the English Wikipedia articles "Cangjie input method" and "Chu Bong-Foo", giving each title and URL as text. THE screen SHALL make no other claims, statistics, or "dying" language.
-6. THE screen SHALL be operable by keyboard, touch, and mouse; its continue control SHALL have an accessible label; the shapes SHALL carry a Chinese `lang` attribute; and its text SHALL meet contrast guidelines on the dark theme.
-
----
-
-### Requirement 4: Cangjie Séance Session
-
-**User Story:** As a player, I want a Cangjie Séance to work like a Write Séance, so that the game feels familiar and my progress is kept.
-
-#### Acceptance Criteria
-
-1. WHEN a Cangjie Séance begins, THE App SHALL select its ghosts with the ghost-game-core session-selection algorithm (ghost-game-core AC 6.5), applied to the Learning order filtered to characters Playable in Cangjie mode, with the UI-read clock and the same `EngineConfig`.
-2. THE App SHALL skip every character that is not Playable in Cangjie mode; such a character SHALL never appear as a Cangjie ghost.
-3. THE Cangjie Séance SHALL follow the ghost-game-core Séance flow: "Ghost N of M", the cleaned and masked clue, one terminal Outcome per ghost, a "Next ghost" control after each Outcome with the last one leading to the summary, the session summary, and "Begin another Séance" starting another Séance in the same Mode.
-4. THE App SHALL record each Cangjie ghost's Outcome to the Review history IMMEDIATELY when it is reached, using `applyReview` with the UI-read clock, so that leaving mid-session loses no completed ghost.
-5. THE App SHALL keep one Review history per Mode (`write`, `cangjie`), each keyed by character, so that a Cangjie Outcome never changes when a character is next due in Write mode, and a Write Outcome never changes when it is next due in Cangjie mode.
-
----
-
-### Requirement 5: Typing the Cangjie Code
+### Requirement 3: Summoning a Ghost by Typing its Cangjie Code
 
 **User Story:** As a player, I want to type a ghost's Cangjie code on my keyboard or on screen and see each correct shape appear, so that I learn how the character is built.
 
 #### Acceptance Criteria
 
-1. WHEN a ghost is presented in Cangjie mode, THE App SHALL show the clue and one empty Code slot per key of the target code, and SHALL accept input from the physical keyboard and from the On-screen Cangjie keyboard. The number of Code slots tells the player the code length, by design.
-2. THE App SHALL read `KeyboardEvent.key` for physical keyboard input; WHEN `key` is a single letter A–Y (case-insensitive), Ctrl, Alt, and Meta are not held, and the event is not an auto-repeat, THE App SHALL treat the event as one key entry; THE App SHALL ignore every event whose `isComposing` is true (and every event whose `key` is `"Process"`), every Z, and every other key. Z is not a Cangjie key, so it is ignored and not counted as a mistake.
-3. THE Cangjie screen SHALL show a short note asking the player to turn off any system Chinese input method if typed letters do not appear.
-4. THE On-screen Cangjie keyboard SHALL provide 25 buttons, A–Y with their base shapes and X labelled 難; each button SHALL have an accessible name containing its letter, measure at least 44 px in each dimension, and be operable by touch, mouse, and keyboard focus.
+1. WHEN the Summon step begins, THE App SHALL show one empty Code slot per key of the target code and SHALL accept input from the physical keyboard and from the On-screen Cangjie keyboard. The number of Code slots tells the player the code length, by design.
+2. WHEN a physical key event has a `KeyboardEvent.key` that is a single letter A–Y (either case), Ctrl, Alt and Meta are not held, the event is not an auto-repeat, `isComposing` is false and `key` is not `"Process"`, THE App SHALL treat the event as one key entry; THE App SHALL ignore every other event, including every Z, without counting a mistake.
+3. THE Summon step SHALL show a short note asking the player to turn off any system Chinese input method if typed letters do not appear.
+4. THE On-screen Cangjie keyboard SHALL provide 25 buttons (A–Y with their base shapes and X labelled 難); each button SHALL have an accessible name containing its letter, measure at least 44 px in each dimension, and be operable by touch, mouse and keyboard focus.
 5. WHEN a key entry equals the next expected key of the code, THE App SHALL fill the next Code slot with that key's letter and base shape (難 for X) and give accepted feedback.
-6. WHEN a key entry does not equal the next expected key (a wrong key entry is a letter A–Y that differs from the next expected key, or an on-screen key that differs), THE App SHALL count exactly one mistake within the handling of that entry, leave the slots unchanged, and give rejected feedback; nothing SHALL change the mistake count outside a key entry.
-7. WHEN the player enters a wrong key for the SAME slot on 3 consecutive entries (the ghost-game-core `strokeHintAfterConsecutiveMisses` constant), THE App SHALL show a Key hint identifying the next expected key, on its slot and on the On-screen Cangjie keyboard; the player SHALL still enter that key to fill the slot. THE App SHALL provide no control to request a Key hint; the Key hint appears only automatically after 3 consecutive wrong entries for the same slot.
-8. WHEN the last slot is filled with no Key hint shown and total mistakes within `cleanMistakeThreshold`, THE App SHALL resolve the ghost as `clean`; WHEN the last slot is filled after any Key hint or with more mistakes, THE App SHALL resolve it as `struggled`; in both cases THE App SHALL show the completed character in ink and the full code.
-9. THE App SHALL provide a clearly labelled "Give up" control; WHEN the player activates it, THE App SHALL stop accepting key entries, show the full code in the slots, play the character's stroke-order animation from the dataset's stroke data, and resolve the ghost as `gave-up`.
-10. THE App SHALL resolve each ghost exactly once, and SHALL ignore key entries and Give up after the ghost is resolved.
-11. THE thresholds SHALL come only from the ghost-game-core engine config; feedback SHALL use text or icons as well as colour; and every control SHALL be operable by keyboard.
-12. THE input and outcome logic (matching a key entry to the code, counting mistakes, triggering the Key hint, classifying the Outcome) SHALL be a pure function in `app/src/engine/` with no I/O and no reliance on ambient time.
+6. WHEN a key entry does not equal the next expected key, THE App SHALL count exactly one mistake within the handling of that entry, leave the slots unchanged, and give rejected feedback; nothing SHALL change the mistake count outside a key entry.
+7. WHEN the player enters a wrong key for the SAME slot on 3 consecutive entries (the `strokeHintAfterConsecutiveMisses` constant of the engine config), THE App SHALL show a Key hint identifying the next expected key, on its slot and on the On-screen Cangjie keyboard; the player SHALL still enter that key to fill the slot. THE App SHALL provide no control to request a Key hint.
+8. WHEN the last slot is filled, THE App SHALL set the Summon step's Step result to `clean` if no Key hint was shown and total mistakes are within `cleanMistakeThreshold`, and to `struggled` otherwise, SHALL show the full code, and SHALL form the character in ink (Requirement 2.4).
+9. THE Summon step SHALL provide a clearly labelled "Give up" control; WHEN the player activates it, THE App SHALL stop accepting key entries, set the Summon step's Step result to `gave-up`, show the full code in the slots, and form the character in ink (Requirement 2.4).
+10. THE App SHALL fix the Summon step's Step result exactly once, and SHALL ignore key entries and Give up after it is fixed.
+11. THE thresholds SHALL come only from the engine config; feedback SHALL use text or an icon as well as colour; and every control SHALL be operable by keyboard.
+12. THE input and Step-result logic (matching a key entry to the code, counting mistakes, triggering the Key hint, classifying the Step result) SHALL be a pure reducer in `app/src/engine/` with no I/O and no reliance on ambient time.
+13. THE Summon step SHALL show the one-line source note "Codes: Unicode Unihan kCangjie" while the player types.
 
 ---
 
-### Requirement 6: Structure Hint in Write Mode
+### Requirement 4: One Combined Outcome per Ghost
 
-**User Story:** As a player who is stuck in Write mode, I want to see how the character is laid out and what it is made of, without seeing the character itself, so that I can rebuild it from its parts.
+**User Story:** As a player, I want one result per ghost that reflects how I did in both steps, so that the Haunting scheduler brings back the ghosts I struggled with.
 
 #### Acceptance Criteria
 
-1. WHILE a Write-mode ghost is unresolved AND no Stroke hint has been shown for it, THE App SHALL offer a clearly labelled "Reveal its shape" control for a character that is Eligible for the structure hint.
-2. WHEN the character is not Eligible for the structure hint, THE App SHALL NOT offer an active "Reveal its shape" control and SHALL say that this ghost's shape cannot be revealed.
-3. WHEN the player activates "Reveal its shape", THE App SHALL show the character's layout as nested boxes following its IDS decomposition, supporting every Ideographic Description Character used in the data (including ⿲ and ⿳ with three parts and ⿻ for overlapping parts), and SHALL label each leaf box with its component; the layout SHALL never show the target character.
-4. WHEN "Reveal its shape" has been used for a ghost, THE App SHALL treat that ghost as having had a hint, so that completing it SHALL resolve as `struggled`, never `clean`; the revealed layout SHALL stay visible until the ghost is resolved.
-5. WHEN a Stroke hint is shown, THE App SHALL withdraw the "Reveal its shape" control for that ghost.
-6. THE conversion from an IDS decomposition to a box layout SHALL be a pure function in `app/src/engine/`; the layout's leaves, in reading order, SHALL be exactly the leaf codepoints of the IDS string in order (repeats allowed), and removing repeats from them (keeping first occurrences) SHALL give exactly `decomposition.components`.
-7. THE App SHALL use system fonts only (no bundled font); components in the CJK Radicals Supplement block (in the current data: ⺊ ⺍ ⺌ ⺮ ⺼) depend on the device's fonts, and rendering on target devices is checked in a later spec (Spec 5).
-8. THE App SHALL offer "Reveal its shape" only in Write mode and SHALL NOT offer it in Cangjie mode.
+1. IF the player used Give up in EITHER step of a ghost's Rite, THEN THE App SHALL set that ghost's Combined outcome to `gave-up`.
+2. IF Give up was not used, AND a hint appeared in EITHER step (a Key hint in the Summon step or a Stroke hint in the Lay-to-rest step) OR total mistakes in EITHER step exceeded `cleanMistakeThreshold` (each step's mistakes compared to the threshold separately, not added together), THEN THE App SHALL set the Combined outcome to `struggled`.
+3. IF neither of the above applies, THEN THE App SHALL set the Combined outcome to `clean`.
+4. WHEN a ghost has no Summon step, THE App SHALL set its Combined outcome to the Lay-to-rest step's Step result.
+5. THE App SHALL record each ghost's Combined outcome ONCE, immediately when it is final (at the end of the Lay-to-rest step), using `applyReview` with the UI-read clock and the Storage module's `recordOutcome(char, entry)`; THE App SHALL record nothing at the end of the Summon step, so leaving mid-ghost records nothing for that ghost.
+6. THE App SHALL keep ONE Review history, shared by both steps, and the Haunting scheduler and Learning order SHALL be unchanged.
+7. WHEN a step's Step result is `gave-up`, key entries and strokes that arrive afterwards SHALL NOT change the Combined outcome.
+8. IF hanzi-writer cannot load the character in the Lay-to-rest step, THEN THE App SHALL resolve that step as `gave-up` (as in ghost-game-core), so the Combined outcome is `gave-up`.
+9. THE combination of the Summon step's Step result (or its absence) with the Lay-to-rest step's Step result SHALL be a pure function `combineOutcomes(summon, write)` in `app/src/engine/outcome.ts`.
 
 ---
 
-### Requirement 7: Never Revealing the Target Character
+### Requirement 5: Never Revealing the Target Character
 
-**User Story:** As a player, I want the game never to show me the character I am trying to recall until the ghost is resolved, so that the challenge is real.
+**User Story:** As a player, I want the game never to show me the character I am trying to recall until I have earned it, so that the challenge is real.
 
 #### Acceptance Criteria
 
-1. WHILE a ghost is unresolved in either Mode, THE App SHALL NOT render the target character in any text, attribute, accessible name, Code slot, key face, hint, layout box, or document title.
-2. WHEN any string shown for an unresolved ghost would contain the target character, THE App SHALL replace each occurrence with "～" (U+FF5E), for display only, as GhostPrompt does.
+1. WHILE the Summon step's code is neither complete nor given up, THE App SHALL NOT render the target character in any text, attribute, accessible name, Code slot, key face, hint, or the document title.
+2. WHEN any string shown for an unresolved ghost would contain the target character, THE App SHALL replace each occurrence with "～" (U+FF5E), for display only, using one shared mask helper (the one GhostPrompt uses).
 3. WHILE the target character is itself the base shape of a key (in the current data: 一 中 人 十 口 大 女 山 手 日 月 木 水 火, each of whose codes is that single key), THE On-screen Cangjie keyboard SHALL show every key by its letter only, with no base shapes, so that no single key stands out.
-4. THE Test_Suite SHALL include a test that renders every ghost in each Mode, in its unresolved state and after a Key hint or structure hint, and asserts that the target character appears nowhere in the DOM text or attributes.
+4. THE App SHALL show the target character during the Summon step only while it forms and fades (Requirement 2.4).
+5. WHILE the Lay-to-rest step is active and not yet ended, THE App SHALL NOT make the target character visible anywhere on the page, including as residue of the Summon step.
+6. WHEN the ghost has no Summon step, THE App SHALL apply the existing Write-mode never-reveal rule (ghost-game-core AC 5.1) and no more.
+7. WHEN the Lay-to-rest step ends, THE App SHALL reveal the character as Write mode does today.
 
 ---
 
-### Requirement 8: Persistence and Schema
+### Requirement 6: "How Cangjie Works" Screen
 
-**User Story:** As a returning player, I want my Write and Cangjie progress and my "How Cangjie works" choice saved, so that nothing is lost when the saved-data format changes.
+**User Story:** As a player new to Cangjie, I want a short explanation before my first Séance, so that I know what the keys mean.
 
 #### Acceptance Criteria
 
-1. THE Storage module SHALL persist, in addition to ghost-game-core's data, whether "How Cangjie works" has been seen and the Cangjie-mode Review history.
-2. THE Storage module SHALL raise `CURRENT_SCHEMA_VERSION` from 1 to 2; schema version 2 SHALL store `history: { write: ReviewHistory, cangjie: ReviewHistory }`; THE migration from version 1 SHALL move the existing history under `write`, keep `introSeen`, set `cangjie` to an empty history, and set "How Cangjie works" to not seen.
-3. ALL other persisted-data rules of ghost-game-core Requirement 7 SHALL continue to apply: unknown or newer versions and corrupt data reset to defaults without migrating, and no storage failure crashes the App.
+1. WHEN the player dismisses the legend intro on a first visit and the Storage module has no record that "How Cangjie works" was seen, THE App SHALL show the "How Cangjie works" screen before the first Séance.
+2. WHEN the player begins a Séance from the start menu and the Storage module has no record that "How Cangjie works" was seen, THE App SHALL show the screen first; WHEN the player continues from it, THE App SHALL record that it was seen and start the Séance.
+3. THE App SHALL let the player re-view the screen from the StartMenu, only outside an active Séance; WHEN the player continues from a re-view, THE App SHALL return to the StartMenu.
+4. THE screen SHALL show all 25 keys with their base shapes (X shown as 難), explain the X key, explain that a code is one to five keys typed in order, and explain that each key stands for a family of related shapes of which only the base shape is shown.
+5. THE screen SHALL show an example code read from the dataset's `cangjie` field at runtime, never written by hand.
+6. THE screen SHALL state that Cangjie was "developed in the 1970s" by Chu Bong-Foo, and SHALL make no other historical claim except these three from content-accuracy.md: it is named after Cangjie, the legendary inventor of Chinese writing; it was the first Chinese input method to use the standard QWERTY keyboard; it was released to the public in 1982. THE screen SHALL show a visible citation to the English Wikipedia articles "Cangjie input method" and "Chu Bong-Foo", giving each title and URL as text. THE screen SHALL contain no other claims, statistics, or "dying" language.
+7. THE screen SHALL state that the game's codes follow the Unicode Unihan `kCangjie` field, which Unihan marks provisional, so some typists know different codes for some characters.
+8. THE screen SHALL be operable by keyboard, touch and mouse; its continue control SHALL have an accessible label; the shapes SHALL carry a Chinese `lang` attribute; and its text SHALL meet contrast guidelines on the dark theme.
+
+---
+
+### Requirement 7: Start Menu
+
+**User Story:** As a returning player, I want a simple menu to begin a Séance or re-read the guides, so that I can find everything without a mode choice.
+
+#### Acceptance Criteria
+
+1. THE StartMenu SHALL offer exactly three controls: "Begin a Nightly Séance", "Read the legend again" and "How Cangjie works", each operable by touch, mouse and keyboard and at least 44 px high.
+2. WHEN the player activates "Begin a Nightly Séance", THE App SHALL start a Séance (after the guide, if Requirement 6.2 applies).
+3. THE StartMenu SHALL be shown only outside an active Séance, so re-viewing a guide never interrupts a Séance.
+4. WHEN the App is opened and a prior visit is recorded, THE App SHALL show the StartMenu directly, skipping the legend intro.
+
+---
+
+### Requirement 8: Persistence and Schema Version 2
+
+**User Story:** As a returning player, I want the app to remember whether I have read "How Cangjie works", so that I am not shown it every time.
+
+#### Acceptance Criteria
+
+1. THE Storage module SHALL set `CURRENT_SCHEMA_VERSION` to 2 and persist the state `{ schemaVersion: 2, introSeen, cangjieIntroSeen, history }`, where `history` is the single Review history keyed by character.
+2. THE Storage module SHALL expose `getCangjieIntroSeen()` and `setCangjieIntroSeen(seen)`; `recordOutcome(char, entry)` SHALL keep its current signature and SHALL preserve both flags.
+3. THE Storage module SHALL ship NO migration from version 1; WHEN persisted data has `schemaVersion` 1, THE Storage module SHALL reset to defaults under the existing rule that an older version without a migration resets. The consequence is that every existing player loses their saved progress once, and sees the legend intro again.
+4. ALL other persisted-data rules of ghost-game-core Requirement 7 SHALL continue to apply: unknown or newer versions, corrupt data and forbidden history keys reset to defaults, and no storage failure crashes the App.
 
 ---
 
 ### Requirement 9: Quality and Testing
 
-**User Story:** As a judge and developer, I want Cangjie mode held to the same standards as the rest of the game, so that it is trustworthy and works on every device.
+**User Story:** As a judge and developer, I want the new feature held to the same standards as the rest of the game, so that it is trustworthy and works on every device.
 
 #### Acceptance Criteria
 
 1. THE feature SHALL use TypeScript `strict: true` with no `any`, keep game logic in `app/src/engine/` and UI in `app/src/components/` or `app/src/modes/`, run fully offline, and make no network request for Cangjie codes or stroke data at runtime.
-2. THE property-based tests SHALL cover at least these cases: (1) entering exactly the code's keys in order fills every slot and completes the ghost, and no shorter sequence completes it; (2) the mistake count equals the number of wrong key entries; (3) the Key hint appears exactly when a slot has received the configured number of consecutive wrong entries, and the counter resets when the slot is filled; (4) Outcome classification in Cangjie mode matches ghost-game-core's rule for the same hint flag and mistake count; (5) nothing changes after resolution; (6) Z and non-letter keys never change the state (no slot filled, no mistake counted); (7) the IDS-to-layout function's leaves equal the leaf codepoints of the IDS string in order, removing repeats gives exactly `decomposition.components`, and the leaves never include the target character; and (8) masked display strings never contain the target character.
-3. THE repository's root `npm test` SHALL keep running all existing character-dataset and ghost-game-core tests, changed only where this spec amends them, plus the new tests.
-4. THE Cangjie mode SHALL be usable from 375 px phones to 1440 px+ laptops, with the physical keyboard on laptops and the On-screen Cangjie keyboard on touch devices.
+2. THE feature SHALL add NO new property-based tests and NO mutation testing; THE Test_Suite SHALL cover the new code with unit tests and component tests only.
+3. THE Test_Suite SHALL include unit tests for: the Unihan parser, the SHA-256 check and the build validation failures; `isPlayableInCangjie`; `parseKeyEvent`; the Summon reducer (slot fill, mistakes, the automatic Key hint at 3 consecutive wrong keys and its reset when the slot is filled, Give up, no change after the step result is fixed, Z ignored); the `combineOutcomes` truth table; and the mask helper.
+4. THE Test_Suite SHALL include component tests, with hanzi-writer mocked, for: the Summon step (slots, physical and on-screen keys, letters-only keys for key-face characters, the IME note, the hint, Give up, the character forming and then fading, never-reveal before completion); the two-step ghost flow in the Séance (summon, then write, then one Combined outcome recorded once; the Summon step skipped for 别 and 错); the "How Cangjie works" screen; the StartMenu; and the App (first visit: intro, guide, Séance; returning visit: menu; a version-1 saved blob resets).
+5. THE Test_Suite SHALL include a never-reveal component test that renders every Playable ghost's Summon step in its unresolved state and again after a Key hint, and asserts the target character appears nowhere in the DOM text, attributes or document title.
+6. THE existing 438 tests SHALL stay green, changed only where this spec changes a behaviour or a shape, and THE repository's root `npm test` SHALL run all tests.
+7. THE feature SHALL be usable from 375 px phones to 1440 px+ laptops, with the physical keyboard on laptops and the On-screen Cangjie keyboard on touch devices; the Lay-to-rest step needs a pointer to draw, and every other control SHALL work with touch and with mouse or keyboard.
 
 ---
 
 ## Amendments to other specs
 
-This spec changes the following elsewhere. These amendments have been applied to those specs.
+This re-scope changes what the other two specs must say. **These other spec files have NOT yet been edited by this rewrite and need a follow-up.** They still carry the earlier cangjie-seance amendments (marked "Amended by cangjie-seance"), some of which this re-scope withdraws.
 
-- **character-dataset**: Requirement 4.2, Requirement 4.11, Properties 4 and 10, the serialiser key order, the README licence summary, and the dataset id `unihan`.
-- **ghost-game-core**: AC 5.5 and 5.6 ("no hint of any kind"); Requirement 7 (schema version 2 with per-Mode history); StartMenu AC 1.5 and 3.6 (controls); AC 6.12 (Learning order filtered for Cangjie mode).
+### ghost-game-core: earlier amendments that this re-scope WITHDRAWS
 
-Remaining steering note: product.md's principle "laptops get Build mode" and tech.md's device target "Laptop … Build mode is primary" are stale now that Cangjie Séance replaces Build mode. This spec treats Cangjie mode as the laptop/keyboard mode.
+- Requirements: the "Reveal its shape" structure hint in AC 5.5 and AC 5.6 and in the Glossary entries "Clean outcome" and "Struggled outcome" (revert to "no Stroke hint" for the Lay-to-rest step's own rule).
+- Requirements: the Glossary entry "Mode", and the per-Mode Review history and the version-1 to version-2 migration in Requirement 7 (AC 7.1, AC 7.6, AC 7.7, AC 7.8).
+- Requirements: the mode choice in AC 1.5 and AC 3.6 (the StartMenu has no per-Mode controls; "Begin another Séance" has no Mode).
+- Requirements: the filtered Learning order in AC 6.12 (the Learning order is always the full order over all 300 characters).
+- Requirements and design: `recordOutcome(mode, char, entry)` returns to `recordOutcome(char, entry)`.
+- Design: the storage amendments (`CURRENT_SCHEMA_VERSION` comment on `= 1`, the `recordOutcome(mode, …)` comment, the "Migrations" paragraph and "Amended storage shape (schema v2)" with `history: { write, cangjie }`), the StartMenu, SeanceSession (`mode` prop) and App amendments, the `structureHintUsed` note in the WriteMode `onComplete` bullet, and the session-selection note after the `learningOrder` wiring.
+
+### ghost-game-core: what this re-scope requires
+
+- Glossary and Requirement 3: a ghost is a Rite of one or two steps; the Combined outcome is recorded once at the end of the Lay-to-rest step (Requirement 4 above).
+- Requirement 1 (AC 1.5, AC 1.3): the StartMenu has three controls (begin, legend, "How Cangjie works"); the legend's begin control leads to "How Cangjie works" on a first visit.
+- Requirement 7: `CURRENT_SCHEMA_VERSION` is 2; the state is `{ schemaVersion, introSeen, cangjieIntroSeen, history }`; no migration ships, so version-1 data resets; `getCangjieIntroSeen` and `setCangjieIntroSeen` join the Storage API.
+- Design: `SeanceSession` gains the two-step ghost flow; `App` gains the `cangjie-guide` screen.
+
+### character-dataset: what this re-scope requires
+
+- Keep the earlier amendments that remain correct: the Unihan source and licence (AC 2.4, 2.5, 2.6), the `cangjie` field and `unihan` dataset id (AC 4.2, 4.11, 4.13), the pipeline inputs and summary (AC 3.2, 3.6, 3.7), the serialiser key order, and the amended Properties 4 and 10 (their tests are updated, not removed).
+- WITHDRAW or replace: the new property-test ACs 5.10, 5.11 and 5.12 and design Property 23 with its `cangjie.test.ts` row. They conflict with "no new property tests"; replace them with unit tests (Requirement 9.3).
+
+### Steering follow-up
+
+`product.md` (core game loop step 2 and the "Cangjie Séance" must-have) and `tech.md` (device targets) still describe Cangjie Séance as a separate mode. They need a follow-up edit to describe the two-step rite. `content-accuracy.md` lists a property test that the expected Cangjie code is always the verbatim Unihan value; this spec meets it with an exhaustive unit test over all 300 records (see "Decisions for review").
 
 ## Decisions
 
-All approved by Takshil; no open questions remain.
+All approved by the human; no open questions remain.
 
-1. Separate Review history per Mode (`write`, `cangjie`); schema version 2 with migration from version 1.
-2. Single-key characters: letters-only on-screen keyboard while the target is itself a key's base shape (Requirement 7.3).
-3. Code length is shown by the number of Code slots, by design.
-4. X-prefixed codes: 别 and 错 are not Playable in Cangjie mode (excluded in the engine, stored verbatim in the data); 身 stays; the X key stays on the keyboard.
-5. "How Cangjie works" makes only the four content-accuracy.md historical claims, with visible citations to the two English Wikipedia articles.
-6. No manual hint button; the Key hint appears only after 3 consecutive wrong entries for the same slot.
-7. Physical keyboard reads `KeyboardEvent.key`, accepts A–Y only, ignores Z, IME composition, and modified or repeated keys, and shows a note about system Chinese input methods.
-8. "Reveal its shape" is offered only in Write mode.
-9. System fonts only; radical rendering is checked in Spec 5.
-10. The pinned Unihan file is committed under `data/raw/unihan/`; its SHA-256 and the zip's SHA-256 are recorded, and the committed file's hash is verified before use.
+1. One rite, no mode choice: every ghost goes through Summon then Lay to rest in one Séance (approved by the human).
+2. Ghosts without a playable code (null, or starting with X: 别 and 错) skip the Summon step; 身 stays playable; 298 of 300 ghosts have a Summon step (approved by the human).
+3. One Combined outcome per ghost, recorded once at the end of the Lay-to-rest step with `applyReview` and `recordOutcome(char, entry)`; one Review history; the scheduler and Learning order are unchanged (approved by the human).
+4. Each step's mistakes are compared to `cleanMistakeThreshold` separately (approved by the human).
+5. Cut: "Reveal its shape", the IDS layout parser and StructureHint component, the mode choice, per-Mode histories and the version-1 to version-2 migration (approved by the human).
+6. Schema version 2 gains `cangjieIntroSeen`; no migration ships (approved by the human).
+7. Kept: Unihan `kCangjie` data with both SHA-256 values, the X-code exclusion, letters-only on-screen keys for the 14 single-key characters, IME handling, the automatic Key hint after 3 consecutive wrong keys, the never-reveal rule, and the "How Cangjie works" screen (approved by the human).
+8. "How Cangjie works" says "developed in the 1970s", matching the content-accuracy.md whitelist, instead of a specific year (approved by the human).
+9. Tests: unit and component tests only, no new property tests, no mutation testing (approved by the human).
+10. The last task is a manual check by a human, not by Kiro (approved by the human).
+
+## Decisions for review
+
+These are choices worth a second look.
+
+1. **Give up in the Summon step still proceeds to writing.** The Combined outcome is already fixed at `gave-up`; the Lay-to-rest step is practice. Reading the character off the screen right before writing it makes that practice weak. Alternative: end the ghost at the Summon step after a Give up.
+2. **The schema bump resets version-1 progress.** Existing players lose their saved Review history and see the legend intro again, once. Alternative: ship a migration that keeps `history` and `introSeen` (the earlier design did this).
+3. **Writing right after seeing the character tests short-term memory.** The 1500 ms hold followed by the 1500 ms fade is the only guard. Longer or shorter times are one constant each (`SUMMON_HOLD_MS`, `SUMMON_FADE_MS`).
+4. **The code-source note on the Summon step.** "Codes: Unicode Unihan kCangjie" is shown on every Summon step, in addition to the statement on the guide, because Unihan marks the field provisional.
+5. **Verbatim-code check is a unit test, not a property test.** content-accuracy.md lists a property test for it; an exhaustive unit test over all 300 records is stronger for a fixed dataset and honours "no new property tests".
