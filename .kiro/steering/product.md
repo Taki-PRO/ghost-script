@@ -23,10 +23,11 @@ Many people can **read** Chinese but can no longer **write** it by hand, because
 
 ## Core game loop
 1. A ghost appears showing a character's **meaning** (English) and **pinyin**. The character itself is hidden.
-2. The player recalls and produces the character:
-   - **Write mode** (touchscreen / pencil): draw it stroke by stroke, each stroke checked live.
-   - **Cangjie Séance** (keyboard, mouse or touch): type the character's Cangjie code; each key summons one shape until the ghost is complete.
-3. Wrong answers trigger hints: in Write mode the next stroke, or an optional "Reveal its shape" layout of the components; in Cangjie mode the next key. Never the full answer at first.
+2. One rite per ghost, in two steps:
+   - **Summon:** type the character's Cangjie code (physical or on-screen keyboard); each key reveals one shape until the character forms, then it fades.
+   - **Lay to rest:** write it from memory, stroke by stroke, each stroke checked live (finger, pencil, mouse or trackpad).
+   - Characters without a playable code skip the summon step.
+3. Wrong answers trigger hints: the next key while summoning, the next stroke while writing. Never the full answer at first.
 4. Correct: the character "comes back to life" in ink and the ghost is laid to rest.
 5. **Haunting** (spaced repetition): characters the player struggled with return sooner; mastered ones return later.
 
@@ -35,7 +36,7 @@ Many people can **read** Chinese but can no longer **write** it by hand, because
 ### Must-have (MVP, target: deployed by Nov 17)
 - Simplified characters + Mandarin pinyin (default script).
 - Write mode with live stroke checking.
-- Cangjie Séance (spec `cangjie-seance`): summon each ghost by typing its Cangjie code on a physical or on-screen keyboard. This is the Resurrection core and replaces the earlier "Build mode" idea; it is how laptop and keyboard players play.
+- The Cangjie summon step (spec `cangjie-seance`): every ghost is summoned by typing its Cangjie code, then written. This is the Resurrection core and replaces the earlier "Build mode" and separate-mode ideas.
 - Structure hints based on component breakdowns.
 - Haunting engine (spaced repetition), progress saved locally in the browser.
 - Nightly Séance: a short daily session (about 10 ghosts) drawn from about 300 checked characters.
@@ -57,7 +58,7 @@ Many people can **read** Chinese but can no longer **write** it by hand, because
 - Any paid service or API that costs money while judges use the app.
 
 ## Product principles
-- **Works on every device.** iPad/phone suit Write mode; laptops suit the Cangjie Séance; both modes work everywhere. Never block a user for lacking a touchscreen.
+- **Works on every device.** The one rite works on every device: on-screen or physical keys to summon, touch, pencil, mouse or trackpad to write. Never block a user for lacking a touchscreen.
 - **Correctness over quantity.** 300 verified characters beat 3,000 unverified ones.
 - **Teach structure, not just answers.** Hints reveal parts before the whole.
 - **Spooky but calm.** Ink-wash, candlelight, quiet atmosphere. Never gory, never jump scares that interrupt learning.

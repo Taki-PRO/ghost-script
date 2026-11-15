@@ -18,15 +18,15 @@ inclusion: always
 - **Fonts:** open-licensed only (e.g. Noto Sans SC / Noto Serif SC; a brush-style font under the SIL Open Font License). Record each font's licence in the README.
 
 ## Device targets
-- iPad Safari (with Apple Pencil) and iPhone/Android browsers: Write mode is primary.
-- Laptop Chrome/Safari/Edge with mouse or trackpad: the Cangjie Séance (physical keyboard) is primary; Write mode also works with a mouse.
+- iPad Safari (with Apple Pencil) and iPhone/Android browsers: summon with the on-screen keyboard, write with finger or pencil.
+- Laptop Chrome/Safari/Edge: summon with the physical keyboard, write with mouse or trackpad.
 - Layout must be responsive from 375px wide phones to 1440px+ laptops.
 
 ## Code conventions
 - Small, pure functions for game logic (scheduling, scoring, hint selection) so they are easy to property-test.
 - Keep UI components separate from game logic: logic in `src/engine/`, UI in `src/components/`.
 - No `any` unless unavoidable; prefer explicit types for character data.
-- Every engine module has tests; every invariant worth stating gets a property-based test.
+- Every engine module has tests. Decision (Nov 15): no new property-based tests or mutation testing from here on; new code gets the unit and component tests it needs, and the existing property tests stay.
 - Accessibility: buttons have labels, colour is never the only signal, text meets contrast guidelines on the dark theme.
 
 ## Testing rules

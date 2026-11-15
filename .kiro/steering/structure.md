@@ -16,7 +16,7 @@ ghost-script/
 │   └── src/
 │       ├── engine/      # pure game logic: scheduler (haunting), scoring, hints, session builder
 │       ├── components/  # React UI components
-│       ├── modes/       # WriteMode, CangjieMode
+│       ├── modes/       # WriteMode, plus the Cangjie summon step
 │       ├── data/        # typed loaders for characters.json
 │       ├── storage/     # localStorage wrapper
 │       └── styles/
@@ -38,4 +38,4 @@ ghost-script/
 - Keep `kiro-log.md` updated whenever a Kiro feature is used or a decision about Kiro usage is made.
 
 ## Names
-- Never write personal names in repo files (specs, tasks, logs, code, comments). Refer to the person as "the human" or "a human". Approvals in data files are recorded as "approved by Takshil".
+- Never write personal names in repo files (specs, tasks, logs, code, comments), with one exception: approvals anywhere (data files, README, log, specs) are recorded as "approved by Takshil". Otherwise refer to the person as "the human" or "a human".

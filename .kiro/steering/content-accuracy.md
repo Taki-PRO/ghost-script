@@ -27,12 +27,12 @@ Judges may not read Chinese, so they cannot spot a wrong character. Correctness 
 - Cangjie history: only these claims may appear in the app, each citing the English Wikipedia articles "Cangjie input method" and "Chu Bong-Foo": developed in the 1970s by Chu Bong-Foo; named after Cangjie, the legendary inventor of Chinese writing; the first Chinese input method to use the standard QWERTY keyboard; released to the public in 1982. Nothing else (no usage statistics, no claims that it is "dying") without a new source.
 - Character selection: HSK 3.0 handwriting characters (书写字), writing level 1 (exactly 300), from `ivankra/hsk30` `hsk30-chars.csv`, column `WritingLevel`.
 
-## Required property-based tests on the dataset
+## Required tests on the dataset (existing property tests stay; new checks are plain unit tests)
 - Every character in `character-list.txt` exists in the generated dataset, exactly once.
 - Every character has stroke data, at least one pinyin reading and at least one meaning.
 - Every component listed for a character is a valid single character or recognised component.
 - Hint order is consistent with the decomposition (hints never reveal a component that is not part of the character).
-- In the Cangjie Séance, the expected code is always the verbatim Unihan `kCangjie` value; the app never derives or guesses a code.
+- The expected Cangjie code is always the verbatim Unihan `kCangjie` value; the app never derives or guesses a code. Checked by an exhaustive unit test over all 300 records, not a property test.
 - The dataset build is deterministic: running the pipeline twice produces identical output.
 
 ## Manual review

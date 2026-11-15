@@ -324,6 +324,20 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   - Premise reworded so Cangjie is never called dead. Phonetic typing caused the forgetting, and the shape-based keyboard it displaced is brought back as the cure. The audience is heritage and second-language learners. History now says "developed in the 1970s".
 - **Next:** re-scope `cangjie-seance` to the trimmed one-rite version, then build it.
 
+## Nov 15, 2026: Spec 3 re-scoped to one rite
+
+- **What I did:** Rewrote `cangjie-seance` to follow the review, approved by Takshil. There is no mode choice any more. Every ghost is one rite: summon it by typing its Cangjie code, watch the character form and fade, then write it from memory.
+- **Kiro feature:** Spec workflow (requirements, design and tasks rewritten together, with waves for parallel execution).
+- **Result:**
+  - The tasks are 37 leaf tasks in 8 groups and 13 waves. Kiro checked that no wave has two tasks editing the same file.
+  - Cut: "Reveal its shape", the layout parser, the mode choice, per-mode histories and the save-data migration. The save schema moves to 2 and old data resets; nobody has saved progress yet.
+  - Kept: Unihan codes in the pipeline, the X-code exclusion (别 and 错 skip the summon step, so 298 of 300 have one), letters-only keys for single-key characters, IME handling, the never-reveal rule, and a "How Cangjie works" guide that says "developed in the 1970s" and names Unihan `kCangjie` as the code source.
+  - Kiro's own choices, accepted: the formed character holds 1.5 s and fades over 1.5 s. Giving up while summoning still goes on to writing, but the outcome stays gave-up. Steps are labelled "Step 1 of 2: Summon" and "Step 2 of 2: Lay to rest".
+  - No new property tests. The verbatim-Unihan check becomes an exhaustive unit test over all 300 records, and the steering docs were updated to say so.
+  - Kiro found that the earlier specs still held the withdrawn amendments (mode choice, per-mode history, shape hint). Those are fixed next.
+- **Credits:** 490 of 4,000 used in total (115 since the last count: Spec 3 planning, the deploy spec, and this re-scope).
+- **Next:** align the two earlier specs, then build the data pipeline group.
+
 ---
 
 ## Template for new entries
