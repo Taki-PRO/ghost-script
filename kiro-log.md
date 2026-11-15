@@ -408,6 +408,24 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   - **Tests:** 128 unit tests, including the Oracle checked against all 300 records and a scan proving it has no network code. **1033 tests pass**; `tsc` clean for root, app and oracle.
 - **Next:** fix the leak and the unsourced lines, confirm the hook by hand, then visual identity.
 
+## Nov 16, 2026: Hook and Oracle verified by hand; first real accuracy review
+
+- **What I did:** Checked the tooling by hand in the Kiro IDE, then had Kiro fix what the accuracy reviewer found and run the reviewer agent itself for the first time (the earlier run was an emulation).
+- **Kiro features:** agent hooks, MCP, custom agents, spec amendments.
+- **Result:**
+  - **The data hook works on a human save.** At first it didn't fire, because Kiro loads hook files when a session starts and this one was new. After a window reload, saving `data/prompt-overrides.csv` with 吧 set to entry 9 made the chat report `DATA CHECK FAILED: build:data` and the exact row and column to fix. Saving the reverted row reported `DATA CHECK PASSED`. Both were recorded for the video.
+  - **The Oracle works inside Kiro.** It first showed "Connection Failed", then connected (3 tools) on Retry. Asked in chat to look up 我 and decompose 好 "not from memory", Kiro called the MCP tools and answered HQI from Unihan 18.0.0 (provisional) and ⿰女子 from Make Me a Hanzi. Recorded for the video. Kiro's chat font draws ⿰ as an empty box; the data is correct.
+  - **The guide no longer gives away an early ghost.** Its example is now 想 = DUP (木 山 心), at position 290 of 300 in the learning order, instead of 七, the second ghost. A test checks the example is at position 30 or later.
+  - **Guide wording:** dropped the unsourced lines about the X key; the "family of related shapes" sentence now sits under the Wikipedia citation.
+  - **Security:** the Oracle's zod went from 3.25.76 to 4.6.7, clearing a high-severity advisory. The remaining audit warnings are all in dev and test tooling.
+  - **The real reviewer** found more: the README premise was worded as fact, the Huainanzi line had no recorded source, and two guide lines about how codes work read like claims about Cangjie. It also flagged the designed summon reveal. Decisions, approved by Takshil:
+    - The premise is now worded as a premise.
+    - The Huainanzi line is sourced to Lau's concordance (8/62/27–28), as quoted by Puett.
+    - Game instructions are worded as being about this game.
+    - The designed reveal and a late guide example are recorded as not leaks.
+  - **1038 tests pass**; `tsc` clean for root, app and oracle.
+- **Next:** visual identity.
+
 ---
 
 ## Template for new entries

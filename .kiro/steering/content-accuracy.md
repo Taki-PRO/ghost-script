@@ -37,3 +37,13 @@ Judges may not read Chinese, so they cannot spot a wrong character. Correctness 
 
 ## Manual review
 - A human spot-checks a random sample of characters (meaning, pinyin, components) before each deploy and records the result in `kiro-log.md`.
+
+## Approved legend line
+- The intro may quote the Huainanzi, chapter 8: 昔者蒼頡作書而天雨粟，鬼夜哭 ("in ancient times, when Cangjie created writing, Heaven rained grain and ghosts wept at night"), shown in the app as 天雨粟，鬼夜哭. Source: D. C. Lau et al., *A Concordance to the Huainanzi* (Commercial Press, Hong Kong, 1992), 8/62/27–28, as quoted in Michael Puett, "Sages, Creation, and the End of History in the Huainanzi" (https://scholar.harvard.edu/sites/scholar.harvard.edu/files/puett/files/puett_sages_in_the_huainanzi_2.pdf). The English rendering in the app is our own and must say "wept".
+
+## What is not an answer leak (decided by a human)
+- The designed summon reveal: once the code is complete, the character forms, holds and fades before writing starts. The plain-text fallback used when the animation fails follows the same timing and is also allowed.
+- The "How Cangjie works" example, as long as it is chosen from late in the learning order (position 30 or later), not from the first characters a new player meets.
+
+## Game instructions are not claims
+- Statements about how this game works (for example "in this game, a code is one to five keys", "the 25 keys in this game") are instructions, not claims about Cangjie, and need no source as long as they are worded as being about this game.
