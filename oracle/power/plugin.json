@@ -1,0 +1,11 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "cangjie-oracle",
+  "version": "1.0.0",
+  "description": "Look up, verify and decompose Chinese characters using the checked Ghost Script dataset (Unihan Cangjie codes, Make Me a Hanzi decompositions) instead of model memory.",
+  "author": {
+    "name": "Ghost Script"
+  },
+  "keywords": ["cangjie", "chinese", "character", "hanzi", "decomposition", "input method", "ghost-script"],
+  "license": "MIT"
+}

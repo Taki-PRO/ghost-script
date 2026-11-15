@@ -37,7 +37,9 @@ The feature stays small (about one day of work). Tests are Vitest unit tests onl
 - **Oracle_Tools**: The three tools `lookup`, `verify` and `decompose` exposed by the Cangjie_Oracle.
 - **Cangjie_Source**: The object `{ dataset: "unihan", version: "18.0.0", field: "kCangjie", provisional: true }` that names where a Cangjie code comes from.
 - **Valid_Character_Input**: A string of exactly one Unicode code point in the CJK Unified Ideographs block U+4E00 to U+9FFF.
-- **Valid_Code_Input**: A string accepted by `isValidCangjieCode` (one to five upper-case letters A to Y).
+- **Normalised_Code**: A code argument after conversion to upper case, before validation.
+- **Valid_Code_Input**: A code argument whose Normalised_Code is accepted by `isValidCangjieCode` (one to five letters A to Y, pattern `^[A-Y]{1,5}$`).
+- **Manual_Check_Command**: The command `npm run check:data`, run by a person in a terminal.
 - **Workspace_MCP_Config**: The file `.kiro/settings/mcp.json`.
 - **Oracle_Power**: The Kiro Power package in `oracle/power/` that bundles the Cangjie_Oracle.
 - **Unit_Test_Suite**: The Vitest tests added by this feature.
@@ -57,6 +59,7 @@ The feature stays small (about one day of work). Tests are Vitest unit tests onl
 5. IF the Dataset_Build fails, THEN THE Data_Check_Command SHALL skip the Dataset_Tests.
 6. WHEN both steps succeed, THE Data_Check_Command SHALL exit with code 0 and print a first line starting with `DATA CHECK PASSED`.
 7. IF a step fails or cannot start, THEN THE Data_Check_Command SHALL exit with code 1 and write to standard error a first line starting with `DATA CHECK FAILED`, the name of the failing step, and the last 40 lines of that step's combined output.
+8. WHEN the agent saves a file in the Watched_Inputs, THE Data_Check_Hook SHALL fire; saves made by a person in the editor are not required to fire it (decision approved by Takshil).
 
 ### Requirement 2: Override index failures are visible
 
@@ -95,7 +98,7 @@ The feature stays small (about one day of work). Tests are Vitest unit tests onl
 2. THE Cangjie_Oracle SHALL expose exactly the Oracle_Tools `lookup`, `verify` and `decompose`.
 3. WHEN `lookup` receives a Valid_Character_Input present in the Dataset_File with a non-null code, THE Cangjie_Oracle SHALL return the character, the code, the Cangjie_Source and a `playable` flag computed by `isPlayableInCangjie`.
 4. WHEN `lookup` receives a Valid_Character_Input present in the Dataset_File with a null code, THE Cangjie_Oracle SHALL return the code `null`, the source `null` and `playable` false.
-5. WHEN `verify` receives a Valid_Character_Input present in the Dataset_File and a Valid_Code_Input, THE Cangjie_Oracle SHALL return `matches` true if the code equals the stored code and `matches` false otherwise, together with the Cangjie_Source.
+5. WHEN `verify` receives a Valid_Character_Input present in the Dataset_File and a Valid_Code_Input, THE Cangjie_Oracle SHALL return the Normalised_Code in a `normalisedCode` field, `matches` true if the Normalised_Code equals the stored code and `matches` false otherwise, together with the Cangjie_Source.
 6. WHEN `verify` receives a character whose stored code is null, THE Cangjie_Oracle SHALL return `matches` false and the reason `no-code-in-source`.
 7. WHEN `decompose` receives a Valid_Character_Input present in the Dataset_File, THE Cangjie_Oracle SHALL return the IDS decomposition string, the `atomic` flag, the radical and the component list exactly as stored, with the source `make-me-a-hanzi`.
 8. THE Cangjie_Oracle SHALL import `isPlayableInCangjie` and `isValidCangjieCode` from `app/src/engine/cangjieRules.ts` and the record types from `app/src/data/types.ts`, and SHALL NOT restate their rules.
@@ -109,10 +112,11 @@ The feature stays small (about one day of work). Tests are Vitest unit tests onl
 1. THE Cangjie_Oracle SHALL return only values stored in the Dataset_File, the Cangjie_Source constants and the fixed source names.
 2. IF an Oracle_Tool receives a Valid_Character_Input that is not in the Dataset_File, THEN THE Cangjie_Oracle SHALL return `found` false with the reason `not-in-dataset` and no code, decomposition or components.
 3. IF an Oracle_Tool receives a character argument that is not a Valid_Character_Input, THEN THE Cangjie_Oracle SHALL return an MCP tool error whose message names the argument and the rule it broke.
-4. IF `verify` receives a code argument that is not a Valid_Code_Input, THEN THE Cangjie_Oracle SHALL return an MCP tool error whose message names the argument and the rule it broke.
-5. THE Cangjie_Oracle SHALL read only the Dataset_File, SHALL open no network connection and SHALL require no API key or environment variable.
-6. IF the Dataset_File is missing or is not valid JSON at start-up, THEN THE Cangjie_Oracle SHALL write a message naming the file to standard error and exit with a non-zero code.
-7. THE Cangjie_Oracle SHALL write protocol messages to standard output only.
+4. WHEN `verify` receives a code argument, THE Cangjie_Oracle SHALL convert the code to upper case before validating it.
+5. IF the Normalised_Code of a `verify` code argument is not accepted by `isValidCangjieCode`, THEN THE Cangjie_Oracle SHALL return an MCP tool error whose message names the argument and the rule it broke.
+6. THE Cangjie_Oracle SHALL read only the Dataset_File, SHALL open no network connection and SHALL require no API key or environment variable.
+7. IF the Dataset_File is missing or is not valid JSON at start-up, THEN THE Cangjie_Oracle SHALL write a message naming the file to standard error and exit with a non-zero code.
+8. THE Cangjie_Oracle SHALL write protocol messages to standard output only.
 
 ### Requirement 6: Workspace registration
 
@@ -146,6 +150,7 @@ The feature stays small (about one day of work). Tests are Vitest unit tests onl
 2. THE README SHALL state that the Cangjie_Oracle reads only `app/public/data/characters.json` and returns no generated data.
 3. THE `kiro-log.md` file SHALL contain one dated entry for each Kiro feature used by this feature (hooks, custom agents, MCP, steering, specs and, if built, Powers), each with the fields What I did, Kiro feature, Why and Result.
 4. THE `kiro-log.md` entries written by this feature SHALL contain no personal names and no approval wording.
+5. THE README SHALL state that the Data_Check_Hook is fired by agent saves, and that a person runs the Manual_Check_Command in a terminal to run the same check on demand, because the Kiro IDE offers no way to create a manual-trigger hook (decision approved by Takshil).
 
 ### Requirement 9: Tests and no regressions
 

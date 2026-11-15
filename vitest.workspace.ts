@@ -1,1 +1,1 @@
-export default ['./vitest.config.ts', './app'];
+export default ['./vitest.config.ts', './app', './oracle'];

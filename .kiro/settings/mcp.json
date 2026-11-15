@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "cangjie-oracle": {
+      "command": "npx",
+      "args": ["--no-install", "tsx", "oracle/src/index.ts"],
+      "disabled": false,
+      "autoApprove": ["lookup", "verify", "decompose"]
+    }
+  }
+}

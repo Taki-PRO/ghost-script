@@ -1,0 +1,384 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Improve the override failure message in `scripts/build-data.ts`": [
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757677814
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757686832
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757876589
+      }
+    ],
+    "1.2 Write unit tests `tests/unit/build-override-errors.test.ts`": [
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757677848
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757885129
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758003619
+      }
+    ],
+    "1.3 Create `scripts/data-check.ts` and the npm scripts": [
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757677877
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757688042
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757876738
+      }
+    ],
+    "1.4 Write unit tests `tests/unit/data-check.test.ts`": [
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757677906
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757886174
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758004018
+      }
+    ],
+    "2.1 Create `.kiro/hooks/data-check-on-save.json`": [
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757677932
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757689234
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757877814
+      }
+    ],
+    "2.2 Write unit tests `tests/unit/kiro-hook.test.ts`": [
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757677956
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757887474
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758005220
+      }
+    ],
+    "3.1 Create `.kiro/agents/accuracy-reviewer.json` and `.kiro/agents/accuracy-reviewer.prompt.txt`": [
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757677980
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757690252
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757878974
+      }
+    ],
+    "3.2 Write unit tests `tests/unit/accuracy-reviewer-agent.test.ts`": [
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757678006
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757888560
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758006423
+      }
+    ],
+    "4.1 Scaffold the `oracle` workspace": [
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757678029
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757889537
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758007280
+      }
+    ],
+    "4.2 Implement `oracle/src/dataset.ts` and `oracle/src/oracle.ts`": [
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757678055
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758012272
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758084761
+      }
+    ],
+    "4.3 Write unit tests `oracle/tests/oracle.test.ts`": [
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757678080
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758208144
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758287616
+      }
+    ],
+    "4.4 Implement `oracle/src/server.ts` and `oracle/src/index.ts`": [
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757678157
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758209031
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758288468
+      }
+    ],
+    "4.5 Write unit tests `oracle/tests/server.test.ts` and `oracle/tests/no-network.test.ts`": [
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757678185
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758293611
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758366649
+      }
+    ],
+    "5.1 Create `.kiro/settings/mcp.json`": [
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757678209
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758013096
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758203422
+      }
+    ],
+    "5.2 Write unit tests `tests/unit/mcp-config.test.ts`": [
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757678232
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758294800
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758366928
+      }
+    ],
+    "6.1 Create `oracle/power/`": [
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757678258
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758295611
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758370048
+      }
+    ],
+    "6.2 Write unit tests `tests/unit/oracle-power.test.ts`": [
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757678289
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758374526
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758419536
+      }
+    ],
+    "7.1 Add a \"Kiro tooling\" section to `README.md`": [
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757678323
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758424423
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758473969
+      }
+    ],
+    "8.1 Add entries to `kiro-log.md`": [
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757678353
+      }
+    ],
+    "9. Final checkpoint - Verify the whole change": [
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794757678380
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758486441
+      },
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758645727
+      }
+    ],
+    "1. Data check pipeline: clear override failure and check runner": [
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758004041
+      }
+    ],
+    "2. Agent hook for the data check": [
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758005245
+      }
+    ],
+    "3. Accuracy reviewer agent": [
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758006450
+      }
+    ],
+    "4. Cangjie Oracle MCP server": [
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758366670
+      }
+    ],
+    "5. Register the Oracle in the workspace MCP config": [
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758366958
+      }
+    ],
+    "6. Oracle Power (later task; skip first if time runs out)": [
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758419562
+      }
+    ],
+    "7. README": [
+      {
+        "executionId": "a9e6676f-bd1f-4e97-a5ed-991e056f2c7b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794758474006
+      }
+    ]
+  }
+}

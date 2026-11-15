@@ -41,14 +41,13 @@ Formats below were read from the official Kiro docs on the day this spec was wri
 
 The design picks the documented approach in each case. Implementation and the demo must check these.
 
-1. **Human saves.** The hook types page says `PostFileSave` "triggers when the agent saves or modifies files matching specific patterns". It does not say whether a save made by the human in the editor fires it. The design uses `PostFileSave` because it is the only documented file-save trigger. The demo can edit the file through the agent, which is documented to fire the hook, and the implementation task checks a manual editor save and records the outcome in `kiro-log.md`.
+1. **Human saves.** The hook types page says `PostFileSave` "triggers when the agent saves or modifies files matching specific patterns". It does not say whether a save made by a person in the editor fires it. Decided (approved by Takshil): firing on agent saves only is acceptable. The demo edits the file through the agent. The implementation task still tries one editor save and records the outcome in `kiro-log.md`, but nothing depends on it.
 2. **Pass or fail "in the chat".** The docs say a command hook's stdout goes into the agent's context on exit 0, and stderr is sent to the agent with a notice that the hook returned an error on any other exit code. They do not describe a separate banner. The chat therefore shows the result because the agent reports it. The command prints a fixed first line (`DATA CHECK PASSED` or `DATA CHECK FAILED`) so that the report is unambiguous. A hook can run a shell command directly (confirmed), so no agent-prompt action is used.
 3. **Matcher path form.** The docs say file-event matchers are a regex against the file path, and do not say whether the path is absolute or relative. The regex accepts both.
 4. **MCP working directory.** The MCP config documents `command`, `args`, `env`, `disabled`, `autoApprove` and `disabledTools`, and no `cwd`. The design assumes Kiro starts the server with the workspace root as working directory and uses a workspace-relative entry path. The dataset path does not depend on the working directory.
 5. **What `read` covers.** The docs say the `read` category holds "all built-in file read tools". The list of tools inside it (for example whether text search is included) is not on the pages read. The agent also lists no other tools, so the worst case is that the reviewer has fewer search tools, not that it can write.
 6. **Steering in custom agents.** One page says custom agents inherit steering by default, another says steering files are not automatically included. The agent therefore lists `content-accuracy.md` as an explicit `file://` resource.
 7. **Power installed from a folder or GitHub.** The docs do not say what working directory the power's `mcp.json` command runs in after installation. The Power task checks this and records the result; if relative paths fail, the Power documents that it must be installed from a clone of this repository.
-8. **SDK version.** The user's stack names `@modelcontextprotocol/sdk` (the v1 package, latest `1.32.2` on npm when this spec was written). A v2 SDK exists under a different package name (`@modelcontextprotocol/server`). This design keeps the v1 package as `tech.md` requires.
 
 ## Architecture
 
@@ -227,7 +226,7 @@ export type LookupResult =
   | { found: true; character: string; cangjie: string | null; source: CangjieSource | null; playable: boolean }
   | NotFound;
 export type VerifyResult =
-  | { found: true; character: string; code: string; matches: boolean; source: CangjieSource | null; reason?: 'no-code-in-source' }
+  | { found: true; character: string; normalisedCode: string; matches: boolean; source: CangjieSource | null; reason?: 'no-code-in-source' }
   | NotFound;
 export type DecomposeResult =
   | { found: true; character: string; ids: string; atomic: boolean; radical: string; components: string[]; source: { dataset: 'make-me-a-hanzi' } }
@@ -243,9 +242,9 @@ export function decompose(dataset: Dataset, character: unknown): DecomposeResult
 ```
 
 - `parseCharacterInput` accepts exactly one code point (`[...value].length === 1`) in U+4E00 to U+9FFF, which is the range the character-dataset spec restricts records to. Anything else, including an empty string, several characters, Latin letters and non-strings, throws `OracleInputError` with a message such as `character must be exactly one CJK Unified Ideograph (U+4E00 to U+9FFF), got "ab"`.
-- `parseCodeInput` accepts a value for which `isValidCangjieCode` is true, so lower-case input is rejected rather than silently normalised (the app's keys and the dataset are upper case). The message names the pattern `A-Y, 1 to 5 letters`.
+- `parseCodeInput` requires a string, converts it with `toUpperCase()`, then validates the result with `isValidCangjieCode` (pattern `^[A-Y]{1,5}$`, not restated) and returns the normalised code. `hqi` becomes `HQI`. `hqz` (Z is outside A to Y) and `abcdef` (six letters) are rejected. The error message names the argument `code` and the pattern `A-Y, 1 to 5 letters`.
 - `lookup` returns `source: CANGJIE_SOURCE` only when `record.sources.cangjie === 'unihan'` and `record.cangjie !== null`; otherwise `cangjie: null`, `source: null`, `playable: false`. `playable` is `isPlayableInCangjie(record.cangjie)`.
-- `verify` compares `code === record.cangjie` with strict equality (the dataset stores the verbatim Unihan value). A null stored code gives `matches: false, reason: 'no-code-in-source'`. It does not return the stored code, so `verify` stays a yes or no check; `lookup` is the tool that returns it.
+- `verify` compares the normalised code with `record.cangjie` by strict equality (the dataset stores the verbatim Unihan value) and returns the normalised code as `normalisedCode`. For 我, `verify("我", "hqi")` returns `matches: true, normalisedCode: "HQI"`. A null stored code gives `matches: false, reason: 'no-code-in-source'`. It does not return the stored code, so `verify` stays a yes or no check; `lookup` is the tool that returns it.
 - `decompose` copies `decomposition.decomposition`, `atomic`, `radical` and `components` from the record.
 - A valid character with no record returns the `NotFound` object, never an error and never a guess.
 - `CANGJIE_SOURCE.version` is a constant. A unit test reads `data/raw/SOURCES.md` and checks it still states `Unicode version:** 18.0.0`, so the constant cannot drift from the recorded source silently.
@@ -311,7 +310,7 @@ No new persisted data. Result types are listed under `oracle.ts`. Example tool r
 | Oracle: invalid character or code argument | MCP tool result with `isError: true` and a message naming the argument and rule. |
 | Oracle: valid character not in the dataset | Normal result with `found: false`, `reason: 'not-in-dataset'`. |
 | Oracle: dataset file missing or invalid | Message on stderr naming the file, exit code 1, no tools served. |
-| Hook never fires on a human save | Documented limitation (see "Facts the docs do not confirm", item 1); `npm run check:data` is the manual fallback and is documented in the README. |
+| Hook does not fire on a person's editor save | Accepted (see Decisions, item 1). `npm run check:data` is the manual fallback and is documented in the README. |
 
 ## Testing Strategy
 
@@ -321,7 +320,7 @@ Property-based testing does not apply, and none is added (decision of Nov 15 in 
 - `tests/unit/data-check.test.ts`. A fake `StepRunner` drives `runDataCheck`: both steps pass → exit 0 and a first line starting `DATA CHECK PASSED`; build fails → exit 1, tests never run, stderr starts with `DATA CHECK FAILED`, names `build:data` and holds at most 40 tail lines; tests fail → names `test:data`; `status: null` → failed. `tailLines` edge cases (fewer lines than the count, empty text). Requirements 1.4 to 1.7.
 - `tests/unit/kiro-hook.test.ts`. Parses `.kiro/hooks/data-check-on-save.json`: `version` `v1`, trigger `PostFileSave`, action type `command`, command runs `check:data`, timeout 300. Compiles the matcher and checks it matches `data/character-list.txt`, `data/prompt-overrides.csv`, `data/raw/unihan/Unihan_DictionaryLikeData.txt` as relative and as absolute paths, and does not match `app/public/data/characters.json`, `data/prompt-review.csv` or `app/src/App.tsx`. Checks the root `package.json` has the scripts `check:data` and `test:data`. Requirements 1.1 to 1.3.
 - `tests/unit/accuracy-reviewer-agent.test.ts`. Parses `.kiro/agents/accuracy-reviewer.json`: `tools` equals `["read"]`; `deny` rules exist for `fs_write` and `shell`; no `allow` rule for either; `content-accuracy.md` is in `resources`; the prompt file exists and mentions the four History_Claims topics, "dead", "dying", "licence", "answer", `path:line` and `No findings`. Requirements 3.1 to 3.8 (file contents only; the agent's live behaviour is shown in the demo).
-- `oracle/tests/oracle.test.ts` (oracle project). With a small in-memory dataset: `lookup` for a coded character, a character with an X-prefixed code (the real 别 has `XRSLN` and 错 has `XCTA`: the code is returned and `playable` is false), a character with a null code (in-memory fixture only), a not-in-dataset character; `verify` match, mismatch, and no-code; `decompose` atomic and composite; every invalid input (empty, two characters, Latin, hiragana, non-string, lower-case code, six-letter code, `Z`) throws `OracleInputError`. An exhaustive loop over the real `characters.json`: for each of the 300 records, `lookup` returns the record's code verbatim, `source` is non-null exactly when `sources.cangjie === 'unihan'`, `playable` equals `isPlayableInCangjie(code)`, `verify(char, code)` is `matches: true`, and `decompose` returns the stored fields. A check that `SOURCES.md` still states Unicode version 18.0.0. Requirements 4.3 to 4.8, 5.1 to 5.4.
+- `oracle/tests/oracle.test.ts` (oracle project). With a small in-memory dataset: `lookup` for a coded character, a character with an X-prefixed code (the real 别 has `XRSLN` and 错 has `XCTA`: the code is returned and `playable` is false), a character with a null code (in-memory fixture only), a not-in-dataset character; `verify` match, mismatch, and no-code; `decompose` atomic and composite; `verify` cases: `("我", "hqi")` → `matches: true` with `normalisedCode: "HQI"`; a wrong valid code → `matches: false`; `("我", "hqz")` and `("我", "abcdef")` → `OracleInputError` (invalid after normalising); a valid but unknown character → `found: false, reason: 'not-in-dataset'`. Every invalid input (empty, two characters, Latin, hiragana, non-string character; non-string, empty, `Z`-containing or six-letter code) throws `OracleInputError`. An exhaustive loop over the real `characters.json`: for each of the 300 records, `lookup` returns the record's code verbatim, `source` is non-null exactly when `sources.cangjie === 'unihan'`, `playable` equals `isPlayableInCangjie(code)`, `verify(char, code)` is `matches: true`, and `decompose` returns the stored fields. A check that `SOURCES.md` still states Unicode version 18.0.0. Requirements 4.3 to 4.8, 5.1 to 5.4.
 - `oracle/tests/server.test.ts`. Connects an SDK `Client` to `createServer(dataset)` through the SDK's in-memory transport pair. Asserts `listTools` returns exactly `lookup`, `verify`, `decompose`; a call returns the same JSON as the pure function; an invalid argument returns `isError: true`. A second test runs `loadDataset` on a missing path and on a file with invalid JSON and expects `OracleDataError` naming the path (the process-exit path in `index.ts` is a three-line wrapper checked by hand in the demo). Requirements 4.1, 4.2, 5.3, 5.4, 5.6.
 - `oracle/tests/no-network.test.ts`. Reads every file in `oracle/src` and asserts none imports `node:http`, `node:https`, `node:net`, `node:tls`, `node:dgram` or `node:dns`, none calls `fetch(`, none references `process.env`, and `console.log` is not used (stdout is reserved for the protocol). Requirements 5.5, 5.7.
 - `tests/unit/mcp-config.test.ts`. Parses `.kiro/settings/mcp.json`: server `cangjie-oracle`, `command` and `args` present, no `env`, `url`, `headers`; `autoApprove` equals the three tool names; and the file named in `args` exists. Requirements 6.1 to 6.3.
@@ -338,8 +337,13 @@ Property-based testing does not apply, and none is added (decision of Nov 15 in 
 | Oracle | In chat ask "what is the Cangjie code for 一, and is it playable?" and show the `lookup` tool call with the source `unihan 18.0.0 kCangjie`. Ask about a rare character outside the 300 and show `found: false`, with no guess. Call `verify` with a wrong code. |
 | Power (if built) | Powers panel → Add Custom Power → import `oracle/power/`, then repeat one Oracle question. |
 
-## Open decisions for the human
+## Decisions
 
-1. Is a human editor save expected to fire `PostFileSave`? The design assumes it may not and keeps the agent-edit demo path plus the manual `npm run check:data`.
-2. Is the strict upper-case code input for `verify` acceptable, or should lower-case be accepted and uppercased?
-3. Should the Power ship as part of this one-day budget? It is the last implementation task and can be skipped without affecting the others.
+All decisions below are approved by Takshil.
+
+1. **Hook fires on agent saves only.** A person's editor save is not required to fire `PostFileSave`.
+2. **No manual-trigger hook.** The official hook types page (https://kiro.dev/docs/hooks/types/, updated Nov 12, 2026) lists a Manual trigger only as legacy in the IDE, runnable for old IDE 0.x `userTriggered` hooks, and states that a new Manual-trigger hook cannot be created in the IDE. It is creatable only in Kiro Web, and CLI V3 lists it but cannot run it. The page gives no JSON shape for a v1 manual hook. So no second hook file is added. The README documents `npm run check:data` as the on-demand fallback (Requirement 8.5), and the demo can run it in a terminal.
+3. **`verify` normalises the code.** The code is converted to upper case, then validated with `isValidCangjieCode`, and the result reports `normalisedCode`.
+4. **The Power task stays** (task 6, last and skippable).
+5. **`@modelcontextprotocol/sdk` stays on v1 (1.32.2).** The v2 SDK uses a different package name (`@modelcontextprotocol/server`) and is not used.
+6. **`kiro-log.md` task stays** (task 8.1). It is written by the human this time rather than executed by Kiro.

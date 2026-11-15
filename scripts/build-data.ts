@@ -28,6 +28,7 @@ import type {
   CharacterRecord,
   MissingFieldError,
   Prompt,
+  PromptOverrideFailure,
 } from '../app/src/data/types';
 
 import { isPlayableInCangjie, isValidCangjieCode } from '../app/src/engine/cangjieRules';
@@ -577,14 +578,27 @@ async function atomicWrite(path: string, content: string): Promise<void> {
   await rename(tmpPath, path);
 }
 
+/**
+ * Plain-words help for each override failure. A new reason added to
+ * `PromptOverrideFailure` fails to compile until it has a message here.
+ */
+const OVERRIDE_ERROR_HELP: Record<PromptOverrideFailure, string> = {
+  'unknown-character':
+    'this character is not in data/character-list.txt. In data/prompt-overrides.csv, remove the row or add the character to data/character-list.txt.',
+  'entry-index-out-of-range':
+    'entryIndex is larger than the number of CC-CEDICT entries for this character. Fix this row in data/prompt-overrides.csv (column entryIndex).',
+  'meaning-index-out-of-range':
+    'meaningIndex is larger than the number of meanings in the chosen CC-CEDICT entry. Fix this row in data/prompt-overrides.csv (column meaningIndex).',
+};
+
 /** Format one per-character failure for the stderr report. */
-function formatError(e: MissingFieldError): string {
+export function formatError(e: MissingFieldError): string {
   const parts: string[] = [];
   if (e.missingFields.length > 0) {
     parts.push(`missing: ${e.missingFields.join(', ')}`);
   }
   if (e.overrideError !== undefined) {
-    parts.push(`override: ${e.overrideError}`);
+    parts.push(`override ${e.overrideError}: ${OVERRIDE_ERROR_HELP[e.overrideError]}`);
   }
   if (e.promptFailure !== undefined) {
     parts.push(`prompt: ${e.promptFailure}`);

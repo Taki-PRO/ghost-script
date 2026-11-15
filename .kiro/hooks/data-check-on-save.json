@@ -1,0 +1,13 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Data check on save",
+      "description": "Rebuilds the dataset and runs the dataset tests when the build inputs are saved.",
+      "trigger": "PostFileSave",
+      "matcher": "(^|/)data/(character-list\\.txt|prompt-overrides\\.csv|raw/.+)$",
+      "action": { "type": "command", "command": "npm run check:data --silent" },
+      "timeout": 300
+    }
+  ]
+}

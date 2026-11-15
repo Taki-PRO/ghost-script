@@ -78,3 +78,57 @@ npm test
 ```
 
 Runs the Vitest suite: unit tests, fast-check property-based tests, smoke tests, and the integration test.
+
+## Kiro tooling
+
+Three Kiro-native tools sit around the character dataset. None of them changes the game or the shipped web app.
+
+### Data check hook
+
+The hook is defined in `.kiro/hooks/data-check-on-save.json`. It fires after a file save (`PostFileSave`) and watches these inputs:
+
+- `data/character-list.txt`
+- `data/prompt-overrides.csv`
+- anything under `data/raw/`
+
+When one of them is saved, the hook runs `npm run check:data --silent`. That command runs `npm run build:data`, then `npm run test:data` (`vitest run --project node`), and stops at the first step that fails.
+
+- On success, the first line printed is `DATA CHECK PASSED: build:data and test:data succeeded`.
+- On failure, the first line is `DATA CHECK FAILED: <step>` (the name of the failing step), followed by the last 40 lines of that step's output.
+- A bad override index in `data/prompt-overrides.csv` fails the build with a message that names the file and the column to fix. A negative index is rejected earlier, by the CSV parser, as a `malformed-row`.
+
+The hook fires when the Kiro agent saves one of these files. A save made by a person in the editor is not required to fire it. The Kiro IDE cannot create a manual-trigger hook, so to run the same check on demand, run this in a terminal from the repository root:
+
+```
+npm run check:data
+```
+
+### Accuracy reviewer
+
+`.kiro/agents/accuracy-reviewer.json` defines a custom agent that checks the app text, specs and README against `content-accuracy.md`. Pick `accuracy-reviewer` in the Kiro agent picker and ask it to review. It is read-only: its only tool is `read`, and writing files and running shell commands are denied.
+
+For each violation it reports one line, `path:line  [rule]  "quoted text"`. If it finds nothing, it reports `No findings` and lists the files it checked. It quotes the text and never proposes replacement character data.
+
+### Cangjie Oracle (MCP server)
+
+The Oracle is a small MCP server in the `oracle/` workspace. It uses `@modelcontextprotocol/sdk` over stdio and opens no network connection. Start it by hand with:
+
+```
+npm run oracle
+```
+
+Kiro starts it for you: it is registered as `cangjie-oracle` in `.kiro/settings/mcp.json` (command `npx --no-install tsx oracle/src/index.ts`). It offers three tools:
+
+| Tool | Input | Returns |
+| --- | --- | --- |
+| `lookup` | `character` | the stored Cangjie code, its source (Unihan 18.0.0 `kCangjie`, which Unicode marks provisional), and whether the character is playable in the summon step |
+| `verify` | `character`, `code` | whether the code matches the stored one. The code is converted to upper case, then must be 1 to 5 letters from A to Y; the result includes the normalised code |
+| `decompose` | `character` | the IDS decomposition, the component list, the radical and the `atomic` flag, from Make Me a Hanzi data as stored in our dataset |
+
+A character that is not in the dataset returns `found: false`; the Oracle does not guess. It reads only `app/public/data/characters.json` (the path is resolved from the module, not from the working directory) and returns only values stored there, so it generates no character data. Those values keep the dataset's licences; see [Data and licences](#data-and-licences).
+
+### Oracle Power
+
+`oracle/power/` packages the Oracle as a Kiro Power: `plugin.json`, `mcp.json`, and a skill at `skills/cangjie-oracle/SKILL.md`. To import it, open the Powers panel, choose Add Custom Power, then Import power from a folder, and select `oracle/power/`.
+
+Limitation (expected, not yet verified): the Power's `mcp.json` starts the server with the workspace-relative path `oracle/src/index.ts`. It will most likely work only when the Power is installed from a clone of this repository and the server runs with the repository root as its working directory. The Power folder on its own, or a copy of it elsewhere, will not find the server. Kiro also renames installed servers (for example `power-cangjie-oracle-cangjie-oracle`). In a clone, the workspace registration above is the supported way to use the Oracle.

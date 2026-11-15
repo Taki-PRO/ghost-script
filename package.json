@@ -5,11 +5,15 @@
   "private": true,
   "type": "module",
   "workspaces": [
-    "app"
+    "app",
+    "oracle"
   ],
   "scripts": {
     "build:data": "tsx scripts/build-data.ts",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:data": "vitest run --project node",
+    "check:data": "tsx scripts/data-check.ts",
+    "oracle": "tsx oracle/src/index.ts"
   },
   "devDependencies": {
     "@types/node": "22.20.5",

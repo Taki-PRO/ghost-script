@@ -1,0 +1,19 @@
+{
+  "name": "accuracy-reviewer",
+  "description": "Read-only reviewer: checks app text, specs and README against content-accuracy.md.",
+  "prompt": "file://./accuracy-reviewer.prompt.txt",
+  "tools": ["read"],
+  "includeMcpJson": false,
+  "permissions": {
+    "rules": [
+      { "capability": "fs_write", "match": ["**"], "effect": "deny" },
+      { "capability": "shell", "match": ["*"], "effect": "deny" }
+    ]
+  },
+  "resources": [
+    "file://.kiro/steering/content-accuracy.md",
+    "file://.kiro/steering/product.md",
+    "file://data/raw/SOURCES.md"
+  ],
+  "welcomeMessage": "Accuracy reviewer ready. I only read files; I never change them."
+}
