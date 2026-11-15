@@ -68,12 +68,13 @@ Out of scope: traditional characters and the traditional toggle, any choice of m
 1. WHEN a ghost is presented in a Séance, THE App SHALL run the Rite for that ghost in this order: first the Summon step, then the Lay-to-rest step, with no choice of mode anywhere in the App.
 2. WHEN the ghost's character is Playable in Cangjie mode, THE App SHALL begin the ghost with the Summon step.
 3. IF the ghost's character is not Playable in Cangjie mode (a null code, or a code starting with X; in the current data 别 `XRSLN` and 错 `XCTA`), THEN THE App SHALL skip the Summon step and begin the ghost with the Lay-to-rest step. 身 (`HXH`) SHALL have a Summon step.
-4. WHEN the Summon step's code is complete, or the player gives up in the Summon step, THE App SHALL form the character in ink, hold it on screen for `SUMMON_HOLD_MS` (1500 ms), fade it out over `SUMMON_FADE_MS` (1500 ms), remove it from the page, and only then begin the Lay-to-rest step.
+4. WHEN the Summon step's code is complete, or the player gives up in the Summon step, THE App SHALL form the character in ink, hold it on screen for 1.5 s (`SUMMON_HOLD_MS`, 1500 ms), fade it out over 1.5 s (`SUMMON_FADE_MS`, 1500 ms), remove it from the page, and only then begin the Lay-to-rest step.
 5. WHERE the player's system requests reduced motion, THE App SHALL replace the animated fade by an immediate removal after the same hold time.
-6. WHEN the player gives up in the Summon step, THE App SHALL still proceed to the Lay-to-rest step for that ghost after the character has formed and faded.
+6. WHEN the player gives up in the Summon step, THE App SHALL show the full code, form and fade the character as in AC 2.4, and still proceed to the Lay-to-rest step for that ghost, with the ghost's Combined outcome fixed at `gave-up`.
 7. THE Lay-to-rest step SHALL behave exactly as Write mode does in ghost-game-core (hanzi-writer quiz mode, live per-stroke checking, Stroke hint after 3 consecutive misses of the same stroke, "Give up" with stroke-order animation, clean-mistake threshold from the engine config).
 8. WHEN a Séance begins, THE App SHALL select its ghosts with the ghost-game-core session-selection algorithm (ghost-game-core AC 6.5) applied to the Learning order over all 300 characters, with the UI-read clock and the same `EngineConfig`; 298 of the 300 ghosts have a Summon step.
-9. THE Séance SHALL keep the ghost-game-core flow: "Ghost N of M", the cleaned and masked clue shown through both steps, a text label naming the active step ("Summon" or "Lay to rest"), a "Next ghost" control that appears only after the Lay-to-rest step ends (the last ghost leading to the summary), the session summary, and "Begin another Séance".
+9. THE Séance SHALL keep the ghost-game-core flow: "Ghost N of M", the cleaned and masked clue shown through both steps, a text label naming the active step ("Step 1 of 2: Summon" or "Step 2 of 2: Lay to rest"; "Lay to rest" for a ghost without a Summon step), a "Next ghost" control that appears only after the Lay-to-rest step ends (the last ghost leading to the summary), the session summary, and "Begin another Séance".
+10. THE hold and fade durations of AC 2.4 SHALL come only from the named constants `SUMMON_HOLD_MS` and `SUMMON_FADE_MS`, each defined once in the Summon step module (`app/src/modes/SummonStep.tsx`).
 
 ---
 
@@ -95,7 +96,7 @@ Out of scope: traditional characters and the traditional toggle, any choice of m
 10. THE App SHALL fix the Summon step's Step result exactly once, and SHALL ignore key entries and Give up after it is fixed.
 11. THE thresholds SHALL come only from the engine config; feedback SHALL use text or an icon as well as colour; and every control SHALL be operable by keyboard.
 12. THE input and Step-result logic (matching a key entry to the code, counting mistakes, triggering the Key hint, classifying the Step result) SHALL be a pure reducer in `app/src/engine/` with no I/O and no reliance on ambient time.
-13. THE Summon step SHALL show the one-line source note "Codes: Unicode Unihan kCangjie" while the player types.
+13. WHILE the Summon step is active, THE App SHALL show the one-line source note "Codes: Unicode Unihan kCangjie" (the guide carries the fuller statement, Requirement 6.7).
 
 ---
 
@@ -114,6 +115,7 @@ Out of scope: traditional characters and the traditional toggle, any choice of m
 7. WHEN a step's Step result is `gave-up`, key entries and strokes that arrive afterwards SHALL NOT change the Combined outcome.
 8. IF hanzi-writer cannot load the character in the Lay-to-rest step, THEN THE App SHALL resolve that step as `gave-up` (as in ghost-game-core), so the Combined outcome is `gave-up`.
 9. THE combination of the Summon step's Step result (or its absence) with the Lay-to-rest step's Step result SHALL be a pure function `combineOutcomes(summon, write)` in `app/src/engine/outcome.ts`.
+10. THE SeanceSession SHALL combine the two Step results internally and report one Outcome per ghost, so that the App's outcome handler and `recordOutcome(char, entry)` keep their current signatures.
 
 ---
 
@@ -194,7 +196,7 @@ Out of scope: traditional characters and the traditional toggle, any choice of m
 
 ## Amendments to other specs
 
-This re-scope changes what the other two specs must say. **These other spec files have NOT yet been edited by this rewrite and need a follow-up.** They still carry the earlier cangjie-seance amendments (marked "Amended by cangjie-seance"), some of which this re-scope withdraws.
+This re-scope changes what the other two specs must say. **These amendments HAVE now been applied.** In ghost-game-core, the withdrawn Cangjie-mode amendments were removed, AC 5.1 was amended for summon-then-fade, and Requirement 7 received the schema-2 reset note. In character-dataset, the Cangjie property tests were replaced by the exhaustive unit test. The lists below record what was changed.
 
 ### ghost-game-core: earlier amendments that this re-scope WITHDRAWS
 
@@ -217,31 +219,28 @@ This re-scope changes what the other two specs must say. **These other spec file
 - Keep the earlier amendments that remain correct: the Unihan source and licence (AC 2.4, 2.5, 2.6), the `cangjie` field and `unihan` dataset id (AC 4.2, 4.11, 4.13), the pipeline inputs and summary (AC 3.2, 3.6, 3.7), the serialiser key order, and the amended Properties 4 and 10 (their tests are updated, not removed).
 - WITHDRAW or replace: the new property-test ACs 5.10, 5.11 and 5.12 and design Property 23 with its `cangjie.test.ts` row. They conflict with "no new property tests"; replace them with unit tests (Requirement 9.3).
 
-### Steering follow-up
+### Steering
 
-`product.md` (core game loop step 2 and the "Cangjie Séance" must-have) and `tech.md` (device targets) still describe Cangjie Séance as a separate mode. They need a follow-up edit to describe the two-step rite. `content-accuracy.md` lists a property test that the expected Cangjie code is always the verbatim Unihan value; this spec meets it with an exhaustive unit test over all 300 records (see "Decisions for review").
+The steering files (`product.md`, `tech.md`, `content-accuracy.md`) are updated and describe the two-step rite. `content-accuracy.md` requires the expected Cangjie code to be the verbatim Unihan value; this spec meets that with an exhaustive unit test over all 300 records (Decision 12).
 
 ## Decisions
 
-All approved by the human; no open questions remain.
+All approved by Takshil; no open questions remain.
 
-1. One rite, no mode choice: every ghost goes through Summon then Lay to rest in one Séance (approved by the human).
-2. Ghosts without a playable code (null, or starting with X: 别 and 错) skip the Summon step; 身 stays playable; 298 of 300 ghosts have a Summon step (approved by the human).
-3. One Combined outcome per ghost, recorded once at the end of the Lay-to-rest step with `applyReview` and `recordOutcome(char, entry)`; one Review history; the scheduler and Learning order are unchanged (approved by the human).
-4. Each step's mistakes are compared to `cleanMistakeThreshold` separately (approved by the human).
-5. Cut: "Reveal its shape", the IDS layout parser and StructureHint component, the mode choice, per-Mode histories and the version-1 to version-2 migration (approved by the human).
-6. Schema version 2 gains `cangjieIntroSeen`; no migration ships (approved by the human).
-7. Kept: Unihan `kCangjie` data with both SHA-256 values, the X-code exclusion, letters-only on-screen keys for the 14 single-key characters, IME handling, the automatic Key hint after 3 consecutive wrong keys, the never-reveal rule, and the "How Cangjie works" screen (approved by the human).
-8. "How Cangjie works" says "developed in the 1970s", matching the content-accuracy.md whitelist, instead of a specific year (approved by the human).
-9. Tests: unit and component tests only, no new property tests, no mutation testing (approved by the human).
-10. The last task is a manual check by a human, not by Kiro (approved by the human).
-
-## Decisions for review
-
-These are choices worth a second look.
-
-1. **Give up in the Summon step still proceeds to writing.** The Combined outcome is already fixed at `gave-up`; the Lay-to-rest step is practice. Reading the character off the screen right before writing it makes that practice weak. Alternative: end the ghost at the Summon step after a Give up.
-2. **The schema bump resets version-1 progress.** Existing players lose their saved Review history and see the legend intro again, once. Alternative: ship a migration that keeps `history` and `introSeen` (the earlier design did this).
-3. **Writing right after seeing the character tests short-term memory.** The 1500 ms hold followed by the 1500 ms fade is the only guard. Longer or shorter times are one constant each (`SUMMON_HOLD_MS`, `SUMMON_FADE_MS`).
-4. **The code-source note on the Summon step.** "Codes: Unicode Unihan kCangjie" is shown on every Summon step, in addition to the statement on the guide, because Unihan marks the field provisional.
-5. **Verbatim-code check is a unit test, not a property test.** content-accuracy.md lists a property test for it; an exhaustive unit test over all 300 records is stronger for a fixed dataset and honours "no new property tests".
+1. One rite, no mode choice: every ghost goes through Summon then Lay to rest in one Séance (approved by Takshil).
+2. Ghosts without a playable code (null, or starting with X: 别 and 错) skip the Summon step; 身 stays playable; 298 of 300 ghosts have a Summon step (approved by Takshil).
+3. One Combined outcome per ghost, recorded once at the end of the Lay-to-rest step with `applyReview` and `recordOutcome(char, entry)`; one Review history; the scheduler and Learning order are unchanged (approved by Takshil).
+4. Each step's mistakes are compared to `cleanMistakeThreshold` separately (approved by Takshil).
+5. Cut: "Reveal its shape", the IDS layout parser and StructureHint component, the mode choice, per-Mode histories and the version-1 to version-2 migration (approved by Takshil).
+6. Schema version 2 gains `cangjieIntroSeen`; no migration ships (approved by Takshil).
+7. Kept: Unihan `kCangjie` data with both SHA-256 values, the X-code exclusion, letters-only on-screen keys for the 14 single-key characters, IME handling, the automatic Key hint after 3 consecutive wrong keys, the never-reveal rule, and the "How Cangjie works" screen (approved by Takshil).
+8. "How Cangjie works" says "developed in the 1970s", matching the content-accuracy.md whitelist, instead of a specific year (approved by Takshil).
+9. Tests: unit and component tests only, no new property tests, no mutation testing (approved by Takshil).
+10. The last task is a manual check by a human, not by Kiro (approved by Takshil).
+11. Accepted trade-off: writing right after seeing the character tests short-term memory; the hold and fade times are named constants (`SUMMON_HOLD_MS`, `SUMMON_FADE_MS`), one constant each, so they are easy to change.
+12. The verbatim-code check is an exhaustive unit test over all 300 records, not a property test, which honours "no new property tests".
+13. Give up in the Summon step reveals the code; the character forms and fades; the ghost still proceeds to the Lay-to-rest step with the Combined outcome fixed at `gave-up` (approved by Takshil).
+14. The formed character holds 1.5 s and fades over 1.5 s (approved by Takshil).
+15. The Summon step shows the one-line note "Codes: Unicode Unihan kCangjie", in addition to the statement in the guide (approved by Takshil).
+16. Step labels are "Step 1 of 2: Summon" and "Step 2 of 2: Lay to rest" (approved by Takshil).
+17. `SeanceSession` combines the two Step results internally, so `App` and `recordOutcome(char, entry)` keep their current form (approved by Takshil).

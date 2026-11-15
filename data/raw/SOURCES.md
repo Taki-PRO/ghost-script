@@ -33,3 +33,15 @@ This file records the provenance and licence of every raw dataset in `data/raw/`
 - **Original standard:** Ministry of Education GF0025-2021 (2021)
 - **Licence file:** data/raw/hsk30/LICENSE (copied from the repo at the pinned commit)
 - **Used for:** character-list.txt (the ~300 characters taught in the app)
+
+## Unihan (`Unihan_DictionaryLikeData.txt`)
+- **Unicode version:** 18.0.0
+- **File date:** 2026-07-31 (from the file header)
+- **Source URL:** https://www.unicode.org/Public/18.0.0/ucd/Unihan.zip
+- **File:** Unihan_DictionaryLikeData.txt (extracted unmodified from Unihan.zip)
+- **Field:** kCangjie
+- **SHA-256 (Unihan.zip):** 4c93ea9c1f636451729a840978f1667a53886af37ba854fdcce109721c63d43e
+- **SHA-256 (Unihan_DictionaryLikeData.txt):** cce221e3d4719c9fa7f0068d2a86bd0d8f3bf5725a21a77d00fc4f784d5520ed
+- **Licence:** Unicode License V3 (SPDX: Unicode-3.0)
+- **Licence file:** data/raw/unihan/LICENSE
+- **Used for:** Cangjie codes (UAX #38 marks the kCangjie field provisional)

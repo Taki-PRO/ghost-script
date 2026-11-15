@@ -350,7 +350,7 @@ Build the data pipeline that transforms three open-source raw datasets into `app
 - The `buildDataset` function is kept pure (accepts paths as parameters) so property tests can exercise it with in-memory fixtures rather than touching the real `data/raw/` files.
 - Each property test is tagged with a comment: `// Feature: character-dataset, Property N: <title>`.
 - Run tasks one at a time and review each result. Do not use "Run All Tasks".
-- The Cangjie field (Unihan) is implemented by the `cangjie-seance` spec's tasks, which also update this spec's affected tests (Properties 4 and 10, schema and integration tests).
+- The Cangjie field (Unihan) is implemented by the `cangjie-seance` spec's tasks. Its checks are unit tests, not property tests (Nov 15 decision in tech.md): the exhaustive 300-record check is `tests/unit/cangjie-dataset.test.ts` (cangjie-seance task 1.15), and the Unihan parser and validation tests are in cangjie-seance tasks 1.4, 1.6, 1.8 and 1.15. The existing Properties 4 and 10 tests are updated for the `cangjie` field and six `sources` keys in cangjie-seance task 1.12, and the other existing pipeline, integration and smoke tests in tasks 1.13 and 1.14.
 
 ## Task Dependency Graph
 

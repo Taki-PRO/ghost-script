@@ -34,12 +34,15 @@
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 import fc from 'fast-check';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import type { BuildOptions, CharacterRecord } from '../../app/src/data/types';
 import { buildDataset } from '../../scripts/build-data';
+import { sha256Hex } from '../../scripts/lib/verify-sha256';
 import { numberedToToneMarks } from '../../scripts/lib/prompt';
 import { arbitraryCharacter, arbitraryStrokeData } from '../helpers/arbitraries';
 import type { StrokeData } from '../../app/src/data/types';
@@ -168,6 +171,13 @@ function arbitraryBundleWithInRangeOverrides(): fc.Arbitrary<{
 // --- Materialisation --------------------------------------------------------
 
 /** All temp dirs created during the run, cleaned up in afterEach. */
+// Unihan input for the pipeline: the committed fixture and its real SHA-256.
+// The generated characters are not in the fixture, so their `cangjie` is null.
+const UNIHAN_PATH = fileURLToPath(
+  new URL('../fixtures/unihan/valid.txt', import.meta.url),
+);
+const UNIHAN_SHA256 = sha256Hex(readFileSync(UNIHAN_PATH));
+
 const tempDirs: string[] = [];
 
 /**
@@ -245,6 +255,8 @@ function materialise(
     makeMeAHanziPath,
     ccCedictPath,
     promptOverridesPath,
+    unihanPath: UNIHAN_PATH,
+    unihanSha256: UNIHAN_SHA256,
   };
 }
 

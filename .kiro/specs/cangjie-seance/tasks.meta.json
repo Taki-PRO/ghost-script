@@ -1,0 +1,252 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Commit the pinned Unihan data file": [
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794744724439
+      },
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794744818425
+      }
+    ],
+    "1.2 Commit the Unicode License V3 text": [
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794744724491
+      },
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794744819701
+      }
+    ],
+    "1.4 Implement the shared `app/src/engine/cangjieRules.ts` with unit tests": [
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794744725629
+      },
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794744820995
+      }
+    ],
+    "1.5 Extend the shared record and build types in `app/src/data/types.ts`": [
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794744726832
+      },
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794744822020
+      }
+    ],
+    "1.7 Implement `scripts/lib/verify-sha256.ts` with unit tests": [
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794744727746
+      },
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794744823387
+      }
+    ],
+    "1.3 Record the Unihan source in `data/raw/SOURCES.md`": [
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794744824410
+      },
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794745160595
+      }
+    ],
+    "1.6 Implement `scripts/lib/parse-unihan.ts` with fixtures and unit tests": [
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794744825790
+      },
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794745161675
+      }
+    ],
+    "1.8 Add the `cangjie` argument to `scripts/lib/merge.ts` and update `tests/unit/merge.test.ts`": [
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794744827010
+      },
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794745162885
+      }
+    ],
+    "1.9 Update `scripts/lib/serialise.ts` and `tests/unit/serialise.test.ts`": [
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794744828419
+      },
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794745164235
+      }
+    ],
+    "1.10 Update `tests/helpers/arbitraries.ts`": [
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794744829150
+      },
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794745165273
+      }
+    ],
+    "1.11 Extend `scripts/build-data.ts`": [
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794745166476
+      },
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794745500545
+      }
+    ],
+    "1.12 Update the existing character-dataset Properties 4 and 10 in `tests/property/character-record-schema.test.ts`": [
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794745168080
+      },
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794745500696
+      }
+    ],
+    "1.16 Update the README \"Data and licences\" section": [
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794745168939
+      },
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794745500911
+      }
+    ],
+    "1.13 Update the other existing pipeline tests for the Unihan input": [
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794745502197
+      },
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794745688571
+      }
+    ],
+    "1.14 Update the existing integration and smoke tests": [
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794745503337
+      },
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794745689604
+      }
+    ],
+    "1.17 Run the pipeline and regenerate `characters.json`": [
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794745504597
+      },
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794745690162
+      }
+    ],
+    "1.15 Write unit tests for the build summary and the dataset codes": [
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794745701652
+      },
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794745815951
+      }
+    ],
+    "1.18 Validate `cangjie` in `app/src/data/charDataLoader.ts` and update the loader tests": [
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794745820693
+      },
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794745864731
+      }
+    ],
+    "1.19 Add `cangjie` to the remaining app test fixtures": [
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794745868566
+      },
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794745919664
+      }
+    ],
+    "1. Data pipeline: Unihan source, `cangjie` field, and updated dataset tests": [
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794745919699
+      }
+    ],
+    "2. Checkpoint - Data layer": [
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794745925535
+      },
+      {
+        "executionId": "ecf6e71a-455e-462d-b6cb-86683865be4a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794745976900
+      }
+    ]
+  }
+}

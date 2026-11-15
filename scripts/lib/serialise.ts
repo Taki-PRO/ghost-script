@@ -4,7 +4,7 @@
 //   - records are sorted by Unicode codepoint ascending (char.codePointAt(0))
 //   - each record's keys are emitted in a FIXED order
 //     (character, pinyin, meanings, strokeCount, strokeData, decomposition,
-//      prompt, sources)
+//      prompt, cangjie, sources)
 //   - nested strokeData / decomposition / sources objects use the design's
 //     field order
 //
@@ -60,6 +60,7 @@ interface OrderedRecord {
   strokeData: StrokeData;
   decomposition: Decomposition;
   prompt: Prompt;
+  cangjie: string | null;
   sources: FieldSources;
 }
 
@@ -87,12 +88,14 @@ function orderRecord(record: CharacterRecord): OrderedRecord {
       meaning: record.prompt.meaning,
       pinyin: record.prompt.pinyin,
     },
+    cangjie: record.cangjie,
     sources: {
       pinyin: record.sources.pinyin,
       meanings: record.sources.meanings,
       strokeCount: record.sources.strokeCount,
       strokeData: record.sources.strokeData,
       decomposition: record.sources.decomposition,
+      cangjie: record.sources.cangjie,
     },
   };
 }

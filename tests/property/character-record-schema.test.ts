@@ -2,20 +2,21 @@
 // Feature: character-dataset, Property 10: sources object has exactly the required keys with valid values
 //
 // Property 4: For any CharacterRecord produced by the pipeline, the record
-// contains EXACTLY the expected keys (character, pinyin, meanings, strokeCount,
-// strokeData, decomposition, prompt, sources) and NO unrecognised keys. We
+// contains EXACTLY the nine expected keys (character, pinyin, meanings,
+// strokeCount, strokeData, decomposition, prompt, cangjie, sources) and NO unrecognised keys. We
 // assert this against the record object itself AND against the pipeline's
 // serialised form: each record is placed into a Map, serialised with
 // `serialiseDataset`, re-parsed, and the per-character key list is compared to
 // the exact ordered design key list.
 //
-// Property 10: For any CharacterRecord, `sources` has EXACTLY the five keys
-// (pinyin, meanings, strokeCount, strokeData, decomposition), each value is a
-// valid DatasetId, and each field maps to the dataset the design fixes it to
-// (pinyin/meanings → cc-cedict, strokeCount/strokeData → hanzi-writer-data,
-// decomposition → make-me-a-hanzi).
+// Property 10: For any CharacterRecord, `sources` has EXACTLY the six keys
+// (pinyin, meanings, strokeCount, strokeData, decomposition, cangjie), each
+// value is a valid DatasetId, and each field maps to the dataset the design
+// fixes it to (pinyin/meanings → cc-cedict, strokeCount/strokeData →
+// hanzi-writer-data, decomposition → make-me-a-hanzi). `cangjie` maps to
+// 'unihan' when the record's cangjie code is non-null, otherwise 'missing'.
 //
-// Validates: Requirements 4.2, 4.10
+// Validates: Requirements 4.2, 4.10 (cangjie-seance: 1.3, 9.6)
 
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
@@ -40,6 +41,7 @@ const EXPECTED_RECORD_KEYS = [
   'strokeData',
   'decomposition',
   'prompt',
+  'cangjie',
   'sources',
 ] as const;
 
@@ -50,17 +52,22 @@ const EXPECTED_SOURCE_KEYS = [
   'strokeCount',
   'strokeData',
   'decomposition',
+  'cangjie',
 ] as const;
 
-/** The valid DatasetId values a `sources` field may hold. */
-const VALID_DATASET_IDS: ReadonlySet<DatasetId> = new Set<DatasetId>([
+/** The valid values a `sources` field may hold (`'missing'` only for cangjie). */
+const VALID_DATASET_IDS: ReadonlySet<DatasetId | 'missing'> = new Set<
+  DatasetId | 'missing'
+>([
   'cc-cedict',
   'hanzi-writer-data',
   'make-me-a-hanzi',
+  'unihan',
+  'missing',
 ]);
 
-/** The required field → DatasetId mapping the design fixes. */
-const REQUIRED_SOURCE_MAPPING: FieldSources = {
+/** The required field → DatasetId mapping the design fixes (except `cangjie`). */
+const REQUIRED_SOURCE_MAPPING: Omit<FieldSources, 'cangjie'> = {
   pinyin: 'cc-cedict',
   meanings: 'cc-cedict',
   strokeCount: 'hanzi-writer-data',
@@ -103,12 +110,12 @@ describe('Property 4: CharacterRecord schema completeness', () => {
 });
 
 describe('Property 10: sources object has exactly the required keys with valid values', () => {
-  it('sources has exactly the five required keys, each a valid DatasetId matching the fixed mapping', () => {
+  it('sources has exactly the six required keys, each a valid DatasetId matching the fixed mapping', () => {
     fc.assert(
       fc.property(arbitraryCharacterRecord(), (record: CharacterRecord) => {
         const { sources } = record;
 
-        // Exactly the five required keys — no more, no fewer.
+        // Exactly the six required keys — no more, no fewer.
         expect(new Set(Object.keys(sources))).toEqual(
           new Set(EXPECTED_SOURCE_KEYS),
         );
@@ -121,8 +128,14 @@ describe('Property 10: sources object has exactly the required keys with valid v
 
         // Each field maps to the dataset the design fixes it to.
         for (const key of EXPECTED_SOURCE_KEYS) {
+          if (key === 'cangjie') continue;
           expect(sources[key]).toBe(REQUIRED_SOURCE_MAPPING[key]);
         }
+
+        // cangjie is 'unihan' iff the record has a code, else 'missing'.
+        expect(sources.cangjie).toBe(
+          record.cangjie === null ? 'missing' : 'unihan',
+        );
       }),
       { numRuns: 100 },
     );

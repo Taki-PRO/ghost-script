@@ -451,13 +451,43 @@ export function arbitraryPrompt(): fc.Arbitrary<Prompt> {
 
 // --- CharacterRecord --------------------------------------------------------
 
-const RECORD_SOURCES: FieldSources = {
-  pinyin: 'cc-cedict',
-  meanings: 'cc-cedict',
-  strokeCount: 'hanzi-writer-data',
-  strokeData: 'hanzi-writer-data',
-  decomposition: 'make-me-a-hanzi',
-};
+const CANGJIE_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXY'.split('');
+
+/** `null`, or a Cangjie code matching `^[A-Y]{1,5}$`. */
+export function arbitraryCangjie(): fc.Arbitrary<string | null> {
+  return fc.oneof(
+    { weight: 1, arbitrary: fc.constant<string | null>(null) },
+    {
+      weight: 4,
+      arbitrary: fc
+        .array(fc.constantFrom(...CANGJIE_LETTERS), {
+          minLength: 1,
+          maxLength: 5,
+        })
+        .map((keys) => keys.join('')),
+    },
+  );
+}
+
+/**
+ * The fixed `FieldSources` mapping, with `cangjie` set to `'unihan'` exactly
+ * when the given `cangjie` value is non-null, otherwise `'missing'`.
+ */
+export function sourcesFor(cangjie: string | null): FieldSources {
+  return {
+    pinyin: 'cc-cedict',
+    meanings: 'cc-cedict',
+    strokeCount: 'hanzi-writer-data',
+    strokeData: 'hanzi-writer-data',
+    decomposition: 'make-me-a-hanzi',
+    cangjie: cangjie === null ? 'missing' : 'unihan',
+  };
+}
+
+/** A `sources` object paired consistently with a generated `cangjie` value. */
+export function arbitrarySources(): fc.Arbitrary<FieldSources> {
+  return arbitraryCangjie().map(sourcesFor);
+}
 
 /**
  * A full, valid `CharacterRecord`.
@@ -466,7 +496,9 @@ const RECORD_SOURCES: FieldSources = {
  * 13, 14, 15):
  *   - `pinyin` and `meanings` are non-empty arrays of non-empty strings.
  *   - `strokeCount === strokeData.strokes.length` (always ≥ 1).
- *   - `sources` is the fixed DatasetId mapping, exactly five keys.
+ *   - `cangjie` is `null` or matches `^[A-Y]{1,5}$`; `sources.cangjie` is
+ *     `'unihan'` exactly when `cangjie` is non-null, else `'missing'`.
+ *   - `sources` is the fixed DatasetId mapping, exactly six keys.
  *   - the decomposition is built for this record's `character`, so an atomic
  *     record's `components` is `[character]` (Property 9).
  */
@@ -485,16 +517,27 @@ export function arbitraryCharacterRecord(): fc.Arbitrary<CharacterRecord> {
         strokeData: arbitraryStrokeData(),
         decomposition: arbitraryDecompositionFor(character),
         prompt: arbitraryPrompt(),
+        cangjie: arbitraryCangjie(),
       })
-      .map(({ pinyin, meanings, strokeData, decomposition, prompt }) => ({
-        character,
-        pinyin,
-        meanings,
-        strokeCount: strokeData.strokes.length,
-        strokeData,
-        decomposition,
-        prompt,
-        sources: RECORD_SOURCES,
-      })),
+      .map(
+        ({
+          pinyin,
+          meanings,
+          strokeData,
+          decomposition,
+          prompt,
+          cangjie,
+        }) => ({
+          character,
+          pinyin,
+          meanings,
+          strokeCount: strokeData.strokes.length,
+          strokeData,
+          decomposition,
+          prompt,
+          cangjie,
+          sources: sourcesFor(cangjie),
+        }),
+      ),
   );
 }

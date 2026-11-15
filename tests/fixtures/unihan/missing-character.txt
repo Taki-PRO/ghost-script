@@ -1,0 +1,4 @@
+# synthetic: 人 has no kCangjie line
+U+4EBA	kFenn	429A
+U+4EBA	kGradeLevel	1
+U+4E00	kCangjie	M

@@ -1,0 +1,49 @@
+# Unihan_DictionaryLikeData.txt
+# Date: 2026-07-31 00:00:00 GMT [KL]
+# Unicode Version 18.0.0
+#
+# Unicode Character Database
+# © 2026 Unicode®, Inc.
+# Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the U.S. and other countries.
+# For terms of use and license, see https://www.unicode.org/terms_of_use.html
+#
+# For documentation, see https://www.unicode.org/reports/tr38/
+#
+# This file contains data on the following fields from the Unihan database:
+#	kAlternateTotalStrokes
+#	kCangjie
+#	kCheungBauer
+#	kFenn
+#	kFourCornerCode
+#	kGradeLevel
+#	kHDZRadBreak
+#	kHKGlyph
+#	kMojiJoho
+#	kPhonetic
+#	kStrange
+#	kUnihanCore2020
+#
+U+3406	kCangjie	HSMS
+U+3406	kMojiJoho	MJ000010
+U+4E00	kCangjie	M
+U+4E00	kFenn	1A
+U+4E00	kMojiJoho	MJ006294
+U+4E09	kCangjie	MMM
+U+4E09	kFenn	1A
+U+4E2D	kCangjie	L
+U+4E2D	kFenn	784A
+U+4E86	kCangjie	NN
+U+4E86	kFenn	111A
+U+4EBA	kCangjie	O
+U+4EBA	kFenn	429A
+U+53E3	kCangjie	R
+U+53E3	kFenn	694A
+U+53F7	kCangjie	RMVS
+U+53F7	kMojiJoho	MJ008047 MJ008047:E0101 MJ057144:E0102
+U+540E	kCangjie	HMR
+U+540E	kFenn	721F
+U+6211	kCangjie	HQI
+U+6211	kFenn	338A
+U+6211	kMojiJoho	MJ012065
+U+884C	kCangjie	HOMMN
+U+884C	kFenn	5A

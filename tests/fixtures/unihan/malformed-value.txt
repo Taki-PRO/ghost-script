@@ -1,0 +1,4 @@
+U+6211	kCangjie	HQI
+U+4E00	kCangjie	m1
+U+4EBA	kCangjie	
+U+53E3	kCangjie	R S

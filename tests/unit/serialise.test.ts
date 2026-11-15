@@ -35,12 +35,14 @@ function makeRecord(
       meaning: 'meaning',
       pinyin: 'pīn',
     },
+    cangjie: null,
     sources: {
       pinyin: 'cc-cedict',
       meanings: 'cc-cedict',
       strokeCount: 'hanzi-writer-data',
       strokeData: 'hanzi-writer-data',
       decomposition: 'make-me-a-hanzi',
+      cangjie: 'missing',
     },
     ...overrides,
   };
@@ -93,9 +95,39 @@ describe('serialiseDataset', () => {
         'strokeData',
         'decomposition',
         'prompt',
+        'cangjie',
         'sources',
       ]);
     }
+  });
+
+  it('orders the six keys within sources in the fixed design order', () => {
+    const json = serialiseDataset(outOfOrderMap());
+    const parsed = JSON.parse(json) as Record<string, CharacterRecord>;
+
+    for (const char of Object.keys(parsed)) {
+      expect(Object.keys(parsed[char].sources)).toEqual([
+        'pinyin',
+        'meanings',
+        'strokeCount',
+        'strokeData',
+        'decomposition',
+        'cangjie',
+      ]);
+    }
+  });
+
+  it('serialises cangjie: null as null and keeps a string code verbatim', () => {
+    const map = new Map<string, CharacterRecord>();
+    map.set('口', makeRecord('口', { cangjie: 'R', sources: { ...KOU.sources, cangjie: 'unihan' } }));
+    map.set('人', REN);
+    const json = serialiseDataset(map);
+    const parsed = JSON.parse(json) as Record<string, CharacterRecord>;
+
+    expect(parsed['人'].cangjie).toBeNull();
+    expect(json).toContain('"cangjie": null');
+    expect(parsed['口'].cangjie).toBe('R');
+    expect(parsed['口'].sources.cangjie).toBe('unihan');
   });
 
   it('is deterministic: same Map yields byte-for-byte identical strings', () => {

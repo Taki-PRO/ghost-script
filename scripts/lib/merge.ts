@@ -37,6 +37,9 @@ export type MergeResult =
  * that merge stays pure and prompt-selection failures are handled fail-slow in
  * the build.
  *
+ * `cangjie` is the already-validated Unihan code or null. null is never a
+ * failure; the record gets `cangjie: null` and `sources.cangjie = 'missing'`.
+ *
  * @returns { ok: true, record } when every required field is present;
  *          otherwise { ok: false, missingFields } listing every absent field
  *          in the stable order
@@ -48,6 +51,7 @@ export function mergeCharacter(
   makeMeAHanzi: MakeMeAHanziEntry | undefined,
   ccCedict: CcCedictEntry | undefined,
   prompt: Prompt,
+  cangjie: string | null,
 ): MergeResult {
   const missingFields: RequiredField[] = [];
 
@@ -89,6 +93,7 @@ export function mergeCharacter(
     strokeCount: 'hanzi-writer-data',
     strokeData: 'hanzi-writer-data',
     decomposition: 'make-me-a-hanzi',
+    cangjie: cangjie === null ? 'missing' : 'unihan',
   };
 
   const record: CharacterRecord = {
@@ -110,6 +115,7 @@ export function mergeCharacter(
       components: mm.components,
     },
     prompt,
+    cangjie,
     sources,
   };
 

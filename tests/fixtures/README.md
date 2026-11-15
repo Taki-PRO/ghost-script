@@ -44,3 +44,37 @@ handling and are not real dictionary entries.
 Line numbers for `了` (4605–4606), `三` (1187–1188), `后` (20366–20367),
 `号`/`號` (97073–97074), and `中` (3263–3265) are 1-indexed against
 `data/raw/cc-cedict/cedict_ts.u8` as present in this repository.
+
+## `unihan/`
+### `unihan/valid.txt` (real data)
+Lines copied **verbatim** from `data/raw/unihan/Unihan_DictionaryLikeData.txt`
+(Unicode Unihan database, Unicode 18.0.0, dated 2026-07-31; Unicode License V3,
+see `data/raw/unihan/LICENSE` and `data/raw/SOURCES.md`). Line numbers are
+1-indexed against that file as present in this repository, and lines keep
+their source order.
+
+| Source line(s) | Content | Why it is included |
+|---|---|---|
+| 1–25 | Header comment lines | Comment handling. |
+| 40–41 | `㐆` kCangjie, kMojiJoho | Character from the Make Me a Hanzi fixture. |
+| 15731, 15732, 15737 | `一` kCangjie, kFenn, kMojiJoho | Used by several fixtures. |
+| 15782–15783 | `三` kCangjie, kFenn | Character from the CC-CEDICT fixture. |
+| 15992–15993 | `中` kCangjie, kFenn | Character from the CC-CEDICT fixture. |
+| 16412–16413 | `了` kCangjie, kFenn | Character from the CC-CEDICT fixture. |
+| 16701–16702 | `人` kCangjie, kFenn | Used by several fixtures. |
+| 23534–23535 | `口` kCangjie, kFenn | Character from the CC-CEDICT fixture. |
+| 23676, 23678 | `号` kCangjie, kMojiJoho | Character from the CC-CEDICT fixture. |
+| 23806–23807 | `后` kCangjie, kFenn | Character from the CC-CEDICT fixture. |
+| 41747–41748, 41752 | `我` kCangjie, kFenn, kMojiJoho | Used by several fixtures. |
+| 89778–89779 | `行` kCangjie, kFenn | Character from the CC-CEDICT fixture. |
+
+Lines 23676 and 23678 are not adjacent in the source (line 23677 is a
+`kFourCornerCode` line that is left out).
+
+### Synthetic fixtures (not real Unihan data)
+These three files are **synthetic**: hand-written to exercise parser and build
+error paths. They contain no claim about real Unihan values.
+
+- `unihan/malformed-value.txt`: `kCangjie` lines with values that are not valid codes (`m1`, empty, `R S`).
+- `unihan/duplicate-value.txt`: two `kCangjie` lines for the same character (`我`).
+- `unihan/missing-character.txt`: a character (`人`) with other fields but no `kCangjie` line.

@@ -587,7 +587,7 @@ Keys are sorted by Unicode codepoint ascending. Key order within each record is 
 
 ### Property 21: every override index is in range and reviewer-attributed
 
-*For any* parsed prompt-override applied in a successful build, `meaningIndex` SHALL be a valid index into the character's `meanings`, `entryIndex` SHALL be a valid index into the character's CC-CEDICT entries, and `reviewedBy` SHALL be non-empty.
+*For any* parsed prompt-override applied in a successful build, `meaningIndex` SHALL be a valid index into the glosses of the entry selected by `entryIndex`, `entryIndex` SHALL be a valid index into the character's CC-CEDICT entries, and `reviewedBy` SHALL be non-empty.
 
 **Validates: Requirements 6.6, 6.7**
 
@@ -598,14 +598,6 @@ Keys are sorted by Unicode codepoint ascending. Key order within each record is 
 *For any* `CharacterRecord` in a successfully built `characters.json`, there SHALL exist a single CC-CEDICT entry for that character such that `prompt.meaning` is one of that entry's glosses (after optional `(bound form) ` stripping) AND `prompt.pinyin` equals `numberedToToneMarks(entry.reading)`.
 
 **Validates: Requirements 6.12**
-
----
-
-### Property 23: Cangjie codes are well-formed, attributed, and verbatim from Unihan
-
-*For any* `CharacterRecord` in a successfully built `characters.json`: (a) if `cangjie` is non-null, it SHALL match `^[A-Y]{1,5}$`; (b) `sources.cangjie` SHALL equal `"unihan"` if and only if `cangjie` is non-null (otherwise it SHALL equal `"missing"`); and (c) if `cangjie` is non-null, it SHALL equal the single raw Unihan `kCangjie` value for that character as returned by `parseUnihanCangjie`. *(Added by cangjie-seance Requirement 1)*
-
-**Validates: Requirements 4.13, 5.10, 5.11, 5.12**
 
 ---
 
@@ -657,6 +649,9 @@ Concrete example-based tests for:
 - `parseCcCedict`: correctly parses a sample multi-entry block; deduplicated output matches expected arrays; and that `entries` preserves per-source-line reading+glosses in order (e.g. 了 yields a `liao3` entry and a `le` entry, each with its own glosses).
 - `parseMakeMeAHanzi`: correctly parses a sample `dictionary.txt` line with and without etymology.
 - `parseUnihanCangjie` *(added by cangjie-seance Requirement 1)*: collects every `kCangjie` value per character in source order, ignores other fields and comment lines, and returns two values for a character that appears twice. Fixture lines are taken from the real Unihan file under `data/raw/unihan/` (for example 别 `XRSLN`, 错 `XCTA`, 身 `HXH`); no invented entries. Build-level tests cover a malformed value, a duplicate value, and a missing value (null, build succeeds, summary lists the character).
+- Cangjie unit tests *(added by cangjie-seance Requirement 1; no new property tests, per the Nov 15 decision in tech.md)*, implemented by cangjie-seance tasks:
+  - Exhaustive dataset check (`tests/unit/cangjie-dataset.test.ts`, cangjie-seance task 1.15): loops over all 300 records of `app/public/data/characters.json` against the committed raw Unihan file; every non-null `cangjie` matches `^[A-Y]{1,5}$` and equals the single raw `kCangjie` value; `sources.cangjie` is `"unihan"` exactly when `cangjie` is non-null (Requirements 4.13, 5.10).
+  - Unihan parser and validation tests: `parseUnihanCangjie` with fixtures (cangjie-seance task 1.6); `cangjieRules` format checks (task 1.4); build-summary tests for a missing, malformed or duplicate value and hash mismatch (task 1.15); `mergeCharacter` with `cangjie` (task 1.8).
 - `parseHanziWriterData`: correctly extracts `strokeCount` from a known JSON fixture.
 - `mergeCharacter`: returns failure when any required field is missing; returns success with correct `sources` when all fields present.
 - `selectPrompt`: entry-based selection — real cases such as 三 (skips the `San` proper-noun entry), 后 (walks to a usable entry), 号, 了 (picks a usable entry whose reading pairs with its gloss), and 中; override precedence over the default rule (override selects an entry + a gloss within it); the single `no-usable-sense` failure result; and that the chosen meaning and reading share an entry. Fixture lines are taken from the real CC-CEDICT data in `data/raw/cc-cedict/cedict_ts.u8`; no invented entries.
@@ -675,7 +670,6 @@ Each property corresponds to a design correctness property. All property tests r
 | `pipeline-determinism.test.ts` | Property 2 (determinism) |
 | `pipeline-errors.test.ts` | Property 3 (fail-slow error aggregation) |
 | `character-record-schema.test.ts` | Properties 4, 10, 13, 14, 15 (4 and 10 amended by cangjie-seance Requirement 1) |
-| `cangjie.test.ts` | Property 23 (Cangjie format, attribution, and verbatim match with raw Unihan; added by cangjie-seance Requirement 1) |
 | `cc-cedict-parser.test.ts` | Property 5 (deduplication preserves order) |
 | `hanzi-writer-parser.test.ts` | Property 6 (stroke data round-trip) |
 | `make-me-a-hanzi-parser.test.ts` | Property 7 (decomposition verbatim pass-through) |
@@ -719,4 +713,4 @@ arbitraryDecomposition()  // random IDS strings using valid CJK codepoints (U+4E
 arbitraryCharacterRecord() // full record with all fields present (cangjie either null or ^[A-Y]{1,5}$, with matching sources.cangjie)
 ```
 
-The Cangjie fixtures and the raw-value comparison in Property 23 use lines from the real Unihan file in `data/raw/unihan/`, not hand-written codes (amended by cangjie-seance Requirement 1).
+The Cangjie fixtures use lines from the real Unihan file in `data/raw/unihan/`, not hand-written codes (amended by cangjie-seance Requirement 1).

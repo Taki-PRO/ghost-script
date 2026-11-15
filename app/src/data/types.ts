@@ -1,7 +1,7 @@
 // Canonical types shared by the app, data pipeline, and Cangjie Oracle MCP server.
 
 /** Literal union of valid source dataset identifiers. */
-export type DatasetId = 'cc-cedict' | 'hanzi-writer-data' | 'make-me-a-hanzi';
+export type DatasetId = 'cc-cedict' | 'hanzi-writer-data' | 'make-me-a-hanzi' | 'unihan';
 
 /** Required fields whose absence constitutes a pipeline error. */
 export type RequiredField =
@@ -67,6 +67,8 @@ export interface FieldSources {
   strokeCount: DatasetId;   // always "hanzi-writer-data"
   strokeData: DatasetId;    // always "hanzi-writer-data"
   decomposition: DatasetId; // always "make-me-a-hanzi"
+  /** "unihan" when a code is present, "missing" when cangjie is null. */
+  cangjie: DatasetId | 'missing';
 }
 
 /** The canonical record for one character in characters.json. */
@@ -84,6 +86,8 @@ export interface CharacterRecord {
   decomposition: Decomposition;
   /** Always non-null; the chosen ghost clue (see Requirement 6). */
   prompt: Prompt;
+  /** Verbatim Unihan kCangjie code, or null when Unihan has none. Never derived. */
+  cangjie: string | null;
   sources: FieldSources;
 }
 
@@ -129,9 +133,28 @@ export interface BuildOptions {
   promptOverridesPath?: string;
   /** Path to write prompt-review.csv on success (optional). */
   promptReviewPath?: string;
+  /** Path to the Unihan_DictionaryLikeData.txt file. */
+  unihanPath: string;
+  /** Expected SHA-256 (hex) of the Unihan file. */
+  unihanSha256: string;
+}
+
+/** A character whose Unihan kCangjie value could not be used. */
+export interface CangjieError {
+  character: string;
+  values: string[];
+  reason: 'invalid-format' | 'multiple-values';
 }
 
 /** Return type of buildDataset(). */
 export type BuildResult =
-  | { ok: true; output: string; promptReviewCsv: string } // serialised JSON + review CSV
-  | { ok: false; errors: MissingFieldError[] };
+  | {
+      ok: true;
+      output: string; // serialised JSON
+      promptReviewCsv: string;
+      /** Characters whose cangjie is null. */
+      cangjieMissing: string[];
+      /** Characters for which isPlayableInCangjie is false. */
+      notPlayable: string[];
+    }
+  | { ok: false; errors: MissingFieldError[]; cangjieErrors: CangjieError[] };

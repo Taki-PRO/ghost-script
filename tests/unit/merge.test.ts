@@ -64,7 +64,7 @@ describe('mergeCharacter', () => {
     const mm = makeMakeMeAHanzi();
     const cc = makeCcCedict();
 
-    const result = mergeCharacter(CHAR, hw, mm, cc, PROMPT);
+    const result = mergeCharacter(CHAR, hw, mm, cc, PROMPT, 'VND');
 
     expect(result.ok).toBe(true);
     if (!result.ok) {
@@ -83,7 +83,9 @@ describe('mergeCharacter', () => {
       strokeCount: 'hanzi-writer-data',
       strokeData: 'hanzi-writer-data',
       decomposition: 'make-me-a-hanzi',
+      cangjie: 'unihan',
     });
+    expect(record.cangjie).toBe('VND');
 
     // Top-level wiring.
     expect(record.character).toBe(CHAR);
@@ -113,7 +115,7 @@ describe('mergeCharacter', () => {
   });
 
   it('returns failure listing pinyin and meanings when ccCedict is missing', () => {
-    const result = mergeCharacter(CHAR, makeHanziWriter(), makeMakeMeAHanzi(), undefined, PROMPT);
+    const result = mergeCharacter(CHAR, makeHanziWriter(), makeMakeMeAHanzi(), undefined, PROMPT, null);
 
     expect(result.ok).toBe(false);
     if (result.ok) {
@@ -123,7 +125,7 @@ describe('mergeCharacter', () => {
   });
 
   it('returns failure listing strokeCount and strokeData when hanziWriter is missing', () => {
-    const result = mergeCharacter(CHAR, undefined, makeMakeMeAHanzi(), makeCcCedict(), PROMPT);
+    const result = mergeCharacter(CHAR, undefined, makeMakeMeAHanzi(), makeCcCedict(), PROMPT, null);
 
     expect(result.ok).toBe(false);
     if (result.ok) {
@@ -133,7 +135,7 @@ describe('mergeCharacter', () => {
   });
 
   it('returns failure listing decomposition when makeMeAHanzi is missing', () => {
-    const result = mergeCharacter(CHAR, makeHanziWriter(), undefined, makeCcCedict(), PROMPT);
+    const result = mergeCharacter(CHAR, makeHanziWriter(), undefined, makeCcCedict(), PROMPT, null);
 
     expect(result.ok).toBe(false);
     if (result.ok) {
@@ -143,7 +145,7 @@ describe('mergeCharacter', () => {
   });
 
   it('lists all five required fields in stable order when all three entries are undefined', () => {
-    const result = mergeCharacter(CHAR, undefined, undefined, undefined, PROMPT);
+    const result = mergeCharacter(CHAR, undefined, undefined, undefined, PROMPT, null);
 
     expect(result.ok).toBe(false);
     if (result.ok) {
@@ -164,7 +166,7 @@ describe('mergeCharacter', () => {
       meanings: ['good'],
       entries: [{ reading: '', meanings: ['good'] }],
     };
-    const result = mergeCharacter(CHAR, makeHanziWriter(), makeMakeMeAHanzi(), cc, PROMPT);
+    const result = mergeCharacter(CHAR, makeHanziWriter(), makeMakeMeAHanzi(), cc, PROMPT, null);
 
     expect(result.ok).toBe(false);
     if (result.ok) {
@@ -175,12 +177,34 @@ describe('mergeCharacter', () => {
 
   it('treats empty strokes as missing strokeCount and strokeData', () => {
     const hw: HanziWriterEntry = { strokes: [], medians: [], radStrokes: [] };
-    const result = mergeCharacter(CHAR, hw, makeMakeMeAHanzi(), makeCcCedict(), PROMPT);
+    const result = mergeCharacter(CHAR, hw, makeMakeMeAHanzi(), makeCcCedict(), PROMPT, null);
 
     expect(result.ok).toBe(false);
     if (result.ok) {
       throw new Error('expected failure result');
     }
     expect(result.missingFields).toEqual(['strokeCount', 'strokeData']);
+  });
+
+  it('records a Cangjie code with source unihan', () => {
+    const result = mergeCharacter(CHAR, makeHanziWriter(), makeMakeMeAHanzi(), makeCcCedict(), PROMPT, 'VND');
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) {
+      throw new Error('expected ok result');
+    }
+    expect(result.record.cangjie).toBe('VND');
+    expect(result.record.sources.cangjie).toBe('unihan');
+  });
+
+  it('treats a null Cangjie code as missing without producing a failure', () => {
+    const result = mergeCharacter(CHAR, makeHanziWriter(), makeMakeMeAHanzi(), makeCcCedict(), PROMPT, null);
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) {
+      throw new Error('expected ok result');
+    }
+    expect(result.record.cangjie).toBeNull();
+    expect(result.record.sources.cangjie).toBe('missing');
   });
 });

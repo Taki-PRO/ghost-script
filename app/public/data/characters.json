@@ -63,12 +63,14 @@
       "meaning": "one",
       "pinyin": "yī"
     },
+    "cangjie": "M",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "七": {
@@ -186,12 +188,14 @@
       "meaning": "seven",
       "pinyin": "qī"
     },
+    "cangjie": "JU",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "三": {
@@ -320,12 +324,14 @@
       "meaning": "three",
       "pinyin": "sān"
     },
+    "cangjie": "MMM",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "上": {
@@ -454,12 +460,14 @@
       "meaning": "up; upper; above; previous",
       "pinyin": "shàng"
     },
+    "cangjie": "YM",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "下": {
@@ -599,12 +607,14 @@
       "meaning": "down",
       "pinyin": "xià"
     },
+    "cangjie": "MY",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "不": {
@@ -766,12 +776,14 @@
       "meaning": "no; not so",
       "pinyin": "bù"
     },
+    "cangjie": "MF",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "东": {
@@ -963,12 +975,14 @@
       "meaning": "east",
       "pinyin": "dōng"
     },
+    "cangjie": "KD",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "两": {
@@ -1245,12 +1259,14 @@
       "meaning": "two",
       "pinyin": "liǎng"
     },
+    "cangjie": "MOOB",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "个": {
@@ -1396,12 +1412,14 @@
       "meaning": "(classifier used before a noun that has no specific classifier)",
       "pinyin": "gè"
     },
+    "cangjie": "OL",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "中": {
@@ -1563,12 +1581,14 @@
       "meaning": "middle; center",
       "pinyin": "zhōng"
     },
+    "cangjie": "L",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "为": {
@@ -1754,12 +1774,14 @@
       "meaning": "as (in the capacity of)",
       "pinyin": "wéi"
     },
+    "cangjie": "IKSI",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "么": {
@@ -1915,12 +1937,14 @@
       "meaning": "suffix, used to form interrogative 什麼|什么[shen2 me5], what?, indefinite 這麼|这么[zhe4 me5] thus, etc",
       "pinyin": "me"
     },
+    "cangjie": "HI",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "九": {
@@ -2093,12 +2117,14 @@
       "meaning": "nine",
       "pinyin": "jiǔ"
     },
+    "cangjie": "KN",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "也": {
@@ -2288,12 +2314,14 @@
       "meaning": "also; too; as well; (not ...) either",
       "pinyin": "yě"
     },
+    "cangjie": "PD",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "习": {
@@ -2431,12 +2459,14 @@
       "meaning": "to practice",
       "pinyin": "xí"
     },
+    "cangjie": "SIM",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "书": {
@@ -2611,12 +2641,14 @@
       "meaning": "book",
       "pinyin": "shū"
     },
+    "cangjie": "IDS",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "买": {
@@ -2828,12 +2860,14 @@
       "meaning": "to buy",
       "pinyin": "mǎi"
     },
+    "cangjie": "NYK",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "了": {
@@ -2971,12 +3005,14 @@
       "meaning": "(completed action marker)",
       "pinyin": "le"
     },
+    "cangjie": "NN",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "事": {
@@ -3263,12 +3299,14 @@
       "meaning": "matter",
       "pinyin": "shì"
     },
+    "cangjie": "JLLN",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "二": {
@@ -3355,12 +3393,14 @@
       "meaning": "two",
       "pinyin": "èr"
     },
+    "cangjie": "MM",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "五": {
@@ -3525,12 +3565,14 @@
       "meaning": "five",
       "pinyin": "wǔ"
     },
+    "cangjie": "MDM",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "些": {
@@ -3805,12 +3847,14 @@
       "meaning": "classifier indicating a small amount or small number greater than 1: some, a few, several",
       "pinyin": "xiē"
     },
+    "cangjie": "YPMM",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "人": {
@@ -3924,12 +3968,14 @@
       "meaning": "person; people",
       "pinyin": "rén"
     },
+    "cangjie": "O",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "什": {
@@ -4114,12 +4160,14 @@
       "meaning": "what",
       "pinyin": "shén"
     },
+    "cangjie": "OJ",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "今": {
@@ -4295,12 +4343,14 @@
       "meaning": "now",
       "pinyin": "jīn"
     },
+    "cangjie": "OIN",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "介": {
@@ -4484,12 +4534,14 @@
       "meaning": "to introduce",
       "pinyin": "jiè"
     },
+    "cangjie": "OLL",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "从": {
@@ -4683,12 +4735,14 @@
       "meaning": "from; through; via",
       "pinyin": "cóng"
     },
+    "cangjie": "OO",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "他": {
@@ -4928,12 +4982,14 @@
       "meaning": "(third-person singular) (since the early 20th century, usu. male) he; him; his",
       "pinyin": "tā"
     },
+    "cangjie": "OPD",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "以": {
@@ -5114,12 +5170,14 @@
       "meaning": "to use",
       "pinyin": "yǐ"
     },
+    "cangjie": "VIO",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "们": {
@@ -5328,12 +5386,14 @@
       "meaning": "plural marker for pronouns, and nouns referring to individuals",
       "pinyin": "men"
     },
+    "cangjie": "OLS",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "休": {
@@ -5571,12 +5631,14 @@
       "meaning": "to rest",
       "pinyin": "xiū"
     },
+    "cangjie": "OD",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "会": {
@@ -5808,12 +5870,14 @@
       "meaning": "can; to have the skill; to know how to",
       "pinyin": "huì"
     },
+    "cangjie": "OMMI",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "但": {
@@ -6069,12 +6133,14 @@
       "meaning": "but; yet; however; still",
       "pinyin": "dàn"
     },
+    "cangjie": "OAM",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "住": {
@@ -6311,12 +6377,14 @@
       "meaning": "to live; to reside; to stay",
       "pinyin": "zhù"
     },
+    "cangjie": "OYG",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "体": {
@@ -6573,12 +6641,14 @@
       "meaning": "body",
       "pinyin": "tǐ"
     },
+    "cangjie": "ODM",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "作": {
@@ -6831,12 +6901,14 @@
       "meaning": "to do; to engage in",
       "pinyin": "zuò"
     },
+    "cangjie": "OHS",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "你": {
@@ -7104,12 +7176,14 @@
       "meaning": "you (informal, as opposed to courteous 您[nin2])",
       "pinyin": "nǐ"
     },
+    "cangjie": "ONF",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "候": {
@@ -7461,12 +7535,14 @@
       "meaning": "to wait",
       "pinyin": "hòu"
     },
+    "cangjie": "OLNK",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "借": {
@@ -7817,12 +7893,14 @@
       "meaning": "to borrow",
       "pinyin": "jiè"
     },
+    "cangjie": "OTA",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "假": {
@@ -8223,12 +8301,14 @@
       "meaning": "fake",
       "pinyin": "jiǎ"
     },
+    "cangjie": "ORYE",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "做": {
@@ -8600,12 +8680,14 @@
       "meaning": "to make; to produce",
       "pinyin": "zuò"
     },
+    "cangjie": "OJRK",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "儿": {
@@ -8751,12 +8833,14 @@
       "meaning": "child",
       "pinyin": "ér"
     },
+    "cangjie": "LU",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "先": {
@@ -9005,12 +9089,14 @@
       "meaning": "beforehand; first; earlier",
       "pinyin": "xiān"
     },
+    "cangjie": "HGHU",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "八": {
@@ -9111,12 +9197,14 @@
       "meaning": "eight",
       "pinyin": "bā"
     },
+    "cangjie": "HO",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "六": {
@@ -9261,12 +9349,14 @@
       "meaning": "six",
       "pinyin": "liù"
     },
+    "cangjie": "YC",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "关": {
@@ -9489,12 +9579,14 @@
       "meaning": "to close; to shut; to turn off",
       "pinyin": "guān"
     },
+    "cangjie": "TK",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "兴": {
@@ -9706,12 +9798,14 @@
       "meaning": "to rise",
       "pinyin": "xīng"
     },
+    "cangjie": "FMC",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "再": {
@@ -9943,12 +10037,14 @@
       "meaning": "again; once more; re-",
       "pinyin": "zài"
     },
+    "cangjie": "MGB",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "写": {
@@ -10174,12 +10270,14 @@
       "meaning": "to write",
       "pinyin": "xiě"
     },
+    "cangjie": "BYSM",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "冷": {
@@ -10438,12 +10536,14 @@
       "meaning": "cold",
       "pinyin": "lěng"
     },
+    "cangjie": "IMOII",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "净": {
@@ -10743,12 +10843,14 @@
       "meaning": "clean",
       "pinyin": "jìng"
     },
+    "cangjie": "IMNSD",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "准": {
@@ -11057,12 +11159,14 @@
       "meaning": "to allow",
       "pinyin": "zhǔn"
     },
+    "cangjie": "IMOG",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "几": {
@@ -11228,12 +11332,14 @@
       "meaning": "how many; how much",
       "pinyin": "jǐ"
     },
+    "cangjie": "HN",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "出": {
@@ -11438,12 +11544,14 @@
       "meaning": "to go out; to come out",
       "pinyin": "chū"
     },
+    "cangjie": "UU",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "分": {
@@ -11667,12 +11775,14 @@
       "meaning": "to divide; to separate",
       "pinyin": "fēn"
     },
+    "cangjie": "CSH",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "别": {
@@ -11962,12 +12072,14 @@
       "meaning": "to leave; to part (from)",
       "pinyin": "bié"
     },
+    "cangjie": "XRSLN",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "到": {
@@ -12234,12 +12346,14 @@
       "meaning": "to reach; to arrive",
       "pinyin": "dào"
     },
+    "cangjie": "MGLN",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "前": {
@@ -12546,12 +12660,14 @@
       "meaning": "front",
       "pinyin": "qián"
     },
+    "cangjie": "TBLN",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "动": {
@@ -12796,12 +12912,14 @@
       "meaning": "(of sth) to move",
       "pinyin": "dòng"
     },
+    "cangjie": "MIKS",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "助": {
@@ -13083,12 +13201,14 @@
       "meaning": "to help",
       "pinyin": "zhù"
     },
+    "cangjie": "BMKS",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "包": {
@@ -13358,12 +13478,14 @@
       "meaning": "to cover",
       "pinyin": "bāo"
     },
+    "cangjie": "PRU",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "北": {
@@ -13572,12 +13694,14 @@
       "meaning": "north",
       "pinyin": "běi"
     },
+    "cangjie": "LMP",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "医": {
@@ -13846,12 +13970,14 @@
       "meaning": "medical",
       "pinyin": "yī"
     },
+    "cangjie": "SOK",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "十": {
@@ -13943,12 +14069,14 @@
       "meaning": "ten",
       "pinyin": "shí"
     },
+    "cangjie": "J",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "午": {
@@ -14084,12 +14212,14 @@
       "meaning": "7th earthly branch: 11 a.m.-1 p.m., noon, 5th solar month (6th June-6th July), year of the Horse",
       "pinyin": "wǔ"
     },
+    "cangjie": "OJ",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "半": {
@@ -14256,12 +14386,14 @@
       "meaning": "half",
       "pinyin": "bàn"
     },
+    "cangjie": "FQ",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "南": {
@@ -14563,12 +14695,14 @@
       "meaning": "south",
       "pinyin": "nán"
     },
+    "cangjie": "JBTJ",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "去": {
@@ -14765,12 +14899,14 @@
       "meaning": "to go",
       "pinyin": "qù"
     },
+    "cangjie": "GI",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "又": {
@@ -14915,12 +15051,14 @@
       "meaning": "(once) again",
       "pinyin": "yòu"
     },
+    "cangjie": "NK",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "友": {
@@ -15132,12 +15270,14 @@
       "meaning": "friend",
       "pinyin": "yǒu"
     },
+    "cangjie": "KE",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "口": {
@@ -15275,12 +15415,14 @@
       "meaning": "mouth",
       "pinyin": "kǒu"
     },
+    "cangjie": "R",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "叫": {
@@ -15476,12 +15618,14 @@
       "meaning": "to shout",
       "pinyin": "jiào"
     },
+    "cangjie": "RVL",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "可": {
@@ -15673,12 +15817,14 @@
       "meaning": "(prefix) can; may; able to; -able",
       "pinyin": "kě"
     },
+    "cangjie": "MNR",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "号": {
@@ -15912,12 +16058,14 @@
       "meaning": "(after a numeral) number designation (e.g. 237號房間|237号房间[er4 san1 qi1 hao4 fang2 jian1] \"Room 237\")",
       "pinyin": "hào"
     },
+    "cangjie": "RMVS",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "吃": {
@@ -16178,12 +16326,14 @@
       "meaning": "to eat; to consume",
       "pinyin": "chī"
     },
+    "cangjie": "RON",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "同": {
@@ -16433,12 +16583,14 @@
       "meaning": "same",
       "pinyin": "tóng"
     },
+    "cangjie": "BMR",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "名": {
@@ -16676,12 +16828,14 @@
       "meaning": "name",
       "pinyin": "míng"
     },
+    "cangjie": "NIR",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "后": {
@@ -16933,12 +17087,14 @@
       "meaning": "back",
       "pinyin": "hòu"
     },
+    "cangjie": "HMR",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "向": {
@@ -17205,12 +17361,14 @@
       "meaning": "towards",
       "pinyin": "xiàng"
     },
+    "cangjie": "HBR",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "吗": {
@@ -17482,12 +17640,14 @@
       "meaning": "(question particle for \"yes-no\" questions)",
       "pinyin": "ma"
     },
+    "cangjie": "RNVM",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "吧": {
@@ -17775,12 +17935,14 @@
       "meaning": "(modal particle indicating suggestion or surmise)",
       "pinyin": "ba"
     },
+    "cangjie": "RAU",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "听": {
@@ -18035,12 +18197,14 @@
       "meaning": "to listen to; to hear",
       "pinyin": "tīng"
     },
+    "cangjie": "RHML",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "告": {
@@ -18271,12 +18435,14 @@
       "meaning": "to say; to tell",
       "pinyin": "gào"
     },
+    "cangjie": "HGR",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "呢": {
@@ -18608,12 +18774,14 @@
       "meaning": "(sentence-final particle) used in questions to link back to prior discourse or context (\"what about...?\", \"and...?\")",
       "pinyin": "ne"
     },
+    "cangjie": "RSP",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "和": {
@@ -18892,12 +19060,14 @@
       "meaning": "(joining two nouns) and; together with; with (Taiwan pr. [han4])",
       "pinyin": "hé"
     },
+    "cangjie": "HDR",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "哥": {
@@ -19214,12 +19384,14 @@
       "meaning": "elder brother",
       "pinyin": "gē"
     },
+    "cangjie": "MRNR",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "哪": {
@@ -19565,12 +19737,14 @@
       "meaning": "how",
       "pinyin": "nǎ"
     },
+    "cangjie": "RSQL",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "唱": {
@@ -19934,12 +20108,14 @@
       "meaning": "to sing",
       "pinyin": "chàng"
     },
+    "cangjie": "RAA",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "喜": {
@@ -20296,12 +20472,14 @@
       "meaning": "to be fond of",
       "pinyin": "xǐ"
     },
+    "cangjie": "GRTR",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "喝": {
@@ -20720,12 +20898,14 @@
       "meaning": "to drink",
       "pinyin": "hē"
     },
+    "cangjie": "RAPV",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "四": {
@@ -20934,12 +21114,14 @@
       "meaning": "four",
       "pinyin": "sì"
     },
+    "cangjie": "WC",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "回": {
@@ -21174,12 +21356,14 @@
       "meaning": "to go back; to return; to turn back; to turn around",
       "pinyin": "huí"
     },
+    "cangjie": "WR",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "因": {
@@ -21417,12 +21601,14 @@
       "meaning": "cause",
       "pinyin": "yīn"
     },
+    "cangjie": "WK",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "国": {
@@ -21699,12 +21885,14 @@
       "meaning": "country; nation; state",
       "pinyin": "guó"
     },
+    "cangjie": "WMGI",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "在": {
@@ -21930,12 +22118,14 @@
       "meaning": "(of sb or sth) to be (located) at",
       "pinyin": "zài"
     },
+    "cangjie": "KLG",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "地": {
@@ -22191,12 +22381,14 @@
       "meaning": "earth",
       "pinyin": "dì"
     },
+    "cangjie": "GPD",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "场": {
@@ -22469,12 +22661,14 @@
       "meaning": "large place used for a specific purpose",
       "pinyin": "chǎng"
     },
+    "cangjie": "GNSH",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "坏": {
@@ -22716,12 +22910,14 @@
       "meaning": "bad",
       "pinyin": "huài"
     },
+    "cangjie": "GMF",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "坐": {
@@ -22975,12 +23171,14 @@
       "meaning": "to sit",
       "pinyin": "zuò"
     },
+    "cangjie": "OOG",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "块": {
@@ -23236,12 +23434,14 @@
       "meaning": "lump; chunk; piece",
       "pinyin": "kuài"
     },
+    "cangjie": "GDK",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "备": {
@@ -23545,12 +23745,14 @@
       "meaning": "to prepare; to equip",
       "pinyin": "bèi"
     },
+    "cangjie": "HEW",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "外": {
@@ -23749,12 +23951,14 @@
       "meaning": "outside",
       "pinyin": "wài"
     },
+    "cangjie": "NIY",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "多": {
@@ -23991,12 +24195,14 @@
       "meaning": "many; much; more; a lot of",
       "pinyin": "duō"
     },
+    "cangjie": "NINI",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "大": {
@@ -24155,12 +24361,14 @@
       "meaning": "big; large; great",
       "pinyin": "dà"
     },
+    "cangjie": "K",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "天": {
@@ -24348,12 +24556,14 @@
       "meaning": "day",
       "pinyin": "tiān"
     },
+    "cangjie": "MK",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "太": {
@@ -24539,12 +24749,14 @@
       "meaning": "too (much)",
       "pinyin": "tài"
     },
+    "cangjie": "KI",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "女": {
@@ -24701,12 +24913,14 @@
       "meaning": "female",
       "pinyin": "nǚ"
     },
+    "cangjie": "V",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "奶": {
@@ -24981,12 +25195,14 @@
       "meaning": "breast",
       "pinyin": "nǎi"
     },
+    "cangjie": "VNHS",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "她": {
@@ -25280,12 +25496,14 @@
       "meaning": "she",
       "pinyin": "tā"
     },
+    "cangjie": "VPD",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "好": {
@@ -25573,12 +25791,14 @@
       "meaning": "good",
       "pinyin": "hǎo"
     },
+    "cangjie": "VND",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "妈": {
@@ -25860,12 +26080,14 @@
       "meaning": "ma",
       "pinyin": "mā"
     },
+    "cangjie": "VNVM",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "姐": {
@@ -26169,12 +26391,14 @@
       "meaning": "older sister",
       "pinyin": "jiě"
     },
+    "cangjie": "VBM",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "子": {
@@ -26356,12 +26580,14 @@
       "meaning": "son",
       "pinyin": "zǐ"
     },
+    "cangjie": "ND",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "字": {
@@ -26596,12 +26822,14 @@
       "meaning": "character",
       "pinyin": "zì"
     },
+    "cangjie": "JND",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "学": {
@@ -26877,12 +27105,14 @@
       "meaning": "to learn",
       "pinyin": "xué"
     },
+    "cangjie": "FBND",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "孩": {
@@ -27204,12 +27434,14 @@
       "meaning": "child",
       "pinyin": "hái"
     },
+    "cangjie": "NDYVO",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "完": {
@@ -27483,12 +27715,14 @@
       "meaning": "to finish",
       "pinyin": "wán"
     },
+    "cangjie": "JMMU",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "家": {
@@ -27839,12 +28073,14 @@
       "meaning": "home",
       "pinyin": "jiā"
     },
+    "cangjie": "JMSO",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "对": {
@@ -28055,12 +28291,14 @@
       "meaning": "right; correct",
       "pinyin": "duì"
     },
+    "cangjie": "EDI",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "小": {
@@ -28187,12 +28425,14 @@
       "meaning": "small",
       "pinyin": "xiǎo"
     },
+    "cangjie": "NC",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "少": {
@@ -28349,12 +28589,14 @@
       "meaning": "few",
       "pinyin": "shǎo"
     },
+    "cangjie": "FH",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "就": {
@@ -28738,12 +28980,14 @@
       "meaning": "(after a suppositional clause) in that case; then",
       "pinyin": "jiù"
     },
+    "cangjie": "YFIKU",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "山": {
@@ -28878,12 +29122,14 @@
       "meaning": "mountain; hill (CL:座[zuo4])",
       "pinyin": "shān"
     },
+    "cangjie": "U",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "岁": {
@@ -29114,12 +29360,14 @@
       "meaning": "years old",
       "pinyin": "suì"
     },
+    "cangjie": "UNI",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "工": {
@@ -29245,12 +29493,14 @@
       "meaning": "work",
       "pinyin": "gōng"
     },
+    "cangjie": "MLM",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "差": {
@@ -29548,12 +29798,14 @@
       "meaning": "difference; discrepancy",
       "pinyin": "chā"
     },
+    "cangjie": "TQM",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "师": {
@@ -29803,12 +30055,14 @@
       "meaning": "teacher",
       "pinyin": "shī"
     },
+    "cangjie": "LLMB",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "帮": {
@@ -30165,12 +30419,14 @@
       "meaning": "to help",
       "pinyin": "bāng"
     },
+    "cangjie": "QLLB",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "常": {
@@ -30512,12 +30768,14 @@
       "meaning": "always",
       "pinyin": "cháng"
     },
+    "cangjie": "FBRLB",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "干": {
@@ -30657,12 +30915,14 @@
       "meaning": "dry",
       "pinyin": "gān"
     },
+    "cangjie": "MJ",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "年": {
@@ -30863,12 +31123,14 @@
       "meaning": "year",
       "pinyin": "nián"
     },
+    "cangjie": "OQ",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "应": {
@@ -31106,12 +31368,14 @@
       "meaning": "to agree (to do sth)",
       "pinyin": "yīng"
     },
+    "cangjie": "IFM",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "店": {
@@ -31372,12 +31636,14 @@
       "meaning": "shop; store",
       "pinyin": "diàn"
     },
+    "cangjie": "IYR",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "开": {
@@ -31555,12 +31821,14 @@
       "meaning": "to open (transitive or intransitive)",
       "pinyin": "kāi"
     },
+    "cangjie": "MT",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "当": {
@@ -31799,12 +32067,14 @@
       "meaning": "(onom.) dong",
       "pinyin": "dāng"
     },
+    "cangjie": "FSM",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "很": {
@@ -32135,12 +32405,14 @@
       "meaning": "very; quite",
       "pinyin": "hěn"
     },
+    "cangjie": "HOAV",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "得": {
@@ -32509,12 +32781,14 @@
       "meaning": "to obtain",
       "pinyin": "dé"
     },
+    "cangjie": "HOAMI",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "忘": {
@@ -32763,12 +33037,14 @@
       "meaning": "to forget",
       "pinyin": "wàng"
     },
+    "cangjie": "YVP",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "忙": {
@@ -32977,12 +33253,14 @@
       "meaning": "busy",
       "pinyin": "máng"
     },
+    "cangjie": "PYV",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "快": {
@@ -33247,12 +33525,14 @@
       "meaning": "rapid",
       "pinyin": "kuài"
     },
+    "cangjie": "PDK",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "怎": {
@@ -33547,12 +33827,14 @@
       "meaning": "how",
       "pinyin": "zěn"
     },
+    "cangjie": "HSP",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "怕": {
@@ -33822,12 +34104,14 @@
       "meaning": "to be afraid",
       "pinyin": "pà"
     },
+    "cangjie": "PHA",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "息": {
@@ -34165,12 +34449,14 @@
       "meaning": "breath",
       "pinyin": "xī"
     },
+    "cangjie": "HUP",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "您": {
@@ -34519,12 +34805,14 @@
       "meaning": "you (courteous, as opposed to informal 你[ni3])",
       "pinyin": "nín"
     },
+    "cangjie": "OFP",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "想": {
@@ -34927,12 +35215,14 @@
       "meaning": "to think (about)",
       "pinyin": "xiǎng"
     },
+    "cangjie": "DUP",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "意": {
@@ -35321,12 +35611,14 @@
       "meaning": "idea; thought; meaning; sense",
       "pinyin": "yì"
     },
+    "cangjie": "YTAP",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "我": {
@@ -35599,12 +35891,14 @@
       "meaning": "I; me; my",
       "pinyin": "wǒ"
     },
+    "cangjie": "HQI",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "房": {
@@ -35891,12 +36185,14 @@
       "meaning": "house",
       "pinyin": "fáng"
     },
+    "cangjie": "HSYHS",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "所": {
@@ -36188,12 +36484,14 @@
       "meaning": "place",
       "pinyin": "suǒ"
     },
+    "cangjie": "HSHML",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "手": {
@@ -36353,12 +36651,14 @@
       "meaning": "hand",
       "pinyin": "shǒu"
     },
+    "cangjie": "Q",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "才": {
@@ -36517,12 +36817,14 @@
       "meaning": "ability; talent",
       "pinyin": "cái"
     },
+    "cangjie": "DH",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "打": {
@@ -36710,12 +37012,14 @@
       "meaning": "to hit; to strike",
       "pinyin": "dǎ"
     },
+    "cangjie": "QMN",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "找": {
@@ -37009,12 +37313,14 @@
       "meaning": "to try to find",
       "pinyin": "zhǎo"
     },
+    "cangjie": "QI",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "把": {
@@ -37311,12 +37617,14 @@
       "meaning": "to hold; to grasp",
       "pinyin": "bǎ"
     },
+    "cangjie": "QAU",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "拿": {
@@ -37704,12 +38012,14 @@
       "meaning": "to hold",
       "pinyin": "ná"
     },
+    "cangjie": "OMRQ",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "放": {
@@ -38016,12 +38326,14 @@
       "meaning": "to put",
       "pinyin": "fàng"
     },
+    "cangjie": "YSOK",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "教": {
@@ -38414,12 +38726,14 @@
       "meaning": "to teach; to instruct",
       "pinyin": "jiāo"
     },
+    "cangjie": "JDOK",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "文": {
@@ -38602,12 +38916,14 @@
       "meaning": "language",
       "pinyin": "wén"
     },
+    "cangjie": "YK",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "新": {
@@ -38966,12 +39282,14 @@
       "meaning": "new",
       "pinyin": "xīn"
     },
+    "cangjie": "YDHML",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "方": {
@@ -39157,12 +39475,14 @@
       "meaning": "square",
       "pinyin": "fāng"
     },
+    "cangjie": "YHS",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "旁": {
@@ -39484,12 +39804,14 @@
       "meaning": "one side",
       "pinyin": "páng"
     },
+    "cangjie": "YBYHS",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "日": {
@@ -39663,12 +39985,14 @@
       "meaning": "sun",
       "pinyin": "rì"
     },
+    "cangjie": "A",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "早": {
@@ -39883,12 +40207,14 @@
       "meaning": "early",
       "pinyin": "zǎo"
     },
+    "cangjie": "AJ",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "时": {
@@ -40127,12 +40453,14 @@
       "meaning": "time; hour; period; season",
       "pinyin": "shí"
     },
+    "cangjie": "ADI",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "明": {
@@ -40430,12 +40758,14 @@
       "meaning": "bright",
       "pinyin": "míng"
     },
+    "cangjie": "AB",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "星": {
@@ -40725,12 +41055,14 @@
       "meaning": "star",
       "pinyin": "xīng"
     },
+    "cangjie": "AHQM",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "昨": {
@@ -41033,12 +41365,14 @@
       "meaning": "yesterday",
       "pinyin": "zuó"
     },
+    "cangjie": "AHS",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "是": {
@@ -41355,12 +41689,14 @@
       "meaning": "to be (followed by substantives only)",
       "pinyin": "shì"
     },
+    "cangjie": "AMYO",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "晚": {
@@ -41739,12 +42075,14 @@
       "meaning": "evening",
       "pinyin": "wǎn"
     },
+    "cangjie": "ANAU",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "更": {
@@ -42026,12 +42364,14 @@
       "meaning": "to change or replace",
       "pinyin": "gēng"
     },
+    "cangjie": "MLWK",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "月": {
@@ -42212,12 +42552,14 @@
       "meaning": "moon",
       "pinyin": "yuè"
     },
+    "cangjie": "B",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "有": {
@@ -42460,12 +42802,14 @@
       "meaning": "to have; there is",
       "pinyin": "yǒu"
     },
+    "cangjie": "KB",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "朋": {
@@ -42771,12 +43115,14 @@
       "meaning": "friend",
       "pinyin": "péng"
     },
+    "cangjie": "BB",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "服": {
@@ -43130,12 +43476,14 @@
       "meaning": "clothes",
       "pinyin": "fú"
     },
+    "cangjie": "BSLE",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "期": {
@@ -43538,12 +43886,14 @@
       "meaning": "period",
       "pinyin": "qī"
     },
+    "cangjie": "TCB",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "木": {
@@ -43701,12 +44051,14 @@
       "meaning": "tree",
       "pinyin": "mù"
     },
+    "cangjie": "D",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "本": {
@@ -43911,12 +44263,14 @@
       "meaning": "classifier for books, periodicals, files etc",
       "pinyin": "běn"
     },
+    "cangjie": "DM",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "机": {
@@ -44190,12 +44544,14 @@
       "meaning": "machine; mechanism",
       "pinyin": "jī"
     },
+    "cangjie": "DHN",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "来": {
@@ -44419,12 +44775,14 @@
       "meaning": "to come",
       "pinyin": "lái"
     },
+    "cangjie": "DT",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "果": {
@@ -44683,12 +45041,14 @@
       "meaning": "fruit",
       "pinyin": "guǒ"
     },
+    "cangjie": "WD",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "树": {
@@ -44986,12 +45346,14 @@
       "meaning": "tree",
       "pinyin": "shù"
     },
+    "cangjie": "DEDI",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "样": {
@@ -45277,12 +45639,14 @@
       "meaning": "manner",
       "pinyin": "yàng"
     },
+    "cangjie": "DTQ",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "楼": {
@@ -45694,12 +46058,14 @@
       "meaning": "house with more than 1 story",
       "pinyin": "lóu"
     },
+    "cangjie": "DFDV",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "次": {
@@ -45938,12 +46304,14 @@
       "meaning": "classifier for enumerated events: time",
       "pinyin": "cì"
     },
+    "cangjie": "IMNO",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "欢": {
@@ -46197,12 +46565,14 @@
       "meaning": "joyous",
       "pinyin": "huān"
     },
+    "cangjie": "ENO",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "歌": {
@@ -46645,12 +47015,14 @@
       "meaning": "song (CL:首[shou3],支[zhi1])",
       "pinyin": "gē"
     },
+    "cangjie": "MRNO",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "正": {
@@ -46843,12 +47215,14 @@
       "meaning": "straight",
       "pinyin": "zhèng"
     },
+    "cangjie": "MYLM",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "每": {
@@ -47110,12 +47484,14 @@
       "meaning": "each",
       "pinyin": "měi"
     },
+    "cangjie": "OWYI",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "比": {
@@ -47318,12 +47694,14 @@
       "meaning": "to compare",
       "pinyin": "bǐ"
     },
+    "cangjie": "PP",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "气": {
@@ -47524,12 +47902,14 @@
       "meaning": "gas; air",
       "pinyin": "qì"
     },
+    "cangjie": "OMN",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "水": {
@@ -47724,12 +48104,14 @@
       "meaning": "water",
       "pinyin": "shuǐ"
     },
+    "cangjie": "E",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "汉": {
@@ -47929,12 +48311,14 @@
       "meaning": "Chinese (language)",
       "pinyin": "Hàn"
     },
+    "cangjie": "EE",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "汽": {
@@ -48183,12 +48567,14 @@
       "meaning": "steam",
       "pinyin": "qì"
     },
+    "cangjie": "EOMN",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "没": {
@@ -48491,12 +48877,14 @@
       "meaning": "(negative prefix for verbs) have not; not",
       "pinyin": "méi"
     },
+    "cangjie": "EHNE",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "洗": {
@@ -48803,12 +49191,14 @@
       "meaning": "to wash; to bathe",
       "pinyin": "xǐ"
     },
+    "cangjie": "EHGU",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "渴": {
@@ -49212,12 +49602,14 @@
       "meaning": "thirsty",
       "pinyin": "kě"
     },
+    "cangjie": "EAPV",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "火": {
@@ -49392,12 +49784,14 @@
       "meaning": "fire",
       "pinyin": "huǒ"
     },
+    "cangjie": "F",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "点": {
@@ -49674,12 +50068,14 @@
       "meaning": "(after a number) o'clock",
       "pinyin": "diǎn"
     },
+    "cangjie": "YRF",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "热": {
@@ -50024,12 +50420,14 @@
       "meaning": "hot (of weather)",
       "pinyin": "rè"
     },
+    "cangjie": "QIF",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "然": {
@@ -50383,12 +50781,14 @@
       "meaning": "so",
       "pinyin": "rán"
     },
+    "cangjie": "BKF",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "爱": {
@@ -50764,12 +51164,14 @@
       "meaning": "to love; to be fond of; to like",
       "pinyin": "ài"
     },
+    "cangjie": "BBKE",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "爸": {
@@ -51101,12 +51503,14 @@
       "meaning": "father",
       "pinyin": "bà"
     },
+    "cangjie": "CKAU",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "牛": {
@@ -51262,12 +51666,14 @@
       "meaning": "ox",
       "pinyin": "niú"
     },
+    "cangjie": "HQ",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "玩": {
@@ -51556,12 +51962,14 @@
       "meaning": "to play",
       "pinyin": "wán"
     },
+    "cangjie": "MGMMU",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "现": {
@@ -51880,12 +52288,14 @@
       "meaning": "now",
       "pinyin": "xiàn"
     },
+    "cangjie": "MGBHU",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "球": {
@@ -52203,12 +52613,14 @@
       "meaning": "ball",
       "pinyin": "qiú"
     },
+    "cangjie": "MGIJE",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "生": {
@@ -52406,12 +52818,14 @@
       "meaning": "to grow; to give birth; to produce; to be born",
       "pinyin": "shēng"
     },
+    "cangjie": "HQM",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "用": {
@@ -52603,12 +53017,14 @@
       "meaning": "to use; to make use of; to employ",
       "pinyin": "yòng"
     },
+    "cangjie": "BQ",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "电": {
@@ -52838,12 +53254,14 @@
       "meaning": "electricity",
       "pinyin": "diàn"
     },
+    "cangjie": "LWU",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "男": {
@@ -53122,12 +53540,14 @@
       "meaning": "male",
       "pinyin": "nán"
     },
+    "cangjie": "WKS",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "病": {
@@ -53469,12 +53889,14 @@
       "meaning": "illness",
       "pinyin": "bìng"
     },
+    "cangjie": "KMOB",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "白": {
@@ -53683,12 +54105,14 @@
       "meaning": "white",
       "pinyin": "bái"
     },
+    "cangjie": "HA",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "百": {
@@ -53922,12 +54346,14 @@
       "meaning": "hundred",
       "pinyin": "bǎi"
     },
+    "cangjie": "MA",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "的": {
@@ -54238,12 +54664,14 @@
       "meaning": "of; ~'s (possessive particle)",
       "pinyin": "de"
     },
+    "cangjie": "HAPI",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "看": {
@@ -54574,12 +55002,14 @@
       "meaning": "to see; to look at",
       "pinyin": "kàn"
     },
+    "cangjie": "HQBU",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "真": {
@@ -54898,12 +55328,14 @@
       "meaning": "really",
       "pinyin": "zhēn"
     },
+    "cangjie": "JBMC",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "着": {
@@ -55258,12 +55690,14 @@
       "meaning": "aspect particle indicating action in progress or ongoing state",
       "pinyin": "zhe"
     },
+    "cangjie": "TQBU",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "睡": {
@@ -55680,12 +56114,14 @@
       "meaning": "to sleep",
       "pinyin": "shuì"
     },
+    "cangjie": "BUHJM",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "知": {
@@ -55964,12 +56400,14 @@
       "meaning": "to know",
       "pinyin": "zhī"
     },
+    "cangjie": "OKR",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "票": {
@@ -56317,12 +56755,14 @@
       "meaning": "ticket",
       "pinyin": "piào"
     },
+    "cangjie": "MWMMF",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "穿": {
@@ -56622,12 +57062,14 @@
       "meaning": "to wear; to put on (clothes, shoes etc.)",
       "pinyin": "chuān"
     },
+    "cangjie": "JCMVH",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "站": {
@@ -56926,12 +57368,14 @@
       "meaning": "station",
       "pinyin": "zhàn"
     },
+    "cangjie": "YTYR",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "笑": {
@@ -57230,12 +57674,14 @@
       "meaning": "to laugh; to smile",
       "pinyin": "xiào"
     },
+    "cangjie": "HHK",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "第": {
@@ -57598,12 +58044,14 @@
       "meaning": "(prefix indicating ordinal number, as in 第六[di4 liu4] \"sixth\")",
       "pinyin": "dì"
     },
+    "cangjie": "HNLH",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "等": {
@@ -57950,12 +58398,14 @@
       "meaning": "to wait for; to await",
       "pinyin": "děng"
     },
+    "cangjie": "HGDI",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "答": {
@@ -58309,12 +58759,14 @@
       "meaning": "to answer",
       "pinyin": "dá"
     },
+    "cangjie": "HOMR",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "系": {
@@ -58587,12 +59039,14 @@
       "meaning": "to connect",
       "pinyin": "xì"
     },
+    "cangjie": "HVIF",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "累": {
@@ -58956,12 +59410,14 @@
       "meaning": "tired",
       "pinyin": "lèi"
     },
+    "cangjie": "WVIF",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "绍": {
@@ -59264,12 +59720,14 @@
       "meaning": "to continue",
       "pinyin": "shào"
     },
+    "cangjie": "VMSHR",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "给": {
@@ -59590,12 +60048,14 @@
       "meaning": "to give",
       "pinyin": "gěi"
     },
+    "cangjie": "VMOMR",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "网": {
@@ -59843,12 +60303,14 @@
       "meaning": "net; web",
       "pinyin": "wǎng"
     },
+    "cangjie": "BKK",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "老": {
@@ -60112,12 +60574,14 @@
       "meaning": "old (of people)",
       "pinyin": "lǎo"
     },
+    "cangjie": "JKP",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "考": {
@@ -60384,12 +60848,14 @@
       "meaning": "to take an exam",
       "pinyin": "kǎo"
     },
+    "cangjie": "JKYS",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "而": {
@@ -60582,12 +61048,14 @@
       "meaning": "and",
       "pinyin": "ér"
     },
+    "cangjie": "MBLL",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "肉": {
@@ -60843,12 +61311,14 @@
       "meaning": "meat",
       "pinyin": "ròu"
     },
+    "cangjie": "OBO",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "能": {
@@ -61256,12 +61726,14 @@
       "meaning": "can",
       "pinyin": "néng"
     },
+    "cangjie": "IBPP",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "花": {
@@ -61533,12 +62005,14 @@
       "meaning": "flower",
       "pinyin": "huā"
     },
+    "cangjie": "TOP",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "茶": {
@@ -61832,12 +62306,14 @@
       "meaning": "tea",
       "pinyin": "chá"
     },
+    "cangjie": "TOD",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "菜": {
@@ -62150,12 +62626,14 @@
       "meaning": "vegetable; greens (CL:棵[ke1])",
       "pinyin": "cài"
     },
+    "cangjie": "TBD",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "蛋": {
@@ -62508,12 +62986,14 @@
       "meaning": "egg",
       "pinyin": "dàn"
     },
+    "cangjie": "NOLMI",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "行": {
@@ -62752,12 +63232,14 @@
       "meaning": "to walk; to go; to travel",
       "pinyin": "xíng"
     },
+    "cangjie": "HOMMN",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "衣": {
@@ -62964,12 +63446,14 @@
       "meaning": "clothes",
       "pinyin": "yī"
     },
+    "cangjie": "YHV",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "西": {
@@ -63219,12 +63703,14 @@
       "meaning": "west",
       "pinyin": "xī"
     },
+    "cangjie": "MCW",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "要": {
@@ -63537,12 +64023,14 @@
       "meaning": "to want; to need; to ask for",
       "pinyin": "yào"
     },
+    "cangjie": "MWV",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "见": {
@@ -63768,12 +64256,14 @@
       "meaning": "to see",
       "pinyin": "jiàn"
     },
+    "cangjie": "BLU",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "视": {
@@ -64105,12 +64595,14 @@
       "meaning": "(literary, or bound form) to look at",
       "pinyin": "shì"
     },
+    "cangjie": "IFBHU",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "觉": {
@@ -64462,12 +64954,14 @@
       "meaning": "to feel",
       "pinyin": "jué"
     },
+    "cangjie": "FBBHU",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "认": {
@@ -64656,12 +65150,14 @@
       "meaning": "to recognize",
       "pinyin": "rèn"
     },
+    "cangjie": "IVO",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "让": {
@@ -64855,12 +65351,14 @@
       "meaning": "to yield",
       "pinyin": "ràng"
     },
+    "cangjie": "IVYM",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "记": {
@@ -65089,12 +65587,14 @@
       "meaning": "to record",
       "pinyin": "jì"
     },
+    "cangjie": "IVSU",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "识": {
@@ -65356,12 +65856,14 @@
       "meaning": "to know",
       "pinyin": "shí"
     },
+    "cangjie": "IVRC",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "诉": {
@@ -65619,12 +66121,14 @@
       "meaning": "to complain",
       "pinyin": "sù"
     },
+    "cangjie": "IVHMY",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "试": {
@@ -65907,12 +66411,14 @@
       "meaning": "to test",
       "pinyin": "shì"
     },
+    "cangjie": "IVIPM",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "话": {
@@ -66206,12 +66712,14 @@
       "meaning": "spoken words",
       "pinyin": "huà"
     },
+    "cangjie": "IVHJR",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "该": {
@@ -66506,12 +67014,14 @@
       "meaning": "should",
       "pinyin": "gāi"
     },
+    "cangjie": "IVYVO",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "语": {
@@ -66812,12 +67322,14 @@
       "meaning": "language",
       "pinyin": "yǔ"
     },
+    "cangjie": "IVMMR",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "说": {
@@ -67152,12 +67664,14 @@
       "meaning": "to speak; to talk; to say",
       "pinyin": "shuō"
     },
+    "cangjie": "IVCRU",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "请": {
@@ -67512,12 +68026,14 @@
       "meaning": "to ask",
       "pinyin": "qǐng"
     },
+    "cangjie": "IVQMB",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "课": {
@@ -67844,12 +68360,14 @@
       "meaning": "lesson",
       "pinyin": "kè"
     },
+    "cangjie": "IVWD",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "谁": {
@@ -68181,12 +68699,14 @@
       "meaning": "who",
       "pinyin": "shéi"
     },
+    "cangjie": "IVOG",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "谢": {
@@ -68574,12 +69094,14 @@
       "meaning": "to thank",
       "pinyin": "xiè"
     },
+    "cangjie": "IVHHI",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "贵": {
@@ -68908,12 +69430,14 @@
       "meaning": "expensive",
       "pinyin": "guì"
     },
+    "cangjie": "LMBO",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "走": {
@@ -69148,12 +69672,14 @@
       "meaning": "to walk",
       "pinyin": "zǒu"
     },
+    "cangjie": "GYO",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "起": {
@@ -69535,12 +70061,14 @@
       "meaning": "to rise",
       "pinyin": "qǐ"
     },
+    "cangjie": "GORU",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "跑": {
@@ -69964,12 +70492,14 @@
       "meaning": "to run",
       "pinyin": "pǎo"
     },
+    "cangjie": "RMPRU",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "跟": {
@@ -70391,12 +70921,14 @@
       "meaning": "with",
       "pinyin": "gēn"
     },
+    "cangjie": "RMAV",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "路": {
@@ -70816,12 +71348,14 @@
       "meaning": "road (CL:條|条[tiao2])",
       "pinyin": "lù"
     },
+    "cangjie": "RMHER",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "身": {
@@ -71078,12 +71612,14 @@
       "meaning": "body",
       "pinyin": "shēn"
     },
+    "cangjie": "HXH",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "车": {
@@ -71264,12 +71800,14 @@
       "meaning": "car",
       "pinyin": "chē"
     },
+    "cangjie": "JQ",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "边": {
@@ -71531,12 +72069,14 @@
       "meaning": "side",
       "pinyin": "biān"
     },
+    "cangjie": "YKS",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "过": {
@@ -71803,12 +72343,14 @@
       "meaning": "to cross",
       "pinyin": "guò"
     },
+    "cangjie": "YDI",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "还": {
@@ -72092,12 +72634,14 @@
       "meaning": "still",
       "pinyin": "hái"
     },
+    "cangjie": "YMF",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "这": {
@@ -72370,12 +72914,14 @@
       "meaning": "(pronoun) this; these",
       "pinyin": "zhè"
     },
+    "cangjie": "YYK",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "进": {
@@ -72666,12 +73212,14 @@
       "meaning": "to go forward",
       "pinyin": "jìn"
     },
+    "cangjie": "YTT",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "远": {
@@ -72975,12 +73523,14 @@
       "meaning": "far",
       "pinyin": "yuǎn"
     },
+    "cangjie": "YMMU",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "送": {
@@ -73303,12 +73853,14 @@
       "meaning": "to send; to deliver; to transmit",
       "pinyin": "sòng"
     },
+    "cangjie": "YTK",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "道": {
@@ -73707,12 +74259,14 @@
       "meaning": "road; path (CL:條|条[tiao2],股[gu3])",
       "pinyin": "dào"
     },
+    "cangjie": "YTHU",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "那": {
@@ -73986,12 +74540,14 @@
       "meaning": "(specifier) that; the; those (colloquial pr. [nei4])",
       "pinyin": "nà"
     },
+    "cangjie": "SQNL",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "都": {
@@ -74346,12 +74902,14 @@
       "meaning": "all; both; entirely",
       "pinyin": "dōu"
     },
+    "cangjie": "JANL",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "酒": {
@@ -74669,12 +75227,14 @@
       "meaning": "wine (esp. rice wine)",
       "pinyin": "jiǔ"
     },
+    "cangjie": "EMCW",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "里": {
@@ -74917,12 +75477,14 @@
       "meaning": "inside",
       "pinyin": "lǐ"
     },
+    "cangjie": "WG",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "钱": {
@@ -75281,12 +75843,14 @@
       "meaning": "coin",
       "pinyin": "qián"
     },
+    "cangjie": "CIJ",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "错": {
@@ -75710,12 +76274,14 @@
       "meaning": "mistake",
       "pinyin": "cuò"
     },
+    "cangjie": "XCTA",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "长": {
@@ -75894,12 +76460,14 @@
       "meaning": "long",
       "pinyin": "cháng"
     },
+    "cangjie": "LHMO",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "门": {
@@ -76052,12 +76620,14 @@
       "meaning": "gate; door; doorway; gateway; opening (CL:扇[shan4])",
       "pinyin": "mén"
     },
+    "cangjie": "ILS",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "问": {
@@ -76301,12 +76871,14 @@
       "meaning": "to ask; to inquire",
       "pinyin": "wèn"
     },
+    "cangjie": "LSR",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "间": {
@@ -76584,12 +77156,14 @@
       "meaning": "between",
       "pinyin": "jiān"
     },
+    "cangjie": "ISA",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "院": {
@@ -76956,12 +77530,14 @@
       "meaning": "courtyard",
       "pinyin": "yuàn"
     },
+    "cangjie": "NLJMU",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "难": {
@@ -77290,12 +77866,14 @@
       "meaning": "difficult (to...)",
       "pinyin": "nán"
     },
+    "cangjie": "EOG",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "雨": {
@@ -77554,12 +78132,14 @@
       "meaning": "rain",
       "pinyin": "yǔ"
     },
+    "cangjie": "MLBY",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "零": {
@@ -77965,12 +78545,14 @@
       "meaning": "zero",
       "pinyin": "líng"
     },
+    "cangjie": "MBOII",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "非": {
@@ -78215,12 +78797,14 @@
       "meaning": "to not be; not",
       "pinyin": "fēi"
     },
+    "cangjie": "LMYYY",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "面": {
@@ -78506,12 +79090,14 @@
       "meaning": "face",
       "pinyin": "miàn"
     },
+    "cangjie": "MWYL",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "飞": {
@@ -78674,12 +79260,14 @@
       "meaning": "to fly",
       "pinyin": "fēi"
     },
+    "cangjie": "NO",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "饭": {
@@ -78982,12 +79570,14 @@
       "meaning": "cooked rice",
       "pinyin": "fàn"
     },
+    "cangjie": "NVHE",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "饿": {
@@ -79350,12 +79940,14 @@
       "meaning": "hungry",
       "pinyin": "è"
     },
+    "cangjie": "NVHQI",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "马": {
@@ -79536,12 +80128,14 @@
       "meaning": "horse",
       "pinyin": "mǎ"
     },
+    "cangjie": "NVSM",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "高": {
@@ -79878,12 +80472,14 @@
       "meaning": "high",
       "pinyin": "gāo"
     },
+    "cangjie": "YRBR",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "鸡": {
@@ -80201,12 +80797,14 @@
       "meaning": "fowl",
       "pinyin": "jī"
     },
+    "cangjie": "EPYM",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   },
   "黑": {
@@ -80513,12 +81111,14 @@
       "meaning": "black",
       "pinyin": "hēi"
     },
+    "cangjie": "WGF",
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
       "strokeCount": "hanzi-writer-data",
       "strokeData": "hanzi-writer-data",
-      "decomposition": "make-me-a-hanzi"
+      "decomposition": "make-me-a-hanzi",
+      "cangjie": "unihan"
     }
   }
 }

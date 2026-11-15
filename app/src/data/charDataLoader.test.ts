@@ -41,7 +41,9 @@ function validRecord(char: string): CharacterRecord {
       components: [char],
     },
     prompt: { meaning: 'you', pinyin: 'nǐ' },
+    cangjie: 'ON',
     sources: {
+      cangjie: 'unihan',
       pinyin: 'cc-cedict',
       meanings: 'cc-cedict',
       strokeCount: 'hanzi-writer-data',
@@ -181,6 +183,7 @@ describe('loadDataset: invalid-shape', () => {
     'strokeData',
     'decomposition',
     'prompt',
+    'cangjie',
     'sources',
   ])('record missing %s', async (field) => {
     const rec = validRecord('人') as unknown as Mutable;
@@ -201,6 +204,9 @@ describe('loadDataset: invalid-shape', () => {
     ['empty prompt.meaning', (r) => (r.prompt.meaning = '')],
     ['missing prompt.pinyin', (r) => delete r.prompt.pinyin],
     ['character differs from key', (r) => (r.character = '大')],
+    ['lower-case cangjie', (r) => (r.cangjie = 'on')],
+    ['six-key cangjie', (r) => (r.cangjie = 'ABCDEF')],
+    ['non-string cangjie', (r) => (r.cangjie = 42)],
   ];
 
   it.each(mutations)('%s', async (_name, mutate) => {
@@ -208,6 +214,14 @@ describe('loadDataset: invalid-shape', () => {
     mutate(rec);
     stubFetchBody({ 人: rec });
     await expect(loadDataset()).resolves.toEqual(invalid);
+  });
+
+  it.each([['null', null], ['a valid code', 'ON']])('accepts cangjie %s', async (_n, value) => {
+    const rec = validRecord('人') as unknown as Mutable;
+    rec.cangjie = value;
+    stubFetchBody({ 人: rec });
+    const res = await loadDataset();
+    expect(res.ok).toBe(true);
   });
 
   it('one bad record among many good ones fails the whole load', async () => {

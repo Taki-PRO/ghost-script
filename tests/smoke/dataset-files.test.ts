@@ -7,9 +7,11 @@
 // (tests/smoke/ is two directories below the root).
 //
 // _Requirements: 2.1, 2.2, 2.3_
-import { existsSync, statSync, readdirSync } from 'node:fs';
+import { existsSync, statSync, readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, it, expect } from 'vitest';
+
+import { readRecordedSha256 } from '../../scripts/lib/verify-sha256';
 
 // This file lives in tests/smoke/, so the repo root is two directories up.
 const repoRootUrl = new URL('../../', import.meta.url);
@@ -70,6 +72,28 @@ describe('raw dataset assets and licences are present on disk', () => {
     it('has its LICENSE file', () => {
       const licence = fromRoot('data/raw/cc-cedict/LICENSE');
       expect(isFile(licence), `expected licence file to exist: ${licence}`).toBe(true);
+    });
+  });
+
+  describe('Unihan (Cangjie codes, Unicode License V3)', () => {
+    it('has Unihan_DictionaryLikeData.txt', () => {
+      const file = fromRoot('data/raw/unihan/Unihan_DictionaryLikeData.txt');
+      expect(isFile(file), `expected Unihan file to exist: ${file}`).toBe(true);
+    });
+
+    it('has its LICENSE file', () => {
+      const licence = fromRoot('data/raw/unihan/LICENSE');
+      expect(isFile(licence), `expected licence file to exist: ${licence}`).toBe(true);
+    });
+
+    it('has a Unihan section in SOURCES.md with both recorded SHA-256 hashes', () => {
+      const md = readFileSync(fromRoot('data/raw/SOURCES.md'), 'utf8');
+      expect(md).toMatch(/^## Unihan/m);
+      for (const label of ['Unihan.zip', 'Unihan_DictionaryLikeData.txt']) {
+        expect(readRecordedSha256(md, label), `recorded hash for ${label}`).toMatch(
+          /^[0-9a-fA-F]{64}$/,
+        );
+      }
     });
   });
 

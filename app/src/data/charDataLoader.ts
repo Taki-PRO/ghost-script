@@ -1,4 +1,5 @@
 import type { CharDataLoaderFn } from 'hanzi-writer';
+import { isValidCangjieCode } from '../engine/cangjieRules';
 import type { CharacterRecord, StrokeData } from './types';
 
 /** In-memory dataset keyed by character (insertion order = JSON key order). */
@@ -81,6 +82,10 @@ function isPrompt(v: unknown): boolean {
   return isPlainObject(v) && isNonEmptyString(v.meaning) && isNonEmptyString(v.pinyin);
 }
 
+function isCangjie(v: unknown): boolean {
+  return v === null || (typeof v === 'string' && isValidCangjieCode(v));
+}
+
 function isCharacterRecord(v: unknown): v is CharacterRecord {
   if (!isPlainObject(v)) return false;
   return (
@@ -93,6 +98,7 @@ function isCharacterRecord(v: unknown): v is CharacterRecord {
     isStrokeData(v.strokeData) &&
     isDecomposition(v.decomposition) &&
     isPrompt(v.prompt) &&
+    isCangjie(v.cangjie) &&
     isPlainObject(v.sources)
   );
 }

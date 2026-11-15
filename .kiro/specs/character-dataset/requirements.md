@@ -99,9 +99,9 @@ The character-dataset feature builds the data pipeline that produces `app/public
 
 ---
 
-### Requirement 5: Dataset Property-Based Tests
+### Requirement 5: Dataset Tests
 
-**User Story:** As a developer, I want a property-based test suite using fast-check that verifies the invariants of the generated dataset, so that data errors are caught automatically and judges can trust the character data.
+**User Story:** As a developer, I want a test suite that verifies the invariants of the generated dataset, using fast-check property tests for the original checks and plain unit tests for checks added later (per the Nov 15 decision in tech.md, no new property tests), so that data errors are caught automatically and judges can trust the character data.
 
 #### Acceptance Criteria
 
@@ -114,9 +114,9 @@ The character-dataset feature builds the data pipeline that produces `app/public
 7. THE Test_Suite SHALL include a property test asserting that the sequence of components revealed by the hint engine for a character is a subsequence of (and contains only components drawn from) the non-null leaf components of that character's `decomposition` field as returned by the engine module in `src/engine/`.
 8. THE Test_Suite SHALL include a determinism test that invokes the Pipeline function (or reads two separately produced output files) with identical inputs and asserts byte-for-byte string equality between the two resulting `characters.json` contents; "identical inputs" means the same `character-list.txt` content, the same raw dataset files (verified by content hash), and no environment-variable differences that affect output.
 9. THE Test_Suite SHALL be runnable with `npm test` from the repository root and SHALL complete without network access after the raw datasets are present in `data/raw/`.
-10. THE Test_Suite SHALL include a property test asserting that every CharacterRecord whose `cangjie` field is non-null has a `cangjie` value matching `^[A-Y]{1,5}$`. *(Added by cangjie-seance Requirement 1)*
-11. THE Test_Suite SHALL include a property test asserting that, for every CharacterRecord, `sources.cangjie` equals `"unihan"` if and only if `cangjie` is non-null. *(Added by cangjie-seance Requirement 1)*
-12. THE Test_Suite SHALL include a property test asserting that every non-null `cangjie` value equals the raw Unihan `kCangjie` value for that character. *(Added by cangjie-seance Requirement 1)*
+10. THE Test_Suite SHALL include an exhaustive unit test over all 300 records asserting that every non-null `cangjie` matches `^[A-Y]{1,5}$`, that `sources.cangjie` is `"unihan"` exactly when `cangjie` is non-null, and that every non-null `cangjie` equals the raw Unihan `kCangjie` value for that character (Amended by cangjie-seance; no new property tests, per tech.md).
+11. *(Withdrawn: merged into AC 5.10 as a unit test; number kept so existing references stay stable.)*
+12. *(Withdrawn: merged into AC 5.10 as a unit test; number kept so existing references stay stable.)*
 
 ---
 

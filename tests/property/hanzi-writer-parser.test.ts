@@ -111,6 +111,7 @@ describe('Property 6: stroke data extraction round-trip', () => {
             dummyMakeMeAHanzi(character),
             dummyCcCedict(),
             DUMMY_PROMPT,
+            null,
           );
 
           expect(merged.ok).toBe(true);

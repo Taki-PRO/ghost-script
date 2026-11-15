@@ -24,11 +24,19 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import type {
   BuildOptions,
   BuildResult,
+  CangjieError,
   CharacterRecord,
   MissingFieldError,
   Prompt,
 } from '../app/src/data/types';
 
+import { isPlayableInCangjie, isValidCangjieCode } from '../app/src/engine/cangjieRules';
+import { parseUnihanCangjie } from './lib/parse-unihan';
+import {
+  Sha256MismatchError,
+  readRecordedSha256,
+  verifyFileSha256,
+} from './lib/verify-sha256';
 import { parseCharacterList } from './lib/parse-character-list';
 import { parseHanziWriterData } from './lib/parse-hanzi-writer-data';
 import { parseMakeMeAHanzi } from './lib/parse-make-me-a-hanzi';
@@ -76,6 +84,7 @@ export async function buildDataset(opts: BuildOptions): Promise<BuildResult> {
     opts.hanziWriterDataDir,
     opts.makeMeAHanziPath,
     opts.ccCedictPath,
+    opts.unihanPath,
   ]) {
     if (!existsSync(path)) {
       missingInputs.push(path);
@@ -112,6 +121,11 @@ export async function buildDataset(opts: BuildOptions): Promise<BuildResult> {
   const ccCedictRaw = await readFile(opts.ccCedictPath, 'utf8');
   const ccCedict = parseCcCedict(ccCedictRaw);
 
+  // Verify the Unihan file's SHA-256 BEFORE reading its contents, then parse.
+  await verifyFileSha256(opts.unihanPath, opts.unihanSha256);
+  const unihanRaw = await readFile(opts.unihanPath, 'utf8');
+  const unihan = parseUnihanCangjie(unihanRaw);
+
   // 4. Read prompt overrides when provided and present. An absent path or
   //    missing file means an empty overrides map. A parse failure (shape /
   //    reviewer / duplicate) is an input-validation failure → throw.
@@ -135,8 +149,42 @@ export async function buildDataset(opts: BuildOptions): Promise<BuildResult> {
   // 5. Fail-slow pass: process EVERY character before deciding.
   const records = new Map<string, CharacterRecord>();
   const errors: MissingFieldError[] = [];
+  const cangjieErrors: CangjieError[] = [];
+  const cangjieMissing: string[] = [];
+  const notPlayable: string[] = [];
 
   for (const char of characters) {
+    // Cangjie: verbatim Unihan value, validated, never derived (fail-slow).
+    const cangjieValues = unihan.get(char) ?? [];
+    let cangjie: string | null = null;
+    if (cangjieValues.length > 1) {
+      cangjieErrors.push({
+        character: char,
+        values: [...cangjieValues],
+        reason: 'multiple-values',
+      });
+    } else if (cangjieValues.length === 1) {
+      const value = cangjieValues[0] as string;
+      if (isValidCangjieCode(value)) {
+        cangjie = value;
+      } else {
+        cangjieErrors.push({
+          character: char,
+          values: [value],
+          reason: 'invalid-format',
+        });
+      }
+    }
+    const cangjieFailed = cangjieErrors.some((e) => e.character === char);
+    if (!cangjieFailed) {
+      if (cangjie === null) {
+        cangjieMissing.push(char);
+      }
+      if (!isPlayableInCangjie(cangjie)) {
+        notPlayable.push(char);
+      }
+    }
+
     const cc = ccCedict.get(char);
     const override = overrides.get(char);
 
@@ -194,6 +242,7 @@ export async function buildDataset(opts: BuildOptions): Promise<BuildResult> {
       makeMeAHanzi.get(char),
       cc,
       prompt as Prompt,
+      cangjie,
     );
     if (merged.ok) {
       records.set(char, merged.record);
@@ -207,8 +256,8 @@ export async function buildDataset(opts: BuildOptions): Promise<BuildResult> {
   //    override errors are appended after the in-list errors; in-list errors
   //    are already in character-list order (the loop preserves it).
   const allErrors = [...errors, ...unknownOverrideErrors];
-  if (allErrors.length > 0) {
-    return { ok: false, errors: allErrors };
+  if (allErrors.length > 0 || cangjieErrors.length > 0) {
+    return { ok: false, errors: allErrors, cangjieErrors };
   }
 
   // 7. Serialise and verify the output record count matches the list length.
@@ -223,7 +272,7 @@ export async function buildDataset(opts: BuildOptions): Promise<BuildResult> {
   // Compute the prompt-review CSV in character-list order.
   const promptReviewCsv = buildPromptReviewCsv(characters, ccCedict, overrides);
 
-  return { ok: true, output, promptReviewCsv };
+  return { ok: true, output, promptReviewCsv, cangjieMissing, notPlayable };
 }
 
 /**
@@ -412,6 +461,28 @@ function repoRoot(): string {
  */
 async function main(): Promise<void> {
   const root = repoRoot();
+  const unihanFile = 'Unihan_DictionaryLikeData.txt';
+  const sourcesPath = join(root, 'data/raw/SOURCES.md');
+  let unihanSha256: string | null = null;
+  try {
+    unihanSha256 = readRecordedSha256(
+      await readFile(sourcesPath, 'utf8'),
+      unihanFile,
+    );
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    process.stderr.write(`Error: cannot read ${sourcesPath}: ${message}\n`);
+    process.exitCode = 1;
+    return;
+  }
+  if (unihanSha256 === null) {
+    process.stderr.write(
+      `Error: no recorded SHA-256 for ${unihanFile} in ${sourcesPath}. No output written.\n`,
+    );
+    process.exitCode = 1;
+    return;
+  }
+
   const opts: BuildOptions = {
     characterListPath: join(root, 'data/character-list.txt'),
     hanziWriterDataDir: join(root, 'data/raw/hanzi-writer-data'),
@@ -419,6 +490,8 @@ async function main(): Promise<void> {
     ccCedictPath: join(root, 'data/raw/cc-cedict/cedict_ts.u8'),
     promptOverridesPath: join(root, 'data/prompt-overrides.csv'),
     promptReviewPath: join(root, 'data/prompt-review.csv'),
+    unihanPath: join(root, 'data/raw/unihan', unihanFile),
+    unihanSha256,
   };
 
   let result: BuildResult;
@@ -426,17 +499,27 @@ async function main(): Promise<void> {
     result = await buildDataset(opts);
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    process.stderr.write(`Error: ${message}\n`);
+    const prefix =
+      err instanceof Sha256MismatchError ? 'Error (Unihan hash check): ' : 'Error: ';
+    process.stderr.write(`${prefix}${message}\n`);
     process.exitCode = 1;
     return;
   }
 
   if (!result.ok) {
-    const lines = result.errors.map((e) => formatError(e));
-    process.stderr.write(
-      `${result.errors.length} character(s) could not be built:\n`,
-    );
-    process.stderr.write(`${lines.join('\n')}\n`);
+    if (result.errors.length > 0) {
+      const lines = result.errors.map((e) => formatError(e));
+      process.stderr.write(
+        `${result.errors.length} character(s) could not be built:\n`,
+      );
+      process.stderr.write(`${lines.join('\n')}\n`);
+    }
+    if (result.cangjieErrors.length > 0) {
+      process.stderr.write(
+        `${result.cangjieErrors.length} character(s) have an unusable Cangjie code:\n`,
+      );
+      process.stderr.write(`${formatCangjieErrors(result.cangjieErrors)}\n`);
+    }
     process.stderr.write(`\nNo output written.\n`);
     process.exitCode = 1;
     return;
@@ -453,9 +536,38 @@ async function main(): Promise<void> {
   const count = Object.keys(JSON.parse(result.output) as object).length;
   process.stdout.write(
     `Built ${count} character(s) → ${outputPath}\n` +
+      formatCangjieSummary(count, result.cangjieMissing, result.notPlayable) +
       `All required fields (pinyin, meanings, strokeCount, strokeData, decomposition) and prompt are non-null.\n` +
       `Wrote prompt review → ${reviewPath}\n`,
   );
+}
+
+/**
+ * The four Cangjie lines of the success summary: coverage, characters without
+ * a code, the Playable count, and the characters that are not Playable.
+ */
+export function formatCangjieSummary(
+  count: number,
+  cangjieMissing: readonly string[],
+  notPlayable: readonly string[],
+): string {
+  const withCode = count - cangjieMissing.length;
+  const playable = count - notPlayable.length;
+  const missingText = cangjieMissing.length === 0 ? 'none' : cangjieMissing.join(' ');
+  const notPlayableText = notPlayable.length === 0 ? 'none' : notPlayable.join(' ');
+  return (
+    `Cangjie code: ${withCode} of ${count} characters have one.\n` +
+    `Without a Cangjie code: ${missingText}\n` +
+    `Playable in Cangjie: ${playable} of ${count}\n` +
+    `Not playable in Cangjie: ${notPlayableText}\n`
+  );
+}
+
+/** One line per failing character: `character: values (reason)`. */
+export function formatCangjieErrors(errors: readonly CangjieError[]): string {
+  return errors
+    .map((e) => `${e.character}: ${e.values.join(', ')} (${e.reason})`)
+    .join('\n');
 }
 
 /** Atomically write `content` to `path` via a temp file + rename. */

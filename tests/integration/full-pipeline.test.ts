@@ -32,6 +32,7 @@ import {
   type CcCedictEntry,
 } from '../../scripts/lib/parse-cc-cedict';
 import { numberedToToneMarks } from '../../scripts/lib/prompt';
+import { readRecordedSha256 } from '../../scripts/lib/verify-sha256';
 
 // --- Path resolution (relative to repo root via import.meta.url) ------------
 
@@ -46,17 +47,26 @@ const HANZI_WRITER_DATA_DIR = atRoot('data/raw/hanzi-writer-data');
 const MAKE_ME_A_HANZI_PATH = atRoot('data/raw/make-me-a-hanzi/dictionary.txt');
 const CC_CEDICT_PATH = atRoot('data/raw/cc-cedict/cedict_ts.u8');
 const PROMPT_OVERRIDES_PATH = atRoot('data/prompt-overrides.csv');
+const UNIHAN_FILE = 'Unihan_DictionaryLikeData.txt';
+const UNIHAN_PATH = atRoot(`data/raw/unihan/${UNIHAN_FILE}`);
+const SOURCES_MD_PATH = atRoot('data/raw/SOURCES.md');
 
-const BUILD_OPTIONS: BuildOptions = {
-  characterListPath: CHARACTER_LIST_PATH,
-  hanziWriterDataDir: HANZI_WRITER_DATA_DIR,
-  makeMeAHanziPath: MAKE_ME_A_HANZI_PATH,
-  ccCedictPath: CC_CEDICT_PATH,
-  promptOverridesPath: PROMPT_OVERRIDES_PATH,
-  // NOTE: no promptReviewPath — buildDataset does not write it. main() writes
-  // data/prompt-review.csv; this test uses result.promptReviewCsv directly and
-  // never touches the real file.
-};
+const CANGJIE_CODE = /^[A-Y]{1,5}$/;
+
+function buildOptions(unihanSha256: string): BuildOptions {
+  return {
+    characterListPath: CHARACTER_LIST_PATH,
+    hanziWriterDataDir: HANZI_WRITER_DATA_DIR,
+    makeMeAHanziPath: MAKE_ME_A_HANZI_PATH,
+    ccCedictPath: CC_CEDICT_PATH,
+    promptOverridesPath: PROMPT_OVERRIDES_PATH,
+    unihanPath: UNIHAN_PATH,
+    unihanSha256,
+    // NOTE: no promptReviewPath — buildDataset does not write it. main() writes
+    // data/prompt-review.csv; this test uses result.promptReviewCsv directly and
+    // never touches the real file.
+  };
+}
 
 const REVIEW_HEADER =
   'character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives';
@@ -248,15 +258,24 @@ let records: Map<string, CharacterRecord>;
 let characterListRaw: string;
 let ccCedict: Map<string, CcCedictEntry>;
 let overrideCharacters: Set<string>;
+let cangjieMissing: string[];
+let notPlayable: string[];
 
 beforeAll(async () => {
-  const result = await buildDataset(BUILD_OPTIONS);
+  const sourcesMd = await readFile(SOURCES_MD_PATH, 'utf8');
+  const unihanSha256 = readRecordedSha256(sourcesMd, UNIHAN_FILE);
+  if (unihanSha256 === null) {
+    throw new Error(`no recorded SHA-256 for ${UNIHAN_FILE} in SOURCES.md`);
+  }
+  const result = await buildDataset(buildOptions(unihanSha256));
   if (!result.ok) {
     throw new Error(
       `buildDataset failed on real data:\n${JSON.stringify(result.errors, null, 2)}`,
     );
   }
   output = result.output;
+  cangjieMissing = result.cangjieMissing;
+  notPlayable = result.notPlayable;
   promptReviewCsv = result.promptReviewCsv;
   records = parseRecords(output);
 
@@ -540,5 +559,33 @@ describe('real-data property checks (all 300 records)', () => {
         `${char} prompt {meaning:"${record.prompt.meaning}", pinyin:"${record.prompt.pinyin}"} comes from a single CC-CEDICT entry`,
       ).toBeGreaterThanOrEqual(0);
     }
+  });
+});
+
+// --- Part 3: Cangjie field --------------------------------------------------
+
+describe('full pipeline — Cangjie codes', () => {
+  it('every record has cangjie as a [A-Y]{1,5} string or null, with consistent sources.cangjie', () => {
+    const raw = JSON.parse(output) as Record<string, Record<string, unknown>>;
+    expect(Object.keys(raw).length).toBe(300);
+    for (const [char, rec] of Object.entries(raw)) {
+      const cangjie = rec.cangjie;
+      const sources = rec.sources as Record<string, unknown>;
+      if (cangjie === null) {
+        expect(sources.cangjie, `${char} null code is marked missing`).toBe('missing');
+      } else {
+        expect(typeof cangjie, `${char} cangjie is a string`).toBe('string');
+        expect(CANGJIE_CODE.test(cangjie as string), `${char} code "${String(cangjie)}" shape`).toBe(true);
+        expect(sources.cangjie, `${char} code is sourced from unihan`).toBe('unihan');
+      }
+    }
+  });
+
+  it('reports no characters without a Cangjie code', () => {
+    expect(cangjieMissing).toEqual([]);
+  });
+
+  it('reports exactly 别 and 错 as not playable', () => {
+    expect([...notPlayable].sort()).toEqual(['别', '错'].sort());
   });
 });
