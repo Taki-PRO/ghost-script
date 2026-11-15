@@ -247,6 +247,92 @@
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794745976900
       }
+    ],
+    "3.1 Implement `app/src/engine/outcome.ts` and move `resolveCompletion` into it": [
+      {
+        "executionId": "cc9248fd-f73b-4bb8-8a3e-d4731909d3c9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794753765415
+      },
+      {
+        "executionId": "cc9248fd-f73b-4bb8-8a3e-d4731909d3c9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794754278528
+      }
+    ],
+    "3.2 Implement `app/src/engine/mask.ts` and move `maskTarget` into it": [
+      {
+        "executionId": "cc9248fd-f73b-4bb8-8a3e-d4731909d3c9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794753766456
+      },
+      {
+        "executionId": "cc9248fd-f73b-4bb8-8a3e-d4731909d3c9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794754278678
+      }
+    ],
+    "3.3 Implement the key table and key-event parsing in `app/src/engine/cangjie.ts` with unit tests": [
+      {
+        "executionId": "cc9248fd-f73b-4bb8-8a3e-d4731909d3c9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794753767668
+      },
+      {
+        "executionId": "cc9248fd-f73b-4bb8-8a3e-d4731909d3c9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794754279666
+      }
+    ],
+    "4.1 Implement schema 2 in `app/src/storage/storage.ts`": [
+      {
+        "executionId": "cc9248fd-f73b-4bb8-8a3e-d4731909d3c9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794753768429
+      },
+      {
+        "executionId": "cc9248fd-f73b-4bb8-8a3e-d4731909d3c9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794754280550
+      }
+    ],
+    "3.4 Implement the Summon reducer in `app/src/engine/cangjie.ts` with unit tests": [
+      {
+        "executionId": "cc9248fd-f73b-4bb8-8a3e-d4731909d3c9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794754285753
+      },
+      {
+        "executionId": "cc9248fd-f73b-4bb8-8a3e-d4731909d3c9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794754657564
+      }
+    ],
+    "4.2 Update the existing storage tests in `app/src/storage/storage.test.ts`": [
+      {
+        "executionId": "cc9248fd-f73b-4bb8-8a3e-d4731909d3c9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794754286884
+      },
+      {
+        "executionId": "cc9248fd-f73b-4bb8-8a3e-d4731909d3c9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794754708893
+      }
+    ],
+    "3. Pure engine modules": [
+      {
+        "executionId": "cc9248fd-f73b-4bb8-8a3e-d4731909d3c9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794754657597
+      }
+    ],
+    "4. Storage schema version 2": [
+      {
+        "executionId": "cc9248fd-f73b-4bb8-8a3e-d4731909d3c9",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794754708926
+      }
     ]
   }
 }

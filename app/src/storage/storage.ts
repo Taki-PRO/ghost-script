@@ -9,7 +9,7 @@ import type { AttemptRecord, Outcome, ReviewEntry, ReviewHistory } from '../engi
  */
 
 /** Schema version written by this build. */
-export const CURRENT_SCHEMA_VERSION = 1;
+export const CURRENT_SCHEMA_VERSION = 2;
 
 /** The single localStorage key holding the persisted blob. */
 export const STORAGE_KEY = 'ghost-script:state';
@@ -18,6 +18,8 @@ export const STORAGE_KEY = 'ghost-script:state';
 export interface PersistedState {
   readonly schemaVersion: number;
   readonly introSeen: boolean;
+  /** Whether the player has read "How Cangjie works". Added in schema 2. */
+  readonly cangjieIntroSeen: boolean;
   readonly history: ReviewHistory;
 }
 
@@ -47,13 +49,15 @@ export interface Store {
   recordOutcome(char: string, entry: ReviewEntry): PersistedState;
   getIntroSeen(): boolean;
   setIntroSeen(seen: boolean): void;
+  getCangjieIntroSeen(): boolean;
+  setCangjieIntroSeen(seen: boolean): void;
   resetToDefaults(): void;
 }
 
 /**
- * Migrations shipped with the app. EMPTY: schema version 1 is the first
- * version, so no older schema exists yet. Add `1: (old) => ...` etc. when
- * CURRENT_SCHEMA_VERSION is bumped.
+ * Migrations shipped with the app. EMPTY: a version-1 blob has no migration
+ * path to version 2 and resets to defaults. Add `2: (old) => ...` etc. when
+ * CURRENT_SCHEMA_VERSION is bumped again.
  */
 const SHIPPED_MIGRATIONS: MigrationMap = {};
 
@@ -103,8 +107,14 @@ function validateState(blob: unknown, version: number): PersistedState | undefin
   if (!isPlainObject(blob)) return undefined;
   if (blob.schemaVersion !== version) return undefined;
   if (typeof blob.introSeen !== 'boolean') return undefined;
+  if (typeof blob.cangjieIntroSeen !== 'boolean') return undefined;
   if (!isValidHistory(blob.history)) return undefined;
-  return { schemaVersion: version, introSeen: blob.introSeen, history: blob.history };
+  return {
+    schemaVersion: version,
+    introSeen: blob.introSeen,
+    cangjieIntroSeen: blob.cangjieIntroSeen,
+    history: blob.history,
+  };
 }
 
 /** Create a store. Used by tests (fake backend, versions, migrations). */
@@ -117,6 +127,7 @@ export function createStore(options: StoreOptions = {}): Store {
   const defaultState: PersistedState = Object.freeze({
     schemaVersion: version,
     introSeen: false,
+    cangjieIntroSeen: false,
     history: Object.freeze({}) as ReviewHistory,
   });
 
@@ -165,6 +176,7 @@ export function createStore(options: StoreOptions = {}): Store {
       const blob: PersistedState = {
         schemaVersion: version,
         introSeen: state.introSeen,
+        cangjieIntroSeen: state.cangjieIntroSeen,
         history: state.history,
       };
       backend.setItem(key, JSON.stringify(blob));
@@ -184,6 +196,7 @@ export function createStore(options: StoreOptions = {}): Store {
     const next: PersistedState = {
       schemaVersion: version,
       introSeen: prior.introSeen,
+      cangjieIntroSeen: prior.cangjieIntroSeen,
       history: { ...prior.history, [char]: entry },
     };
     saveState(next);
@@ -199,6 +212,15 @@ export function createStore(options: StoreOptions = {}): Store {
     saveState({ ...prior, introSeen: seen });
   }
 
+  function getCangjieIntroSeen(): boolean {
+    return loadState().cangjieIntroSeen;
+  }
+
+  function setCangjieIntroSeen(seen: boolean): void {
+    const prior = loadState();
+    saveState({ ...prior, cangjieIntroSeen: seen });
+  }
+
   function resetToDefaults(): void {
     try {
       getBackend()?.removeItem(key);
@@ -207,7 +229,12 @@ export function createStore(options: StoreOptions = {}): Store {
     }
   }
 
-  return { defaultState, loadState, saveState, recordOutcome, getIntroSeen, setIntroSeen, resetToDefaults };
+  return { defaultState, loadState, saveState, recordOutcome, getIntroSeen,
+    setIntroSeen,
+    getCangjieIntroSeen,
+    setCangjieIntroSeen,
+    resetToDefaults,
+  };
 }
 
 const defaultStore = createStore();
@@ -221,4 +248,6 @@ export const recordOutcome = (char: string, entry: ReviewEntry): PersistedState 
   defaultStore.recordOutcome(char, entry);
 export const getIntroSeen = (): boolean => defaultStore.getIntroSeen();
 export const setIntroSeen = (seen: boolean): void => defaultStore.setIntroSeen(seen);
+export const getCangjieIntroSeen = (): boolean => defaultStore.getCangjieIntroSeen();
+export const setCangjieIntroSeen = (seen: boolean): void => defaultStore.setCangjieIntroSeen(seen);
 export const resetToDefaults = (): void => defaultStore.resetToDefaults();

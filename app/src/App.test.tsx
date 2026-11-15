@@ -196,7 +196,7 @@ describe('App integration', () => {
   it('1.5: returning visitor sees the menu; legend re-readable, absent during séance', async () => {
     localStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify({ schemaVersion: 1, introSeen: true, history: {} }),
+      JSON.stringify({ schemaVersion: 2, introSeen: true, cangjieIntroSeen: false, history: {} }),
     );
     const user = await openApp();
     const start = await screen.findByRole('button', { name: /begin a nightly séance/i });

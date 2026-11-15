@@ -4,6 +4,7 @@ import type { CharacterRecord } from '../data/types';
 import { makeCharDataLoader, type CharacterDataset } from '../data/charDataLoader';
 import type { EngineConfig } from '../engine/config';
 import type { Outcome } from '../engine/scheduler';
+import { resolveCompletion } from '../engine/outcome';
 import { theme } from '../styles/theme';
 
 export interface WriteModeProps {
@@ -14,14 +15,7 @@ export interface WriteModeProps {
   onOutcome: (outcome: Outcome) => void;
 }
 
-/** Req 5.5 / 5.6: clean iff no hint was shown AND mistakes <= clean threshold. */
-export function resolveCompletion(
-  hintShown: boolean,
-  mistakes: number,
-  config: Pick<EngineConfig, 'cleanMistakeThreshold'>,
-): Outcome {
-  return !hintShown && mistakes <= config.cleanMistakeThreshold ? 'clean' : 'struggled';
-}
+export { resolveCompletion } from '../engine/outcome';
 
 /**
  * Req 5.4: hanzi-writer 3.7.3 passes `mistakesOnStroke` (already including the

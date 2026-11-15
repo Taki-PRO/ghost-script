@@ -112,37 +112,37 @@ Add the two-step rite to Ghost Script: every ghost is first SUMMONED by typing i
   - Ensure all tests pass, ask the user if questions arise.
   - _Requirements: 9.6_
 
-- [ ] 3. Pure engine modules
-  - [ ] 3.1 Implement `app/src/engine/outcome.ts` and move `resolveCompletion` into it
+- [x] 3. Pure engine modules
+  - [x] 3.1 Implement `app/src/engine/outcome.ts` and move `resolveCompletion` into it
     - Create `outcome.ts` with `resolveCompletion(hintShown, mistakes, config)` (`clean` iff no hint and `mistakes <= config.cleanMistakeThreshold`, else `struggled`) and `combineOutcomes(summon: Outcome | null, write: Outcome): Outcome` (any `gave-up` wins, then any `struggled`, else `clean`)
     - In `app/src/modes/WriteMode.tsx` import `resolveCompletion` and re-export it (`export { resolveCompletion } from '../engine/outcome'`) so existing imports and `WriteMode.test.tsx` stay green
     - Write `app/src/engine/outcome.test.ts`: `resolveCompletion` threshold boundary and hint forcing `struggled`; the full `combineOutcomes` truth table (12 cells including the `null` row)
     - _Requirements: 3.8, 4.1, 4.2, 4.3, 4.4, 4.9_
 
-  - [ ] 3.2 Implement `app/src/engine/mask.ts` and move `maskTarget` into it
+  - [x] 3.2 Implement `app/src/engine/mask.ts` and move `maskTarget` into it
     - Create `mask.ts` with `maskTarget(text, char)` replacing every occurrence of `char` with "～" (U+FF5E); move the body unchanged from `GhostPrompt.tsx`
     - In `app/src/components/GhostPrompt.tsx` import and re-export it so `GhostPrompt.test.tsx` keeps passing
     - Write `app/src/engine/mask.test.ts`: no occurrence, several occurrences, empty text, surrogate-pair characters
     - _Requirements: 5.2_
 
-  - [ ] 3.3 Implement the key table and key-event parsing in `app/src/engine/cangjie.ts` with unit tests
+  - [x] 3.3 Implement the key table and key-event parsing in `app/src/engine/cangjie.ts` with unit tests
     - Export `CangjieKey`, `CangjieKeyInfo`, `CANGJIE_KEYS` (25 entries A–Y, X → 難), `KEY_FACE_CHARACTERS`, `KeyEventLike` and `parseKeyEvent`
     - `parseKeyEvent` returns the upper-case letter for a single letter A–Y in either case with no Ctrl, Alt, Meta, repeat or composition and `key !== 'Process'`; otherwise `null` (Z included)
     - Write `app/src/engine/cangjie.keys.test.ts`: 25 entries, each shape, X → 難, no Z, `KEY_FACE_CHARACTERS` contains 一 中 人 十 口 大 女 山 手 日 月 木 水 火 and 難, `parseKeyEvent` examples for each ignore rule
     - _Requirements: 3.2, 3.4, 5.3, 9.3_
 
-  - [ ] 3.4 Implement the Summon reducer in `app/src/engine/cangjie.ts` with unit tests
+  - [x] 3.4 Implement the Summon reducer in `app/src/engine/cangjie.ts` with unit tests
     - Add `SummonStatus`, `SummonState`, `startSummon`, `nextExpectedKey`, `isKeyHintVisible`, `applyKeyEntry`, `applyKeyEvent` and `giveUpSummon` exactly as in the design: a non-`active` state is returned unchanged; a correct key advances and resets `missesOnSlot`; the last slot sets `status` with `resolveCompletion(hintShown, mistakes, config)`; a wrong key adds one mistake and one miss and sets `hintShown` (sticky) at the configured count; `applyKeyEvent` returns the same `state` object when the event is ignored
     - Write `app/src/engine/cangjie.summon.test.ts` using real codes (for example `HQI`, `R`, `HXH`): full entry gives `clean`; wrong key adds one mistake and leaves slots unchanged; the Key hint appears after 3 consecutive wrong keys for the same slot and is not visible after 2; the hint disappears when the slot is filled but still gives `struggled`; mistakes above the threshold give `struggled`; Give up gives `gave-up` and shows no further change; entries after the Step result change nothing; Z and a modified key are ignored
     - _Requirements: 3.5, 3.6, 3.7, 3.8, 3.9, 3.10, 3.12, 9.3_
 
-- [ ] 4. Storage schema version 2
-  - [ ] 4.1 Implement schema 2 in `app/src/storage/storage.ts`
+- [x] 4. Storage schema version 2
+  - [x] 4.1 Implement schema 2 in `app/src/storage/storage.ts`
     - Raise `CURRENT_SCHEMA_VERSION` to 2; `PersistedState` gains `cangjieIntroSeen`; `SHIPPED_MIGRATIONS` stays empty so a version-1 blob resets to defaults
     - Extend `validateState` (boolean `cangjieIntroSeen`); `saveState`, `recordOutcome` and `setIntroSeen` preserve it; add `getCangjieIntroSeen` and `setCangjieIntroSeen` to `Store` and as module-level wrappers; keep `recordOutcome(char, entry)` and every reset rule and the in-memory fallback unchanged
     - _Requirements: 8.1, 8.2, 8.3, 8.4_
 
-  - [ ] 4.2 Update the existing storage tests in `app/src/storage/storage.test.ts`
+  - [x] 4.2 Update the existing storage tests in `app/src/storage/storage.test.ts`
     - Schema version 2 and the new default state; `cangjieIntroSeen` round trip through `setCangjieIntroSeen` and `getCangjieIntroSeen`; `recordOutcome` and `setIntroSeen` keep it; a version-1 blob resets to defaults (no migration); corrupt, newer and forbidden-key blobs still reset; storage unavailable still works in memory
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 9.6_
 

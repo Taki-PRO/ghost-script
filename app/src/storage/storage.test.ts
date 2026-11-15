@@ -51,7 +51,9 @@ const entry = (outcome: 'clean' | 'struggled' | 'gave-up' = 'clean', prior?: Rev
   applyReview(prior, outcome, NOW, DEFAULT_CONFIG);
 
 const validBlob = (over: Record<string, unknown> = {}): string =>
-  JSON.stringify({ schemaVersion: 1, introSeen: false, history: {}, ...over });
+  JSON.stringify({ schemaVersion: 2, introSeen: false, cangjieIntroSeen: false, history: {}, ...over });
+
+const v1Blob = (over: Record<string, unknown> = {}): string => validBlob({ schemaVersion: 1, ...over });
 
 const goodEntry = { step: 1, lastOutcome: 'clean', nextDue: 5, history: [{ outcome: 'clean', at: 1 }] };
 
@@ -72,6 +74,7 @@ describe('first run and round trip', () => {
     const state: PersistedState = {
       schemaVersion: CURRENT_SCHEMA_VERSION,
       introSeen: true,
+      cangjieIntroSeen: true,
       history: { 女: entry('clean'), 好: entry('struggled') },
     };
     s.saveState(state);
@@ -81,16 +84,74 @@ describe('first run and round trip', () => {
   });
 });
 
+describe('schema 2 and cangjieIntroSeen (Req 8)', () => {
+  it('uses schema version 2 and a default with cangjieIntroSeen false', () => {
+    expect(CURRENT_SCHEMA_VERSION).toBe(2);
+    expect(DEFAULT_STATE).toEqual({ schemaVersion: 2, introSeen: false, cangjieIntroSeen: false, history: {} });
+    expect(createStore({ backend, key: KEY }).getCangjieIntroSeen()).toBe(false);
+  });
+
+  it('round-trips setCangjieIntroSeen / getCangjieIntroSeen', () => {
+    const s = createStore({ backend, key: KEY });
+    s.setCangjieIntroSeen(true);
+    expect(s.getCangjieIntroSeen()).toBe(true);
+    expect(createStore({ backend, key: KEY }).getCangjieIntroSeen()).toBe(true);
+    s.setCangjieIntroSeen(false);
+    expect(s.getCangjieIntroSeen()).toBe(false);
+  });
+
+  it('recordOutcome and setIntroSeen keep cangjieIntroSeen; setCangjieIntroSeen keeps the rest', () => {
+    const s = createStore({ backend, key: KEY });
+    s.setCangjieIntroSeen(true);
+    const e = entry();
+    expect(s.recordOutcome('女', e).cangjieIntroSeen).toBe(true);
+    s.setIntroSeen(true);
+    expect(s.getCangjieIntroSeen()).toBe(true);
+    s.setCangjieIntroSeen(false);
+    expect(s.loadState()).toMatchObject({ introSeen: true, history: { 女: e } });
+  });
+
+  it('resets a version-1 blob to defaults with the shipped migrations (no migration)', () => {
+    backend.data.set(KEY, v1Blob({ introSeen: true, history: { 女: goodEntry } }));
+    const s = createStore({ backend, key: KEY });
+    expect(s.loadState()).toEqual(s.defaultState);
+    expect(s.getIntroSeen()).toBe(false);
+  });
+
+  it('works in memory when storage is unavailable', () => {
+    const s = createStore({ key: KEY, backend: () => undefined });
+    expect(s.getCangjieIntroSeen()).toBe(false);
+    expect(() => s.setCangjieIntroSeen(true)).not.toThrow();
+    expect(s.getCangjieIntroSeen()).toBe(false);
+  });
+
+  it('persists through the default module-level store', () => {
+    localStorage.clear();
+    defaults.setCangjieIntroSeen(true);
+    expect(defaults.getCangjieIntroSeen()).toBe(true);
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY) as string)).toMatchObject({
+      schemaVersion: 2,
+      cangjieIntroSeen: true,
+    });
+    localStorage.clear();
+  });
+});
+
 describe('migrations from known older versions', () => {
   it('migrates v1 to v2', () => {
-    backend.data.set(KEY, validBlob({ history: { 女: goodEntry } }));
+    backend.data.set(KEY, v1Blob({ history: { 女: goodEntry } }));
     const s = createStore({
       backend,
       key: KEY,
       currentVersion: 2,
-      migrations: { 1: (old) => ({ ...(old as object), introSeen: true }) },
+      migrations: { 1: (old) => ({ ...(old as object), introSeen: true, cangjieIntroSeen: false }) },
     });
-    expect(s.loadState()).toEqual({ schemaVersion: 2, introSeen: true, history: { 女: goodEntry } });
+    expect(s.loadState()).toEqual({
+      schemaVersion: 2,
+      introSeen: true,
+      cangjieIntroSeen: false,
+      history: { 女: goodEntry },
+    });
   });
 
   it('migrates by reshaping an old field', () => {
@@ -102,15 +163,20 @@ describe('migrations from known older versions', () => {
       migrations: {
         1: (old) => {
           const o = old as { seen: boolean; entries: unknown };
-          return { introSeen: o.seen, history: o.entries };
+          return { introSeen: o.seen, cangjieIntroSeen: true, history: o.entries };
         },
       },
     });
-    expect(s.loadState()).toEqual({ schemaVersion: 2, introSeen: true, history: { 女: goodEntry } });
+    expect(s.loadState()).toEqual({
+      schemaVersion: 2,
+      introSeen: true,
+      cangjieIntroSeen: true,
+      history: { 女: goodEntry },
+    });
   });
 
   it('runs a two-step chain v1 -> v2 -> v3 in order', () => {
-    backend.data.set(KEY, validBlob());
+    backend.data.set(KEY, v1Blob());
     const order: number[] = [];
     const s = createStore({
       backend,
@@ -119,7 +185,7 @@ describe('migrations from known older versions', () => {
       migrations: {
         1: (old) => {
           order.push(1);
-          return { ...(old as object), introSeen: true };
+          return { ...(old as object), introSeen: true, cangjieIntroSeen: false };
         },
         2: (old) => {
           order.push(2);
@@ -127,18 +193,23 @@ describe('migrations from known older versions', () => {
         },
       },
     });
-    expect(s.loadState()).toEqual({ schemaVersion: 3, introSeen: true, history: { 女: goodEntry } });
+    expect(s.loadState()).toEqual({
+      schemaVersion: 3,
+      introSeen: true,
+      cangjieIntroSeen: false,
+      history: { 女: goodEntry },
+    });
     expect(order).toEqual([1, 2]);
   });
 
   it('resets when an older version has no migration', () => {
-    backend.data.set(KEY, validBlob({ introSeen: true }));
+    backend.data.set(KEY, v1Blob({ introSeen: true }));
     const s = createStore({ backend, key: KEY, currentVersion: 2, migrations: {} });
     expect(s.loadState()).toEqual(s.defaultState);
   });
 
   it('resets when the migration chain has a gap', () => {
-    backend.data.set(KEY, validBlob({ introSeen: true }));
+    backend.data.set(KEY, v1Blob({ introSeen: true }));
     const s = createStore({
       backend,
       key: KEY,
@@ -149,7 +220,7 @@ describe('migrations from known older versions', () => {
   });
 
   it('resets when a migration throws', () => {
-    backend.data.set(KEY, validBlob({ introSeen: true }));
+    backend.data.set(KEY, v1Blob({ introSeen: true }));
     const s = createStore({
       backend,
       key: KEY,
@@ -167,10 +238,11 @@ describe('migrations from known older versions', () => {
     ['null', null],
     ['a string', 'junk'],
     ['an array', []],
-    ['a bad shape', { introSeen: 'yes', history: {} }],
-    ['a bad history', { introSeen: true, history: { 女: { step: -1 } } }],
+    ['a bad shape', { introSeen: 'yes', cangjieIntroSeen: false, history: {} }],
+    ['a missing cangjieIntroSeen', { introSeen: true, history: {} }],
+    ['a bad history', { introSeen: true, cangjieIntroSeen: false, history: { 女: { step: -1 } } }],
   ])('resets when a migration returns %s', (_name, out) => {
-    backend.data.set(KEY, validBlob({ introSeen: true }));
+    backend.data.set(KEY, v1Blob({ introSeen: true }));
     const s = createStore({ backend, key: KEY, currentVersion: 2, migrations: { 1: () => out } });
     expect(s.loadState()).toEqual(s.defaultState);
   });
@@ -187,7 +259,7 @@ describe('unknown or newer schema versions', () => {
     ['null', 'null'],
   ];
   it.each(versions)('resets and never migrates for schemaVersion %s', (_n, literal) => {
-    backend.data.set(KEY, `{"schemaVersion":${literal},"introSeen":true,"history":{}}`);
+    backend.data.set(KEY, `{"schemaVersion":${literal},"introSeen":true,"cangjieIntroSeen":false,"history":{}}`);
     const migrate = vi.fn((old: unknown) => old);
     const s = createStore({ backend, key: KEY, currentVersion: 2, migrations: { 1: migrate, 2: migrate } });
     expect(s.loadState()).toEqual(s.defaultState);
@@ -195,7 +267,7 @@ describe('unknown or newer schema versions', () => {
   });
 
   it('resets and never migrates when schemaVersion is missing', () => {
-    backend.data.set(KEY, '{"introSeen":true,"history":{}}');
+    backend.data.set(KEY, '{"introSeen":true,"cangjieIntroSeen":false,"history":{}}');
     const migrate = vi.fn((old: unknown) => old);
     const s = createStore({ backend, key: KEY, currentVersion: 2, migrations: { 1: migrate } });
     expect(s.loadState()).toEqual(s.defaultState);
@@ -210,6 +282,8 @@ describe('corrupt data resets to defaults', () => {
     ['a JSON array', '[1,2]'],
     ['a JSON string', '"hello"'],
     ['wrong introSeen type', validBlob({ introSeen: 'yes' })],
+    ['wrong cangjieIntroSeen type', validBlob({ cangjieIntroSeen: 'yes' })],
+    ['missing cangjieIntroSeen', JSON.stringify({ schemaVersion: 2, introSeen: false, history: {} })],
     ['history not an object', validBlob({ history: [] })],
     ['step -1', validBlob({ history: { 女: { ...goodEntry, step: -1 } } })],
     ['step 2.5', validBlob({ history: { 女: { ...goodEntry, step: 2.5 } } })],
@@ -222,11 +296,11 @@ describe('corrupt data resets to defaults', () => {
     ['attempts not an array', validBlob({ history: { 女: { ...goodEntry, history: {} } } })],
     [
       '__proto__ key in history',
-      `{"schemaVersion":1,"introSeen":false,"history":{"__proto__":${JSON.stringify(goodEntry)}}}`,
+      `{"schemaVersion":2,"introSeen":false,"cangjieIntroSeen":false,"history":{"__proto__":${JSON.stringify(goodEntry)}}}`,
     ],
     [
       'constructor key in history',
-      `{"schemaVersion":1,"introSeen":false,"history":{"constructor":${JSON.stringify(goodEntry)}}}`,
+      `{"schemaVersion":2,"introSeen":false,"cangjieIntroSeen":false,"history":{"constructor":${JSON.stringify(goodEntry)}}}`,
     ],
   ];
   it.each(cases)('resets on %s', (_n, raw) => {
@@ -370,7 +444,7 @@ describe('intro flag and reset', () => {
 describe('schemaVersion stamping and default immutability', () => {
   it('saveState writes the store version, not the passed one', () => {
     const s = createStore({ backend, key: KEY, currentVersion: 4 });
-    s.saveState({ schemaVersion: 99, introSeen: true, history: {} });
+    s.saveState({ schemaVersion: 99, introSeen: true, cangjieIntroSeen: true, history: {} });
     const raw = JSON.parse(backend.data.get(KEY) as string) as PersistedState;
     expect(raw.schemaVersion).toBe(4);
     expect(s.loadState().schemaVersion).toBe(4);
@@ -378,7 +452,7 @@ describe('schemaVersion stamping and default immutability', () => {
 
   it('DEFAULT_STATE is frozen and mutation does not leak into loadState', () => {
     const s = createStore({ backend, key: KEY });
-    const d = s.loadState() as { introSeen: boolean; history: Record<string, ReviewEntry> };
+    const d = s.loadState() as { introSeen: boolean; cangjieIntroSeen: boolean; history: Record<string, ReviewEntry> };
     expect(Object.isFrozen(d)).toBe(true);
     expect(() => {
       d.introSeen = true;
@@ -386,7 +460,15 @@ describe('schemaVersion stamping and default immutability', () => {
     expect(() => {
       d.history['女'] = entry();
     }).toThrow();
-    expect(s.loadState()).toEqual({ schemaVersion: CURRENT_SCHEMA_VERSION, introSeen: false, history: {} });
+    expect(() => {
+      d.cangjieIntroSeen = true;
+    }).toThrow();
+    expect(s.loadState()).toEqual({
+      schemaVersion: CURRENT_SCHEMA_VERSION,
+      introSeen: false,
+      cangjieIntroSeen: false,
+      history: {},
+    });
     expect(Object.isFrozen(DEFAULT_STATE)).toBe(true);
   });
 });
