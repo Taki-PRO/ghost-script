@@ -2,7 +2,7 @@
 
 ## Overview
 
-Add Cangjie Séance to Ghost Script: a second way to lay a ghost to rest by typing its Cangjie code, plus a one-time "How Cangjie works" screen, a Write-mode "Reveal its shape" structure hint, a stricter never-reveal-the-target rule, and per-mode saved progress. Work proceeds in seven groups. First the data pipeline: the pinned, hash-verified Unihan file and licence are committed and recorded, `cangjie` enters the record types, loader, merge, serialiser and build, the existing character-dataset tests that this breaks are updated, the README is updated, and the pipeline is run to regenerate `characters.json`. Second, the pure engine modules (`outcome.ts`, `mask.ts`, `cangjie.ts`, `structureLayout.ts`). Third, storage schema version 2 with the shipped 1→2 migration. Fourth, the UI components and modes. Fifth, the App wiring and the cross-mode masking test. Sixth, a full-suite checkpoint. Seventh, a manual play-through by the human (Raghav). Each property test sits right after the code it tests, and every design Correctness Property (1–20) has exactly one test sub-task.
+Add Cangjie Séance to Ghost Script: a second way to lay a ghost to rest by typing its Cangjie code, plus a one-time "How Cangjie works" screen, a Write-mode "Reveal its shape" structure hint, a stricter never-reveal-the-target rule, and per-mode saved progress. Work proceeds in seven groups. First the data pipeline: the pinned, hash-verified Unihan file and licence are committed and recorded, `cangjie` enters the record types, loader, merge, serialiser and build, the existing character-dataset tests that this breaks are updated, the README is updated, and the pipeline is run to regenerate `characters.json`. Second, the pure engine modules (`outcome.ts`, `mask.ts`, `cangjie.ts`, `structureLayout.ts`). Third, storage schema version 2 with the shipped 1→2 migration. Fourth, the UI components and modes. Fifth, the App wiring and the cross-mode masking test. Sixth, a full-suite checkpoint. Seventh, a manual play-through by a human. Each property test sits right after the code it tests, and every design Correctness Property (1–20) has exactly one test sub-task.
 
 ## Tasks
 
@@ -365,10 +365,10 @@ Add Cangjie Séance to Ghost Script: a second way to lay a ghost to rest by typi
     - Run `npm run build -w app`; it must succeed
     - _Requirements: 9.1, 9.4_
 
-- [ ] 7. Final human manual check (NON-CODING, performed by Raghav)
+- [ ] 7. Final human manual check (NON-CODING, performed by a human)
   - [ ] 7.1 Human play-through of the Cangjie Séance
-    - This task is performed by Raghav, the human. It is NOT a coding task. Kiro runs nothing for this task and SHALL NOT write the `kiro-log.md` entry; Raghav records the result himself
-    - Raghav starts the dev server (`npm run dev -w app`) and plays one Cangjie Séance with a physical keyboard and one with the on-screen keyboard (touch or mouse)
+    - This task is performed by a human, the human. It is NOT a coding task. Kiro runs nothing for this task and SHALL NOT write the `kiro-log.md` entry; the human records the result
+    - The human starts the dev server (`npm run dev -w app`) and plays one Cangjie Séance with a physical keyboard and one with the on-screen keyboard (touch or mouse)
     - Check: the "How Cangjie works" guide on the first Cangjie start; Code slots; mistakes; the automatic Key hint after 3 consecutive misses on one slot; a clean, a struggled and a gave-up Outcome; the summary; and that progress persists across a reload while Write-mode progress is unaffected
     - _Requirements: 3.1, 4.3, 4.4, 4.5, 5.1, 5.4, 5.6, 5.7, 5.8, 5.9, 8.1, 8.2, 9.4_
 

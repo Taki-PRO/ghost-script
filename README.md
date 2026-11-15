@@ -1,6 +1,10 @@
 # Ghost Script
 
-Ghost Script is a haunted handwriting game that brings back the Chinese characters people have forgotten how to write. It targets character amnesia (提笔忘字) — the common experience of being able to read Chinese but no longer recall how to write it by hand after years of phonetic typing. Rather than drilling by repetition, Ghost Script teaches how each character is built, the Cangjie way: structural, component-by-component thinking. It is built for **Kiroween 2026**, category **Resurrection** — the revived "dead technology" is handwriting itself, together with the structural thinking of the Cangjie input method.
+Ghost Script is a haunted handwriting game for people who can read Chinese characters but can no longer write them: character amnesia (提笔忘字). It is for heritage learners and second-language learners, so the interface is in English.
+
+**The premise:** phonetic typing caused the forgetting, so Ghost Script brings back the shape-based keyboard that phonetic input displaced for most typists. Cangjie (倉頡輸入法), developed in the 1970s by Chu Bong-Foo, builds every character from basic shapes. In the game, each forgotten character is a ghost: you summon it by typing its Cangjie code, shape by shape, then lay it to rest by writing it by hand. Ghosts you struggle with come back to haunt you sooner.
+
+Built for **Kiroween 2026**, category **Resurrection**.
 
 ## Data and licences
 

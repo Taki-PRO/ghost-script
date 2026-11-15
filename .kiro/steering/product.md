@@ -17,8 +17,9 @@ Many people can **read** Chinese but can no longer **write** it by hand, because
 
 ## Hackathon context
 - Built for **Kiroween 2026**, category **Resurrection**.
-- The revived "dead technology" is handwriting itself plus the structural thinking of the **Cangjie input method** (invented 1976 by Chu Bong-Foo, named after Cangjie, the legendary inventor of Chinese writing).
-- Theme: legend says ghosts wailed at night when Cangjie invented writing. In the game, forgotten characters are ghosts; writing them correctly lays them to rest.
+- **Resurrection premise (present it as a design premise, not a proven fact):** phonetic typing caused the forgetting; the shape-based keyboard it displaced for most typists, the **Cangjie input method** (developed in the 1970s by Chu Bong-Foo, named after Cangjie, the legendary inventor of Chinese writing), is brought back as the cure. Never call Cangjie "dead" or "dying": it is still taught and used in Hong Kong and Taiwan.
+- **Audience:** heritage learners and second-language learners who can read characters but struggle to write them. The interface is in English for them.
+- Theme: legend says ghosts wept at night when Cangjie invented writing. In the game, forgotten characters are ghosts; writing them correctly lays them to rest.
 
 ## Core game loop
 1. A ghost appears showing a character's **meaning** (English) and **pinyin**. The character itself is hidden.

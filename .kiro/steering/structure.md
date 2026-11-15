@@ -36,3 +36,6 @@ ghost-script/
 - Raw data in `data/raw/` keeps its original licence file alongside it.
 - New features get a spec in `.kiro/specs/<feature-name>/` before implementation.
 - Keep `kiro-log.md` updated whenever a Kiro feature is used or a decision about Kiro usage is made.
+
+## Names
+- Never write personal names in repo files (specs, tasks, logs, code, comments). Refer to the person as "the human" or "a human". Approvals in data files are recorded as "approved by Takshil".
