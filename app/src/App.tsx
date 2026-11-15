@@ -9,8 +9,16 @@ import {
   type Outcome,
   type ReviewHistory,
 } from './engine/scheduler';
-import { getIntroSeen, loadState, recordOutcome, setIntroSeen } from './storage/storage';
+import {
+  getCangjieIntroSeen,
+  getIntroSeen,
+  loadState,
+  recordOutcome,
+  setCangjieIntroSeen,
+  setIntroSeen,
+} from './storage/storage';
 import { IntroScreen } from './components/IntroScreen';
+import { CangjieGuide } from './components/CangjieGuide';
 import { StartMenu } from './components/StartMenu';
 import { SeanceSession } from './components/SeanceSession';
 import { SessionSummary, type SessionResults } from './components/SessionSummary';
@@ -44,6 +52,7 @@ type View =
   | { screen: 'error' }
   | { screen: 'intro'; dataset: CharacterDataset }
   | { screen: 'menu'; dataset: CharacterDataset }
+  | { screen: 'cangjie-guide'; dataset: CharacterDataset; origin: 'before-seance' | 'review' }
   | { screen: 'seance'; dataset: CharacterDataset; ghosts: CharacterRecord[]; sessionId: number }
   | { screen: 'summary'; dataset: CharacterDataset; results: SessionResults };
 
@@ -87,6 +96,18 @@ export default function App() {
     [sessionCounter],
   );
 
+  /** Show the Cangjie guide first when it has never been read, else start. */
+  const beginSeance = useCallback(
+    (dataset: CharacterDataset) => {
+      if (!getCangjieIntroSeen()) {
+        setView({ screen: 'cangjie-guide', dataset, origin: 'before-seance' });
+        return;
+      }
+      startSeance(dataset);
+    },
+    [startSeance],
+  );
+
   const handleOutcome = useCallback((char: string, outcome: Outcome, now: number) => {
     const prior = priorEntry(loadState().history, char);
     recordOutcome(char, applyReview(prior, outcome, now, DEFAULT_CONFIG));
@@ -117,7 +138,7 @@ export default function App() {
           <IntroScreen
             onBegin={() => {
               setIntroSeen(true);
-              startSeance(dataset);
+              beginSeance(dataset);
             }}
           />
         </Shell>
@@ -128,8 +149,26 @@ export default function App() {
       return (
         <Shell>
           <StartMenu
-            onStartSeance={() => startSeance(dataset)}
+            onStartSeance={() => beginSeance(dataset)}
             onReviewLegend={() => setView({ screen: 'intro', dataset })}
+            onReviewCangjieGuide={() =>
+              setView({ screen: 'cangjie-guide', dataset, origin: 'review' })
+            }
+          />
+        </Shell>
+      );
+    }
+    case 'cangjie-guide': {
+      const { dataset, origin } = view;
+      return (
+        <Shell>
+          <CangjieGuide
+            dataset={dataset}
+            onContinue={() => {
+              setCangjieIntroSeen(true);
+              if (origin === 'before-seance') startSeance(dataset);
+              else setView({ screen: 'menu', dataset });
+            }}
           />
         </Shell>
       );
@@ -153,7 +192,7 @@ export default function App() {
       const { dataset, results } = view;
       return (
         <Shell>
-          <SessionSummary results={results} onPlayAgain={() => startSeance(dataset)} />
+          <SessionSummary results={results} onPlayAgain={() => beginSeance(dataset)} />
         </Shell>
       );
     }

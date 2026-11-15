@@ -146,62 +146,62 @@ Add the two-step rite to Ghost Script: every ghost is first SUMMONED by typing i
     - Schema version 2 and the new default state; `cangjieIntroSeen` round trip through `setCangjieIntroSeen` and `getCangjieIntroSeen`; `recordOutcome` and `setIntroSeen` keep it; a version-1 blob resets to defaults (no migration); corrupt, newer and forbidden-key blobs still reset; storage unavailable still works in memory
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 9.6_
 
-- [ ] 5. UI: Summon step, guide, start menu, two-step Séance
-  - [ ] 5.1 Implement `app/src/modes/SummonStep.tsx`
+- [x] 5. UI: Summon step, guide, start menu, two-step Séance
+  - [x] 5.1 Implement `app/src/modes/SummonStep.tsx`
     - Props `{ record, dataset, config, onDone }`; export the named constants `SUMMON_HOLD_MS` (1500, the 1.5 s hold) and `SUMMON_FADE_MS` (1500, the 1.5 s fade), the only source of the timings; Code slots (one per key, accessible name "Slot N, empty", filled shows letter and shape with `lang="zh"`, shapes passed through `maskTarget` before the step ends); `window` `keydown` listener using `applyKeyEvent` that skips editable targets and calls `preventDefault` only for accepted entries; 25 on-screen buttons in QWERTY rows without Z (at least 44 px, `aria-label` "Key A", letters only when `KEY_FACE_CHARACTERS.has(record.character)`, disabled once the step ends)
     - `role="status"` `aria-live="polite"` feedback with text and a symbol plus the mistake count; the automatic Key hint outline and "Hint: press X" text with no hint control; the IME note; the source note "Codes: Unicode Unihan kCangjie"; a "Give up" button
     - No hanzi-writer instance before the step ends; then `animateCharacter()` forms the character, the component holds `SUMMON_HOLD_MS`, fades over `SUMMON_FADE_MS` (no transition under `prefers-reduced-motion`), empties the container and calls `onDone(status)` once; a hanzi-writer failure falls back to the character as plain text for the same hold and fade; timers are cleared on unmount
     - _Requirements: 2.4, 2.5, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 3.10, 3.11, 3.13, 5.1, 5.2, 5.3, 5.4, 5.5_
 
-  - [ ] 5.2 Write component tests `app/src/modes/SummonStep.test.tsx` (hanzi-writer mocked, fake timers)
+  - [x] 5.2 Write component tests `app/src/modes/SummonStep.test.tsx` (hanzi-writer mocked, fake timers)
     - Slot count equals code length; physical keys fill slots; on-screen keys fill slots; a wrong key adds one mistake and leaves slots unchanged; Z, a modified key and a composing event are ignored; the editable-target skip; the Key hint appears after 3 consecutive wrong keys for the same slot with no hint control, and disappears when the slot is filled
     - Clean and struggled Step results; Give up shows the full code and gives `gave-up`; the character forms (writer created only after the step ends), is held 1.5 s (`SUMMON_HOLD_MS`), fades over 1.5 s (`SUMMON_FADE_MS`) and is removed before `onDone` is called exactly once; later keys are ignored; a hanzi-writer failure shows the plain-text fallback and still calls `onDone`
     - IME note and source note visible; letters-only keyboard for a key-face target (for example 口) and shapes shown otherwise (for example 我); the target is absent from DOM text and attributes before completion
     - _Requirements: 2.4, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 3.10, 3.13, 5.1, 5.3, 9.4_
 
-  - [ ] 5.3 Implement `app/src/components/CangjieGuide.tsx`
+  - [x] 5.3 Implement `app/src/components/CangjieGuide.tsx`
     - Props `{ dataset, onContinue }`; export `pickGuideExample(dataset)` (first character in `learningOrder(dataset)` that is Playable and has a code of at least 2 keys, code read from `record.cangjie`, `null` when none)
     - Show the 25 keys from `CANGJIE_KEYS` (X as 難, explained), that a code is one to five keys typed in order, that each key stands for a family of related shapes of which only the base shape is shown, the example (omitted when `null`), "developed in the 1970s" by Chu Bong-Foo plus exactly the three other whitelisted claims, the statement that the codes follow the Unicode Unihan `kCangjie` field which Unihan marks provisional so some typists know different codes for some characters, and a visible citation giving each title and URL as text ("Cangjie input method" `https://en.wikipedia.org/wiki/Cangjie_input_method`, "Chu Bong-Foo" `https://en.wikipedia.org/wiki/Chu_Bong-Foo`)
     - A "Continue" button with an accessible label; shapes carry `lang="zh"`
     - _Requirements: 6.4, 6.5, 6.6, 6.7, 6.8_
 
-  - [ ] 5.4 Write component tests `app/src/components/CangjieGuide.test.tsx`
+  - [x] 5.4 Write component tests `app/src/components/CangjieGuide.test.tsx`
     - 25 keys with X as 難; the claim "developed in the 1970s" and the three other whitelisted claims only (no other year, statistic or "dying" wording); the Unihan source statement including "provisional"; both citations with titles and URLs as text; the example code equals the dataset record's `cangjie`; `pickGuideExample` picks the first eligible, skips single-key and X-prefixed codes, returns `null` when none; Continue calls `onContinue`
     - _Requirements: 6.4, 6.5, 6.6, 6.7, 6.8, 9.4_
 
-  - [ ] 5.5 Update `app/src/components/StartMenu.tsx`
+  - [x] 5.5 Update `app/src/components/StartMenu.tsx`
     - Props `{ onStartSeance, onReviewLegend, onReviewCangjieGuide }`; three buttons, each at least 44 px high with the existing focus ring: "Begin a Nightly Séance", "Read the legend again", "How Cangjie works"
     - _Requirements: 7.1, 7.2, 7.3_
 
-  - [ ] 5.6 Update the StartMenu tests in `app/src/components/StartMenu.test.tsx`
+  - [x] 5.6 Update the StartMenu tests in `app/src/components/StartMenu.test.tsx`
     - Three buttons with accessible names; each calls its callback; no mode choice is present
     - _Requirements: 7.1, 7.2, 9.4_
 
-  - [ ] 5.7 Implement the two-step ghost flow in `app/src/components/SeanceSession.tsx`
+  - [x] 5.7 Implement the two-step ghost flow in `app/src/components/SeanceSession.tsx`
     - Props unchanged; per-ghost `step` state (`summon` when `isPlayableInCangjie(record.cangjie)`, else `write`), reset in `handleAdvance`; `summonResultRef` cleared per ghost; a text label for the active step; render `SummonStep` (with `key={record.character}`) and then `WriteMode`
     - `handleSummonDone` stores the Step result and switches to `write`; `handleWriteOutcome` calls `combineOutcomes(summonResultRef.current, writeResult)` and passes it to the existing guarded `handleOutcome`, so `onOutcome(char, combined, Date.now())` fires once; nothing is reported at the end of the Summon step; "Next ghost" appears only after the Lay-to-rest step ends
     - _Requirements: 2.1, 2.2, 2.3, 2.6, 2.7, 2.9, 4.1, 4.2, 4.3, 4.4, 4.5, 4.7, 5.5, 5.6, 5.7_
 
-  - [ ] 5.8 Update the Séance tests in `app/src/components/SeanceSession.test.tsx` (hanzi-writer mocked, fake timers)
+  - [x] 5.8 Update the Séance tests in `app/src/components/SeanceSession.test.tsx` (hanzi-writer mocked, fake timers)
     - A Playable ghost runs summon, then write, then one `onOutcome` call with the combined Outcome (cases: clean and clean; summon struggled; write struggled; summon Give up still proceeds to writing and records `gave-up`; write Give up); nothing is recorded at the end of the Summon step
     - 别 and 错 skip the Summon step and go straight to writing, and 身 has a Summon step; the step label changes between "Step 1 of 2: Summon" and "Step 2 of 2: Lay to rest" ("Lay to rest" alone for 别 and 错); the target character is absent from the DOM text and attributes from the end of the fade until the Lay-to-rest step ends; "Next ghost" appears only after the Lay-to-rest step; the last ghost leads to the summary
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.6, 2.9, 4.1, 4.2, 4.3, 4.4, 4.5, 5.5, 9.4_
 
-- [ ] 6. App wiring and never-reveal test
-  - [ ] 6.1 Wire the guide and the menu in `app/src/App.tsx`
+- [x] 6. App wiring and never-reveal test
+  - [x] 6.1 Wire the guide and the menu in `app/src/App.tsx`
     - Add the `cangjie-guide` view (`origin: 'before-seance' | 'review'`); add `beginSeance(dataset)` (guide first when `getCangjieIntroSeen()` is false, else `startSeance`); the intro's `onBegin` calls `setIntroSeen(true)` then `beginSeance`; the menu's `onStartSeance` and the summary's `onPlayAgain` call `beginSeance`; the menu's `onReviewCangjieGuide` shows the guide with `origin: 'review'`
     - The guide's `onContinue` calls `setCangjieIntroSeen(true)`, then starts the Séance (`before-seance`) or returns to the menu (`review`); `buildSession` and `handleOutcome` stay unchanged
     - _Requirements: 2.8, 6.1, 6.2, 6.3, 7.2, 7.4_
 
-  - [ ] 6.2 Update the App tests in `app/src/App.test.tsx`
+  - [x] 6.2 Update the App tests in `app/src/App.test.tsx`
     - First visit: intro, then the guide, then a Séance; returning visit with the guide seen: menu, and "Begin a Nightly Séance" starts a Séance directly; returning visit with the guide unseen: the guide first; "How Cangjie works" shows the guide and Continue returns to the menu; one Combined outcome per ghost reaches the saved history once; a version-1 saved blob resets to the legend intro and an empty history
     - _Requirements: 6.1, 6.2, 6.3, 7.2, 7.4, 8.3, 9.4_
 
-  - [ ] 6.3 Write the never-reveal component test `app/src/modes/SummonStep.neverReveal.test.tsx` (hanzi-writer mocked)
+  - [x] 6.3 Write the never-reveal component test `app/src/modes/SummonStep.neverReveal.test.tsx` (hanzi-writer mocked)
     - Read `app/public/data/characters.json`; for every Playable ghost render `GhostPrompt` and `SummonStep` in the unresolved state, and again after three wrong keys for the first slot (Key hint visible), and assert the target character appears nowhere in the DOM text, any attribute (including `aria-label`), or `document.title`
     - _Requirements: 3.7, 5.1, 5.2, 5.3, 9.5_
 
-- [ ] 7. Final checkpoint - Whole project
+- [x] 7. Final checkpoint - Whole project
   - Run `npm test` from the repository root (all tests pass), `tsc --noEmit` for the root project and for `app/` (no errors), a search that finds no `any` in the new code, and `npm run build -w app` (builds without errors).
   - Ensure all tests pass, ask the user if questions arise.
   - _Requirements: 9.1, 9.6_

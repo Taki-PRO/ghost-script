@@ -3,6 +3,9 @@ import type { CharacterRecord } from '../data/types';
 import type { CharacterDataset } from '../data/charDataLoader';
 import type { EngineConfig } from '../engine/config';
 import type { Outcome } from '../engine/scheduler';
+import { isPlayableInCangjie } from '../engine/cangjieRules';
+import { combineOutcomes } from '../engine/outcome';
+import { SummonStep } from '../modes/SummonStep';
 import { WriteMode } from '../modes/WriteMode';
 import { GhostPrompt } from './GhostPrompt';
 import type { SessionResults } from './SessionSummary';
@@ -29,6 +32,12 @@ export function dedupeGhosts(ghosts: readonly CharacterRecord[]): CharacterRecor
   return out;
 }
 
+type Step = 'summon' | 'write';
+
+function initialStep(record: CharacterRecord | undefined): Step {
+  return record && isPlayableInCangjie(record.cangjie) ? 'summon' : 'write';
+}
+
 const RESULT_TEXT: Record<Outcome, string> = {
   clean: 'Laid to rest',
   struggled: 'Laid to rest — it will return soon',
@@ -45,6 +54,8 @@ export function SeanceSession({ ghosts, dataset, config, onOutcome, onComplete }
 
   const [index, setIndex] = useState(0);
   const [result, setResult] = useState<Outcome | null>(null);
+  const [step, setStep] = useState<Step>(() => initialStep(list[0]));
+  const summonResultRef = useRef<Outcome | null>(null);
 
   const resolvedRef = useRef(false);
   const laidToRestRef = useRef(0);
@@ -88,15 +99,35 @@ export function SeanceSession({ ghosts, dataset, config, onOutcome, onComplete }
       onCompleteRef.current({ total, laidToRest: laidToRestRef.current });
       return;
     }
+    summonResultRef.current = null;
     setResult(null);
+    setStep(initialStep(list[index + 1]));
     setIndex(index + 1);
-  }, [index, total]);
+  }, [index, total, list]);
+
+  const handleSummonDone = useCallback((summonResult: Outcome) => {
+    summonResultRef.current = summonResult;
+    setStep('write');
+  }, []);
+
+  const handleWriteOutcome = useCallback(
+    (writeResult: Outcome) => {
+      handleOutcome(combineOutcomes(summonResultRef.current, writeResult));
+    },
+    [handleOutcome],
+  );
 
   if (!record) {
     return <p className="text-center text-muted">No ghosts tonight.</p>;
   }
 
   const isLast = index === total - 1;
+  const hasSummon = isPlayableInCangjie(record.cangjie);
+  const stepLabel = !hasSummon
+    ? 'Lay to rest'
+    : step === 'summon'
+      ? 'Step 1 of 2: Summon'
+      : 'Step 2 of 2: Lay to rest';
 
   return (
     <div className="mx-auto flex w-full max-w-xl flex-col items-center gap-4 p-4">
@@ -104,7 +135,18 @@ export function SeanceSession({ ghosts, dataset, config, onOutcome, onComplete }
         Ghost {index + 1} of {total}
       </h2>
       <GhostPrompt record={record} />
-      <WriteMode record={record} dataset={dataset} config={config} onOutcome={handleOutcome} />
+      <p className="text-muted">{stepLabel}</p>
+      {step === 'summon' ? (
+        <SummonStep
+          key={record.character}
+          record={record}
+          dataset={dataset}
+          config={config}
+          onDone={handleSummonDone}
+        />
+      ) : (
+        <WriteMode record={record} dataset={dataset} config={config} onOutcome={handleWriteOutcome} />
+      )}
       {result !== null && (
         <div className="flex flex-col items-center gap-3">
           <p className="text-ink">{RESULT_TEXT[result]}</p>

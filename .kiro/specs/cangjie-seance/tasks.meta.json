@@ -333,6 +333,164 @@
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794754708926
       }
+    ],
+    "5.1 Implement `app/src/modes/SummonStep.tsx`": [
+      {
+        "executionId": "d47b489e-4a77-47e4-bcc6-51cc6c01c644",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794755200504
+      },
+      {
+        "executionId": "d47b489e-4a77-47e4-bcc6-51cc6c01c644",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794755319939
+      }
+    ],
+    "5.3 Implement `app/src/components/CangjieGuide.tsx`": [
+      {
+        "executionId": "d47b489e-4a77-47e4-bcc6-51cc6c01c644",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794755200575
+      },
+      {
+        "executionId": "d47b489e-4a77-47e4-bcc6-51cc6c01c644",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794755320050
+      }
+    ],
+    "5.5 Update `app/src/components/StartMenu.tsx`": [
+      {
+        "executionId": "d47b489e-4a77-47e4-bcc6-51cc6c01c644",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794755200619
+      },
+      {
+        "executionId": "d47b489e-4a77-47e4-bcc6-51cc6c01c644",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794755321110
+      }
+    ],
+    "5.2 Write component tests `app/src/modes/SummonStep.test.tsx` (hanzi-writer mocked, fake timers)": [
+      {
+        "executionId": "d47b489e-4a77-47e4-bcc6-51cc6c01c644",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794755327158
+      },
+      {
+        "executionId": "d47b489e-4a77-47e4-bcc6-51cc6c01c644",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794755427285
+      }
+    ],
+    "5.4 Write component tests `app/src/components/CangjieGuide.test.tsx`": [
+      {
+        "executionId": "d47b489e-4a77-47e4-bcc6-51cc6c01c644",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794755328050
+      },
+      {
+        "executionId": "d47b489e-4a77-47e4-bcc6-51cc6c01c644",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794755428248
+      }
+    ],
+    "5.6 Update the StartMenu tests in `app/src/components/StartMenu.test.tsx`": [
+      {
+        "executionId": "d47b489e-4a77-47e4-bcc6-51cc6c01c644",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794755329221
+      },
+      {
+        "executionId": "d47b489e-4a77-47e4-bcc6-51cc6c01c644",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794755429544
+      }
+    ],
+    "5.7 Implement the two-step ghost flow in `app/src/components/SeanceSession.tsx`": [
+      {
+        "executionId": "d47b489e-4a77-47e4-bcc6-51cc6c01c644",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794755330431
+      },
+      {
+        "executionId": "d47b489e-4a77-47e4-bcc6-51cc6c01c644",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794755430811
+      }
+    ],
+    "6.3 Write the never-reveal component test `app/src/modes/SummonStep.neverReveal.test.tsx` (hanzi-writer mocked)": [
+      {
+        "executionId": "d47b489e-4a77-47e4-bcc6-51cc6c01c644",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794755331488
+      },
+      {
+        "executionId": "d47b489e-4a77-47e4-bcc6-51cc6c01c644",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794755432014
+      }
+    ],
+    "5.8 Update the Séance tests in `app/src/components/SeanceSession.test.tsx` (hanzi-writer mocked, fake timers)": [
+      {
+        "executionId": "d47b489e-4a77-47e4-bcc6-51cc6c01c644",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794755437170
+      },
+      {
+        "executionId": "d47b489e-4a77-47e4-bcc6-51cc6c01c644",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794755550496
+      }
+    ],
+    "6.1 Wire the guide and the menu in `app/src/App.tsx`": [
+      {
+        "executionId": "d47b489e-4a77-47e4-bcc6-51cc6c01c644",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794755438202
+      },
+      {
+        "executionId": "d47b489e-4a77-47e4-bcc6-51cc6c01c644",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794755549917
+      }
+    ],
+    "5. UI: Summon step, guide, start menu, two-step Séance": [
+      {
+        "executionId": "d47b489e-4a77-47e4-bcc6-51cc6c01c644",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794755550523
+      }
+    ],
+    "6.2 Update the App tests in `app/src/App.test.tsx`": [
+      {
+        "executionId": "d47b489e-4a77-47e4-bcc6-51cc6c01c644",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794755555022
+      },
+      {
+        "executionId": "d47b489e-4a77-47e4-bcc6-51cc6c01c644",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794755689797
+      }
+    ],
+    "6. App wiring and never-reveal test": [
+      {
+        "executionId": "d47b489e-4a77-47e4-bcc6-51cc6c01c644",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794755689826
+      }
+    ],
+    "7. Final checkpoint - Whole project": [
+      {
+        "executionId": "d47b489e-4a77-47e4-bcc6-51cc6c01c644",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794755694534
+      },
+      {
+        "executionId": "d47b489e-4a77-47e4-bcc6-51cc6c01c644",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794755884361
+      }
     ]
   }
 }

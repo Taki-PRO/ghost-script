@@ -10,6 +10,9 @@ import raw from '../../public/data/characters.json';
 
 const stub = vi.hoisted(() => ({
   mounts: 0,
+  /** When true SummonStep is replaced by a stub whose onDone the tests call; otherwise the real one runs. */
+  fastSummon: true,
+  summon: null as null | { record: { character: string }; onDone: (o: Outcome) => void },
   props: [] as Array<{ record: { character: string }; onOutcome: (o: Outcome) => void }>,
 }));
 
@@ -26,6 +29,37 @@ vi.mock('../modes/WriteMode', async () => {
   };
 });
 
+vi.mock('hanzi-writer', () => ({
+  default: {
+    create: (el: HTMLElement) => {
+      const svg = document.createElement('span');
+      svg.setAttribute('data-testid', 'fake-svg');
+      el.appendChild(svg);
+      return { animateCharacter: () => Promise.resolve() };
+    },
+  },
+}));
+
+vi.mock('../modes/SummonStep', async (importOriginal) => {
+  const React = await import('react');
+  const actual = await importOriginal<typeof import('../modes/SummonStep')>();
+  return {
+    ...actual,
+    SummonStep: (props: { record: { character: string }; onDone: (o: Outcome) => void }) => {
+      React.useEffect(() => {
+        if (!stub.fastSummon) return undefined;
+        stub.summon = props;
+        return () => {
+          stub.summon = null;
+        };
+      });
+      if (!stub.fastSummon) return React.createElement(actual.SummonStep, props as never);
+      return React.createElement('div', { 'data-testid': 'summon-stub' });
+    },
+  };
+});
+
+import { SUMMON_FADE_MS, SUMMON_HOLD_MS } from '../modes/SummonStep';
 import { SeanceSession, dedupeGhosts } from './SeanceSession';
 
 const all = raw as unknown as Record<string, CharacterRecord>;
@@ -37,7 +71,16 @@ const rec = (ch: string): CharacterRecord => {
 const dataset: CharacterDataset = new Map(Object.entries(all));
 
 const lastProps = () => stub.props[stub.props.length - 1]!;
-const emit = (o: Outcome) => act(() => lastProps().onOutcome(o));
+/** Fast path: end the stubbed Summon step if one is showing (clean). */
+const finishSummon = () => {
+  const s = stub.summon;
+  if (s) act(() => s.onDone('clean'));
+};
+/** Report the Lay-to-rest result, finishing a stubbed Summon step first (clean, so the result is unchanged). */
+const emit = (o: Outcome) => {
+  finishSummon();
+  act(() => lastProps().onOutcome(o));
+};
 
 function setup(chars: string[], strict = false) {
   const onOutcome = vi.fn();
@@ -58,6 +101,8 @@ function setup(chars: string[], strict = false) {
 beforeEach(() => {
   stub.mounts = 0;
   stub.props = [];
+  stub.fastSummon = true;
+  stub.summon = null;
 });
 afterEach(() => {
   cleanup();
@@ -68,6 +113,8 @@ describe('SeanceSession', () => {
   it('3.2: shows Ghost 1 of N, passes first record, no Next before an outcome', () => {
     setup(['我', '口', '爱']);
     expect(screen.getByText('Ghost 1 of 3')).toBeTruthy();
+    expect(stub.summon?.record.character).toBe('我');
+    finishSummon();
     expect(lastProps().record.character).toBe('我');
     expect(screen.queryByRole('button', { name: /next ghost|finish the séance/i })).toBeNull();
   });
@@ -76,6 +123,7 @@ describe('SeanceSession', () => {
     vi.useFakeTimers();
     vi.setSystemTime(1_700_000_000_000);
     const { onOutcome } = setup(['我', '口']);
+    finishSummon();
     const first = lastProps();
     act(() => first.onOutcome('clean'));
     expect(onOutcome).toHaveBeenCalledTimes(1);
@@ -100,8 +148,11 @@ describe('SeanceSession', () => {
     expect(document.activeElement).toBe(btn);
     await userEvent.click(btn);
     expect(screen.getByText('Ghost 2 of 2')).toBeTruthy();
+    expect(stub.summon?.record.character).toBe('口');
+    finishSummon();
     expect(lastProps().record.character).toBe('口');
-    expect(stub.mounts).toBe(1);
+    // WriteMode unmounts during the next ghost's Summon step, so each ghost mounts it once.
+    expect(stub.mounts).toBe(2);
     expect(screen.queryByRole('button', { name: /next ghost|finish the séance/i })).toBeNull();
   });
 
@@ -144,15 +195,18 @@ describe('SeanceSession', () => {
     fireEvent.click(btn);
     fireEvent.click(btn);
     expect(screen.getByText('Ghost 2 of 3')).toBeTruthy();
+    finishSummon();
     expect(lastProps().record.character).toBe('口');
   });
 
   it('3.5: duplicates are collapsed, first occurrences in order', () => {
     const { onOutcome } = setup(['我', '口', '我']);
     expect(screen.getByText('Ghost 1 of 2')).toBeTruthy();
+    finishSummon();
     expect(lastProps().record.character).toBe('我');
     emit('clean');
     fireEvent.click(screen.getByRole('button', { name: 'Next ghost' }));
+    finishSummon();
     expect(lastProps().record.character).toBe('口');
     emit('clean');
     expect(screen.getByRole('button', { name: 'Finish the séance' })).toBeTruthy();
@@ -175,5 +229,147 @@ describe('SeanceSession', () => {
     expect(screen.queryByRole('button', { name: /legend|menu/i })).toBeNull();
     emit('clean');
     expect(screen.queryByRole('button', { name: /legend|menu/i })).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Two-step flow with the real SummonStep (hanzi-writer mocked, fake timers)
+// ---------------------------------------------------------------------------
+describe('SeanceSession two-step flow', () => {
+  beforeEach(() => {
+    stub.fastSummon = false;
+    vi.useFakeTimers();
+  });
+
+  const press = (key: string) => fireEvent.keyDown(window, { key });
+  const typeCode = (code: string) => code.split('').forEach(press);
+  /** Hold and fade of the Summon step, with the promise queue flushed between. */
+  const runFade = async () => {
+    await act(async () => {});
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(SUMMON_HOLD_MS);
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(SUMMON_FADE_MS);
+    });
+  };
+  const summonShown = () => screen.queryByRole('region', { name: 'Summon step' }) !== null;
+  const writeShown = () => screen.queryByTestId('write-stub') !== null;
+  const nextShown = () => screen.queryByRole('button', { name: /next ghost|finish the séance/i }) !== null;
+
+  it('clean summon then clean write: one clean Outcome, nothing at the end of the Summon step', async () => {
+    const { onOutcome } = setup(['口']);
+    typeCode('R');
+    await runFade();
+    expect(summonShown()).toBe(false);
+    expect(writeShown()).toBe(true);
+    expect(onOutcome).not.toHaveBeenCalled();
+    emit('clean');
+    expect(onOutcome).toHaveBeenCalledTimes(1);
+    expect(onOutcome.mock.calls[0]!.slice(0, 2)).toEqual(['口', 'clean']);
+  });
+
+  it('struggled summon then clean write records struggled', async () => {
+    const { onOutcome } = setup(['口']);
+    ['B', 'B', 'B', 'R'].forEach(press);
+    await runFade();
+    expect(onOutcome).not.toHaveBeenCalled();
+    emit('clean');
+    expect(onOutcome).toHaveBeenCalledTimes(1);
+    expect(onOutcome.mock.calls[0]!.slice(0, 2)).toEqual(['口', 'struggled']);
+  });
+
+  it('clean summon then struggled write records struggled', async () => {
+    const { onOutcome } = setup(['口']);
+    typeCode('R');
+    await runFade();
+    emit('struggled');
+    expect(onOutcome).toHaveBeenCalledTimes(1);
+    expect(onOutcome.mock.calls[0]!.slice(0, 2)).toEqual(['口', 'struggled']);
+  });
+
+  it('Give up in the Summon step still proceeds to writing and records gave-up', async () => {
+    const { onOutcome } = setup(['口']);
+    fireEvent.click(screen.getByRole('button', { name: 'Give up' }));
+    await runFade();
+    expect(writeShown()).toBe(true);
+    expect(onOutcome).not.toHaveBeenCalled();
+    emit('clean');
+    expect(onOutcome).toHaveBeenCalledTimes(1);
+    expect(onOutcome.mock.calls[0]!.slice(0, 2)).toEqual(['口', 'gave-up']);
+  });
+
+  it('Give up in the Lay-to-rest step records gave-up', async () => {
+    const { onOutcome } = setup(['口']);
+    typeCode('R');
+    await runFade();
+    emit('gave-up');
+    expect(onOutcome).toHaveBeenCalledTimes(1);
+    expect(onOutcome.mock.calls[0]!.slice(0, 2)).toEqual(['口', 'gave-up']);
+  });
+
+  it('别 and 错 skip the Summon step; 身 has one', () => {
+    setup(['别', '错']);
+    expect(summonShown()).toBe(false);
+    expect(writeShown()).toBe(true);
+    expect(screen.getByText('Lay to rest')).toBeTruthy();
+    expect(screen.queryByText(/Step \d of 2/)).toBeNull();
+    cleanup();
+    setup(['身']);
+    expect(summonShown()).toBe(true);
+    expect(writeShown()).toBe(false);
+  });
+
+  it('别 then 错: each is recorded once from the write step alone', () => {
+    const { onOutcome } = setup(['别', '错']);
+    emit('clean');
+    expect(onOutcome.mock.calls[0]!.slice(0, 2)).toEqual(['别', 'clean']);
+    fireEvent.click(screen.getByRole('button', { name: 'Next ghost' }));
+    expect(screen.getByText('Lay to rest')).toBeTruthy();
+    emit('struggled');
+    expect(onOutcome.mock.calls[1]!.slice(0, 2)).toEqual(['错', 'struggled']);
+  });
+
+  it('the step label changes from Summon to Lay to rest', async () => {
+    setup(['身']);
+    expect(screen.getByText('Step 1 of 2: Summon')).toBeTruthy();
+    typeCode('HXH');
+    await runFade();
+    expect(screen.queryByText('Step 1 of 2: Summon')).toBeNull();
+    expect(screen.getByText('Step 2 of 2: Lay to rest')).toBeTruthy();
+  });
+
+  it('the target is absent from the DOM from the end of the fade until the write step ends; Next ghost only after', async () => {
+    setup(['身']);
+    typeCode('HXH');
+    expect(nextShown()).toBe(false);
+    await runFade();
+    expect(document.body.innerHTML).not.toContain('身');
+    expect(nextShown()).toBe(false);
+    emit('clean');
+    expect(nextShown()).toBe(true);
+  });
+
+  it('Next ghost is not shown at the end of the Summon step', async () => {
+    setup(['口', '我']);
+    typeCode('R');
+    await runFade();
+    expect(nextShown()).toBe(false);
+    emit('clean');
+    expect(screen.getByRole('button', { name: 'Next ghost' })).toBeTruthy();
+  });
+
+  it('the last ghost leads to the summary via Finish, with a fresh Summon step per ghost', async () => {
+    const { onOutcome, onComplete } = setup(['口', '别']);
+    typeCode('R');
+    await runFade();
+    emit('clean');
+    fireEvent.click(screen.getByRole('button', { name: 'Next ghost' }));
+    expect(summonShown()).toBe(false);
+    emit('clean');
+    expect(onOutcome).toHaveBeenCalledTimes(2);
+    fireEvent.click(screen.getByRole('button', { name: 'Finish the séance' }));
+    expect(onComplete).toHaveBeenCalledTimes(1);
+    expect(onComplete).toHaveBeenCalledWith({ total: 2, laidToRest: 2 });
   });
 });
