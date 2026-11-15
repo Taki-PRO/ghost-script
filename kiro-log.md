@@ -307,6 +307,23 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   - Kiro amended the two earlier specs to match: the dataset gains a `cangjie` field (the only one allowed to be missing) and a fourth source, and "clean" now means no hint of any kind. Steering docs and a few stale property references were also brought up to date.
 - **Next:** tasks.md for cangjie-seance, then implementation.
 
+## Nov 15, 2026: Course correction after an outside review, and first deployment
+
+- **What I did:** Had the project reviewed against the official judging criteria by a separate AI reviewer acting as a judge. It estimated about 19/50 today and 34/50 if the plan were delivered, short of a winner. Its main reasons: the resurrection was in the text, not on screen; the look was planned last; and the 300 characters are the easiest ones. I'm following its plan:
+  - deploy now;
+  - reframe the premise and audience;
+  - trim the Cangjie Séance and fold it into one rite (summon by typing the code, then write it);
+  - move the visuals ahead of the MCP work, and build hooks, a reviewer agent and the Oracle MCP while doing them;
+  - test with five real people;
+  - feature freeze on Nov 27.
+- **Kiro feature:** Spec workflow. Kiro created a small `github-pages-deploy` spec for the deployment instead of editing files directly, because the steering says new work gets a spec first.
+- **Result:**
+  - **Live at https://taki-pro.github.io/ghost-script/.** A GitHub Actions workflow runs `npm ci`, all 438 tests and the build on Node 22, and deploys only if everything passes. Checked in a real browser: the page, script, styles and the 1.6 MB dataset all load from GitHub Pages, and a Séance starts with 一.
+  - The first run failed because Pages wasn't switched on for the repository. I enabled it and re-ran.
+  - Also added an original SVG ghost favicon, used "wept" consistently, and added "Play it" and "Run it locally" sections to the README.
+  - Premise reworded so Cangjie is never called dead. Phonetic typing caused the forgetting, and the shape-based keyboard it displaced is brought back as the cure. The audience is heritage and second-language learners. History now says "developed in the 1970s".
+- **Next:** re-scope `cangjie-seance` to the trimmed one-rite version, then build it.
+
 ---
 
 ## Template for new entries
