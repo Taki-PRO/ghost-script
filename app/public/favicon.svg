@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img">
+  <title>Ghost Script</title>
+  <path fill="#ece6d6" d="M32 6C19.3 6 10 15.6 10 28v26c0 1.6 1.8 2.5 3.1 1.5l4.9-3.7a2 2 0 0 1 2.4 0l4.6 3.5a2 2 0 0 0 2.4 0l4.6-3.5a2 2 0 0 1 2.4 0l4.6 3.5a2 2 0 0 0 2.4 0l4.6-3.5a2 2 0 0 1 2.4 0l4.9 3.7c1.3 1 3.1.1 3.1-1.5V28C54 15.6 44.7 6 32 6z"/>
+  <circle cx="24" cy="29" r="4" fill="#0e0f13"/>
+  <circle cx="40" cy="29" r="4" fill="#0e0f13"/>
+</svg>

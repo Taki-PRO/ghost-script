@@ -11,12 +11,12 @@ afterEach(() => {
 });
 
 describe('IntroScreen', () => {
-  it('renders the premise: Cangjie, wailing ghosts, forgotten characters are ghosts laid to rest by writing', () => {
+  it('renders the premise: Cangjie, weeping ghosts, forgotten characters are ghosts laid to rest by writing', () => {
     const { container } = render(<IntroScreen onBegin={() => {}} />);
     const text = container.textContent ?? '';
     expect(text).toMatch(/Cangjie/);
     expect(text).toMatch(/invented\s+writing/i);
-    expect(text).toMatch(/ghosts\s+(wept|wailed)/i);
+    expect(text).toMatch(/ghosts\s+wept/i);
     expect(text).toMatch(/night/i);
     expect(text).toMatch(/forgotten[\s\S]*are ghosts/i);
     expect(text).toMatch(/lay[\s\S]*to\s+rest[\s\S]*writing/i);

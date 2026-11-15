@@ -39,13 +39,13 @@ The ghost-game-core feature is the first playable version of Ghost Script: a Rea
 #### Acceptance Criteria
 
 1. WHEN the App is opened and no prior visit is recorded in the Storage module, THE App SHALL display the legend intro screen before any Nightly Séance begins.
-2. THE legend intro screen SHALL present, in English, the premise that Cangjie invented Chinese writing, that legend says ghosts wailed the night writing was created, and that in this game forgotten characters are ghosts the player lays to rest by writing them.
+2. THE legend intro screen SHALL present, in English, the premise that Cangjie invented Chinese writing, that legend says ghosts wept the night writing was created, and that in this game forgotten characters are ghosts the player lays to rest by writing them.
 3. THE legend intro screen SHALL provide a clearly labelled control to begin (e.g. a button) that dismisses the intro and starts a Nightly Séance.
 4. WHEN the player dismisses the legend intro screen, THE App SHALL record in the Storage module that the intro has been seen.
 5. WHEN the App is opened and a prior visit is recorded, THE App SHALL skip the legend intro and go directly to the session start. THE App SHALL offer, ONLY outside an active Nightly Séance, a StartMenu with controls to start a Séance in Write mode or in Cangjie mode, to re-view the legend, and to re-view "How Cangjie works"; none of these re-view controls SHALL be available mid-session, and re-viewing SHALL never interrupt or end an in-progress Séance. *(Amended by cangjie-seance, Requirement 2.)*
 6. THE legend intro screen SHALL be operable by both touch and mouse/keyboard, and its begin control SHALL have an accessible label.
 7. THE legend intro copy SHALL state only facts that are verifiable and sourced; it SHALL NOT invent statistics, exam requirements, or historical claims.
-8. THE legend intro (or an accompanying "About" note reachable from it) SHALL attribute the wailing-ghosts line to its classical source — the Huainanzi, which records that when Cangjie created writing, Heaven rained grain/millet and the ghosts wept at night (天雨粟，鬼夜哭). No other historical claim SHALL be made in the intro copy.
+8. THE legend intro (or an accompanying "About" note reachable from it) SHALL attribute the line about ghosts weeping to its classical source — the Huainanzi, which records that when Cangjie created writing, Heaven rained grain/millet and the ghosts wept at night (天雨粟，鬼夜哭). No other historical claim SHALL be made in the intro copy.
 
 ---
 

@@ -192,7 +192,7 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
 
 - [x] 12. IntroScreen
   - [x] 12.1 Implement `app/src/components/IntroScreen.tsx`
-    - Props `{ onBegin }`; renders the legend copy (Cangjie invented writing; legend of wailing ghosts; forgotten characters are ghosts laid to rest by writing), attributes the wailing-ghosts line to the Huainanzi (天雨粟，鬼夜哭) and makes no other historical claim; labelled "Begin the Séance" control operable by touch and mouse/keyboard
+    - Props `{ onBegin }`; renders the legend copy (Cangjie invented writing; legend of ghosts that wept; forgotten characters are ghosts laid to rest by writing), attributes the line about ghosts weeping to the Huainanzi (天雨粟，鬼夜哭) and makes no other historical claim; labelled "Begin the Séance" control operable by touch and mouse/keyboard
     - _Requirements: 1.2, 1.3, 1.6, 1.7, 1.8_
 
   - [x] 12.2 Write component test `app/src/components/IntroScreen.test.tsx`

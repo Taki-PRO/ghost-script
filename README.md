@@ -6,6 +6,38 @@ Ghost Script is a haunted handwriting game for people who can read Chinese chara
 
 Built for **Kiroween 2026**, category **Resurrection**.
 
+## Play it
+
+Play Ghost Script at https://taki-pro.github.io/ghost-script/. It is a static site that runs in the browser with no account. Your progress is saved only in that browser (in `localStorage`).
+
+## Run it locally
+
+Prerequisites: Node and npm.
+
+1. From the repository root, install dependencies. One install covers the root and the `app` workspace:
+
+   ```
+   npm install
+   ```
+
+2. Start the dev server:
+
+   ```
+   npm run dev -w app
+   ```
+
+3. Open the localhost URL that Vite prints.
+
+Never start the dev server with `--host`. Leaving it out keeps the server on localhost only.
+
+Run the tests with `npm test` and make a production build with `npm run build -w app` (output in `app/dist`). See [Usage](#usage) for details.
+
+## Deployment
+
+Pushing to `main` runs `.github/workflows/deploy.yml`. The workflow runs `npm ci`, the full `npm test`, then `npm run build -w app`, and deploys `app/dist` to GitHub Pages only if every step passes.
+
+One-time repository setting: Settings → Pages → Build and deployment → Source: "GitHub Actions".
+
 ## Data and licences
 
 The character dataset is assembled from three open-source raw datasets plus a published character list. Each source and its licence:
