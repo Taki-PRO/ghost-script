@@ -352,6 +352,21 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   - The earlier specs no longer mention the withdrawn mode choice, per-mode history or shape hint. Req 5.1 now says the character stays hidden until the summon completes and fades before writing.
 - **Next:** groups 3–4: the summon engine and save-data schema 2.
 
+## Nov 15, 2026: Cangjie Séance groups 3–4: summon engine and save data v2
+
+- **What I did:** Ran groups 3 and 4 of `cangjie-seance`: the pure engine for the summon step, and save-data schema 2.
+- **Kiro feature:** Spec task execution with parallel sub-agents.
+- **Result:**
+  - **Engine:**
+    - `outcome.ts` holds the shared outcome rules. `combineOutcomes` gives gave-up if either step gave up, then struggled if either struggled, otherwise clean.
+    - `mask.ts` hides the target character and handles characters outside the Basic Multilingual Plane.
+    - `cangjie.ts` has the 25-key table (24 shapes plus 難), keyboard parsing that ignores Z, modifier keys, auto-repeat and input-method composition, and a summon reducer. One wrong key is one mistake, and three misses in a row on the same slot show the next key.
+  - **Save data:** schema 2 adds "How Cangjie works seen". Version-1 data resets to defaults, with no migration, as decided.
+  - **Kiro kept the tests honest:** the corrupt-data tests now start from valid version-2 data, so they fail for the field being checked, not just because the version is old.
+  - **Kiro checked its own sub-agent:** one agent only read part of the design, so Kiro compared that agent's exported signatures and rules against the full design itself. They match.
+  - **Tests:** 52 new, none of them property tests. **555 tests pass**; `tsc` clean for root and app. The live site redeployed.
+- **Next:** groups 5–6: the summon screen, the guide, and wiring the two-step rite into the Séance.
+
 ---
 
 ## Template for new entries
