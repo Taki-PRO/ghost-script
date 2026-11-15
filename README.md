@@ -97,7 +97,11 @@ When one of them is saved, the hook runs `npm run check:data --silent`. That com
 - On failure, the first line is `DATA CHECK FAILED: <step>` (the name of the failing step), followed by the last 40 lines of that step's output.
 - A bad override index in `data/prompt-overrides.csv` fails the build with a message that names the file and the column to fix. A negative index is rejected earlier, by the CSV parser, as a `malformed-row`.
 
-The hook fires when the Kiro agent saves one of these files. A save made by a person in the editor is not required to fire it. The Kiro IDE cannot create a manual-trigger hook, so to run the same check on demand, run this in a terminal from the repository root:
+Saving any watched input fires the hook once, whether a person or the Kiro agent saves it, as long as hooks are loaded. After the hook file is first added, a window reload may be needed before it loads.
+
+Verified by hand (approved by Takshil): after a window reload, a person saved `data/prompt-overrides.csv` with a bad entry index on the 吧 row. The Kiro chat reported `DATA CHECK FAILED: build:data` with the entry-index message. Reverting the row and saving again reported `DATA CHECK PASSED`.
+
+The Kiro IDE cannot create a manual-trigger hook, so to run the same check on demand, run this in a terminal from the repository root:
 
 ```
 npm run check:data

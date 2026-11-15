@@ -160,14 +160,14 @@ Add the two-step rite to Ghost Script: every ghost is first SUMMONED by typing i
     - _Requirements: 2.4, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 3.10, 3.13, 5.1, 5.3, 9.4_
 
   - [x] 5.3 Implement `app/src/components/CangjieGuide.tsx`
-    - Props `{ dataset, onContinue }`; export `pickGuideExample(dataset)` (first character in `learningOrder(dataset)` that is Playable and has a code of at least 2 keys, code read from `record.cangjie`, `null` when none)
-    - Show the 25 keys from `CANGJIE_KEYS` (X as 難, explained), that a code is one to five keys typed in order, that each key stands for a family of related shapes of which only the base shape is shown, the example (omitted when `null`), "developed in the 1970s" by Chu Bong-Foo plus exactly the three other whitelisted claims, the statement that the codes follow the Unicode Unihan `kCangjie` field which Unihan marks provisional so some typists know different codes for some characters, and a visible citation giving each title and URL as text ("Cangjie input method" `https://en.wikipedia.org/wiki/Cangjie_input_method`, "Chu Bong-Foo" `https://en.wikipedia.org/wiki/Chu_Bong-Foo`)
+    - Props `{ dataset, onContinue }`; export `pickGuideExample(dataset)` (LAST character in `learningOrder(dataset)` that is Playable and has a code of 2 or 3 keys, code read from `record.cangjie`, `null` when none; late in the order to avoid an Answer_Leak)
+    - Show the 25 keys from `CANGJIE_KEYS` (X shown as 難 as the on-screen key label only, no claim about its meaning), that a code is one to five keys typed in order, that each key stands for a family of related shapes of which only the base shape is shown (cited to "Cangjie input method"), the example (omitted when `null`), "developed in the 1970s" by Chu Bong-Foo plus exactly the three other whitelisted claims, the statement that the codes follow the Unicode Unihan `kCangjie` field which Unihan marks provisional so some typists know different codes for some characters, and a visible citation line that also covers the family-of-shapes statement, giving each title and URL as text ("Cangjie input method" `https://en.wikipedia.org/wiki/Cangjie_input_method`, "Chu Bong-Foo" `https://en.wikipedia.org/wiki/Chu_Bong-Foo`)
     - A "Continue" button with an accessible label; shapes carry `lang="zh"`
-    - _Requirements: 6.4, 6.5, 6.6, 6.7, 6.8_
+    - _Requirements: 6.4, 6.5, 6.6, 6.7, 6.8, 6.9_
 
   - [x] 5.4 Write component tests `app/src/components/CangjieGuide.test.tsx`
-    - 25 keys with X as 難; the claim "developed in the 1970s" and the three other whitelisted claims only (no other year, statistic or "dying" wording); the Unihan source statement including "provisional"; both citations with titles and URLs as text; the example code equals the dataset record's `cangjie`; `pickGuideExample` picks the first eligible, skips single-key and X-prefixed codes, returns `null` when none; Continue calls `onContinue`
-    - _Requirements: 6.4, 6.5, 6.6, 6.7, 6.8, 9.4_
+    - 25 keys with X as 難; the claim "developed in the 1970s" and the three other whitelisted claims only (no other year, statistic or "dying" wording); the Unihan source statement including "provisional"; both citations with titles and URLs as text; the example code equals the dataset record's `cangjie`; `pickGuideExample` picks the last eligible, skips single-key, 4-5-key and X-prefixed codes, the example is not among the first characters of the Learning order, returns `null` when none; Continue calls `onContinue`
+    - _Requirements: 6.4, 6.5, 6.6, 6.7, 6.8, 6.9, 9.4_
 
   - [x] 5.5 Update `app/src/components/StartMenu.tsx`
     - Props `{ onStartSeance, onReviewLegend, onReviewCangjieGuide }`; three buttons, each at least 44 px high with the existing focus ring: "Begin a Nightly Séance", "Read the legend again", "How Cangjie works"

@@ -41,7 +41,7 @@ Formats below were read from the official Kiro docs on the day this spec was wri
 
 The design picks the documented approach in each case. Implementation and the demo must check these.
 
-1. **Human saves.** The hook types page says `PostFileSave` "triggers when the agent saves or modifies files matching specific patterns". It does not say whether a save made by a person in the editor fires it. Decided (approved by Takshil): firing on agent saves only is acceptable. The demo edits the file through the agent. The implementation task still tries one editor save and records the outcome in `kiro-log.md`, but nothing depends on it.
+1. **Human saves.** The hook types page says `PostFileSave` "triggers when the agent saves or modifies files matching specific patterns". It does not say whether a save made by a person in the editor fires it. Verified by a human (approved by Takshil): after a window reload, a person's save of `data/prompt-overrides.csv` with a bad 吧 entryIndex made the Kiro chat report `DATA CHECK FAILED: build:data` with the entry-index message, and reverting the row reported `DATA CHECK PASSED`. So human and agent saves of the Watched_Inputs both fire the hook once hooks are loaded, and a window reload may be needed after the hook file is first created. Observation from the build session: no hook output came back to the agent after its own `str_replace` saves. This is recorded as an observation only; no requirement depends on it.
 2. **Pass or fail "in the chat".** The docs say a command hook's stdout goes into the agent's context on exit 0, and stderr is sent to the agent with a notice that the hook returned an error on any other exit code. They do not describe a separate banner. The chat therefore shows the result because the agent reports it. The command prints a fixed first line (`DATA CHECK PASSED` or `DATA CHECK FAILED`) so that the report is unambiguous. A hook can run a shell command directly (confirmed), so no agent-prompt action is used.
 3. **Matcher path form.** The docs say file-event matchers are a regex against the file path, and do not say whether the path is absolute or relative. The regex accepts both.
 4. **MCP working directory.** The MCP config documents `command`, `args`, `env`, `disabled`, `autoApprove` and `disabledTools`, and no `cwd`. The design assumes Kiro starts the server with the workspace root as working directory and uses a workspace-relative entry path. The dataset path does not depend on the working directory.
@@ -310,7 +310,7 @@ No new persisted data. Result types are listed under `oracle.ts`. Example tool r
 | Oracle: invalid character or code argument | MCP tool result with `isError: true` and a message naming the argument and rule. |
 | Oracle: valid character not in the dataset | Normal result with `found: false`, `reason: 'not-in-dataset'`. |
 | Oracle: dataset file missing or invalid | Message on stderr naming the file, exit code 1, no tools served. |
-| Hook does not fire on a person's editor save | Accepted (see Decisions, item 1). `npm run check:data` is the manual fallback and is documented in the README. |
+| Hook file newly created and not yet loaded | No hook fires until the window is reloaded (see Decisions, item 1). `npm run check:data` is the on-demand fallback and is documented in the README. |
 
 ## Testing Strategy
 
@@ -331,7 +331,7 @@ Property-based testing does not apply, and none is added (decision of Nov 15 in 
 
 | Feature | How to show it (about 30 seconds each) |
 | --- | --- |
-| Hook, pass | Ask Kiro to add a harmless trailing blank line to `data/prompt-overrides.csv`, or save it by hand if the manual-save check passed. The hook fires; the chat reports `DATA CHECK PASSED`. |
+| Hook, pass | Ask Kiro to add a harmless trailing blank line to `data/prompt-overrides.csv`, or save it by hand. The hook fires on either save; the chat reports `DATA CHECK PASSED`. |
 | Hook, fail | Change the first override row `比,2,0` to `比,9,0` and save. The chat reports `DATA CHECK FAILED: build:data` and the line `比: override entry-index-out-of-range ... Fix this row in data/prompt-overrides.csv`. Revert the row and the hook reports a pass again. `characters.json` is never changed in the failing run. |
 | Accuracy reviewer | Switch to `accuracy-reviewer` in the agent picker, ask "review the README and app text". Show it reading files and listing findings with `path:line`. Then ask it to edit a file and show it refusing because writes are denied. |
 | Oracle | In chat ask "what is the Cangjie code for 一, and is it playable?" and show the `lookup` tool call with the source `unihan 18.0.0 kCangjie`. Ask about a rare character outside the 300 and show `found: false`, with no guess. Call `verify` with a wrong code. |
@@ -341,7 +341,7 @@ Property-based testing does not apply, and none is added (decision of Nov 15 in 
 
 All decisions below are approved by Takshil.
 
-1. **Hook fires on agent saves only.** A person's editor save is not required to fire `PostFileSave`.
+1. **Hook fires on human and agent saves.** Verified by a human (approved by Takshil): a person's editor save fires `PostFileSave` once hooks are loaded; a window reload may be needed after the hook file is first created.
 2. **No manual-trigger hook.** The official hook types page (https://kiro.dev/docs/hooks/types/, updated Nov 12, 2026) lists a Manual trigger only as legacy in the IDE, runnable for old IDE 0.x `userTriggered` hooks, and states that a new Manual-trigger hook cannot be created in the IDE. It is creatable only in Kiro Web, and CLI V3 lists it but cannot run it. The page gives no JSON shape for a v1 manual hook. So no second hook file is added. The README documents `npm run check:data` as the on-demand fallback (Requirement 8.5), and the demo can run it in a terminal.
 3. **`verify` normalises the code.** The code is converted to upper case, then validated with `isValidCangjieCode`, and the result reports `normalisedCode`.
 4. **The Power task stays** (task 6, last and skippable).

@@ -3,6 +3,8 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import type { CharacterRecord } from '../data/types';
 import type { CharacterDataset } from '../data/charDataLoader';
 import { CANGJIE_KEYS } from '../engine/cangjie';
+import { isPlayableInCangjie } from '../engine/cangjieRules';
+import { learningOrder } from '../engine/learningOrder';
 import { CangjieGuide, pickGuideExample } from './CangjieGuide';
 import raw from '../../public/data/characters.json';
 
@@ -80,16 +82,53 @@ describe('CangjieGuide sources (Req 6.6, 6.7)', () => {
   });
 });
 
+describe('CangjieGuide family-of-shapes statement (Req 6.9)', () => {
+  it('states the family-of-shapes sentence, covered by the citation line naming "Cangjie input method"', () => {
+    const { container } = renderGuide();
+    const text = container.textContent ?? '';
+    expect(text).toContain(
+      'Each key stands for a family of related shapes. Only the base shape of the family is shown on the key.',
+    );
+    expect(text).toMatch(
+      /Sources for the statements about keys, shapes and history above \(English Wikipedia\):.*“Cangjie input method”.*“Chu Bong-Foo”/,
+    );
+  });
+
+  it('has no "difficult" or "no base shape" text', () => {
+    const { container } = renderGuide();
+    const text = container.textContent ?? '';
+    expect(text).not.toMatch(/difficult/i);
+    expect(text).not.toMatch(/no base shape/i);
+  });
+});
+
 describe('CangjieGuide example (Req 6.8)', () => {
-  it('shows the real dataset record\'s code for the picked character', () => {
+  it('shows the code of the record for the last eligible character in the real dataset', () => {
     renderGuide();
+    const order = learningOrder(realDataset);
+    const expected = [...order].reverse().find((ch) => {
+      const code = realDataset.get(ch)?.cangjie ?? null;
+      return code !== null && isPlayableInCangjie(code) && (code.length === 2 || code.length === 3);
+    });
+    expect(expected).toBeDefined();
     const picked = pickGuideExample(realDataset);
     expect(picked).not.toBeNull();
-    expect(picked?.code).toBe(realDataset.get(picked!.character)?.cangjie);
-    expect(picked).toEqual({ character: '七', code: 'JU' });
+    expect(picked?.character).toBe(expected);
+    expect(picked?.code).toBe(realDataset.get(expected!)?.cangjie);
     const example = screen.getByTestId('guide-example');
     expect(example.textContent).toContain(picked!.character);
     expect(example.textContent).toContain(picked!.code);
+  });
+
+  it('is not among the first 30 characters of the Learning order (Answer_Leak)', () => {
+    const picked = pickGuideExample(realDataset);
+    expect(picked).not.toBeNull();
+    const index = learningOrder(realDataset).indexOf(picked!.character);
+    expect(index).toBeGreaterThanOrEqual(30);
+  });
+
+  it('is 想 with DUP on the current dataset', () => {
+    expect(pickGuideExample(realDataset)).toEqual({ character: '想', code: 'DUP' });
   });
 
   it('omits the example when none is eligible', () => {
@@ -100,29 +139,48 @@ describe('CangjieGuide example (Req 6.8)', () => {
 });
 
 describe('pickGuideExample', () => {
-  it('picks the first eligible in learning order', () => {
+  it('picks the last eligible in learning order', () => {
     const dataset = makeDataset([
       ['乙', 5, 'ND'],
       ['一', 1, 'M'],
       ['二', 2, 'MM'],
       ['十', 2, 'J'],
     ]);
-    expect(pickGuideExample(dataset)).toEqual({ character: '二', code: 'MM' });
+    expect(pickGuideExample(dataset)).toEqual({ character: '乙', code: 'ND' });
   });
 
-  it('skips single-key and X-prefixed codes, and null codes', () => {
+  it('skips 1-key, 4-key, 5-key, X-prefixed and null codes', () => {
     const dataset = makeDataset([
-      ['一', 1, 'M'],
-      ['丶', 1, null],
-      ['乂', 2, 'XK'],
-      ['人', 2, 'O'],
       ['大', 3, 'KO'],
+      ['一', 4, 'M'],
+      ['丶', 5, null],
+      ['乂', 6, 'XK'],
+      ['人', 7, 'OIAB'],
+      ['天', 8, 'OIABC'],
     ]);
     expect(pickGuideExample(dataset)).toEqual({ character: '大', code: 'KO' });
   });
 
-  it('returns null when none is eligible', () => {
-    expect(pickGuideExample(makeDataset([['一', 1, 'M'], ['乂', 2, 'XK']]))).toBeNull();
+  it('accepts a 3-key code', () => {
+    const dataset = makeDataset([
+      ['二', 2, 'MM'],
+      ['想', 13, 'DUP'],
+    ]);
+    expect(pickGuideExample(dataset)).toEqual({ character: '想', code: 'DUP' });
+  });
+
+  it('returns null when none is eligible and for an empty dataset', () => {
+    expect(
+      pickGuideExample(
+        makeDataset([
+          ['一', 1, 'M'],
+          ['乂', 2, 'XK'],
+          ['丶', 3, null],
+          ['人', 4, 'OIAB'],
+          ['天', 5, 'OIABC'],
+        ]),
+      ),
+    ).toBeNull();
     expect(pickGuideExample(new Map())).toBeNull();
   });
 });

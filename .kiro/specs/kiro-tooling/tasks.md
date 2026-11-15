@@ -58,7 +58,7 @@ Build the three Kiro-native tools in small steps: the data check (pipeline messa
     - Create `oracle/package.json` (private, `type: module`), `oracle/tsconfig.json` (strict; include `oracle/src`, `oracle/tests` and the two files `app/src/engine/cangjieRules.ts` and `app/src/data/types.ts`) and `oracle/vitest.config.ts` (project name `oracle`, environment `node`, include `tests/**/*.test.ts`)
     - Add `oracle` to the root `workspaces`, add the root script `oracle` (`tsx oracle/src/index.ts`), add `./oracle` to `vitest.workspace.ts`
     - Install `@modelcontextprotocol/sdk` 1.32.2 (v1, decided) and a compatible `zod` with exact pinned versions, and record both versions in the task notes
-    - Installed versions (exact, in `oracle/package.json`): `@modelcontextprotocol/sdk` 1.32.2, `zod` 3.25.76 (the SDK's peer range is `^3.25 || ^4.0`)
+    - Installed versions (exact, in `oracle/package.json`): `@modelcontextprotocol/sdk` 1.32.2, `zod` 4.6.7 (the SDK's peer range is `^3.25 || ^4.0`)
     - _Requirements: 4.1, 9.2_
 
   - [x] 4.2 Implement `oracle/src/dataset.ts` and `oracle/src/oracle.ts`
@@ -105,7 +105,7 @@ Build the three Kiro-native tools in small steps: the data check (pipeline messa
 
 - [x] 7. README
   - [x] 7.1 Add a "Kiro tooling" section to `README.md`
-    - How to use the hook (what it watches, that agent saves fire it and a person's editor save is not required to, the pass and fail lines); state that the Kiro IDE cannot create a manual-trigger hook, so a person runs `npm run check:data` in a terminal for the same check on demand
+    - How to use the hook (what it watches, that saves by the agent or by a person fire it once hooks are loaded, that a window reload may be needed after the hook file is first created, the pass and fail lines); state that the Kiro IDE cannot create a manual-trigger hook, so a person runs `npm run check:data` in a terminal for the same check on demand
     - How to use the Accuracy_Reviewer (pick it in the agent picker; it is read-only), and the Oracle (`npm run oracle`, the registered MCP server, the three tools, sources; it reads only `app/public/data/characters.json` and returns no generated data)
     - If the Power exists, add the import steps and any limitation found in 6.1
     - Note from 6.1: Kiro did not try the Powers panel import (it cannot click the panel). A human must try Add Custom Power → Import power from a folder → `oracle/power/`, then check whether `oracle/src/index.ts` resolves from the install location (the Power's `mcp.json` uses the workspace-relative path `oracle/src/index.ts`, and the docs do not give the server's working directory). Expected limitation unless proven otherwise: the Power only works when installed from a clone of this repository with the workspace root as working directory, and the Power folder alone (or a copy of it) will not find the server. Document that limitation in the README.
@@ -114,7 +114,7 @@ Build the three Kiro-native tools in small steps: the data check (pipeline messa
 - [ ] 8. Kiro log
   - [~] 8.1 Add entries to `kiro-log.md`
     - One entry per Kiro feature used here: Specs, Steering, Hooks, Custom agents, MCP and, if built, Powers, each with What I did, Kiro feature, Why and Result, dated with the day the task runs
-    - Record the outcome of the manual-save check for `PostFileSave` (does a human editor save fire the hook?) and the working-directory check for the MCP server
+    - Record the manual-save outcome for `PostFileSave`, which is now known: a human editor save fires the hook after a window reload (bad 吧 entryIndex reported `DATA CHECK FAILED: build:data`, reverting reported `DATA CHECK PASSED`), and the agent's own `str_replace` saves returned no hook output to the agent (observation only). Also record the working-directory check for the MCP server
     - No personal names and no approval wording in these entries
     - _Requirements: 8.3, 8.4_
 
@@ -133,7 +133,7 @@ Build the three Kiro-native tools in small steps: the data check (pipeline messa
 - The root `package.json` script `oracle` is added in 4.1, not 1.3.
 - Wave 4 is the first point where `oracle/src/index.ts` exists, so the MCP config test (5.2) runs there.
 - Unit tests only. No property-based tests are added.
-- Decisions approved by Takshil: the hook fires on agent saves only; no manual-trigger hook (the IDE cannot create one, so the README documents `npm run check:data`); `verify` upper-cases the code and reports `normalisedCode`; task 6 (Power) stays; `@modelcontextprotocol/sdk` stays on v1 (1.32.2).
+- Decisions approved by Takshil: the hook fires on human and agent saves once hooks are loaded (verified by a human); no manual-trigger hook (the IDE cannot create one, so the README documents `npm run check:data`); `verify` upper-cases the code and reports `normalisedCode`; task 6 (Power) stays; `@modelcontextprotocol/sdk` stays on v1 (1.32.2).
 - Task 8.1 (`kiro-log.md`) stays in the plan. The human writes it this time rather than Kiro.
 - No tasks were added or removed, so the waves are unchanged.
 - Task 9 is a checkpoint and is not in the dependency graph; it runs after wave 6.

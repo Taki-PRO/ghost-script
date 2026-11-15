@@ -29,6 +29,7 @@ The shipped app makes no network request for Cangjie codes or stroke data (Requi
 | D10 | The Summon step ends only after the character has formed (hanzi-writer `animateCharacter()` settled), been held for `SUMMON_HOLD_MS` (1500 ms), and faded for `SUMMON_FADE_MS` (1500 ms), the durations approved by Takshil; then the component unmounts. | The fade is the only guard against copying the character; unmounting removes every trace before writing starts. | 2.4, 5.5 |
 | D11 | Schema version 2 ships with NO migration; version-1 blobs reset through the existing rule. | Smaller code and tests; the cost (one-time progress loss) is accepted (requirements Decision 6). | 8.3 |
 | D12 | `BuildOptions` gains `unihanPath` and `unihanSha256`; `main()` reads the hash from `data/raw/SOURCES.md`. | `buildDataset` stays free of repository paths, so tests pass fixture files and hashes. | 1.9 |
+| D13 | `pickGuideExample` picks the LAST eligible character (2 or 3 keys) in the Learning order, and the guide copy keeps only sourced statements (approved by Takshil). | A new player meets the start of the Learning order first, so a late example is not an Answer_Leak; unsourced Cangjie claims break content-accuracy. | 6.4, 6.5, 6.9 |
 
 ---
 
@@ -434,11 +435,14 @@ export interface CangjieGuideProps {
   onContinue: () => void;
 }
 
-/** First character in learningOrder(dataset) that is Playable and has a code of at least 2 keys; code read from the record. */
+/**
+ * LAST character in learningOrder(dataset) that is Playable and whose code (read from record.cangjie)
+ * has 2 or 3 keys; null when none. Late in the order, so a new player has not met it (Answer_Leak).
+ */
 export function pickGuideExample(dataset: CharacterDataset): { character: string; code: string } | null;
 ```
 
-The screen shows the 25 keys from `CANGJIE_KEYS` (X as 難 with its explanation), that a code is one to five keys typed in order, that each key stands for a family of related shapes of which only the base shape is shown, an example from `pickGuideExample(dataset)` (omitted when `null`), the claim "developed in the 1970s by Chu Bong-Foo", the three other whitelisted claims (named after Cangjie, the legendary inventor of Chinese writing; the first Chinese input method to use the standard QWERTY keyboard; released to the public in 1982), the statement that the game's codes follow the Unicode Unihan `kCangjie` field, which Unihan marks provisional, so some typists know different codes for some characters, and a visible citation giving the article titles and URLs as text: "Cangjie input method" `https://en.wikipedia.org/wiki/Cangjie_input_method` and "Chu Bong-Foo" `https://en.wikipedia.org/wiki/Chu_Bong-Foo`. A "Continue" button has an accessible label; shapes carry `lang="zh"`. No other claims, statistics or "dying" language.
+The screen shows the 25 keys from `CANGJIE_KEYS` (X shown as 難, the label of that on-screen key, with no claim about its meaning), that a code is one to five keys typed in order, that each key stands for a family of related shapes of which only the base shape is shown (sourced to "Cangjie input method"), an example from `pickGuideExample(dataset)` (omitted when `null`; chosen last in the Learning order so it is not a character a new player meets early, Requirement 6.9), the claim "developed in the 1970s by Chu Bong-Foo", the three other whitelisted claims (named after Cangjie, the legendary inventor of Chinese writing; the first Chinese input method to use the standard QWERTY keyboard; released to the public in 1982), the statement that the game's codes follow the Unicode Unihan `kCangjie` field, which Unihan marks provisional, so some typists know different codes for some characters, and a visible citation line covering all of the above claims, including the family-of-shapes statement, giving the article titles and URLs as text: "Cangjie input method" `https://en.wikipedia.org/wiki/Cangjie_input_method` and "Chu Bong-Foo" `https://en.wikipedia.org/wiki/Chu_Bong-Foo`. A "Continue" button has an accessible label; shapes carry `lang="zh"`. No other claims, statistics or "dying" language, and no statement that X has no base shape or what 難 means.
 
 #### `app/src/components/StartMenu.tsx` (Requirement 7)
 
@@ -587,7 +591,7 @@ This feature has no new property-based tests and no mutation tests (Requirement 
 | --- | --- |
 | `app/src/modes/SummonStep.test.tsx` | slot count; physical and on-screen keys; letters-only keys for key-face targets; IME note and source note; Key hint after 3 and no hint control; Give up; character forms then fades (fake timers); `onDone` once; never-reveal before completion |
 | `app/src/modes/SummonStep.neverReveal.test.tsx` | every Playable ghost in `characters.json`, unresolved and after a Key hint: target absent from DOM text, attributes and title |
-| `app/src/components/CangjieGuide.test.tsx` | 25 keys, the four whitelisted claims and no others, "developed in the 1970s", Unihan source statement, both citations with URLs as text, runtime example, `pickGuideExample` |
+| `app/src/components/CangjieGuide.test.tsx` | 25 keys, the four whitelisted claims and no others, "developed in the 1970s", Unihan source statement, both citations with URLs as text, runtime example, `pickGuideExample` (last eligible, 2 or 3 keys, skips 1-key, 4-5-key and X-prefixed codes, `null` when none), family-of-shapes statement present, no "difficult" or "no base shape" wording |
 
 ### Existing tests to update
 

@@ -9,15 +9,18 @@ export interface CangjieGuideProps {
 }
 
 /**
- * First character in learningOrder(dataset) that is Playable and has a code of
- * at least 2 keys. The code is read from the record, never written by hand.
+ * LAST character in learningOrder(dataset) that is Playable and has a code of
+ * 2 or 3 keys; null when none. Late in the order, so a new player has not met it
+ * yet (Answer_Leak). The code is read from the record, never written by hand.
  */
 export function pickGuideExample(
   dataset: CharacterDataset,
 ): { character: string; code: string } | null {
-  for (const character of learningOrder(dataset)) {
+  const order = learningOrder(dataset);
+  for (let i = order.length - 1; i >= 0; i--) {
+    const character = order[i];
     const code = dataset.get(character)?.cangjie ?? null;
-    if (code !== null && isPlayableInCangjie(code) && code.length >= 2) {
+    if (code !== null && isPlayableInCangjie(code) && (code.length === 2 || code.length === 3)) {
       return { character, code };
     }
   }
@@ -74,11 +77,6 @@ export function CangjieGuide({ dataset, onContinue }: CangjieGuideProps) {
           ))}
         </ul>
 
-        <p className="mt-3 text-base leading-relaxed text-ink">
-          The X key is shown as <span lang="zh">{shapeOf('X')}</span> (&ldquo;difficult&rdquo;). It
-          has no base shape of its own.
-        </p>
-
         {example && (
           <p className="mt-6 text-lg leading-relaxed text-ink" data-testid="guide-example">
             Example: the code for <span lang="zh">{example.character}</span> is{' '}
@@ -104,7 +102,7 @@ export function CangjieGuide({ dataset, onContinue }: CangjieGuideProps) {
             <li>It was released to the public in 1982.</li>
           </ul>
           <p className="mt-3 text-sm text-muted">
-            Sources (English Wikipedia):{' '}
+            Sources for the statements about keys, shapes and history above (English Wikipedia):{' '}
             {CITATIONS.map((c, i) => (
               <span key={c.url}>
                 {i > 0 ? '; ' : ''}
