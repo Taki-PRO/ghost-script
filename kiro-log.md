@@ -481,6 +481,21 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   4. The design is still too plain: "just plain black".
 - **Next:** a spec amendment covering all four (approved by Takshil), built by Kiro.
 
+## Nov 16, 2026: Tester fixes: exit, sticky headers, clearer naming, night scene
+
+- **What I did:** Turned the first tester feedback into new requirements in the `visual-identity` spec (approved by Takshil), then had Kiro build them.
+- **Kiro features:** spec amendments across two specs; the `accuracy-reviewer` agent run as a spec task, three rounds until clean.
+- **Result:**
+  - **Exit:** a "Leave séance" button on every Séance screen, with an inline Leave / Stay prompt instead of a browser dialog. Focus goes to Stay; Escape closes it. Finished ghosts are already saved, and the unfinished one isn't recorded. This replaces the old "no menu during a Séance" rule.
+  - **Sticky headers:** the Graveyard and the sources screen keep the title and "Back to menu" at the top while scrolling.
+  - **Naming:** "Credits" is now "Sources & licences", with the caption "Where the words, strokes, codes and fonts come from."
+  - **Night scene, CSS only:** a blue-black sky gradient, two slow mist layers, a moon glow behind a large Cormorant title with the ghost above it, and a candle-gold main button and focus rings. Tests check every text colour at 4.5:1 or better even under the brightest mist and moon (lowest 5.64:1).
+  - **The reviewer wouldn't let an untrue sentence ship.** The Leave prompt was to say "Ghosts you've finished are saved." The reviewer showed this is false when the browser can't save, so the text now depends on whether every save this visit worked. Two more rounds tightened the wording and the save flag. The third run returned "No findings".
+  - **1223 tests pass**; `tsc` clean; bundle 134,057 bytes gzipped, under the 300,000 budget.
+- **Automated browser check (headless Chrome):** the Leave prompt opened with focus on Stay, and Leave went back to the menu. "Back to menu" stayed visible after scrolling the 300 graves. No console errors.
+  - **Bug found:** on a phone (375 px) the sources screen's tables are about 975 px wide, so the whole page scrolls sideways.
+- **Next:** fix the phone overflow, then more testers.
+
 ---
 
 ## Template for new entries
