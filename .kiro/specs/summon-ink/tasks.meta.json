@@ -1,0 +1,407 @@
+{
+  "pbtResults": {
+    "2.3 Write the property-based test `app/src/engine/summonInk.property.test.ts` (the only new property test)": {
+      "status": "passed",
+      "lastRunTimestamp": 1794847936348
+    }
+  },
+  "executionHistory": {
+    "1.1 Record the existing-fields baseline from the committed dataset": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847608101
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847664377
+      }
+    ],
+    "1.2 Move the Cangjie key table to `app/src/engine/cangjieRules.ts`": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847608169
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847665987
+      }
+    ],
+    "1.3 Add the types to `app/src/data/types.ts`": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847608257
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847667175
+      }
+    ],
+    "8.1 Edit `.kiro/steering/tech.md` (steering edit, approved by the human)": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847609551
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847661983
+      }
+    ],
+    "8.2 Edit `.kiro/steering/content-accuracy.md` (steering edit, approved by the human)": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847610436
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847663278
+      }
+    ],
+    "1. Foundations": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847667200
+      }
+    ],
+    "8.3 Apply the amendments to the other specs": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847668376
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847817711
+      }
+    ],
+    "2.1 Implement `app/src/engine/summonInk.ts`": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847669260
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847817797
+      }
+    ],
+    "2.2 Write unit tests `app/src/engine/summonInk.test.ts`": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847818991
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847974669
+      }
+    ],
+    "2.3 Write the property-based test `app/src/engine/summonInk.property.test.ts` (the only new property test)": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847820200
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847974839
+      }
+    ],
+    "3.1 Compute `summonInk` in `scripts/lib/merge.ts`": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847821411
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847976039
+      }
+    ],
+    "3.2 Serialise `summonInk` in `scripts/lib/serialise.ts`": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847822650
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847977261
+      }
+    ],
+    "4.2 Change `app/src/engine/learningOrder.ts` and its tests": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847823550
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847978455
+      }
+    ],
+    "2. The classifier": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847974867
+      }
+    ],
+    "4.1 Validate `summonInk` in `app/src/data/charDataLoader.ts`": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847980055
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848072002
+      }
+    ],
+    "3.3 Count classes and extend the build summary in `scripts/build-data.ts`": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847981245
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848070183
+      }
+    ],
+    "3.4 Update the shared test helpers and the existing pipeline tests": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847982510
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848070324
+      }
+    ],
+    "3.7 Document the derived field in the README": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847983647
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848070787
+      }
+    ],
+    "6.1 Implement ink in `app/src/modes/SummonStep.tsx`": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794847984751
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848073205
+      }
+    ],
+    "3.5 Regenerate `app/public/data/characters.json`": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848074458
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848227514
+      }
+    ],
+    "4.3 Add `summonInk` to the remaining test fixtures": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848075600
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848228704
+      }
+    ],
+    "6.4 Write the real-library integration test": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848076396
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848226319
+      }
+    ],
+    "3.6 Write the dataset unit tests (node project)": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848229979
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848430338
+      }
+    ],
+    "4.4 Update the guide and App tests for the new order": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848231121
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848430236
+      }
+    ],
+    "6.2 Write the component tests for the ink": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848231906
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848430044
+      }
+    ],
+    "6.3 Extend the never-reveal test": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848232778
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848431509
+      }
+    ],
+    "4. Loader, Learning order and fixtures": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848430257
+      }
+    ],
+    "3. Pipeline and dataset": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848430366
+      }
+    ],
+    "6. Summon step": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848431535
+      }
+    ],
+    "5. Checkpoint - Data and engine": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848432236
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848456326
+      }
+    ],
+    "7.1 Share the e2e helpers": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848456453
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848578815
+      }
+    ],
+    "8.4 Run the accuracy review": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848457281
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848784674
+      }
+    ],
+    "7.2 Write `e2e/summon-ink.spec.ts`": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848578627
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848786566
+      }
+    ],
+    "8. Steering, spec amendments and review": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848784706
+      }
+    ],
+    "9. Final checkpoint - Whole project": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848785740
+      },
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848922766
+      }
+    ],
+    "7. End-to-end tests": [
+      {
+        "executionId": "7872aef1-7382-4775-857b-5eebcc876ece",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794848786590
+      }
+    ]
+  }
+}

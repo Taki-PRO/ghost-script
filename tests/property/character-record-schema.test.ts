@@ -2,8 +2,8 @@
 // Feature: character-dataset, Property 10: sources object has exactly the required keys with valid values
 //
 // Property 4: For any CharacterRecord produced by the pipeline, the record
-// contains EXACTLY the nine expected keys (character, pinyin, meanings,
-// strokeCount, strokeData, decomposition, prompt, cangjie, sources) and NO unrecognised keys. We
+// contains EXACTLY the ten expected keys (character, pinyin, meanings,
+// strokeCount, strokeData, decomposition, prompt, cangjie, summonInk, sources) and NO unrecognised keys. We
 // assert this against the record object itself AND against the pipeline's
 // serialised form: each record is placed into a Map, serialised with
 // `serialiseDataset`, re-parsed, and the per-character key list is compared to
@@ -42,6 +42,7 @@ const EXPECTED_RECORD_KEYS = [
   'decomposition',
   'prompt',
   'cangjie',
+  'summonInk',
   'sources',
 ] as const;
 

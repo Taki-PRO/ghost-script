@@ -36,6 +36,7 @@ function makeRecord(
       pinyin: 'pīn',
     },
     cangjie: null,
+    summonInk: { class: 'opaque' },
     sources: {
       pinyin: 'cc-cedict',
       meanings: 'cc-cedict',
@@ -96,9 +97,29 @@ describe('serialiseDataset', () => {
         'decomposition',
         'prompt',
         'cangjie',
+        'summonInk',
         'sources',
       ]);
     }
+  });
+
+  it('emits summonInk keys as { class } or { class, keyStrokes } in that order', () => {
+    const map = new Map<string, CharacterRecord>();
+    map.set('人', REN);
+    map.set(
+      '口',
+      makeRecord('口', {
+        cangjie: 'R',
+        // keys deliberately inserted out of order
+        summonInk: { keyStrokes: [[0, 1]], class: 'transparent' },
+      }),
+    );
+    const json = serialiseDataset(map);
+    const parsed = JSON.parse(json) as Record<string, CharacterRecord>;
+
+    expect(Object.keys(parsed['人'].summonInk)).toEqual(['class']);
+    expect(Object.keys(parsed['口'].summonInk)).toEqual(['class', 'keyStrokes']);
+    expect(parsed['口'].summonInk).toEqual({ class: 'transparent', keyStrokes: [[0, 1]] });
   });
 
   it('orders the six keys within sources in the fixed design order', () => {

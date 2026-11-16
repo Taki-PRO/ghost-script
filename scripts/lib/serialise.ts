@@ -4,7 +4,7 @@
 //   - records are sorted by Unicode codepoint ascending (char.codePointAt(0))
 //   - each record's keys are emitted in a FIXED order
 //     (character, pinyin, meanings, strokeCount, strokeData, decomposition,
-//      prompt, cangjie, sources)
+//      prompt, cangjie, summonInk, sources)
 //   - nested strokeData / decomposition / sources objects use the design's
 //     field order
 //
@@ -17,6 +17,7 @@ import type {
   FieldSources,
   Prompt,
   StrokeData,
+  SummonInk,
 } from '../../app/src/data/types';
 
 /**
@@ -61,7 +62,14 @@ interface OrderedRecord {
   decomposition: Decomposition;
   prompt: Prompt;
   cangjie: string | null;
+  summonInk: SummonInk;
   sources: FieldSources;
+}
+
+/** Rebuilds summonInk as `{ class }` or `{ class, keyStrokes }` in that key order. */
+function orderSummonInk(value: SummonInk): SummonInk {
+  if (value.class === 'opaque') return { class: 'opaque' };
+  return { class: value.class, keyStrokes: value.keyStrokes };
 }
 
 /** Rebuilds a record with keys in the fixed design order. */
@@ -89,6 +97,7 @@ function orderRecord(record: CharacterRecord): OrderedRecord {
       pinyin: record.prompt.pinyin,
     },
     cangjie: record.cangjie,
+    summonInk: orderSummonInk(record.summonInk),
     sources: {
       pinyin: record.sources.pinyin,
       meanings: record.sources.meanings,

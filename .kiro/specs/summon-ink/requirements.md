@@ -18,7 +18,7 @@ A read-only computation over the 300 records of `app/public/data/characters.json
 - 9 records are atomic (一 人 八 又 女 手 牛 而 身). Four of them (一 M, 人 O, 女 V, 手 Q) are themselves a key's base shape and are transparent. Five (八 HO, 又 NK, 牛 HQ, 而 MBLL, 身 HXH) have multi-key codes that no component can match and are opaque.
 - 32 non-atomic records contain the placeholder `？` as a leaf. 33 non-atomic records have at least one `null` stroke match (95 strokes): 12 are partial and 21 are opaque; none is transparent.
 - 13 records repeat a leaf shape (为 二 从 哥 多 朋 比 网 能 那 非 面 飞), so `components`, which is de-duplicated, cannot be used to match keys one for one.
-- 40 records are partial or opaque while a key's base shape is a variant form of a listed component (for example 亻 against 人, 氵 against 水, 扌 against 手, 艹 against 廿, 灬 against 火, ⺮ against 竹): 6 partial and 34 opaque. As a rough upper bound, 4 of them (什 休 找 茶) would be transparent if variants matched. This feature does not fix variants with a hand-written table; the numbers are a note for the human.
+- 40 records are partial or opaque where a listed component is a different character from every key's base shape: 6 partial and 34 opaque. This spec does not compare such shapes (no variant table; decision approved by the human). The numbers are a note for the human.
 - In the 95 partial characters, 97 of 299 keys ink a part and 202 ink nothing. On average 44 percent of a partial character's strokes are inked by its keys.
 - Of the 14 characters that are themselves a key's base shape (一 中 人 十 口 大 女 山 手 日 月 木 水 火), only 一 人 女 手 are transparent.
 
@@ -41,6 +41,7 @@ A read-only computation over the 300 records of `app/public/data/characters.json
 - **Summon_Ink**: The field `summonInk` of a CharacterRecord: `{ class: 'opaque' }`, or `{ class: 'transparent' | 'partial', keyStrokes: number[][] }`.
 - **Key_Strokes**: `keyStrokes[i]`, the ascending stroke indexes that the code's key number `i` (counted from 0) inks; an empty list when the key inks nothing.
 - **Inkless_Key**: A correct key of a character whose Ink_Class is `partial` and whose Key_Strokes are empty.
+- **Opaque_Note**: The one line of static plain text "This code uses shapes the game doesn't show yet." that the Summon_Step shows near the slots for a character whose Ink_Class is `opaque`.
 - **Classifier**: The pure function `classifySummonInk` in `app/src/engine/summonInk.ts`.
 - **Summon_Step**: The component `SummonStep` in `app/src/modes/SummonStep.tsx` (cangjie-seance Requirement 3).
 - **Paper**: The `InkSurface` of the Summon_Step.
@@ -76,6 +77,7 @@ A read-only computation over the 300 records of `app/public/data/characters.json
 14. WHEN the class is `transparent` or `partial`, THE Classifier SHALL return `keyStrokes` with exactly one entry per key of the code, each entry holding the ascending Instance_Strokes of the instance that key matched, or an empty list for an unmatched key.
 15. WHEN the class is `opaque`, THE Classifier SHALL return an object holding the class only.
 16. THE Classifier SHALL give the same result for the same input and SHALL NOT modify its input.
+17. WHEN a record is atomic and its code is exactly one key whose Base_Shape is the character itself, THE Classifier SHALL return class `transparent` with `keyStrokes` holding one entry that lists every stroke index in ascending order.
 
 ---
 
@@ -86,7 +88,7 @@ A read-only computation over the 300 records of `app/public/data/characters.json
 #### Acceptance Criteria
 
 1. THE Pipeline SHALL add to each CharacterRecord a field `summonInk` computed by the Classifier from that record's own data.
-2. THE Pipeline SHALL NOT read any hand-written list of characters, shapes, variants or classes to compute `summonInk`.
+2. THE Pipeline SHALL NOT read any hand-written list of characters, shapes or classes to compute `summonInk`.
 3. THE Pipeline SHALL serialise `summonInk` between `cangjie` and `sources`, with its own keys in the order `class`, `keyStrokes`.
 4. THE Pipeline SHALL serialise every Existing_Field of every record exactly as before this feature, and SHALL NOT add a key to `sources`.
 5. THE Pipeline SHALL stay deterministic: identical inputs SHALL produce a byte-identical `characters.json`.
@@ -144,9 +146,12 @@ A read-only computation over the 300 records of `app/public/data/characters.json
 1. WHEN the player enters an Inkless_Key, THE Summon_Step SHALL show the text "This key's shape is one the game doesn't show yet." in the status line (the element with `role="status"` and `aria-live="polite"`), together with the existing accepted-key text.
 2. THE Summon_Step SHALL replace that text on the player's next key press.
 3. WHEN the key is wrong, or the record's class is `transparent` or `opaque`, or the correct key inks strokes, THE Summon_Step SHALL NOT show the text of AC 5.1.
-4. THE guide "How Cangjie works" SHALL keep the sentence "Each key stands for a family of related shapes. Only the base shape of the family is shown on the key."
-5. THE status line SHALL stay within the Summon_Step's one-screen layout when it shows the text of AC 5.1 at 375 by 812 pixels.
-6. WHEN this feature adds or changes text shown in the App, the README or a spec, THE Accuracy_Reviewer SHALL review that text before the final checkpoint.
+4. WHILE the record's class is `opaque` and the code is neither complete nor given up, THE Summon_Step SHALL show the Opaque_Note as static text near the slots, from the start of the Summon_Step, and SHALL show nothing per key.
+5. THE Opaque_Note SHALL be plain text in an element with no `role` and no `aria-live` attribute, outside the status line, so that assistive technology does not announce it again on a key press.
+6. WHILE the record's class is `transparent`, THE Summon_Step SHALL show neither the text of AC 5.1 nor the Opaque_Note, and WHILE the record's class is `partial`, THE Summon_Step SHALL NOT show the Opaque_Note.
+7. THE guide "How Cangjie works" SHALL keep the sentence "Each key stands for a family of related shapes. Only the base shape of the family is shown on the key."
+8. THE Summon_Step SHALL stay within its one-screen layout at 375 by 812 pixels when it shows the text of AC 5.1 and when it shows the Opaque_Note.
+9. WHEN this feature adds or changes text shown in the App, the README or a spec, including the text of AC 5.1 and the Opaque_Note, THE Accuracy_Reviewer SHALL review that text before the final checkpoint.
 
 ---
 
@@ -156,7 +161,7 @@ A read-only computation over the 300 records of `app/public/data/characters.json
 
 #### Acceptance Criteria
 
-1. WHILE the Summon step's code is neither complete nor given up, THE App SHALL NOT render the target character as text, in an attribute, in an accessible name or in the document title (cangjie-seance AC 5.1), and drawn stroke paths SHALL be the only form in which parts of the character appear.
+1. WHILE the Summon step's code is neither complete nor given up, THE App SHALL NOT render the target character as text, in an attribute, in an accessible name or in the document title (cangjie-seance AC 5.1), and stroke paths SHALL be the only form in which parts of the character appear; paths of strokes not yet inked MAY be present in the document at zero opacity.
 2. WHEN the Summon_Step calls `onDone`, THE Paper SHALL contain no stroke path.
 3. WHILE the Lay-to-rest step is active, THE App SHALL NOT make the target character visible anywhere on the page (cangjie-seance AC 5.5).
 4. THE file `.kiro/steering/content-accuracy.md` SHALL list, under "What is not an answer leak", the parts drawn during the Summon step as designed and approved by the human.
@@ -187,8 +192,9 @@ A read-only computation over the 300 records of `app/public/data/characters.json
 
 1. THE feature SHALL NOT change `app/src/engine/config.ts`, `app/src/engine/scheduler.ts`, `app/src/engine/outcome.ts` or `app/src/storage/`.
 2. THE feature SHALL keep `SUMMON_HOLD_MS` at 1500 and `SUMMON_FADE_MS` at 1500, each defined once in `app/src/modes/SummonStep.tsx`.
-3. THE feature SHALL keep every Existing_Field of `characters.json` byte-identical, and the Test_Suite SHALL compare each record's Existing_Fields with a recorded checksum made from the committed file before this feature.
+3. THE feature SHALL keep every Existing_Field of `characters.json` byte-identical, and until the final checkpoint the Test_Suite SHALL compare each record's Existing_Fields with a recorded checksum made from the committed file before this feature.
 4. WHEN the final checkpoint runs `git diff` on `app/public/data/characters.json`, THE diff SHALL contain added lines only.
+5. WHEN the existing-fields check has passed at the final checkpoint, THE final checkpoint SHALL delete the checksum fixture, the test that reads it and the provenance paragraph that describes it.
 
 ---
 
@@ -198,11 +204,11 @@ A read-only computation over the 300 records of `app/public/data/characters.json
 
 #### Acceptance Criteria
 
-1. THE Test_Suite SHALL include unit tests of the Classifier with hand-built records for: an atomic record, a nested path, a repeated shape matched in order, a `null` stroke, a `？` placeholder leaf, the key X, keys in a different order from the leaves, a path that points at an inner node, a `matches` array of the wrong length, an empty code, a `null` code and a malformed decomposition string.
-2. THE Test_Suite SHALL include exactly one new property-based test, written with fast-check, for the classification rule (design Property 1).
+1. THE Test_Suite SHALL include unit tests of the Classifier with hand-built records for: an atomic record, a nested path, a repeated shape matched in order, a `null` stroke, a `？` placeholder leaf, the key X, keys in a different order from the leaves, a path that points at an inner node, a `matches` array of the wrong length, an empty code, a `null` code and a malformed decomposition string, and for the atomic cases of AC 1.17: an atomic character whose single key's Base_Shape is the character (一 with M) is `transparent`, and an atomic character with a multi-key code (八 with HO) is `opaque`.
+2. THE Test_Suite SHALL include exactly one new property-based test, written with fast-check, for the classification rule (design Property 1), whose generator produces atomic records with a single key equal to the character's own Base_Shape.
 3. THE Test_Suite SHALL include an exhaustive unit test over all 300 records that the stored `summonInk` equals the Classifier's result recomputed from the record, that every leaf of a non-atomic record is either listed in `decomposition.components` or `？`, and that the three class counts add up to 300.
 4. THE Test_Suite SHALL include a spot-check test for 明 早 天 果 里 本 下 干 that reads each code, component list and stroke mapping from the dataset and checks class `transparent`, the key-to-component order and a partition of the strokes.
-5. THE Test_Suite SHALL include the existing-fields check of AC 8.3.
+5. THE Test_Suite SHALL include the existing-fields check of AC 8.3 until the final checkpoint deletes it (AC 8.5).
 6. THE Test_Suite SHALL include component tests of the Summon_Step with a mocked hanzi-writer for Requirements 4 to 6, and one integration test with the real hanzi-writer in jsdom that shows sequential `animateStroke` calls keep earlier strokes visible and a call made while another runs cancels the earlier one.
 7. THE E2E_Suite SHALL include a test that, after the first correct key for 明, the Paper holds at least one visible stroke path, reaching 明 by seeding the saved Review history through the existing `seed` helper and without a backdoor in the App.
 8. THE E2E_Suite SHALL check that the Summon step still fits one screen at 1024 by 768 and at 375 by 812 pixels, including after an ink stroke is drawn.
@@ -218,7 +224,7 @@ A read-only computation over the 300 records of `app/public/data/characters.json
 
 1. THE file `.kiro/steering/tech.md` SHALL state that the decision of no new property-based tests has one exception, the summon-ink classification test, approved by the human.
 2. THE spec documents named in "Amendments to other specs" SHALL carry an "Amended (approved by the human)" note for each change.
-3. THE final checkpoint SHALL run `npm test`, `tsc --noEmit` for the root project, `app/` and `oracle/`, `npm run build:data` twice with identical output, the existing-fields check, `npm run build -w app`, `npm run check:bundle` and `npm run test:e2e`, and all SHALL pass.
+3. THE final checkpoint SHALL run `npm test`, `tsc --noEmit` for the root project, `app/` and `oracle/`, `npm run build:data` twice with identical output, the existing-fields check (then deleted as AC 8.5 requires), `npm run build -w app`, `npm run check:bundle` and `npm run test:e2e`, and all SHALL pass.
 4. THE repository SHALL NOT contain a personal name in any file this feature adds or changes, and approvals SHALL be written as "approved by the human".
 
 ---

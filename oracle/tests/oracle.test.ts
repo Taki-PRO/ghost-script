@@ -37,6 +37,7 @@ function rec(
     },
     prompt: { meaning: 'm', pinyin: 'x' },
     cangjie,
+    summonInk: { class: 'opaque' },
     sources: {
       pinyin: 'cc-cedict',
       meanings: 'cc-cedict',

@@ -76,10 +76,10 @@ describe('cleanStreak', () => {
 
 describe('buildGraveyard', () => {
   const dataset = new Map([
-    ['三', { strokeCount: 3 }],
-    ['一', { strokeCount: 1 }],
-    ['大', { strokeCount: 3 }],
-    ['人', { strokeCount: 2 }],
+    ['三', { strokeCount: 3, summonInk: { class: 'opaque' as const } }],
+    ['一', { strokeCount: 1, summonInk: { class: 'opaque' as const } }],
+    ['大', { strokeCount: 3, summonInk: { class: 'opaque' as const } }],
+    ['人', { strokeCount: 2, summonInk: { class: 'opaque' as const } }],
   ]);
   const order = learningOrder(dataset);
   const clean: ReviewEntry = applyReview(undefined, 'clean', NOW, C);

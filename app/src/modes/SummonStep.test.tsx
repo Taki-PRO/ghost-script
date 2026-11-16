@@ -32,6 +32,7 @@ vi.mock('hanzi-writer', () => {
     return {
       animateCharacter: () =>
         h.rejectAnimate ? Promise.reject(new Error('load failed')) : Promise.resolve(),
+      animateStroke: () => Promise.resolve(),
     };
   };
   return { default: { create } };
@@ -190,7 +191,8 @@ describe('SummonStep Key hint', () => {
 describe('SummonStep results', () => {
   it('clean code gives onDone("clean") once after form, hold and fade', async () => {
     const { onDone } = setup(WO);
-    expect(calls()).toHaveLength(0);
+    // 我 is a partial character: its writer exists from mount (summon-ink).
+    expect(calls()).toHaveLength(1);
     typeCode(WO.cangjie!);
     await flush();
     expect(calls()).toHaveLength(1);
@@ -364,7 +366,8 @@ describe('SummonStep never reveals the target before completion', () => {
       press('B');
       expect(container.textContent).not.toContain(rec.character);
       expect(attrs(container)).not.toContain(rec.character);
-      expect(calls()).toHaveLength(0);
+      // Ink classes create the (stroke-only) writer at mount; opaque ones only when forming.
+      expect(calls()).toHaveLength(rec.summonInk.class === 'opaque' ? 0 : 1);
     });
   }
 });
@@ -438,9 +441,10 @@ describe('SummonStep layout', () => {
     expect(screen.getByRole('button', { name: 'Give up' }).className).toContain('min-h-[44px]');
   });
 
-  it('keeps the writer container empty while typing', () => {
-    setup(WO);
+  it('keeps the writer container empty while typing an opaque character', () => {
+    setup(KOU);
     press('B');
+    expect(KOU.summonInk.class).toBe('opaque');
     expect(screen.getByTestId('ink-container').childElementCount).toBe(0);
   });
 

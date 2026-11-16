@@ -34,6 +34,7 @@ import type {
   CcCedictEntry,
   CcCedictSense,
 } from '../../scripts/lib/parse-cc-cedict';
+import { classifySummonInk } from '../../app/src/engine/summonInk';
 import { extractLeafComponents } from '../../scripts/lib/parse-make-me-a-hanzi';
 
 // --- Characters & components ------------------------------------------------
@@ -536,6 +537,13 @@ export function arbitraryCharacterRecord(): fc.Arbitrary<CharacterRecord> {
           decomposition,
           prompt,
           cangjie,
+          // Computed from the generated record so the helper cannot drift.
+          summonInk: classifySummonInk({
+            character,
+            cangjie,
+            strokeCount: strokeData.strokes.length,
+            decomposition,
+          }),
           sources: sourcesFor(cangjie),
         }),
       ),

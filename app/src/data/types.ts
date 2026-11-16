@@ -71,6 +71,21 @@ export interface FieldSources {
   cangjie: DatasetId | 'missing';
 }
 
+/** How much of a character the Summon step can ink as its Cangjie keys are typed. */
+export type SummonInkClass = 'transparent' | 'partial' | 'opaque';
+
+/**
+ * Derived field: computed by the pipeline from `decomposition`, `cangjie` and the
+ * Cangjie key table. It adds no dataset and no licence.
+ *
+ * `transparent` and `partial` characters store `keyStrokes`: entry i lists the
+ * stroke indexes that the code's key number i inks. `opaque` characters store the
+ * class only.
+ */
+export type SummonInk =
+  | { class: 'opaque' }
+  | { class: 'transparent' | 'partial'; keyStrokes: number[][] };
+
 /** The canonical record for one character in characters.json. */
 export interface CharacterRecord {
   /** Single CJK codepoint, e.g. "我". */
@@ -88,6 +103,8 @@ export interface CharacterRecord {
   prompt: Prompt;
   /** Verbatim Unihan kCangjie code, or null when Unihan has none. Never derived. */
   cangjie: string | null;
+  /** Derived from `decomposition`, `cangjie` and the key table; see SummonInk. */
+  summonInk: SummonInk;
   sources: FieldSources;
 }
 
@@ -156,5 +173,7 @@ export type BuildResult =
       cangjieMissing: string[];
       /** Characters for which isPlayableInCangjie is false. */
       notPlayable: string[];
+      /** Number of records in each Summon_Ink class. */
+      summonInkCounts: Record<SummonInkClass, number>;
     }
   | { ok: false; errors: MissingFieldError[]; cangjieErrors: CangjieError[] };

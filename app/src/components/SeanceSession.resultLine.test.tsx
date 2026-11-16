@@ -29,7 +29,7 @@ vi.mock('hanzi-writer', () => ({
 const all = raw as unknown as Record<string, CharacterRecord>;
 const dataset: CharacterDataset = new Map(Object.entries(all));
 // No Cangjie code: the ghost skips the summon step, so only the write result is combined.
-const ghost: CharacterRecord = { ...all['我']!, cangjie: null };
+const ghost: CharacterRecord = { ...all['我']!, cangjie: null, summonInk: { class: 'opaque' } };
 const quiz = () => h.quiz as QuizOpts;
 
 function setup() {

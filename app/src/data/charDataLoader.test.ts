@@ -42,6 +42,7 @@ function validRecord(char: string): CharacterRecord {
     },
     prompt: { meaning: 'you', pinyin: 'nǐ' },
     cangjie: 'ON',
+    summonInk: { class: 'transparent', keyStrokes: [[0], [1]] },
     sources: {
       cangjie: 'unihan',
       pinyin: 'cc-cedict',
@@ -96,6 +97,16 @@ describe('loadDataset: success', () => {
     expect(defaultDatasetUrl().endsWith('data/characters.json')).toBe(true);
   });
 
+  it('accepts partial and opaque summonInk', async () => {
+    const partial = validRecord('人') as unknown as Mutable;
+    partial.summonInk = { class: 'partial', keyStrokes: [[0, 1], []] };
+    const opaque = validRecord('大') as unknown as Mutable;
+    opaque.summonInk = { class: 'opaque' };
+    stubFetchBody({ 人: partial, 大: opaque });
+    const res = await loadDataset();
+    expect(res.ok).toBe(true);
+  });
+
   it('uses a custom url when provided', async () => {
     const f = stubFetchBody({ 人: validRecord('人') });
     const res = await loadDataset('/custom/chars.json');
@@ -103,6 +114,7 @@ describe('loadDataset: success', () => {
     expect(f).toHaveBeenCalledWith('/custom/chars.json');
   });
 
+  // (needs task 3.5) fails until characters.json is regenerated with summonInk.
   it('loads the real characters.json without mutating it', async () => {
     const before = JSON.parse(JSON.stringify(realData));
     stubFetchBody(realData);
@@ -184,6 +196,7 @@ describe('loadDataset: invalid-shape', () => {
     'decomposition',
     'prompt',
     'cangjie',
+    'summonInk',
     'sources',
   ])('record missing %s', async (field) => {
     const rec = validRecord('人') as unknown as Mutable;
@@ -207,6 +220,20 @@ describe('loadDataset: invalid-shape', () => {
     ['lower-case cangjie', (r) => (r.cangjie = 'on')],
     ['six-key cangjie', (r) => (r.cangjie = 'ABCDEF')],
     ['non-string cangjie', (r) => (r.cangjie = 42)],
+    ['summonInk unknown class', (r) => (r.summonInk = { class: 'ghostly' })],
+    ['summonInk not an object', (r) => (r.summonInk = 'opaque')],
+    ['opaque with keyStrokes', (r) => (r.summonInk = { class: 'opaque', keyStrokes: [[0], [1]] })],
+    ['transparent without keyStrokes', (r) => (r.summonInk = { class: 'transparent' })],
+    ['keyStrokes not arrays', (r) => (r.summonInk = { class: 'transparent', keyStrokes: [0, 1] })],
+    ['keyStrokes wrong length', (r) => (r.summonInk = { class: 'transparent', keyStrokes: [[0, 1]] })],
+    ['keyStrokes non-integer', (r) => (r.summonInk = { class: 'transparent', keyStrokes: [[0.5], [1]] })],
+    ['keyStrokes out of range', (r) => (r.summonInk = { class: 'transparent', keyStrokes: [[0], [2]] })],
+    ['keyStrokes negative', (r) => (r.summonInk = { class: 'transparent', keyStrokes: [[-1], [1]] })],
+    ['keyStrokes not ascending', (r) => (r.summonInk = { class: 'transparent', keyStrokes: [[1, 0], []] })],
+    ['keyStrokes duplicate stroke', (r) => (r.summonInk = { class: 'partial', keyStrokes: [[0], [0]] })],
+    ['transparent missing a stroke', (r) => (r.summonInk = { class: 'transparent', keyStrokes: [[0], []] })],
+    ['partial with all entries empty', (r) => (r.summonInk = { class: 'partial', keyStrokes: [[], []] })],
+    ['transparent with null cangjie', (r) => (r.cangjie = null)],
   ];
 
   it.each(mutations)('%s', async (_name, mutate) => {
@@ -219,6 +246,7 @@ describe('loadDataset: invalid-shape', () => {
   it.each([['null', null], ['a valid code', 'ON']])('accepts cangjie %s', async (_n, value) => {
     const rec = validRecord('人') as unknown as Mutable;
     rec.cangjie = value;
+    if (value === null) rec.summonInk = { class: 'opaque' };
     stubFetchBody({ 人: rec });
     const res = await loadDataset();
     expect(res.ok).toBe(true);
@@ -295,12 +323,10 @@ describe('makeCharDataLoader', () => {
     expect(f).not.toHaveBeenCalled();
   });
 
-  it.each(['我', '口', '爱'])('serves real stroke data for %s', async (ch) => {
-    const f = stubFetchBody(realData);
-    const res = await loadDataset();
-    if (!res.ok) throw new Error('expected ok');
-    f.mockClear();
-    const loader = makeCharDataLoader(res.dataset);
+  it.each(['我', '口', '爱'])('serves real stroke data for %s', (ch) => {
+    const f = vi.fn();
+    vi.stubGlobal('fetch', f);
+    const loader = makeCharDataLoader(new Map(Object.entries(realData)));
     const onLoad = vi.fn();
     const onError = vi.fn();
     loader(ch, onLoad, onError);

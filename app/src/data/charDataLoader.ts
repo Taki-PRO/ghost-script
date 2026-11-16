@@ -1,5 +1,6 @@
 import type { CharDataLoaderFn } from 'hanzi-writer';
 import { isValidCangjieCode } from '../engine/cangjieRules';
+import { isValidSummonInk } from '../engine/summonInk';
 import type { CharacterRecord, StrokeData } from './types';
 
 /** In-memory dataset keyed by character (insertion order = JSON key order). */
@@ -99,6 +100,7 @@ function isCharacterRecord(v: unknown): v is CharacterRecord {
     isDecomposition(v.decomposition) &&
     isPrompt(v.prompt) &&
     isCangjie(v.cangjie) &&
+    isValidSummonInk(v.summonInk, v.cangjie as string | null, v.strokeCount) &&
     isPlainObject(v.sources)
   );
 }

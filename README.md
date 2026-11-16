@@ -60,6 +60,7 @@ Note: the Arphic-licensed `graphics.txt` in the Make Me a Hanzi repository is **
 - **Fonts:** Cormorant Garamond (npm package `@fontsource/cormorant-garamond` 5.3.0), SIL Open Font License 1.1. Copyright 2015 The Cormorant Project Authors (github.com/CatharsisFonts/Cormorant). It is used for headings only (weight 600, Latin subset). Chinese text uses the device's fonts; no Chinese font is bundled.
 - **Legend source:** the intro's legend line, 天雨粟，鬼夜哭, comes from the Huainanzi, chapter 8. Source: D. C. Lau et al., *A Concordance to the Huainanzi* (Commercial Press, Hong Kong, 1992), 8/62/27–28, as quoted in Michael Puett, "Sages, Creation, and the End of History in the Huainanzi" (https://scholar.harvard.edu/sites/scholar.harvard.edu/files/puett/files/puett_sages_in_the_huainanzi_2.pdf). The English rendering is our own.
 - **Third-party notices:** `app/public/THIRD_PARTY_NOTICES.txt` lists the licences of the runtime dependencies. Regenerate it with `npm run build:notices`. The file is committed, and a test fails if it is out of date.
+- **Derived field:** `summonInk` is derived from the decomposition (Make Me a Hanzi), the Cangjie code (Unihan) and the key table, and adds no dataset and no licence.
 
 ## Usage
 

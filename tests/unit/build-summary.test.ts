@@ -1,7 +1,7 @@
 // Unit tests for the Cangjie part of the build: the lists returned on success,
 // the summary text, the failure report, and the hash checks.
 //
-// Requirements: 1.3, 1.4, 1.5, 1.9, 1.10, 9.3
+// Requirements: 1.3, 1.4, 1.5, 1.9, 1.10, 2.6, 9.3
 import { mkdtempSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -13,6 +13,7 @@ import {
   buildDataset,
   formatCangjieErrors,
   formatCangjieSummary,
+  formatSummonInkSummary,
 } from '../../scripts/build-data';
 import {
   Sha256MismatchError,
@@ -113,6 +114,29 @@ describe('summary text', () => {
         'Playable in Cangjie: 4 of 4\n' +
         'Not playable in Cangjie: none\n',
     );
+  });
+});
+
+describe('summon ink summary', () => {
+  it('prints the three class counts on one line', () => {
+    expect(formatSummonInkSummary({ transparent: 15, partial: 95, opaque: 190 })).toBe(
+      'Summon ink: transparent 15, partial 95, opaque 190\n',
+    );
+  });
+
+  it('the build returns counts that add up to the record count and match the stored classes', async () => {
+    const { options } = makeOptions(['我', '一', '人', '口'], fixture('valid'));
+    const result = await buildDataset(options);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    const records = JSON.parse(result.output) as Record<string, { summonInk: { class: string } }>;
+    const { transparent, partial, opaque } = result.summonInkCounts;
+    expect(transparent + partial + opaque).toBe(Object.keys(records).length);
+    for (const cls of ['transparent', 'partial', 'opaque'] as const) {
+      expect(result.summonInkCounts[cls]).toBe(
+        Object.values(records).filter((r) => r.summonInk.class === cls).length,
+      );
+    }
   });
 });
 

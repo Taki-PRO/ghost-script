@@ -29,6 +29,7 @@ import type {
   MissingFieldError,
   Prompt,
   PromptOverrideFailure,
+  SummonInkClass,
 } from '../app/src/data/types';
 
 import { isPlayableInCangjie, isValidCangjieCode } from '../app/src/engine/cangjieRules';
@@ -273,7 +274,23 @@ export async function buildDataset(opts: BuildOptions): Promise<BuildResult> {
   // Compute the prompt-review CSV in character-list order.
   const promptReviewCsv = buildPromptReviewCsv(characters, ccCedict, overrides);
 
-  return { ok: true, output, promptReviewCsv, cangjieMissing, notPlayable };
+  const summonInkCounts: Record<SummonInkClass, number> = {
+    transparent: 0,
+    partial: 0,
+    opaque: 0,
+  };
+  for (const record of records.values()) {
+    summonInkCounts[record.summonInk.class] += 1;
+  }
+
+  return {
+    ok: true,
+    output,
+    promptReviewCsv,
+    cangjieMissing,
+    notPlayable,
+    summonInkCounts,
+  };
 }
 
 /**
@@ -538,6 +555,7 @@ async function main(): Promise<void> {
   process.stdout.write(
     `Built ${count} character(s) → ${outputPath}\n` +
       formatCangjieSummary(count, result.cangjieMissing, result.notPlayable) +
+      formatSummonInkSummary(result.summonInkCounts) +
       `All required fields (pinyin, meanings, strokeCount, strokeData, decomposition) and prompt are non-null.\n` +
       `Wrote prompt review → ${reviewPath}\n`,
   );
@@ -561,6 +579,16 @@ export function formatCangjieSummary(
     `Without a Cangjie code: ${missingText}\n` +
     `Playable in Cangjie: ${playable} of ${count}\n` +
     `Not playable in Cangjie: ${notPlayableText}\n`
+  );
+}
+
+/** The summon-ink line of the success summary: how many characters are in each class. */
+export function formatSummonInkSummary(
+  counts: Readonly<Record<SummonInkClass, number>>,
+): string {
+  return (
+    `Summon ink: transparent ${counts.transparent}, ` +
+    `partial ${counts.partial}, opaque ${counts.opaque}\n`
   );
 }
 

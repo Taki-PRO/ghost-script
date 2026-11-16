@@ -26,6 +26,7 @@ function rec(character: string, cangjie: string | null, components: string[]): C
     },
     prompt: { meaning: 'm', pinyin: 'x' },
     cangjie,
+    summonInk: { class: 'opaque' },
     sources: { cangjie: cangjie === null ? 'missing' : 'unihan' },
   } as unknown as CharacterRecord;
 }

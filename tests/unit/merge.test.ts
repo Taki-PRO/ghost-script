@@ -87,6 +87,9 @@ describe('mergeCharacter', () => {
     });
     expect(record.cangjie).toBe('VND');
 
+    // The fixture's matches have 2 entries for 3 strokes, so no key can ink.
+    expect(record.summonInk).toEqual({ class: 'opaque' });
+
     // Top-level wiring.
     expect(record.character).toBe(CHAR);
     expect(record.pinyin).toEqual(['hao3', 'hao4']);
@@ -206,5 +209,48 @@ describe('mergeCharacter', () => {
     }
     expect(result.record.cangjie).toBeNull();
     expect(result.record.sources.cangjie).toBe('missing');
+  });
+
+  it('sets a transparent summonInk when every key inks its own part', () => {
+    const hw: HanziWriterEntry = {
+      strokes: Array.from({ length: 8 }, (_, i) => `M ${i} 0 L ${i} 9`),
+      medians: Array.from({ length: 8 }, (_, i) => [
+        [i, 0],
+        [i, 9],
+      ]),
+      radStrokes: [0, 1, 2, 3],
+    };
+    const mm: MakeMeAHanziEntry = {
+      decomposition: '⿰日月',
+      radical: '日',
+      etymology: { type: 'ideographic', hint: 'sun and moon' },
+      matches: [[0], [0], [0], [0], [1], [1], [1], [1]],
+      atomic: false,
+      components: ['日', '月'],
+    };
+
+    const result = mergeCharacter('明', hw, mm, makeCcCedict(), PROMPT, 'AB');
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) {
+      throw new Error('expected ok result');
+    }
+    expect(result.record.summonInk).toEqual({
+      class: 'transparent',
+      keyStrokes: [
+        [0, 1, 2, 3],
+        [4, 5, 6, 7],
+      ],
+    });
+  });
+
+  it('sets an opaque summonInk when no key matches a part', () => {
+    const result = mergeCharacter(CHAR, makeHanziWriter(), makeMakeMeAHanzi(), makeCcCedict(), PROMPT, null);
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) {
+      throw new Error('expected ok result');
+    }
+    expect(result.record.summonInk).toEqual({ class: 'opaque' });
   });
 });

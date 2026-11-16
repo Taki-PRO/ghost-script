@@ -69,7 +69,7 @@ Out of scope: traditional characters and the traditional toggle, any choice of m
 1. WHEN a ghost is presented in a Séance, THE App SHALL run the Rite for that ghost in this order: first the Summon step, then the Lay-to-rest step, with no choice of mode anywhere in the App.
 2. WHEN the ghost's character is Playable in Cangjie mode, THE App SHALL begin the ghost with the Summon step.
 3. IF the ghost's character is not Playable in Cangjie mode (a null code, or a code starting with X; in the current data 别 `XRSLN` and 错 `XCTA`), THEN THE App SHALL skip the Summon step and begin the ghost with the Lay-to-rest step. 身 (`HXH`) SHALL have a Summon step.
-4. WHEN the Summon step's code is complete, or the player gives up in the Summon step, THE App SHALL form the character in ink, hold it on screen for 1.5 s (`SUMMON_HOLD_MS`, 1500 ms), fade it out over 1.5 s (`SUMMON_FADE_MS`, 1500 ms), remove it from the page, and only then begin the Lay-to-rest step.
+4. WHEN the Summon step's code is complete, or the player gives up in the Summon step, THE App SHALL form the character in ink, hold it on screen for 1.5 s (`SUMMON_HOLD_MS`, 1500 ms), fade it out over 1.5 s (`SUMMON_FADE_MS`, 1500 ms), remove it from the page, and only then begin the Lay-to-rest step. *(Amended (approved by the human): see summon-ink Requirements 4 and 6: strokes may be drawn during typing, one set per correct key; no character text and no attribute appears before the code is complete, and the hold and fade are unchanged.)*
 5. WHERE the player's system requests reduced motion, THE App SHALL replace the animated fade by an immediate removal after the same hold time.
 6. WHEN the player gives up in the Summon step, THE App SHALL show the full code, form and fade the character as in AC 2.4, and still proceed to the Lay-to-rest step for that ghost, with the ghost's Combined outcome fixed at `gave-up`.
 7. THE Lay-to-rest step SHALL behave exactly as Write mode does in ghost-game-core (hanzi-writer quiz mode, live per-stroke checking, Stroke hint after 3 consecutive misses of the same stroke, "Give up" with stroke-order animation, clean-mistake threshold from the engine config).
@@ -126,7 +126,7 @@ Out of scope: traditional characters and the traditional toggle, any choice of m
 
 #### Acceptance Criteria
 
-1. WHILE the Summon step's code is neither complete nor given up, THE App SHALL NOT render the target character in any text, attribute, accessible name, Code slot, key face, hint, or the document title.
+1. WHILE the Summon step's code is neither complete nor given up, THE App SHALL NOT render the target character in any text, attribute, accessible name, Code slot, key face, hint, or the document title. *(Amended (approved by the human): see summon-ink Requirements 4 and 6: strokes drawn during typing are allowed because they are drawn paths, not text or an attribute.)*
 2. WHEN any string shown for an unresolved ghost would contain the target character, THE App SHALL replace each occurrence with "～" (U+FF5E), for display only, using one shared mask helper (the one GhostPrompt uses).
 3. WHILE the target character is itself the base shape of a key (in the current data: 一 中 人 十 口 大 女 山 手 日 月 木 水 火, each of whose codes is that single key), THE On-screen Cangjie keyboard SHALL show every key by its letter only, with no base shapes, so that no single key stands out.
 4. THE App SHALL show the target character during the Summon step only while it forms and fades (Requirement 2.4).

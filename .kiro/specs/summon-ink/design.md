@@ -18,7 +18,7 @@ Nothing in the scheduler, outcomes, thresholds or storage changes.
 - **Specs**: this requirements-first spec (`.kiro/specs/summon-ink/`), with tasks and a wave plan.
 - **Steering**: the four steering files shaped the design (`tech.md` stack and the property-test rule, `structure.md` names and layout, `product.md` never-reveal and one-rite principles, `content-accuracy.md` derived-data and answer-leak rules). Two of them are edited by tasks of this spec.
 - **MCP server (Cangjie Oracle)**: the `decompose` and `lookup` tools of the cangjie-oracle server were used to spot-check the eight characters in the table below before this design relied on them.
-- **Custom agent**: `accuracy-reviewer` reviews the new on-screen text and the README change (task 8.1).
+- **Custom agent**: `accuracy-reviewer` reviews the new on-screen text and the README change, including both honest-message lines (task 8.4).
 - **Hook**: `data-check-on-save` runs `npm run check:data` (the dataset build and the node-project tests) when `data/character-list.txt`, `data/prompt-overrides.csv` or a file under `data/raw/` is saved. It does not fire on `scripts/` edits or on `build:data` itself. The new dataset tests live in `tests/unit/`, so they run in that hook's `test:data` step.
 - **Playwright e2e**: the existing `e2e/` suite is extended with `summon-ink.spec.ts`.
 
@@ -64,22 +64,27 @@ Other rejected options: `highlightStroke` flashes a stroke and fades it, so it d
 
 ## Decisions
 
+Decisions D3, D5, D9, D12 to D17 were decided or confirmed by the human; no open questions remain.
+
 | ID | Decision | Rationale | Requirements |
 |---|---|---|---|
 | D1 | Classify against the leaves of the IDS tree, by exact path, not against `components` and not by the first path index. | `components` is de-duplicated and loses repeats and `？`; nested paths need the whole path. | 1.4, 1.6, 1.8 |
 | D2 | Keys map to instances with a forward-only cursor (first fit). | Deterministic, handles repeated shapes (二, 从, 朋) in order, and keeps "in key order" well defined for overlap layouts: the order of the IDS leaves. Transparent is then exactly "the code's shapes equal the glyphs of the eligible leaves, in order, and no stroke is unattributed". | 1.8, 1.9, 1.12 |
-| D3 | Atomic records have one instance, the character itself; `matches` is ignored. | Atomic `matches` are all `null`, so the general rule would call 一 opaque although its key M is 一. | 1.3 |
+| D3 | Atomic records have one instance, the character itself; `matches` is ignored. Confirmed by the human: an atomic character whose single key's Base_Shape is the character itself is `transparent` (一 M, 人 O, 女 V, 手 Q). | Atomic `matches` are all `null`, so the general rule would call 一 opaque although its key M is 一. AC 1.17 states the case explicitly, and the unit tests and Property 1 cover it. | 1.3, 1.17 |
 | D4 | A `null` or non-leaf path never counts toward a key, and any such stroke prevents `transparent`. | Strokes that no key explains cannot be called "built from the keys". | 1.6, 1.12 |
-| D5 | No variant table. 亻 does not match 人, 氵 does not match 水, and so on. | A hand-written list is against the data rules. The numbers are reported for the human. | 2.2 |
+| D5 | Decided by the human: no variant table in this spec. A component matches a key only when it is literally the key's base shape; this spec does not compare different characters. | A hand-written list is against the data rules. The numbers are reported for the human. A variant table, if ever wanted, needs its own spec and a sourced dataset. | 2.2 |
 | D6 | `summonInk` sits between `cangjie` and `sources`; `sources` gets no new key. | The generated diff is lines added only (no `}` becomes `},`), and "existing fields byte-identical" holds for `sources` too. Attribution is in the type documentation, README and `content-accuracy.md`. | 2.3, 2.4, 2.7, 8.4 |
 | D7 | The Pipeline computes the class inside `mergeCharacter`, from the data it already holds. | One assembly point; the function stays pure; no change to the call order in `build-data.ts`. | 2.1 |
 | D8 | The shared key table moves to `cangjieRules.ts` and `cangjie.ts` re-exports it. | `cangjieRules.ts` imports nothing, and the Pipeline and the oracle already import it by relative path. Importing `cangjie.ts` would pull the reducer and `outcome.ts` into the Pipeline. | 1.2 |
-| D9 | Strokes are drawn with `animateStroke` through a promise queue; `strokeAnimationSpeed` is 2 (about half of the default drawing time per stroke), and 1000 under reduced motion. | Verified API (Research 1 to 4). The value 2 is a starting point to tune by eye; the unit tests assert only that reduced motion uses the fast value. | 4.2, 4.6, 4.9 |
+| D9 | Strokes are drawn with `animateStroke` through a promise queue; `strokeAnimationSpeed` is 2 (about half of the default drawing time per stroke), and 1000 under reduced motion. | Verified API (Research 1 to 4). Decided by the human: `SUMMON_INK_SPEED = 2` stays a named, exported constant, tuned by eye (task 10.1); the unit tests assert only that reduced motion uses the fast value and do not pin the number. | 4.2, 4.6, 4.9 |
 | D10 | For ink classes the Ink_Writer is created when the step mounts, and forming draws the not-yet-inked strokes in index order. For `opaque` nothing changes. | Keeps the opaque path byte-for-byte as today and risk-free. | 4.1, 4.5, 4.7 |
 | D11 | Give up inks nothing extra for untyped keys; the strokes not yet inked form like at completion. | The final picture is the same, with one code path. The full code still shows in the slots. | 4.8 |
-| D12 | The honest message appears only for an Inkless_Key of a `partial` character. | In a `transparent` character no key is inkless. In an `opaque` character every key is silent, so a message on one key (for example the X in 身) would single it out. See open question 1. | 5.1, 5.3 |
-| D13 | The hidden strokes exist in the DOM at zero opacity during typing (they are in the public dataset anyway). The character is never present as text or in any attribute. | A subset loader or a second writer would add a second renderer for a protection the public JSON file already makes moot. See open question 2. | 6.1 |
-| D14 | The existing-fields check uses a recorded checksum fixture, not `git show HEAD`. | Works in a shallow clone and after the change is committed. | 8.3 |
+| D12 | Honest message, two lines, one per kind of character. A `partial` character shows "This key's shape is one the game doesn't show yet." per key, only for an Inkless_Key. An `opaque` character shows one line for the whole ghost, the Opaque_Note "This code uses shapes the game doesn't show yet.", and nothing per key. A `transparent` character shows neither. Approved by the human. | In a `transparent` character no key is inkless. In an `opaque` character every key is silent, so a per-key message would repeat on every key (or single out one key, for example the X in 身). | 5.1, 5.3, 5.4, 5.6 |
+| D13 | Decided by the human: stroke paths at zero opacity for strokes not yet inked are acceptable in the DOM during typing (they are in the public dataset anyway). The character is never present as text or in any attribute, and the never-reveal test keeps checking text and attributes. | A subset loader or a second writer would add a second renderer for a protection the public JSON file already makes moot. | 6.1 |
+| D14 | The existing-fields check uses a recorded checksum fixture, not `git show HEAD`. The fixture, its test and its provenance paragraph exist only to prove this change; the final checkpoint deletes all three after the check has passed. | Works in a shallow clone and after the change is committed. Once the check has passed on the final dataset, the fixture would only go stale when a later spec changes existing fields on purpose. | 8.3, 8.5 |
+| D15 | The Opaque_Note shows from the start of the Summon step until the code is complete or given up, as a static paragraph directly below the slots. It is plain text in an element with no `role` and no `aria-live`, outside the status line. | Static text near the slots is seen before the first key and is not re-announced on every key press, as a live region would be. Screen-reader users reach it in reading order. Colour is not the only signal because it is a sentence. | 5.4, 5.5, 5.8 |
+| D16 | The derived-data note for `content-accuracy.md` stays a task of this spec (task 8.2). | `summonInk` is the first derived field, so the steering file needs a rule for it. | 2.7 |
+| D17 | Task 10.1 (the `kiro-log.md` entry and the by-eye speed check) stays a non-coding task done by the human. Kiro does not write `kiro-log.md`. | The log is first person, written by the human. | 4.2, 4.9 |
 
 ## Architecture
 
@@ -303,7 +308,7 @@ function enqueueInk(strokes: readonly number[]) {
    A wrong key calls nothing. A correct key with an empty list loops zero times.
 3. **Forming (the existing `started` effect).** For `inks`: do not create a new writer. Call `enqueueInk` with every index in `0..strokeCount-1` not in `queuedRef`, then `chainRef.current.then(() => brokenRef.current ? useFallback() : holdAndFade())`. The hold, fade and `finish()` code is unchanged, and `finish()` empties the container so the Paper holds no path when `onDone` runs. For a transparent character the remainder is empty, so the hold starts as soon as the queue drains. For `opaque`, the effect is the existing one (create, `animateCharacter()`, hold, fade).
 4. **Surface visibility.** `InkSurface` gets `hidden={phase === 'typing' && !inks}`. The paper size and grid are unchanged, so the layout does not move.
-5. **Status text.** `describe(prev, next)` gains a third argument, `inkless: boolean`, true when `ink.class === 'partial'` and `keyStrokes[prev.filled]` is empty and the key was accepted:
+5. **Status text (partial only).** `describe(prev, next)` gains a third argument, `inkless: boolean`, true when `ink.class === 'partial'` and `keyStrokes[prev.filled]` is empty and the key was accepted:
 
 ```ts
 const INKLESS_TEXT = "This key's shape is one the game doesn't show yet.";
@@ -311,6 +316,16 @@ const INKLESS_TEXT = "This key's shape is one the game doesn't show yet.";
 ```
 
    The text goes in the existing `role="status"` `aria-live="polite"` paragraph, which already has `min-h-[2.5rem]` (two lines at 14 px). The longest message, "✓ Code complete This key's shape is one the game doesn't show yet. · Mistakes: 0", is about 80 characters, so two lines at 375 px, which the e2e fit test checks.
+   **Opaque_Note.** For an `opaque` record the step renders one static paragraph directly below the slots while `phase === 'typing'`:
+
+```tsx
+const OPAQUE_NOTE = "This code uses shapes the game doesn't show yet.";
+{record.summonInk.class === 'opaque' && phase === 'typing' && (
+  <p data-testid="opaque-note" className="text-sm text-ink-muted">{OPAQUE_NOTE}</p>
+)}
+```
+
+   The element has no `role` and no `aria-live`, and it is not inside the status paragraph, so it is not announced again on key presses. `describe` never adds text for an `opaque` or a `transparent` record. The paragraph disappears when forming starts. It takes one or two lines at 375 px; the Paper size comes from `summonPaperSize`, which already reserves room for the other controls, and the e2e fit test checks an opaque character at both sizes. The text uses the secondary-text token that already meets contrast on the dark theme.
 6. **Give up.** `handleGiveUp` is unchanged; forming (step 3) draws everything not queued.
 7. **Reduced motion** is read once when the writer is created; the fade handling is unchanged.
 8. **Unmount.** The existing cleanup runs, plus `disposedRef.current = true`, so queued steps stop and `onDone` is not called.
@@ -328,8 +343,9 @@ No code change. `pickGuideExample` still returns the last Playable character wit
 - `visibleInkPaths(page)` counts stroke paths under `[data-testid="ink-container"]` (`path[clip-path]`) whose own and ancestors' computed opacity multiply to more than 0 and none of which has `display: none`. The probe in jsdom confirmed that hidden layers have effective opacity 0, so only drawn main strokes count. In Chromium the check uses `getComputedStyle`.
 - `e2e/summon-ink.spec.ts`:
   1. *Ink after the first key*: seed before 明, open the Séance, confirm the page shows 明's prompt pinyin read from the data, press `record.cangjie[0]`, and poll until `visibleInkPaths` equals `keyStrokes[0].length`.
-  2. *Honest message*: seed before the first partial character in the learning order, type the code up to and including the first key whose `keyStrokes` entry is empty, and expect the status line to contain the text of AC 5.1.
-  3. *Fit with ink* at 1024 by 768 and 375 by 812: after the first key on 明 (and after the inkless key of 2), the Summon step controls from `fits-one-screen.spec.ts` are inside the viewport and there is no vertical scroll.
+  2. *Honest message, partial*: seed before the first partial character in the learning order, type the code up to and including the first key whose `keyStrokes` entry is empty, expect the status line to contain the text of AC 5.1, and expect no Opaque_Note on the page.
+  3. *Honest message, opaque*: seed before the first opaque character in the learning order; before any key, expect the Opaque_Note to be visible, to have no `role` and no `aria-live`, and not to be inside the status line; type the first key and expect the status line not to contain the text of AC 5.1 and the Opaque_Note unchanged.
+  4. *Fit with ink and notes* at 1024 by 768 and 375 by 812: after the first key on 明, after the inkless key of 2, and with the Opaque_Note of 3, the Summon step controls from `fits-one-screen.spec.ts` are inside the viewport and there is no vertical scroll.
 
 ## Data Models
 
@@ -381,6 +397,8 @@ For an opaque character:
 
 `tests/fixtures/summon-ink/existing-fields.sha256.json`: an object from character to the SHA-256 (hex) of `JSON.stringify(record)` with `summonInk` removed, taken from the committed `characters.json` before this feature. The fixture is recorded once by task 1.1 from `git show HEAD:app/public/data/characters.json`. The fixtures README gets a provenance paragraph.
 
+The fixture is temporary (D14). In the final checkpoint (task 9), after the existing-fields test has passed, the fixture, `tests/unit/summon-ink-existing-fields.test.ts` and the provenance paragraph in `tests/fixtures/README.md` are deleted (the directory `tests/fixtures/summon-ink/` goes with the fixture, and other files in `tests/fixtures/` stay), and `npm test` is run again to confirm that nothing else depended on them.
+
 ## Correctness Properties
 
 *A property is a characteristic or behavior that should hold true across all valid executions of a system-essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
@@ -396,8 +414,9 @@ Reflection on the prework: the testable acceptance criteria of Requirement 1 all
 3. **Model agreement**: the result equals the result of a simple independent model that (a) lists the leaves with at least one stroke in left-to-right order, (b) reduces each key to its base shape or "none" for X, (c) walks the keys against that list with a forward-only cursor, and (d) returns `transparent` exactly when the code's shape sequence equals the list's glyph sequence and no stroke is unattributed, `opaque` when no key matched or the code is `null` or empty, and `partial` otherwise.
 4. **Monotone under extra keys**: appending the key X to the code never raises the class (transparent, partial, opaque in that order of rank) and leaves the existing entries of `keyStrokes` unchanged.
 5. **Purity**: calling the function twice on a deep-frozen copy of the input gives equal results and does not throw.
+6. **Atomic self key**: for an atomic record whose code is exactly one key whose base shape equals the character, the result is `transparent` with `keyStrokes` equal to one entry listing every index from 0 to `strokeCount` minus 1; for an atomic record whose code has two or more keys, the result is never `transparent`.
 
-**Validates: Requirements 1.3, 1.4, 1.6, 1.8, 1.9, 1.11, 1.12, 1.13, 1.14, 1.15, 1.16**
+**Validates: Requirements 1.3, 1.4, 1.6, 1.8, 1.9, 1.11, 1.12, 1.13, 1.14, 1.15, 1.16, 1.17**
 
 ## Error Handling
 
@@ -410,7 +429,7 @@ Reflection on the prework: the testable acceptance criteria of Requirement 1 all
 | A stroke animation rejects | The queue marks the writer broken; the remaining ink calls are skipped; the text fallback runs at completion. | 4.10 |
 | Player types faster than strokes draw | Strokes queue and draw in order; the reducer state is unaffected. | 4.6 |
 | Unmount during drawing | The queue steps return early, timers are cleared, the container is emptied, `onDone` is not called. | 4.11 |
-| Correct key in an `opaque` or `transparent` character | No message; as today. | 5.3 |
+| Correct key in an `opaque` or `transparent` character | No per-key message. An `opaque` character shows the Opaque_Note from the start of the step; a `transparent` character shows no note. | 5.3, 5.4, 5.6 |
 
 ## Testing Strategy
 
@@ -420,13 +439,13 @@ PBT applies to the classifier, which is a pure function with a large input space
 
 `app/src/engine/summonInk.property.test.ts`: fast-check, at least 100 runs (use 300), tagged `// Feature: summon-ink, Property 1: Classification invariants`.
 
-Generators: a random IDS tree of depth up to 3 using binary operators and the ternary ones, with leaves drawn from the 24 base shapes, a few non-shape characters (`乂`, `亻`) and `？`; the IDS string printed from the tree; `strokeCount` from 1 to 12; each stroke assigned a leaf path, `null`, or a bad path (inner node, too long, index out of range); `matches` of the right length most of the time and of the wrong length or `null` sometimes; a code of 0 to 5 letters from A to Y, or `null`; and atomic records with all-`null` matches. The shape sequence of the code can be seeded from the leaf glyphs (with random drops, additions and swaps) so that transparent and partial results occur often.
+Generators: a random IDS tree of depth up to 3 using binary operators and the ternary ones, with leaves drawn from the 24 base shapes, a few non-shape characters (`乂`, `亻`) and `？`; the IDS string printed from the tree; `strokeCount` from 1 to 12; each stroke assigned a leaf path, `null`, or a bad path (inner node, too long, index out of range); `matches` of the right length most of the time and of the wrong length or `null` sometimes; a code of 0 to 5 letters from A to Y, or `null`; and atomic records with all-`null` matches, whose character is often drawn from the 24 base shapes and whose code is often exactly the one key of that shape (the clause 6 case). The shape sequence of the code can be seeded from the leaf glyphs (with random drops, additions and swaps) so that transparent and partial results occur often.
 
 ### Unit tests (Requirement 9.1, 9.3 to 9.5)
 
-- `app/src/engine/summonInk.test.ts`: the hand-built cases listed in Requirement 9.1; `parseIds` on binary, ternary and malformed strings; `isValidSummonInk` accepts and rejects each case of Requirement 3.3 to 3.7; `summonInkRank`; `BASE_SHAPE_BY_KEY` has 24 entries and no X.
-- `tests/unit/summon-ink-dataset.test.ts` (node project): exhaustive over all 300 records (stored equals recomputed; every leaf listed in `components` or `？`; counts add up to 300; every stored value passes `isValidSummonInk`; `summonInk` is the key before `sources` in each record's key order), and the eight-character spot check with codes, components and `matches` read from the dataset (no typed codes).
-- `tests/unit/summon-ink-existing-fields.test.ts`: recomputes each record's checksum without `summonInk` and compares with the fixture; fails with the character names that differ.
+- `app/src/engine/summonInk.test.ts`: the hand-built cases listed in Requirement 9.1, including the atomic cases (一 with M is `transparent` with all strokes; 八 with HO is `opaque`; an atomic character with the right key plus an extra key is `partial`); `parseIds` on binary, ternary and malformed strings; `isValidSummonInk` accepts and rejects each case of Requirement 3.3 to 3.7; `summonInkRank`; `BASE_SHAPE_BY_KEY` has 24 entries and no X.
+- `tests/unit/summon-ink-dataset.test.ts` (node project): exhaustive over all 300 records (stored equals recomputed; every leaf listed in `components` or `？`; counts add up to 300; every stored value passes `isValidSummonInk`; `summonInk` is the key before `sources` in each record's key order), the atomic characters (一 人 女 手 are `transparent`, 八 又 牛 而 身 are `opaque`), and the eight-character spot check with codes, components and `matches` read from the dataset (no typed codes).
+- `tests/unit/summon-ink-existing-fields.test.ts`: recomputes each record's checksum without `summonInk` and compares with the fixture; fails with the character names that differ. Temporary: deleted with its fixture in the final checkpoint.
 - `tests/unit/serialise.test.ts` and `merge.test.ts`: the new key order and the merged value.
 - `tests/unit/build-summary.test.ts`: the summary line and that the three counts add up.
 - `app/src/data/charDataLoader.test.ts`: the loader cases of Requirement 3.
@@ -434,9 +453,9 @@ Generators: a random IDS tree of depth up to 3 using binary operators and the te
 
 ### Component tests (hanzi-writer mocked, fake timers)
 
-`app/src/modes/SummonStep.test.tsx` and `SummonStep.ink.test.tsx` (new file for the ink cases; the mock adds `animateStroke`): the writer exists from mount for transparent and partial characters and not for opaque; a correct key calls `animateStroke` for exactly that key's strokes; a wrong key calls nothing; two quick keys call `animateStroke` one after the other, never overlapping (the mock tracks concurrency); at completion only the not-yet-queued strokes are drawn, in ascending order, then the hold and fade run with the same constants; Give up draws every undrawn stroke; reduced motion passes the fast speed and skips the fade; a rejected `animateStroke` or a `create` that throws leads to the plain-text fallback; unmount stops everything; the status text of Requirement 5 appears for an Inkless_Key only; the Paper has no `path` element when `onDone` runs. Records come from the real dataset: the first transparent record, the first partial record with an inkless key, and the first opaque record.
+`app/src/modes/SummonStep.test.tsx` and `SummonStep.ink.test.tsx` (new file for the ink cases; the mock adds `animateStroke`): the writer exists from mount for transparent and partial characters and not for opaque; a correct key calls `animateStroke` for exactly that key's strokes; a wrong key calls nothing; two quick keys call `animateStroke` one after the other, never overlapping (the mock tracks concurrency); at completion only the not-yet-queued strokes are drawn, in ascending order, then the hold and fade run with the same constants; Give up draws every undrawn stroke; reduced motion passes the fast speed and skips the fade; a rejected `animateStroke` or a `create` that throws leads to the plain-text fallback; unmount stops everything; the per-key text of AC 5.1 appears for an Inkless_Key of a `partial` character only; the Opaque_Note appears from mount for an `opaque` character only, has no `role` and no `aria-live`, is not inside the status element, stays unchanged across correct and wrong keys, adds no per-key text, and is gone once forming starts; a `transparent` character shows neither line; the Paper has no `path` element when `onDone` runs. Records come from the real dataset: the first transparent record, the first partial record with an inkless key, and the first opaque record.
 
-`SummonStep.neverReveal.test.tsx` extends its loop: for every transparent and partial playable record, after each correct key, the character appears in no text and no attribute.
+`SummonStep.neverReveal.test.tsx` extends its loop: for every transparent and partial playable record, after each correct key, the character appears in no text and no attribute (zero-opacity stroke paths are allowed, D13); the loop also covers the opaque characters' Opaque_Note text.
 
 ### Integration test (real hanzi-writer in jsdom)
 

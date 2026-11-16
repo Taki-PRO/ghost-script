@@ -278,7 +278,7 @@ export function serialiseDataset(
 ): string
 ```
 
-Sorts records by Unicode codepoint (`char.codePointAt(0)`) ascending, then serialises to JSON with a fixed key order per record (`character`, `pinyin`, `meanings`, `strokeCount`, `strokeData`, `decomposition`, `prompt`, `cangjie`, `sources`), and a fixed key order within `sources` (`pinyin`, `meanings`, `strokeCount`, `strokeData`, `decomposition`, `cangjie` last). *(Amended by cangjie-seance Requirement 1)* Uses `JSON.stringify(sorted, null, 2)` for a human-readable, deterministic output.
+Sorts records by Unicode codepoint (`char.codePointAt(0)`) ascending, then serialises to JSON with a fixed key order per record (`character`, `pinyin`, `meanings`, `strokeCount`, `strokeData`, `decomposition`, `prompt`, `cangjie`, `sources`; *Amended (approved by the human): see summon-ink Requirements 1 and 2: `summonInk` goes between `cangjie` and `sources`*), and a fixed key order within `sources` (`pinyin`, `meanings`, `strokeCount`, `strokeData`, `decomposition`, `cangjie` last). *(Amended by cangjie-seance Requirement 1)* Uses `JSON.stringify(sorted, null, 2)` for a human-readable, deterministic output.
 
 ---
 
@@ -297,6 +297,7 @@ export interface CharacterRecord {
   decomposition: Decomposition;  // always non-null; atomic=true when character is indivisible
   prompt:       Prompt;          // always non-null; chosen ghost clue (see Requirement 6)
   cangjie:      string | null;   // verbatim Unihan kCangjie, matches ^[A-Y]{1,5}$; the only nullable field (amended by cangjie-seance Requirement 1)
+  // summonInk: derived field between cangjie and sources, no sources key (amended, approved by the human: see summon-ink Requirements 1 and 2)
   sources:      FieldSources;
 }
 
@@ -402,7 +403,7 @@ The top-level value is a JSON object:
 
 When Unihan has no `kCangjie` value for a character, `cangjie` is `null` and `sources.cangjie` is `"missing"`; in the current data all 300 characters have a value.
 
-Keys are sorted by Unicode codepoint ascending. Key order within each record is fixed: `character`, `pinyin`, `meanings`, `strokeCount`, `strokeData`, `decomposition`, `prompt`, `cangjie`, `sources`; within `sources` it is `pinyin`, `meanings`, `strokeCount`, `strokeData`, `decomposition`, `cangjie` (amended by cangjie-seance Requirement 1). This guarantees byte-for-byte determinism across runs.
+Keys are sorted by Unicode codepoint ascending. Key order within each record is fixed: `character`, `pinyin`, `meanings`, `strokeCount`, `strokeData`, `decomposition`, `prompt`, `cangjie`, `sources`; within `sources` it is `pinyin`, `meanings`, `strokeCount`, `strokeData`, `decomposition`, `cangjie` (amended by cangjie-seance Requirement 1). *(Amended (approved by the human): see summon-ink Requirements 1 and 2: the record key order gains `summonInk` between `cangjie` and `sources`.)* This guarantees byte-for-byte determinism across runs.
 
 ### `data/character-list.txt` format
 
@@ -451,7 +452,7 @@ Keys are sorted by Unicode codepoint ascending. Key order within each record is 
 
 ### Property 4: CharacterRecord schema completeness
 
-*For any* `CharacterRecord` produced by the pipeline, the record SHALL contain exactly the fields `character`, `pinyin`, `meanings`, `strokeCount`, `strokeData`, `decomposition`, `prompt`, `cangjie`, and `sources`, with `cangjie` either `null` or a string and every other field non-null, and no unrecognised keys SHALL be present. *(Amended by cangjie-seance Requirement 1)*
+*For any* `CharacterRecord` produced by the pipeline, the record SHALL contain exactly the fields `character`, `pinyin`, `meanings`, `strokeCount`, `strokeData`, `decomposition`, `prompt`, `cangjie`, and `sources`, with `cangjie` either `null` or a string and every other field non-null, and no unrecognised keys SHALL be present. *(Amended by cangjie-seance Requirement 1)* *(Amended (approved by the human): see summon-ink Requirements 1 and 2: `summonInk` is also an expected field, between `cangjie` and `sources`.)*
 
 **Validates: Requirements 4.2**
 
@@ -499,7 +500,7 @@ Keys are sorted by Unicode codepoint ascending. Key order within each record is 
 
 ### Property 10: sources object has exactly the required keys with valid values
 
-*For any* `CharacterRecord`, the `sources` object SHALL have exactly six keys (`pinyin`, `meanings`, `strokeCount`, `strokeData`, `decomposition`, `cangjie`) and each value SHALL be one of the four dataset ids `"cc-cedict"`, `"hanzi-writer-data"`, `"make-me-a-hanzi"`, or `"unihan"`, except that `sources.cangjie` MAY instead be `"missing"`; no other key SHALL ever have the value `"missing"`. *(Amended by cangjie-seance Requirement 1)*
+*For any* `CharacterRecord`, the `sources` object SHALL have exactly six keys (`pinyin`, `meanings`, `strokeCount`, `strokeData`, `decomposition`, `cangjie`) and each value SHALL be one of the four dataset ids `"cc-cedict"`, `"hanzi-writer-data"`, `"make-me-a-hanzi"`, or `"unihan"`, except that `sources.cangjie` MAY instead be `"missing"`; no other key SHALL ever have the value `"missing"`. *(Amended by cangjie-seance Requirement 1)* *(Note, Amended (approved by the human): see summon-ink Requirements 1 and 2: this property is unchanged; `summonInk` adds no `sources` key.)*
 
 **Validates: Requirements 4.11**
 

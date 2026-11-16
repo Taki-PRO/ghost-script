@@ -126,16 +126,19 @@ Build the first playable version of Ghost Script: a React + Vite single-page app
   - [x] 5.8 Implement pure `learningOrder` in `app/src/engine/learningOrder.ts`
     - `export function learningOrder(dataset: ReadonlyMap<string, Pick<CharacterRecord, 'strokeCount'>>): string[]` — returns the dataset's keys sorted by `strokeCount` ascending, ties broken by `codePointAt(0)` ascending; pure, does not mutate the input, independent of Map insertion order
     - _Requirements: 6.12, 8.1, 8.2_
+    - Note: Amended (approved by the human): see summon-ink Requirement 7; this task's text is left as history
 
   - [x] 5.9 Write unit tests `app/src/engine/learningOrder.test.ts`
     - Hand-built dataset with equal and different stroke counts and tie-break by codepoint; empty dataset; input Map not mutated; real-data check importing `app/public/data/characters.json`: first element has the minimum `strokeCount`, last has the maximum, length 300, all keys present
     - _Requirements: 6.12_
+    - Note: Amended (approved by the human): see summon-ink Requirement 7; this task's text is left as history
 
   - [x] 5.10 Write property test `app/src/engine/learningOrder.property.test.ts`
     - `// Feature: ghost-game-core, Property 12: The learning order is a deterministic, stroke-count-sorted permutation of the dataset`
     - fast-check, ≥100 runs; assert permutation, determinism (including independence from Map insertion order), non-decreasing `strokeCount`, and codepoint tie-break
     - **Validates: Requirements 6.12, 8.7**
     - _Requirements: 6.12, 8.6, 8.7_
+    - Note: Amended (approved by the human): see summon-ink Requirement 7; this task's text is left as history
 
 - [x] 6. Storage module
   - [x] 6.1 Implement `app/src/storage/storage.ts`

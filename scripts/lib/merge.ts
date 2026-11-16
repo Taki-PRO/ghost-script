@@ -12,6 +12,7 @@ import type {
   Prompt,
   RequiredField,
 } from '../../app/src/data/types';
+import { classifySummonInk } from '../../app/src/engine/summonInk';
 import type { HanziWriterEntry } from './parse-hanzi-writer-data';
 import type { MakeMeAHanziEntry } from './parse-make-me-a-hanzi';
 import type { CcCedictEntry } from './parse-cc-cedict';
@@ -116,6 +117,16 @@ export function mergeCharacter(
     },
     prompt,
     cangjie,
+    summonInk: classifySummonInk({
+      character: char,
+      cangjie,
+      strokeCount: hw.strokes.length,
+      decomposition: {
+        decomposition: mm.decomposition,
+        matches: mm.matches,
+        atomic: mm.atomic,
+      },
+    }),
     sources,
   };
 

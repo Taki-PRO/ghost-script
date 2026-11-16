@@ -1,5 +1,5 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
-import { START, boxInside, seed, seedState } from './helpers';
+import { START, expectInside, expectNoVerticalScroll, seed, seedState } from './helpers';
 
 // Height_Check and scroll reset at 1024 x 768 and 375 x 812 (Requirements 29.3 to 29.7).
 // Codes are never typed: "Give up" moves through the steps.
@@ -31,27 +31,6 @@ for (const vp of VIEWPORTS) {
       const write = page.getByRole('region', { name: 'Write mode' });
       await expect(write).toBeVisible({ timeout: 10_000 });
       return write;
-    }
-
-    async function expectInside(page: Page, name: string, locator: Locator): Promise<void> {
-      await expect(locator, `${name} is not visible`).toBeVisible();
-      const { box, viewport } = await boxInside(page, locator);
-      const detail = `${name}: box ${JSON.stringify(box)}, innerWidth ${viewport.width}, innerHeight ${viewport.height}`;
-      expect(box.top, detail).toBeGreaterThanOrEqual(0);
-      expect(box.bottom, detail).toBeLessThanOrEqual(viewport.height);
-      expect(box.left, detail).toBeGreaterThanOrEqual(0);
-      expect(box.right, detail).toBeLessThanOrEqual(viewport.width);
-    }
-
-    async function expectNoVerticalScroll(page: Page): Promise<void> {
-      await page.evaluate(() => document.fonts.ready);
-      const m = await page.evaluate(() => ({
-        scrollHeight: document.documentElement.scrollHeight,
-        innerHeight: window.innerHeight,
-      }));
-      expect(m.scrollHeight, `scrollHeight ${m.scrollHeight}, innerHeight ${m.innerHeight}`).toBeLessThanOrEqual(
-        m.innerHeight,
-      );
     }
 
     test('Summon step fits', async ({ page }) => {

@@ -26,7 +26,7 @@ inclusion: always
 - Small, pure functions for game logic (scheduling, scoring, hint selection) so they are easy to property-test.
 - Keep UI components separate from game logic: logic in `src/engine/`, UI in `src/components/`.
 - No `any` unless unavoidable; prefer explicit types for character data.
-- Every engine module has tests. Decision (Nov 15): no new property-based tests or mutation testing from here on; new code gets the unit and component tests it needs, and the existing property tests stay.
+- Every engine module has tests. Decision (Nov 15): no new property-based tests or mutation testing from here on; new code gets the unit and component tests it needs, and the existing property tests stay. The decision has one exception, approved by the human: the summon-ink classification (`app/src/engine/summonInk.ts`) gets exactly one property-based test; no other new property tests and no mutation testing.
 - Accessibility: buttons have labels, colour is never the only signal, text meets contrast guidelines on the dark theme.
 
 ## Testing rules

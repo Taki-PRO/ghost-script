@@ -40,7 +40,7 @@ flowchart TD
         CONFIG["config.ts\nALL tunable constants"]
         SCHED["scheduler.ts\napplyReview / nextDue / selectSession"]
         CLEAN["promptCleanup.ts\ncleanupMeaning (pure, idempotent)"]
-        LEARN["learningOrder.ts\nstrokeCount asc, codepoint tie-break"]
+        LEARN["learningOrder.ts\nInk_Class, strokeCount asc, codepoint tie-break"]
     end
 
     subgraph storage["app/src/storage/"]
@@ -322,6 +322,8 @@ export function learningOrder(
 
 The App passes `learningOrder(dataset)` as the character list to `selectSession`, so NEW characters are introduced, and ties broken, from the fewest-strokes characters upward.
 
+*(Amended (approved by the human): see summon-ink Requirement 7: the sort key is now Ink_Class first (`transparent`, `partial`, `opaque`), then `strokeCount` ascending, then codepoint ascending, so the function reads `summonInk` as well as `strokeCount`; the signature and comments above show the order before this amendment.)*
+
 ### `app/src/storage/storage.ts` (wrapped localStorage, Req 7)
 
 A small typed API; the rest of the app never touches `localStorage` keys directly. Every read/write is wrapped in `try/catch` and degrades gracefully (Req 7.3, 7.5, 7.7).
@@ -545,7 +547,7 @@ The scheduler and prompt-cleanup functions are pure (no I/O, injected clock), wh
 
 ### Property 12: The learning order is a deterministic, stroke-count-sorted permutation of the dataset
 
-*For any* dataset, `learningOrder` SHALL return a permutation of the dataset's keys (same elements, no duplicates), identical for identical input regardless of the Map's insertion order, with non-decreasing `strokeCount` along the list and ties in strokeCount ordered by Unicode codepoint ascending.
+*For any* dataset, `learningOrder` SHALL return a permutation of the dataset's keys (same elements, no duplicates), identical for identical input regardless of the Map's insertion order, with non-decreasing `strokeCount` along the list and ties in strokeCount ordered by Unicode codepoint ascending. *(Amended (approved by the human): see summon-ink Requirement 7: the list is first grouped by Ink_Class, and the non-decreasing `strokeCount` and codepoint tie-break hold within each class.)*
 
 **Validates: Requirements 6.12, 8.7**
 
@@ -648,7 +650,7 @@ Example-based tests, kept lean because property tests cover broad input ranges:
 - **`scheduler`** — `applyReview`: clean for a new character or after a miss lands on step 0, clean after a clean advances one step (capped at 5), and missed resets to step 0 + 10 min; `selectSession` ordering across the four bands of Req 6.5 with concrete fixtures.
 - **`storage`** — uses `createStore` with a fake backend (and a custom `currentVersion`/`migrations` map, since the shipped map is empty): migration from a known older `schemaVersion`; reset on unknown/newer/zero/negative/non-integer `schemaVersion` and on corrupt blobs, including histories with `__proto__`/`constructor`/`prototype` keys; no-op on simulated write failure; `recordOutcome(char, entry)` persists immediately; `resetToDefaults` removes the key.
 - **`charDataLoader`** — `toHanziWriterData` projection; `loadDataset` failure results for fetch/parse/shape (including `record.character !== key` and `__proto__`/`constructor`/`prototype` keys); `makeCharDataLoader` calls `onLoad` for known chars and `onError` (never `onLoad`) for unknown.
-- **`learningOrder`** — a small hand-built dataset (equal and different stroke counts, tie-break by codepoint); a real-data check against `app/public/data/characters.json` (first entry has the minimum `strokeCount`, last has the maximum, length 300); the empty dataset; the input Map is not mutated.
+- **`learningOrder`** — a small hand-built dataset (equal and different stroke counts, tie-break by codepoint); a real-data check against `app/public/data/characters.json` (first entry has the minimum `strokeCount`, last has the maximum, length 300); the empty dataset; the input Map is not mutated. *(Amended (approved by the human): see summon-ink Requirement 7: the hand-built cases and the real-data check follow the new key, Ink_Class first, then `strokeCount`, then codepoint.)*
 
 ### Property tests (Vitest + fast-check, ≥100 iterations each)
 

@@ -45,6 +45,10 @@ Judges may not read Chinese, so they cannot spot a wrong character. Correctness 
 - The Graveyard showing the glyph of a character the player has already met, including one they gave up on: giving up reveals the character, so it is no longer hidden.
 - The designed summon reveal: once the code is complete, the character forms, holds and fades before writing starts. The plain-text fallback used when the animation fails follows the same timing and is also allowed.
 - The "How Cangjie works" example, as long as it is chosen from late in the learning order (position 30 or later), not from the first characters a new player meets.
+- The parts of a character drawn as strokes during the Summon step, as each correct key is typed (spec `summon-ink`), approved by the human. Parts appear only as drawn paths, never as text or in an attribute, and the Paper is empty before the Lay-to-rest step.
+
+## Derived fields
+- A field the pipeline derives from other sourced fields (for example `summonInk`) records no new dataset. Its derivation is named in the type documentation and the README, and it needs no entry in `sources`.
 
 ## Game instructions are not claims
 - Statements about how this game works (for example "in this game, a code is one to five keys", "the 25 keys in this game") are instructions, not claims about Cangjie, and need no source as long as they are worded as being about this game.

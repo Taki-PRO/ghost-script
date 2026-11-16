@@ -171,7 +171,7 @@ describe('App integration', () => {
       expect(ghosts[0]).toBe('一');
     });
 
-    it('presents the lowest-strokeCount characters, ascending', async () => {
+    it('presents transparent characters first, by ascending strokeCount', async () => {
       const user = await openApp();
       await beginFirstVisit(user);
       const presented = await playSeance(user, Array<Outcome>(10).fill('clean'));
@@ -180,8 +180,7 @@ describe('App integration', () => {
       expect(presented).toEqual(learningOrder(dataset).slice(0, 10));
       const counts = presented.map((c) => all[c]!.strokeCount);
       for (let i = 0; i < counts.length - 1; i++) expect(counts[i]!).toBeLessThanOrEqual(counts[i + 1]!);
-      const rest = [...dataset.keys()].filter((c) => !presented.includes(c));
-      expect(Math.max(...counts)).toBeLessThanOrEqual(Math.min(...rest.map((c) => all[c]!.strokeCount)));
+      for (const c of presented) expect(all[c]!.summonInk.class).toBe('transparent');
     });
   });
 

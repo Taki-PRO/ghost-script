@@ -25,6 +25,15 @@ import { theme } from '../styles/theme';
 export const SUMMON_HOLD_MS = 1500;
 /** Duration of the fade-out (Req 2.4). */
 export const SUMMON_FADE_MS = 1500;
+/** hanzi-writer strokeAnimationSpeed while ink strokes are drawn (about half the default drawing time). */
+export const SUMMON_INK_SPEED = 2;
+/** Reduced motion: a stroke finishes within one animation frame. */
+const SUMMON_REDUCED_SPEED = 1000;
+
+/** Status-line text for a correct key whose shape the game does not ink (partial characters only). */
+export const INKLESS_KEY_TEXT = "This key's shape is one the game doesn't show yet.";
+/** Static note for characters whose code inks nothing (opaque characters only). */
+export const OPAQUE_NOTE = "This code uses shapes the game doesn't show yet.";
 
 export interface SummonStepProps {
   record: CharacterRecord;
@@ -85,6 +94,47 @@ export function SummonStep({ record, dataset, config, onDone }: SummonStepProps)
 
   const finished = state.status !== 'active';
 
+  const keyStrokes = record.summonInk.class === 'opaque' ? null : record.summonInk.keyStrokes;
+  const inks = keyStrokes !== null && code !== '';
+  const strokeCount = record.strokeCount;
+
+  const chainRef = useRef<Promise<void>>(Promise.resolve());
+  const queuedRef = useRef<Set<number>>(new Set());
+  const brokenRef = useRef(false);
+  const disposedRef = useRef(false);
+
+  /** Queue strokes; each animateStroke call is awaited before the next starts. */
+  const enqueueInk = useCallback((strokes: readonly number[]) => {
+    const writer = writerRef.current;
+    for (const s of strokes) {
+      if (queuedRef.current.has(s)) continue;
+      queuedRef.current.add(s);
+      chainRef.current = chainRef.current
+        .then(async () => {
+          if (disposedRef.current || brokenRef.current || writer === null) return;
+          await writer.animateStroke(s);
+        })
+        .catch(() => {
+          brokenRef.current = true;
+        });
+    }
+  }, []);
+
+  /** Ink the key's strokes and build the status message for a key press. */
+  const afterKey = useCallback(
+    (prev: SummonState, next: SummonState): string => {
+      const accepted = next.filled > prev.filled;
+      let inkless = false;
+      if (accepted && keyStrokes !== null) {
+        const strokes = keyStrokes[prev.filled] ?? [];
+        inkless = record.summonInk.class === 'partial' && strokes.length === 0;
+        if (inks) enqueueInk(strokes);
+      }
+      return describe(prev, next, inkless);
+    },
+    [keyStrokes, inks, enqueueInk, record.summonInk.class],
+  );
+
   const commit = useCallback((next: SummonState, message: string | null) => {
     stateRef.current = next;
     setState(next);
@@ -97,9 +147,9 @@ export function SummonStep({ record, dataset, config, onDone }: SummonStepProps)
       const prev = stateRef.current;
       if (prev.status !== 'active') return;
       const next = applyKeyEntry(prev, key, configRef.current);
-      commit(next, describe(prev, next));
+      commit(next, afterKey(prev, next));
     },
-    [commit],
+    [commit, afterKey],
   );
 
   // Physical keyboard.
@@ -111,11 +161,45 @@ export function SummonStep({ record, dataset, config, onDone }: SummonStepProps)
       const next = applyKeyEvent(prev, e, configRef.current);
       if (next === prev) return;
       e.preventDefault();
-      commit(next, describe(prev, next));
+      commit(next, afterKey(prev, next));
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [commit]);
+  }, [commit, afterKey]);
+
+  // Ink classes: the writer exists from the start, with no stroke visible.
+  useEffect(() => {
+    if (!inks) return;
+    const container = containerRef.current;
+    if (!container) return;
+    disposedRef.current = false;
+    brokenRef.current = false;
+    queuedRef.current = new Set();
+    chainRef.current = Promise.resolve();
+    try {
+      writerRef.current = HanziWriter.create(container, record.character, {
+        width: side,
+        height: side,
+        padding: 12,
+        showCharacter: false,
+        showOutline: false,
+        strokeColor: theme.inkOnPaper,
+        strokeAnimationSpeed: prefersReducedMotion() ? SUMMON_REDUCED_SPEED : SUMMON_INK_SPEED,
+        charDataLoader: makeCharDataLoader(dataset),
+        onLoadCharDataError: () => {
+          brokenRef.current = true;
+        },
+      });
+    } catch {
+      brokenRef.current = true;
+      writerRef.current = null;
+    }
+    return () => {
+      disposedRef.current = true;
+      writerRef.current = null;
+      container.replaceChildren();
+    };
+  }, [inks, record.character, dataset, side]);
 
   const handleGiveUp = () => {
     const prev = stateRef.current;
@@ -125,7 +209,7 @@ export function SummonStep({ record, dataset, config, onDone }: SummonStepProps)
 
   const started = phase !== 'typing';
 
-  // Forming, holding and fading. No hanzi-writer instance exists before this.
+  // Forming, holding and fading. Opaque characters get their hanzi-writer instance here.
   useEffect(() => {
     if (!started) return;
     const container = containerRef.current;
@@ -165,31 +249,45 @@ export function SummonStep({ record, dataset, config, onDone }: SummonStepProps)
       holdAndFade();
     };
 
-    try {
-      const writer = HanziWriter.create(container, record.character, {
-        width: side,
-        height: side,
-        padding: 12,
-        showCharacter: false,
-        showOutline: false,
-        strokeColor: theme.inkOnPaper,
-        charDataLoader: makeCharDataLoader(dataset),
-        onLoadCharDataError: useFallback,
-      });
-      writerRef.current = writer;
-      writer.animateCharacter().then(holdAndFade, useFallback);
-    } catch {
-      useFallback();
+    if (inks) {
+      // Draw every stroke not yet inked, in ascending order, then hold and fade.
+      if (writerRef.current === null || brokenRef.current) {
+        useFallback();
+      } else {
+        enqueueInk(Array.from({ length: strokeCount }, (_, i) => i));
+        chainRef.current.then(() => {
+          if (disposed) return;
+          if (brokenRef.current) useFallback();
+          else holdAndFade();
+        });
+      }
+    } else {
+      try {
+        const writer = HanziWriter.create(container, record.character, {
+          width: side,
+          height: side,
+          padding: 12,
+          showCharacter: false,
+          showOutline: false,
+          strokeColor: theme.inkOnPaper,
+          charDataLoader: makeCharDataLoader(dataset),
+          onLoadCharDataError: useFallback,
+        });
+        writerRef.current = writer;
+        writer.animateCharacter().then(holdAndFade, useFallback);
+      } catch {
+        useFallback();
+      }
     }
 
     return () => {
       disposed = true;
       timersRef.current.forEach((id) => window.clearTimeout(id));
       timersRef.current = [];
-      writerRef.current = null;
+      if (!inks) writerRef.current = null;
       container.replaceChildren();
     };
-  }, [started, record.character, dataset, side]);
+  }, [started, inks, strokeCount, enqueueInk, record.character, dataset, side]);
 
   const hintVisible = isKeyHintVisible(state, config);
   const hintKey = hintVisible ? nextExpectedKey(state) : null;
@@ -238,11 +336,17 @@ export function SummonStep({ record, dataset, config, onDone }: SummonStepProps)
         {slots}
       </ol>
 
+      {record.summonInk.class === 'opaque' && phase === 'typing' ? (
+        <p data-testid="opaque-note" className="text-center text-sm text-muted">
+          {OPAQUE_NOTE}
+        </p>
+      ) : null}
+
       <div className="relative">
         <InkSurface
           size={`${side}px`}
           containerRef={containerRef}
-          hidden={phase === 'typing'}
+          hidden={phase === 'typing' && !inks}
           style={{
             opacity: fading ? 0 : 1,
             transition: fading && !reduced ? `opacity ${SUMMON_FADE_MS}ms linear` : 'none',
@@ -326,9 +430,10 @@ export function SummonStep({ record, dataset, config, onDone }: SummonStepProps)
   );
 }
 
-function describe(prev: SummonState, next: SummonState): string {
+function describe(prev: SummonState, next: SummonState, inkless: boolean): string {
   if (next.filled > prev.filled) {
-    return next.status === 'active' ? '✓ Key accepted' : '✓ Code complete';
+    const base = next.status === 'active' ? '✓ Key accepted' : '✓ Code complete';
+    return inkless ? `${base} ${INKLESS_KEY_TEXT}` : base;
   }
   return '✗ Not that key';
 }

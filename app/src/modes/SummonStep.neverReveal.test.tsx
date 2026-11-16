@@ -12,6 +12,7 @@ import { SummonStep } from './SummonStep';
 vi.mock('hanzi-writer', () => {
   const create = () => ({
     animateCharacter: vi.fn(() => new Promise<void>(() => undefined)),
+    animateStroke: vi.fn(() => Promise.resolve()),
     cancelQuiz: vi.fn(),
     quiz: vi.fn(() => Promise.resolve()),
     showCharacter: vi.fn(() => Promise.resolve()),
@@ -27,10 +28,18 @@ const playable = Object.values(data).filter((r) => isPlayableInCangjie(r.cangjie
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXY'.split('');
 
 /** Every place the character could leak: text, all attributes, document.title. */
+/** Zero-opacity stroke paths are allowed (they show nothing) and are not checked. */
+function isZeroOpacityPath(el: Element): boolean {
+  if (el.tagName.toLowerCase() !== 'path') return false;
+  const style = (el as SVGElement).style?.opacity ?? '';
+  return el.getAttribute('opacity') === '0' || (style !== '' && Number(style) === 0);
+}
+
 function findLeaks(target: string): string[] {
   const leaks: string[] = [];
   if (document.title.includes(target)) leaks.push('document.title');
   for (const el of Array.from(document.querySelectorAll('*'))) {
+    if (isZeroOpacityPath(el)) continue;
     for (const attr of Array.from(el.attributes)) {
       if (attr.value.includes(target) || attr.name.includes(target)) {
         leaks.push(`<${el.tagName.toLowerCase()} ${attr.name}="${attr.value}">`);
@@ -71,4 +80,19 @@ describe('SummonStep + GhostPrompt never reveal the target before the code is co
     expect(screen.getByRole('status').textContent).toContain('Hint: press');
     expect(findLeaks(record.character)).toEqual([]);
   });
+
+  it.each(playable.map((r) => [r.character, r] as const))(
+    '%s stays hidden after each correct key before the last',
+    (_char, record) => {
+      mount(record);
+      const code = record.cangjie!.toUpperCase();
+      for (let i = 0; i < code.length - 1; i++) {
+        fireEvent.keyDown(window, { key: code[i] });
+        expect(findLeaks(record.character)).toEqual([]);
+      }
+      if (record.summonInk.class === 'opaque') {
+        expect(screen.getByTestId('opaque-note').textContent).not.toContain(record.character);
+      }
+    },
+  );
 });

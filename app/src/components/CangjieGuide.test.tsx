@@ -147,8 +147,11 @@ describe('CangjieGuide example (Req 6.8)', () => {
     expect(index).toBeGreaterThanOrEqual(30);
   });
 
-  it('is 想 with DUP on the current dataset', () => {
-    expect(pickGuideExample(realDataset)).toEqual({ character: '想', code: 'DUP' });
+  it('is 黑 on the current dataset, with its code read from the dataset', () => {
+    const picked = pickGuideExample(realDataset);
+    expect(picked).toEqual({ character: '黑', code: realDataset.get('黑')!.cangjie });
+    expect(picked?.code).toBe('WGF');
+    expect(learningOrder(realDataset).indexOf('黑')).toBe(292);
   });
 
   it('omits the example when none is eligible', () => {

@@ -64,6 +64,14 @@
       "pinyin": "yī"
     },
     "cangjie": "M",
+    "summonInk": {
+      "class": "transparent",
+      "keyStrokes": [
+        [
+          0
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -189,6 +197,9 @@
       "pinyin": "qī"
     },
     "cangjie": "JU",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -325,6 +336,16 @@
       "pinyin": "sān"
     },
     "cangjie": "MMM",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0
+        ],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -461,6 +482,15 @@
       "pinyin": "shàng"
     },
     "cangjie": "YM",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [
+          2
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -608,6 +638,18 @@
       "pinyin": "xià"
     },
     "cangjie": "MY",
+    "summonInk": {
+      "class": "transparent",
+      "keyStrokes": [
+        [
+          0
+        ],
+        [
+          1,
+          2
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -777,6 +819,15 @@
       "pinyin": "bù"
     },
     "cangjie": "MF",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0
+        ],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -976,6 +1027,9 @@
       "pinyin": "dōng"
     },
     "cangjie": "KD",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -1260,6 +1314,17 @@
       "pinyin": "liǎng"
     },
     "cangjie": "MOOB",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0
+        ],
+        [],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -1413,6 +1478,16 @@
       "pinyin": "gè"
     },
     "cangjie": "OL",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1
+        ],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -1582,6 +1657,9 @@
       "pinyin": "zhōng"
     },
     "cangjie": "L",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -1775,6 +1853,9 @@
       "pinyin": "wéi"
     },
     "cangjie": "IKSI",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -1938,6 +2019,9 @@
       "pinyin": "me"
     },
     "cangjie": "HI",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -2118,6 +2202,9 @@
       "pinyin": "jiǔ"
     },
     "cangjie": "KN",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -2315,6 +2402,9 @@
       "pinyin": "yě"
     },
     "cangjie": "PD",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -2460,6 +2550,9 @@
       "pinyin": "xí"
     },
     "cangjie": "SIM",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -2642,6 +2735,9 @@
       "pinyin": "shū"
     },
     "cangjie": "IDS",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -2861,6 +2957,9 @@
       "pinyin": "mǎi"
     },
     "cangjie": "NYK",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -3006,6 +3105,9 @@
       "pinyin": "le"
     },
     "cangjie": "NN",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -3300,6 +3402,9 @@
       "pinyin": "shì"
     },
     "cangjie": "JLLN",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -3394,6 +3499,17 @@
       "pinyin": "èr"
     },
     "cangjie": "MM",
+    "summonInk": {
+      "class": "transparent",
+      "keyStrokes": [
+        [
+          0
+        ],
+        [
+          1
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -3566,6 +3682,9 @@
       "pinyin": "wǔ"
     },
     "cangjie": "MDM",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -3848,6 +3967,9 @@
       "pinyin": "xiē"
     },
     "cangjie": "YPMM",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -3969,6 +4091,15 @@
       "pinyin": "rén"
     },
     "cangjie": "O",
+    "summonInk": {
+      "class": "transparent",
+      "keyStrokes": [
+        [
+          0,
+          1
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -4161,6 +4292,16 @@
       "pinyin": "shén"
     },
     "cangjie": "OJ",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [
+          2,
+          3
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -4344,6 +4485,17 @@
       "pinyin": "jīn"
     },
     "cangjie": "OIN",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1
+        ],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -4535,6 +4687,17 @@
       "pinyin": "jiè"
     },
     "cangjie": "OLL",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1
+        ],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -4736,6 +4899,19 @@
       "pinyin": "cóng"
     },
     "cangjie": "OO",
+    "summonInk": {
+      "class": "transparent",
+      "keyStrokes": [
+        [
+          0,
+          1
+        ],
+        [
+          2,
+          3
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -4983,6 +5159,9 @@
       "pinyin": "tā"
     },
     "cangjie": "OPD",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -5171,6 +5350,17 @@
       "pinyin": "yǐ"
     },
     "cangjie": "VIO",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [
+          2,
+          3
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -5387,6 +5577,9 @@
       "pinyin": "men"
     },
     "cangjie": "OLS",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -5632,6 +5825,18 @@
       "pinyin": "xiū"
     },
     "cangjie": "OD",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [
+          2,
+          3,
+          4,
+          5
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -5871,6 +6076,18 @@
       "pinyin": "huì"
     },
     "cangjie": "OMMI",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1
+        ],
+        [],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -6134,6 +6351,9 @@
       "pinyin": "dàn"
     },
     "cangjie": "OAM",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -6378,6 +6598,9 @@
       "pinyin": "zhù"
     },
     "cangjie": "OYG",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -6642,6 +6865,9 @@
       "pinyin": "tǐ"
     },
     "cangjie": "ODM",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -6902,6 +7128,9 @@
       "pinyin": "zuò"
     },
     "cangjie": "OHS",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -7177,6 +7406,9 @@
       "pinyin": "nǐ"
     },
     "cangjie": "ONF",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -7536,6 +7768,9 @@
       "pinyin": "hòu"
     },
     "cangjie": "OLNK",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -7894,6 +8129,9 @@
       "pinyin": "jiè"
     },
     "cangjie": "OTA",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -8302,6 +8540,9 @@
       "pinyin": "jiǎ"
     },
     "cangjie": "ORYE",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -8681,6 +8922,9 @@
       "pinyin": "zuò"
     },
     "cangjie": "OJRK",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -8834,6 +9078,9 @@
       "pinyin": "ér"
     },
     "cangjie": "LU",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -9090,6 +9337,19 @@
       "pinyin": "xiān"
     },
     "cangjie": "HGHU",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [
+          1,
+          2,
+          3
+        ],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -9198,6 +9458,9 @@
       "pinyin": "bā"
     },
     "cangjie": "HO",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -9350,6 +9613,9 @@
       "pinyin": "liù"
     },
     "cangjie": "YC",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -9580,6 +9846,9 @@
       "pinyin": "guān"
     },
     "cangjie": "TK",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -9799,6 +10068,16 @@
       "pinyin": "xīng"
     },
     "cangjie": "FMC",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [
+          3
+        ],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -10038,6 +10317,16 @@
       "pinyin": "zài"
     },
     "cangjie": "MGB",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0
+        ],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -10271,6 +10560,9 @@
       "pinyin": "xiě"
     },
     "cangjie": "BYSM",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -10537,6 +10829,9 @@
       "pinyin": "lěng"
     },
     "cangjie": "IMOII",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -10844,6 +11139,9 @@
       "pinyin": "jìng"
     },
     "cangjie": "IMNSD",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -11160,6 +11458,9 @@
       "pinyin": "zhǔn"
     },
     "cangjie": "IMOG",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -11333,6 +11634,9 @@
       "pinyin": "jǐ"
     },
     "cangjie": "HN",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -11545,6 +11849,9 @@
       "pinyin": "chū"
     },
     "cangjie": "UU",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -11776,6 +12083,9 @@
       "pinyin": "fēn"
     },
     "cangjie": "CSH",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -12073,6 +12383,9 @@
       "pinyin": "bié"
     },
     "cangjie": "XRSLN",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -12347,6 +12660,9 @@
       "pinyin": "dào"
     },
     "cangjie": "MGLN",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -12661,6 +12977,9 @@
       "pinyin": "qián"
     },
     "cangjie": "TBLN",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -12913,6 +13232,9 @@
       "pinyin": "dòng"
     },
     "cangjie": "MIKS",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -13202,6 +13524,9 @@
       "pinyin": "zhù"
     },
     "cangjie": "BMKS",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -13479,6 +13804,9 @@
       "pinyin": "bāo"
     },
     "cangjie": "PRU",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -13695,6 +14023,9 @@
       "pinyin": "běi"
     },
     "cangjie": "LMP",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -13971,6 +14302,9 @@
       "pinyin": "yī"
     },
     "cangjie": "SOK",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -14070,6 +14404,9 @@
       "pinyin": "shí"
     },
     "cangjie": "J",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -14213,6 +14550,9 @@
       "pinyin": "wǔ"
     },
     "cangjie": "OJ",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -14387,6 +14727,9 @@
       "pinyin": "bàn"
     },
     "cangjie": "FQ",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -14696,6 +15039,18 @@
       "pinyin": "nán"
     },
     "cangjie": "JBTJ",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1
+        ],
+        [],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -14900,6 +15255,17 @@
       "pinyin": "qù"
     },
     "cangjie": "GI",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2
+        ],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -15052,6 +15418,9 @@
       "pinyin": "yòu"
     },
     "cangjie": "NK",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -15271,6 +15640,9 @@
       "pinyin": "yǒu"
     },
     "cangjie": "KE",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -15416,6 +15788,9 @@
       "pinyin": "kǒu"
     },
     "cangjie": "R",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -15619,6 +15994,18 @@
       "pinyin": "jiào"
     },
     "cangjie": "RVL",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2
+        ],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -15818,6 +16205,18 @@
       "pinyin": "kě"
     },
     "cangjie": "MNR",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [
+          1,
+          2,
+          3
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -16059,6 +16458,19 @@
       "pinyin": "hào"
     },
     "cangjie": "RMVS",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2
+        ],
+        [],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -16327,6 +16739,18 @@
       "pinyin": "chī"
     },
     "cangjie": "RON",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2
+        ],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -16584,6 +17008,18 @@
       "pinyin": "tóng"
     },
     "cangjie": "BMR",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [
+          3,
+          4,
+          5
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -16829,6 +17265,18 @@
       "pinyin": "míng"
     },
     "cangjie": "NIR",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [
+          3,
+          4,
+          5
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -17088,6 +17536,18 @@
       "pinyin": "hòu"
     },
     "cangjie": "HMR",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [
+          3,
+          4,
+          5
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -17362,6 +17822,18 @@
       "pinyin": "xiàng"
     },
     "cangjie": "HBR",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [
+          3,
+          4,
+          5
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -17641,6 +18113,19 @@
       "pinyin": "ma"
     },
     "cangjie": "RNVM",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2
+        ],
+        [],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -17936,6 +18421,18 @@
       "pinyin": "ba"
     },
     "cangjie": "RAU",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2
+        ],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -18198,6 +18695,19 @@
       "pinyin": "tīng"
     },
     "cangjie": "RHML",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2
+        ],
+        [],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -18436,6 +18946,18 @@
       "pinyin": "gào"
     },
     "cangjie": "HGR",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [
+          4,
+          5,
+          6
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -18775,6 +19297,18 @@
       "pinyin": "ne"
     },
     "cangjie": "RSP",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2
+        ],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -19061,6 +19595,18 @@
       "pinyin": "hé"
     },
     "cangjie": "HDR",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [
+          5,
+          6,
+          7
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -19385,6 +19931,9 @@
       "pinyin": "gē"
     },
     "cangjie": "MRNR",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -19738,6 +20287,19 @@
       "pinyin": "nǎ"
     },
     "cangjie": "RSQL",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2
+        ],
+        [],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -20109,6 +20671,18 @@
       "pinyin": "chàng"
     },
     "cangjie": "RAA",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2
+        ],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -20473,6 +21047,19 @@
       "pinyin": "xǐ"
     },
     "cangjie": "GRTR",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [
+          9,
+          10,
+          11
+        ],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -20899,6 +21486,19 @@
       "pinyin": "hē"
     },
     "cangjie": "RAPV",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2
+        ],
+        [],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -21115,6 +21715,9 @@
       "pinyin": "sì"
     },
     "cangjie": "WC",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -21357,6 +21960,17 @@
       "pinyin": "huí"
     },
     "cangjie": "WR",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [
+          2,
+          3,
+          4
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -21602,6 +22216,17 @@
       "pinyin": "yīn"
     },
     "cangjie": "WK",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [
+          2,
+          3,
+          4
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -21886,6 +22511,9 @@
       "pinyin": "guó"
     },
     "cangjie": "WMGI",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -22119,6 +22747,18 @@
       "pinyin": "zài"
     },
     "cangjie": "KLG",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [
+          3,
+          4,
+          5
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -22382,6 +23022,18 @@
       "pinyin": "dì"
     },
     "cangjie": "GPD",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2
+        ],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -22662,6 +23314,19 @@
       "pinyin": "chǎng"
     },
     "cangjie": "GNSH",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2
+        ],
+        [],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -22911,6 +23576,18 @@
       "pinyin": "huài"
     },
     "cangjie": "GMF",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2
+        ],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -23172,6 +23849,18 @@
       "pinyin": "zuò"
     },
     "cangjie": "OOG",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [
+          4,
+          5,
+          6
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -23435,6 +24124,18 @@
       "pinyin": "kuài"
     },
     "cangjie": "GDK",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2
+        ],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -23746,6 +24447,20 @@
       "pinyin": "bèi"
     },
     "cangjie": "HEW",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -23952,6 +24667,17 @@
       "pinyin": "wài"
     },
     "cangjie": "NIY",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [
+          3,
+          4
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -24196,6 +24922,9 @@
       "pinyin": "duō"
     },
     "cangjie": "NINI",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -24362,6 +25091,9 @@
       "pinyin": "dà"
     },
     "cangjie": "K",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -24557,6 +25289,19 @@
       "pinyin": "tiān"
     },
     "cangjie": "MK",
+    "summonInk": {
+      "class": "transparent",
+      "keyStrokes": [
+        [
+          0
+        ],
+        [
+          1,
+          2,
+          3
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -24750,6 +25495,17 @@
       "pinyin": "tài"
     },
     "cangjie": "KI",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2
+        ],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -24914,6 +25670,16 @@
       "pinyin": "nǚ"
     },
     "cangjie": "V",
+    "summonInk": {
+      "class": "transparent",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -25196,6 +25962,19 @@
       "pinyin": "nǎi"
     },
     "cangjie": "VNHS",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2
+        ],
+        [],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -25497,6 +26276,18 @@
       "pinyin": "tā"
     },
     "cangjie": "VPD",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2
+        ],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -25792,6 +26583,18 @@
       "pinyin": "hǎo"
     },
     "cangjie": "VND",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2
+        ],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -26081,6 +26884,19 @@
       "pinyin": "mā"
     },
     "cangjie": "VNVM",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2
+        ],
+        [],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -26392,6 +27208,18 @@
       "pinyin": "jiě"
     },
     "cangjie": "VBM",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2
+        ],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -26581,6 +27409,9 @@
       "pinyin": "zǐ"
     },
     "cangjie": "ND",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -26823,6 +27654,9 @@
       "pinyin": "zì"
     },
     "cangjie": "JND",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -27106,6 +27940,9 @@
       "pinyin": "xué"
     },
     "cangjie": "FBND",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -27435,6 +28272,9 @@
       "pinyin": "hái"
     },
     "cangjie": "NDYVO",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -27716,6 +28556,9 @@
       "pinyin": "wán"
     },
     "cangjie": "JMMU",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -28074,6 +28917,9 @@
       "pinyin": "jiā"
     },
     "cangjie": "JMSO",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -28292,6 +29138,9 @@
       "pinyin": "duì"
     },
     "cangjie": "EDI",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -28426,6 +29275,9 @@
       "pinyin": "xiǎo"
     },
     "cangjie": "NC",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -28590,6 +29442,9 @@
       "pinyin": "shǎo"
     },
     "cangjie": "FH",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -28981,6 +29836,9 @@
       "pinyin": "jiù"
     },
     "cangjie": "YFIKU",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -29123,6 +29981,9 @@
       "pinyin": "shān"
     },
     "cangjie": "U",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -29361,6 +30222,18 @@
       "pinyin": "suì"
     },
     "cangjie": "UNI",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2
+        ],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -29494,6 +30367,16 @@
       "pinyin": "gōng"
     },
     "cangjie": "MLM",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0
+        ],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -29799,6 +30682,9 @@
       "pinyin": "chā"
     },
     "cangjie": "TQM",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -30056,6 +30942,9 @@
       "pinyin": "shī"
     },
     "cangjie": "LLMB",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -30420,6 +31309,9 @@
       "pinyin": "bāng"
     },
     "cangjie": "QLLB",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -30769,6 +31661,9 @@
       "pinyin": "cháng"
     },
     "cangjie": "FBRLB",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -30916,6 +31811,18 @@
       "pinyin": "gān"
     },
     "cangjie": "MJ",
+    "summonInk": {
+      "class": "transparent",
+      "keyStrokes": [
+        [
+          0
+        ],
+        [
+          1,
+          2
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -31124,6 +32031,9 @@
       "pinyin": "nián"
     },
     "cangjie": "OQ",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -31369,6 +32279,16 @@
       "pinyin": "yīng"
     },
     "cangjie": "IFM",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [
+          6
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -31637,6 +32557,9 @@
       "pinyin": "diàn"
     },
     "cangjie": "IYR",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -31822,6 +32745,15 @@
       "pinyin": "kāi"
     },
     "cangjie": "MT",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0
+        ],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -32068,6 +33000,9 @@
       "pinyin": "dāng"
     },
     "cangjie": "FSM",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -32406,6 +33341,9 @@
       "pinyin": "hěn"
     },
     "cangjie": "HOAV",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -32782,6 +33720,9 @@
       "pinyin": "dé"
     },
     "cangjie": "HOAMI",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -33038,6 +33979,19 @@
       "pinyin": "wàng"
     },
     "cangjie": "YVP",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [
+          3,
+          4,
+          5,
+          6
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -33254,6 +34208,9 @@
       "pinyin": "máng"
     },
     "cangjie": "PYV",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -33526,6 +34483,9 @@
       "pinyin": "kuài"
     },
     "cangjie": "PDK",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -33828,6 +34788,19 @@
       "pinyin": "zěn"
     },
     "cangjie": "HSP",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [
+          5,
+          6,
+          7,
+          8
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -34105,6 +35078,9 @@
       "pinyin": "pà"
     },
     "cangjie": "PHA",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -34450,6 +35426,19 @@
       "pinyin": "xī"
     },
     "cangjie": "HUP",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [
+          6,
+          7,
+          8,
+          9
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -34806,6 +35795,19 @@
       "pinyin": "nín"
     },
     "cangjie": "OFP",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [
+          7,
+          8,
+          9,
+          10
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -35216,6 +36218,19 @@
       "pinyin": "xiǎng"
     },
     "cangjie": "DUP",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [
+          9,
+          10,
+          11,
+          12
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -35612,6 +36627,20 @@
       "pinyin": "yì"
     },
     "cangjie": "YTAP",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [],
+        [
+          9,
+          10,
+          11,
+          12
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -35892,6 +36921,19 @@
       "pinyin": "wǒ"
     },
     "cangjie": "HQI",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [
+          1,
+          4,
+          5,
+          6
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -36186,6 +37228,9 @@
       "pinyin": "fáng"
     },
     "cangjie": "HSYHS",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -36485,6 +37530,9 @@
       "pinyin": "suǒ"
     },
     "cangjie": "HSHML",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -36652,6 +37700,17 @@
       "pinyin": "shǒu"
     },
     "cangjie": "Q",
+    "summonInk": {
+      "class": "transparent",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2,
+          3
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -36818,6 +37877,9 @@
       "pinyin": "cái"
     },
     "cangjie": "DH",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -37013,6 +38075,9 @@
       "pinyin": "dǎ"
     },
     "cangjie": "QMN",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -37314,6 +38379,18 @@
       "pinyin": "zhǎo"
     },
     "cangjie": "QI",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [
+          3,
+          4,
+          5,
+          6
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -37618,6 +38695,9 @@
       "pinyin": "bǎ"
     },
     "cangjie": "QAU",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -38013,6 +39093,20 @@
       "pinyin": "ná"
     },
     "cangjie": "OMRQ",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [],
+        [
+          6,
+          7,
+          8,
+          9
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -38327,6 +39421,9 @@
       "pinyin": "fàng"
     },
     "cangjie": "YSOK",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -38727,6 +39824,9 @@
       "pinyin": "jiāo"
     },
     "cangjie": "JDOK",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -38917,6 +40017,9 @@
       "pinyin": "wén"
     },
     "cangjie": "YK",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -39283,6 +40386,9 @@
       "pinyin": "xīn"
     },
     "cangjie": "YDHML",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -39476,6 +40582,9 @@
       "pinyin": "fāng"
     },
     "cangjie": "YHS",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -39805,6 +40914,9 @@
       "pinyin": "páng"
     },
     "cangjie": "YBYHS",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -39986,6 +41098,9 @@
       "pinyin": "rì"
     },
     "cangjie": "A",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -40208,6 +41323,21 @@
       "pinyin": "zǎo"
     },
     "cangjie": "AJ",
+    "summonInk": {
+      "class": "transparent",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -40454,6 +41584,19 @@
       "pinyin": "shí"
     },
     "cangjie": "ADI",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -40759,6 +41902,23 @@
       "pinyin": "míng"
     },
     "cangjie": "AB",
+    "summonInk": {
+      "class": "transparent",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6,
+          7
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -41056,6 +42216,20 @@
       "pinyin": "xīng"
     },
     "cangjie": "AHQM",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -41366,6 +42540,19 @@
       "pinyin": "zuó"
     },
     "cangjie": "AHS",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -41690,6 +42877,20 @@
       "pinyin": "shì"
     },
     "cangjie": "AMYO",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -42076,6 +43277,20 @@
       "pinyin": "wǎn"
     },
     "cangjie": "ANAU",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -42365,6 +43580,17 @@
       "pinyin": "gēng"
     },
     "cangjie": "MLWK",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0
+        ],
+        [],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -42553,6 +43779,9 @@
       "pinyin": "yuè"
     },
     "cangjie": "B",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -42803,6 +44032,18 @@
       "pinyin": "yǒu"
     },
     "cangjie": "KB",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [
+          2,
+          3,
+          4,
+          5
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -43116,6 +44357,23 @@
       "pinyin": "péng"
     },
     "cangjie": "BB",
+    "summonInk": {
+      "class": "transparent",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6,
+          7
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -43477,6 +44735,20 @@
       "pinyin": "fú"
     },
     "cangjie": "BSLE",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -43887,6 +45159,19 @@
       "pinyin": "qī"
     },
     "cangjie": "TCB",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [
+          8,
+          9,
+          10,
+          11
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -44052,6 +45337,9 @@
       "pinyin": "mù"
     },
     "cangjie": "D",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -44264,6 +45552,20 @@
       "pinyin": "běn"
     },
     "cangjie": "DM",
+    "summonInk": {
+      "class": "transparent",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [
+          4
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -44545,6 +45847,19 @@
       "pinyin": "jī"
     },
     "cangjie": "DHN",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -44776,6 +46091,9 @@
       "pinyin": "lái"
     },
     "cangjie": "DT",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -45042,6 +46360,23 @@
       "pinyin": "guǒ"
     },
     "cangjie": "WD",
+    "summonInk": {
+      "class": "transparent",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6,
+          7
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -45347,6 +46682,20 @@
       "pinyin": "shù"
     },
     "cangjie": "DEDI",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -45640,6 +46989,19 @@
       "pinyin": "yàng"
     },
     "cangjie": "DTQ",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -46059,6 +47421,20 @@
       "pinyin": "lóu"
     },
     "cangjie": "DFDV",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -46305,6 +47681,9 @@
       "pinyin": "cì"
     },
     "cangjie": "IMNO",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -46566,6 +47945,9 @@
       "pinyin": "huān"
     },
     "cangjie": "ENO",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -47016,6 +48398,9 @@
       "pinyin": "gē"
     },
     "cangjie": "MRNO",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -47216,6 +48601,17 @@
       "pinyin": "zhèng"
     },
     "cangjie": "MYLM",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0
+        ],
+        [],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -47485,6 +48881,9 @@
       "pinyin": "měi"
     },
     "cangjie": "OWYI",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -47695,6 +49094,9 @@
       "pinyin": "bǐ"
     },
     "cangjie": "PP",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -47903,6 +49305,9 @@
       "pinyin": "qì"
     },
     "cangjie": "OMN",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -48105,6 +49510,9 @@
       "pinyin": "shuǐ"
     },
     "cangjie": "E",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -48312,6 +49720,9 @@
       "pinyin": "Hàn"
     },
     "cangjie": "EE",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -48568,6 +49979,9 @@
       "pinyin": "qì"
     },
     "cangjie": "EOMN",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -48878,6 +50292,9 @@
       "pinyin": "méi"
     },
     "cangjie": "EHNE",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -49192,6 +50609,9 @@
       "pinyin": "xǐ"
     },
     "cangjie": "EHGU",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -49603,6 +51023,9 @@
       "pinyin": "kě"
     },
     "cangjie": "EAPV",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -49785,6 +51208,9 @@
       "pinyin": "huǒ"
     },
     "cangjie": "F",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -50069,6 +51495,9 @@
       "pinyin": "diǎn"
     },
     "cangjie": "YRF",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -50421,6 +51850,9 @@
       "pinyin": "rè"
     },
     "cangjie": "QIF",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -50782,6 +52214,9 @@
       "pinyin": "rán"
     },
     "cangjie": "BKF",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -51165,6 +52600,9 @@
       "pinyin": "ài"
     },
     "cangjie": "BBKE",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -51504,6 +52942,9 @@
       "pinyin": "bà"
     },
     "cangjie": "CKAU",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -51667,6 +53108,9 @@
       "pinyin": "niú"
     },
     "cangjie": "HQ",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -51963,6 +53407,9 @@
       "pinyin": "wán"
     },
     "cangjie": "MGMMU",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -52289,6 +53736,9 @@
       "pinyin": "xiàn"
     },
     "cangjie": "MGBHU",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -52614,6 +54064,9 @@
       "pinyin": "qiú"
     },
     "cangjie": "MGIJE",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -52819,6 +54272,16 @@
       "pinyin": "shēng"
     },
     "cangjie": "HQM",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [
+          1
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -53018,6 +54481,9 @@
       "pinyin": "yòng"
     },
     "cangjie": "BQ",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -53255,6 +54721,9 @@
       "pinyin": "diàn"
     },
     "cangjie": "LWU",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -53541,6 +55010,20 @@
       "pinyin": "nán"
     },
     "cangjie": "WKS",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -53890,6 +55373,9 @@
       "pinyin": "bìng"
     },
     "cangjie": "KMOB",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -54106,6 +55592,18 @@
       "pinyin": "bái"
     },
     "cangjie": "HA",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [
+          1,
+          2,
+          3,
+          4
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -54347,6 +55845,15 @@
       "pinyin": "bǎi"
     },
     "cangjie": "MA",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0
+        ],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -54665,6 +56172,9 @@
       "pinyin": "de"
     },
     "cangjie": "HAPI",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -55003,6 +56513,20 @@
       "pinyin": "kàn"
     },
     "cangjie": "HQBU",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -55329,6 +56853,9 @@
       "pinyin": "zhēn"
     },
     "cangjie": "JBMC",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -55691,6 +57218,9 @@
       "pinyin": "zhe"
     },
     "cangjie": "TQBU",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -56115,6 +57645,9 @@
       "pinyin": "shuì"
     },
     "cangjie": "BUHJM",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -56401,6 +57934,18 @@
       "pinyin": "zhī"
     },
     "cangjie": "OKR",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [
+          5,
+          6,
+          7
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -56756,6 +58301,9 @@
       "pinyin": "piào"
     },
     "cangjie": "MWMMF",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -57063,6 +58611,9 @@
       "pinyin": "chuān"
     },
     "cangjie": "JCMVH",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -57369,6 +58920,9 @@
       "pinyin": "zhàn"
     },
     "cangjie": "YTYR",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -57675,6 +59229,9 @@
       "pinyin": "xiào"
     },
     "cangjie": "HHK",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -58045,6 +59602,9 @@
       "pinyin": "dì"
     },
     "cangjie": "HNLH",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -58399,6 +59959,9 @@
       "pinyin": "děng"
     },
     "cangjie": "HGDI",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -58760,6 +60323,9 @@
       "pinyin": "dá"
     },
     "cangjie": "HOMR",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -59040,6 +60606,9 @@
       "pinyin": "xì"
     },
     "cangjie": "HVIF",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -59411,6 +60980,21 @@
       "pinyin": "lèi"
     },
     "cangjie": "WVIF",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -59721,6 +61305,9 @@
       "pinyin": "shào"
     },
     "cangjie": "VMSHR",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -60049,6 +61636,9 @@
       "pinyin": "gěi"
     },
     "cangjie": "VMOMR",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -60304,6 +61894,9 @@
       "pinyin": "wǎng"
     },
     "cangjie": "BKK",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -60575,6 +62168,9 @@
       "pinyin": "lǎo"
     },
     "cangjie": "JKP",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -60849,6 +62445,9 @@
       "pinyin": "kǎo"
     },
     "cangjie": "JKYS",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -61049,6 +62648,9 @@
       "pinyin": "ér"
     },
     "cangjie": "MBLL",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -61312,6 +62914,9 @@
       "pinyin": "ròu"
     },
     "cangjie": "OBO",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -61727,6 +63332,9 @@
       "pinyin": "néng"
     },
     "cangjie": "IBPP",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -62006,6 +63614,9 @@
       "pinyin": "huā"
     },
     "cangjie": "TOP",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -62307,6 +63918,22 @@
       "pinyin": "chá"
     },
     "cangjie": "TOD",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [
+          3,
+          4
+        ],
+        [
+          5,
+          6,
+          7,
+          8
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -62627,6 +64254,9 @@
       "pinyin": "cài"
     },
     "cangjie": "TBD",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -62987,6 +64617,9 @@
       "pinyin": "dàn"
     },
     "cangjie": "NOLMI",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -63233,6 +64866,9 @@
       "pinyin": "xíng"
     },
     "cangjie": "HOMMN",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -63447,6 +65083,9 @@
       "pinyin": "yī"
     },
     "cangjie": "YHV",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -63704,6 +65343,9 @@
       "pinyin": "xī"
     },
     "cangjie": "MCW",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -64024,6 +65666,18 @@
       "pinyin": "yào"
     },
     "cangjie": "MWV",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [
+          6,
+          7,
+          8
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -64257,6 +65911,9 @@
       "pinyin": "jiàn"
     },
     "cangjie": "BLU",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -64596,6 +66253,9 @@
       "pinyin": "shì"
     },
     "cangjie": "IFBHU",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -64955,6 +66615,9 @@
       "pinyin": "jué"
     },
     "cangjie": "FBBHU",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -65151,6 +66814,17 @@
       "pinyin": "rèn"
     },
     "cangjie": "IVO",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [
+          2,
+          3
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -65352,6 +67026,9 @@
       "pinyin": "ràng"
     },
     "cangjie": "IVYM",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -65588,6 +67265,9 @@
       "pinyin": "jì"
     },
     "cangjie": "IVSU",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -65857,6 +67537,9 @@
       "pinyin": "shí"
     },
     "cangjie": "IVRC",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -66122,6 +67805,9 @@
       "pinyin": "sù"
     },
     "cangjie": "IVHMY",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -66412,6 +68098,9 @@
       "pinyin": "shì"
     },
     "cangjie": "IVIPM",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -66713,6 +68402,9 @@
       "pinyin": "huà"
     },
     "cangjie": "IVHJR",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -67015,6 +68707,9 @@
       "pinyin": "gāi"
     },
     "cangjie": "IVYVO",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -67323,6 +69018,9 @@
       "pinyin": "yǔ"
     },
     "cangjie": "IVMMR",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -67665,6 +69363,9 @@
       "pinyin": "shuō"
     },
     "cangjie": "IVCRU",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -68027,6 +69728,9 @@
       "pinyin": "qǐng"
     },
     "cangjie": "IVQMB",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -68361,6 +70065,9 @@
       "pinyin": "kè"
     },
     "cangjie": "IVWD",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -68700,6 +70407,9 @@
       "pinyin": "shéi"
     },
     "cangjie": "IVOG",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -69095,6 +70805,9 @@
       "pinyin": "xiè"
     },
     "cangjie": "IVHHI",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -69431,6 +71144,22 @@
       "pinyin": "guì"
     },
     "cangjie": "LMBO",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [
+          4
+        ],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -69673,6 +71402,18 @@
       "pinyin": "zǒu"
     },
     "cangjie": "GYO",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2
+        ],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -70062,6 +71803,9 @@
       "pinyin": "qǐ"
     },
     "cangjie": "GORU",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -70493,6 +72237,9 @@
       "pinyin": "pǎo"
     },
     "cangjie": "RMPRU",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -70922,6 +72669,9 @@
       "pinyin": "gēn"
     },
     "cangjie": "RMAV",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -71349,6 +73099,9 @@
       "pinyin": "lù"
     },
     "cangjie": "RMHER",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -71613,6 +73366,9 @@
       "pinyin": "shēn"
     },
     "cangjie": "HXH",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -71801,6 +73557,16 @@
       "pinyin": "chē"
     },
     "cangjie": "JQ",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [
+          2,
+          3
+        ],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -72070,6 +73836,9 @@
       "pinyin": "biān"
     },
     "cangjie": "YKS",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -72344,6 +74113,9 @@
       "pinyin": "guò"
     },
     "cangjie": "YDI",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -72635,6 +74407,9 @@
       "pinyin": "hái"
     },
     "cangjie": "YMF",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -72915,6 +74690,9 @@
       "pinyin": "zhè"
     },
     "cangjie": "YYK",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -73213,6 +74991,9 @@
       "pinyin": "jìn"
     },
     "cangjie": "YTT",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -73524,6 +75305,9 @@
       "pinyin": "yuǎn"
     },
     "cangjie": "YMMU",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -73854,6 +75638,9 @@
       "pinyin": "sòng"
     },
     "cangjie": "YTK",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -74260,6 +76047,9 @@
       "pinyin": "dào"
     },
     "cangjie": "YTHU",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -74541,6 +76331,9 @@
       "pinyin": "nà"
     },
     "cangjie": "SQNL",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -74903,6 +76696,9 @@
       "pinyin": "dōu"
     },
     "cangjie": "JANL",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -75228,6 +77024,9 @@
       "pinyin": "jiǔ"
     },
     "cangjie": "EMCW",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -75478,6 +77277,22 @@
       "pinyin": "lǐ"
     },
     "cangjie": "WG",
+    "summonInk": {
+      "class": "transparent",
+      "keyStrokes": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -75844,6 +77659,9 @@
       "pinyin": "qián"
     },
     "cangjie": "CIJ",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -76275,6 +78093,9 @@
       "pinyin": "cuò"
     },
     "cangjie": "XCTA",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -76461,6 +78282,17 @@
       "pinyin": "cháng"
     },
     "cangjie": "LHMO",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [
+          1
+        ],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -76621,6 +78453,9 @@
       "pinyin": "mén"
     },
     "cangjie": "ILS",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -76872,6 +78707,18 @@
       "pinyin": "wèn"
     },
     "cangjie": "LSR",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [
+          3,
+          4,
+          5
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -77157,6 +79004,19 @@
       "pinyin": "jiān"
     },
     "cangjie": "ISA",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [
+          3,
+          4,
+          5,
+          6
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -77531,6 +79391,9 @@
       "pinyin": "yuàn"
     },
     "cangjie": "NLJMU",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -77867,6 +79730,9 @@
       "pinyin": "nán"
     },
     "cangjie": "EOG",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -78133,6 +79999,9 @@
       "pinyin": "yǔ"
     },
     "cangjie": "MLBY",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -78546,6 +80415,9 @@
       "pinyin": "líng"
     },
     "cangjie": "MBOII",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -78798,6 +80670,9 @@
       "pinyin": "fēi"
     },
     "cangjie": "LMYYY",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -79091,6 +80966,9 @@
       "pinyin": "miàn"
     },
     "cangjie": "MWYL",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -79261,6 +81139,9 @@
       "pinyin": "fēi"
     },
     "cangjie": "NO",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -79571,6 +81452,9 @@
       "pinyin": "fàn"
     },
     "cangjie": "NVHE",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -79941,6 +81825,9 @@
       "pinyin": "è"
     },
     "cangjie": "NVHQI",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -80129,6 +82016,17 @@
       "pinyin": "mǎ"
     },
     "cangjie": "NVSM",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [],
+        [],
+        [
+          2
+        ]
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -80473,6 +82371,19 @@
       "pinyin": "gāo"
     },
     "cangjie": "YRBR",
+    "summonInk": {
+      "class": "partial",
+      "keyStrokes": [
+        [],
+        [
+          2,
+          3,
+          4
+        ],
+        [],
+        []
+      ]
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -80798,6 +82709,9 @@
       "pinyin": "jī"
     },
     "cangjie": "EPYM",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",
@@ -81112,6 +83026,9 @@
       "pinyin": "hēi"
     },
     "cangjie": "WGF",
+    "summonInk": {
+      "class": "opaque"
+    },
     "sources": {
       "pinyin": "cc-cedict",
       "meanings": "cc-cedict",

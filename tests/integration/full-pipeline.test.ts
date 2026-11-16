@@ -27,6 +27,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import { buildDataset } from '../../scripts/build-data';
 import type { BuildOptions, CharacterRecord } from '../../app/src/data/types';
+import { isValidSummonInk } from '../../app/src/engine/summonInk';
 import {
   parseCcCedict,
   type CcCedictEntry,
@@ -578,6 +579,18 @@ describe('full pipeline — Cangjie codes', () => {
         expect(CANGJIE_CODE.test(cangjie as string), `${char} code "${String(cangjie)}" shape`).toBe(true);
         expect(sources.cangjie, `${char} code is sourced from unihan`).toBe('unihan');
       }
+    }
+  });
+
+  it('every record has summonInk right before sources, valid for its code and stroke count', () => {
+    const raw = JSON.parse(output) as Record<string, Record<string, unknown>>;
+    for (const [char, rec] of Object.entries(raw)) {
+      const keys = Object.keys(rec);
+      expect(keys[keys.indexOf('sources') - 1], `${char} summonInk precedes sources`).toBe('summonInk');
+      expect(
+        isValidSummonInk(rec.summonInk, rec.cangjie as string | null, rec.strokeCount as number),
+        `${char} summonInk is valid`,
+      ).toBe(true);
     }
   });
 
