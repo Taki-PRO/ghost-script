@@ -550,7 +550,7 @@
         "timestamp": 1794800535231
       }
     ],
-    "13. Night scene foundations (tester feedback, approved by Takshil)": [
+    "13. Night scene foundations (tester feedback, approved by the human)": [
       {
         "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
@@ -657,7 +657,7 @@
         "timestamp": 1794801207542
       }
     ],
-    "21. Conditional Leave_Prompt text (accuracy finding, approved by Takshil)": [
+    "21. Conditional Leave_Prompt text (accuracy finding, approved by the human)": [
       {
         "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
@@ -760,7 +760,7 @@
         "timestamp": 1794803955481
       }
     ],
-    "22. Sources & licences fits a phone (bug fix, approved by Takshil)": [
+    "22. Sources & licences fits a phone (bug fix, approved by the human)": [
       {
         "executionId": "df75121e-a915-4016-9ee2-fc3dae1d54ca",
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",

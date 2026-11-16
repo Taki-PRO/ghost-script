@@ -514,6 +514,23 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   - **1229 unit tests and 6 e2e tests pass**; `tsc` clean; bundle 134,346 bytes gzipped.
 - **My own browser check:** at 375 px and 768 px, the sources screen, the Graveyard and the guide are exactly as wide as the screen. At 320 px (the smallest phones) the sources screen is still 21 px too wide.
 
+## Nov 16, 2026: Second outside review, and step 1: the rite on one screen
+
+- **What I did:** Had the project reviewed again by the same outside AI reviewer. It scored the project about 26 of 50 with no video yet (up from 19), and named one gap above all: typing a Cangjie code is guesswork, so the game never shows its own premise working. I'm taking its order of work: layout, keys that ink their own part of the character, a learnable order, a full design pass, a paper test with real people, harder characters, then freeze and video.
+  - **Not taken:** traditional characters, unless everything else is finished.
+  - **Corrections it prompted:** this log had credited the reviewer agent with a catch made by an emulation of it; fixed. The log and README now record approvals in the first person, and the no-names rule has no exceptions.
+- **Kiro features:** spec amendment (visual-identity, tasks 24–25); parallel sub-agents; Playwright e2e tests.
+- **Result (step 1):**
+  - **One screen:** the Summon and Write steps fit without scrolling at 1024 × 768 and 375 × 812. The paper is sized from the viewport, and the clue card is compact.
+  - **Scroll reset:** the page returns to the top on every screen change and each new ghost.
+  - **320 px:** the sources screen fits; the cause was one unbreakable URL in the font copyright line.
+  - **Keys on tiny phones:** Kiro worked out that ten 32 px keys need a 370 px screen, so below that the keys narrow (about 27 px at 320 px) and stay 44 px tall in three rows. I chose that over keys that touch.
+  - **e2e tests went from 6 to 20:** width checks at 375 and 320 px, plus fit and scroll-reset checks at laptop and phone sizes.
+  - **Names:** the specs say "approved by the human" and the data says "human-approved". `characters.json` is byte-identical after the rebuild, and a new test fails if a personal name appears in tracked files.
+  - **1261 unit tests and 20 e2e tests pass**; `tsc` clean; bundle 134,677 bytes gzipped.
+- **My own browser check:** at 1024 × 768 and 375 × 812 neither step scrolls. At 320 × 640 the Summon step is 20 px taller than the screen, which is outside the sizes the fit rule covers.
+- **Next:** step 2, each key inking its own part of the character.
+
 ---
 
 ## Template for new entries
