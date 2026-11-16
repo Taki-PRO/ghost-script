@@ -461,6 +461,16 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   - **Kiro found a bug I hadn't asked about:** Give up could be pressed before the writing surface had loaded. It now stays disabled until hanzi-writer's quiz has started. Kiro checked in the library source that this happens at the start of writing, not the end.
   - A new test runs the real WriteMode inside the Séance and checks for exactly one result line. **1151 tests pass**; `tsc` clean.
 
+## Nov 16, 2026: Kiro CLI: the same accuracy reviewer, from the terminal
+
+- **What I did:** Ran the `accuracy-reviewer` custom agent from Kiro CLI V3 (`kiro-cli chat --agent accuracy-reviewer`) over the README, `app/src/components` and `app/src/data`.
+- **Kiro features:** Kiro CLI, custom agents. One agent file in `.kiro/agents/` works in both the IDE and the CLI.
+- **Result:** It read 33 files in 1m 45s for 8.82 credits, changed nothing, and found four things:
+  - **The README named "character amnesia" without a source.** Fixed: it now cites the Wikipedia article and says how widespread it is is debated.
+  - **The README didn't state that each field of `characters.json` carries its source's licence.** Fixed.
+  - **Two flags on the Graveyard showing a gave-up character.** Not leaks: giving up reveals the character on screen, so it is no longer hidden. Recorded as a human decision in `content-accuracy.md`.
+- **CLI vs IDE:** _(one or two sentences from me to add)_
+
 ---
 
 ## Template for new entries
