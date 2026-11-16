@@ -471,6 +471,16 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   - **Two flags on the Graveyard showing a gave-up character.** Not leaks: giving up reveals the character on screen, so it is no longer hidden. Recorded as a human decision in `content-accuracy.md`.
 - **CLI vs IDE:** It felt good: different from the IDE but easy to use and easy to understand. The agent's welcome line, the tool-call summary and the credit cost per turn were all on screen, so it was clear what it read and what it cost.
 
+## Nov 16, 2026: First tester feedback
+
+- **What I did:** Shared the live link with testers and collected their first reactions.
+- **Feedback:**
+  1. There is no way out: no exit button during a Séance.
+  2. In the Graveyard, "Back to menu" is at the bottom, below 300 tombstones; you have to scroll all the way down to leave.
+  3. The Credits button is unclear: "Also what is the credits button for?"
+  4. The design is still too plain: "just plain black".
+- **Next:** a spec amendment covering all four (approved by Takshil), built by Kiro.
+
 ---
 
 ## Template for new entries
