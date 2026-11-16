@@ -451,6 +451,16 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 - **Polish noticed:** after a ghost is laid to rest, "Laid to rest" appears twice and a greyed-out "Give up" stays on screen.
 - **Next:** the polish, one job in Kiro CLI or Web, then five testers.
 
+## Nov 16, 2026: Polish: one result line, Give up hidden after the outcome
+
+- **What I did:** Asked Kiro (IDE) for two small fixes found in the browser check: "Laid to rest" appeared twice, and a greyed-out Give up stayed on screen.
+- **Kiro feature:** Kiro recorded the change as Requirement 17 and task 12.1 in the `visual-identity` spec, so even a small polish has a spec trail.
+- **Result:**
+  - Only the Séance's result line remains. The old duplicate could even disagree with it: a struggled summon followed by a clean write showed "Laid to rest" from the writing step alone.
+  - Give up disappears once a ghost is resolved, and also while a summoned character forms and fades.
+  - **Kiro found a bug I hadn't asked about:** Give up could be pressed before the writing surface had loaded. It now stays disabled until hanzi-writer's quiz has started. Kiro checked in the library source that this happens at the start of writing, not the end.
+  - A new test runs the real WriteMode inside the Séance and checks for exactly one result line. **1151 tests pass**; `tsc` clean.
+
 ---
 
 ## Template for new entries
