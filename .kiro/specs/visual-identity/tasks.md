@@ -130,8 +130,17 @@ Build the visual layer in small steps: theme tokens, font and CSS first; then th
   - Ensure all tests pass, ask the user if questions arise.
   - _Requirements: 14.1, 14.2, 14.3, 15.3, 16.8_
 
+- [x] 12. Post-outcome polish (requested by the human)
+  - [x] 12.1 Single result line and hidden Give up
+    - In `app/src/modes/WriteMode.tsx`, make `onComplete` set an empty status line; keep the Give-up message "The ghost reveals itself"; render "Give up" disabled while loading and remove it once the outcome is reached
+    - In `app/src/modes/SummonStep.tsx`, render "Give up" only in the typing phase; remove it in the forming and fading phases; add no focus code
+    - Update `WriteMode.test.tsx` and `SummonStep.test.tsx`; update `SeanceSession.test.tsx` and `App.test.tsx` wherever they look for the old WriteMode "Laid to rest" text or a disabled Give up (assert one result line from `SeanceSession` and no Give up button instead)
+    - Change no scheduling, Outcome, hint or timing code, and no file in Requirement 14.1
+    - _Requirements: 17.1, 17.2, 17.3, 17.4, 17.5, 17.6, 17.7, 17.8, 14.3_
+
 ## Notes
 
+- Task 12.1 runs after every other task. It is a small change requested by the human and adds no new property-based tests.
 - No optional tasks: every task is required, including its tests.
 - Unit and component tests only. No property-based tests and no mutation tests are added (decision of Nov 15 in `tech.md`).
 - Use the `cangjie-oracle` MCP tools (`lookup`, `decompose`) whenever a task needs a Cangjie code or a decomposition. Never write a code by hand.
@@ -158,7 +167,8 @@ Build the visual layer in small steps: theme tokens, font and CSS first; then th
     { "id": 3, "tasks": ["4.2", "4.3", "6.2"] },
     { "id": 4, "tasks": ["6.5"] },
     { "id": 5, "tasks": ["9.1", "10.1"] },
-    { "id": 6, "tasks": ["8.2"] }
+    { "id": 6, "tasks": ["8.2"] },
+    { "id": 7, "tasks": ["12.1"] }
   ]
 }
 ```

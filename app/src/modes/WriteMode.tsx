@@ -56,6 +56,7 @@ export function WriteMode({ record, dataset, config, onOutcome }: WriteModeProps
   configRef.current = config;
 
   const [status, setStatus] = useState<Status>('writing');
+  const [loading, setLoading] = useState(true);
   const [mistakes, setMistakes] = useState(0);
   const [feedback, setFeedback] = useState('Draw the first stroke');
 
@@ -64,6 +65,7 @@ export function WriteMode({ record, dataset, config, onOutcome }: WriteModeProps
     if (!container) return;
     resolvedRef.current = false;
     setStatus('writing');
+    setLoading(true);
     setMistakes(0);
     setFeedback('Draw the first stroke');
     container.replaceChildren();
@@ -124,13 +126,13 @@ export function WriteMode({ record, dataset, config, onOutcome }: WriteModeProps
             const outcome = resolveCompletion(hintShown, total, configRef.current);
             if (!resolve(outcome, 'resolved')) return;
             setMistakes(total);
-            setFeedback(
-              outcome === 'clean'
-                ? '✓ Laid to rest'
-                : '✓ Laid to rest — but this ghost will return soon',
-            );
+            // The result line belongs to SeanceSession (combined Outcome); keep this one empty.
+            setFeedback('');
             void writer.showCharacter();
           },
+        })
+        .then(() => {
+          if (!disposed) setLoading(false);
         })
         .catch(fail);
     } catch {
@@ -172,14 +174,16 @@ export function WriteMode({ record, dataset, config, onOutcome }: WriteModeProps
         {feedback}
       </p>
       <p className="text-sm text-muted">Mistakes: {mistakes}</p>
-      <button
-        type="button"
-        onClick={handleGiveUp}
-        disabled={status !== 'writing'}
-        className="rounded-md border border-muted px-4 py-2 text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost disabled:opacity-50"
-      >
-        Give up
-      </button>
+      {status === 'writing' ? (
+        <button
+          type="button"
+          onClick={handleGiveUp}
+          disabled={loading}
+          className="rounded-md border border-muted px-4 py-2 text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost disabled:opacity-50"
+        >
+          Give up
+        </button>
+      ) : null}
     </section>
   );
 }

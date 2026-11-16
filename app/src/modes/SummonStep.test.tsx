@@ -251,6 +251,26 @@ describe('SummonStep results', () => {
     expect(onDone).toHaveBeenCalledWith('gave-up');
   });
 
+  it('17.6: Give up is present while typing and absent in the forming and fading phases', async () => {
+    setup(KOU);
+    expect(screen.getByRole('button', { name: 'Give up' })).toBeInTheDocument();
+    typeCode(KOU.cangjie!);
+    expect(screen.queryByRole('button', { name: 'Give up' })).toBeNull();
+    await flush();
+    act(() => {
+      vi.advanceTimersByTime(SUMMON_HOLD_MS);
+    });
+    expect(screen.queryByRole('button', { name: 'Give up' })).toBeNull();
+    act(() => {
+      vi.advanceTimersByTime(SUMMON_FADE_MS);
+    });
+  });
+  it('17.6: Give up removes itself after use and the on-screen keys are disabled', () => {
+    setup(WO);
+    fireEvent.click(screen.getByRole('button', { name: 'Give up' }));
+    expect(screen.queryByRole('button', { name: 'Give up' })).toBeNull();
+    expect(screen.getByRole('button', { name: /^Key Q/ })).toBeDisabled();
+  });
   it('ignores later keys once the step has ended', async () => {
     const { onDone } = setup(KOU);
     typeCode(KOU.cangjie!);

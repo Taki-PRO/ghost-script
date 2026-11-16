@@ -320,14 +320,15 @@ export function SummonStep({ record, dataset, config, onDone }: SummonStepProps)
       </p>
       <p className="text-center text-xs text-muted">Codes: Unicode Unihan kCangjie</p>
 
-      <button
-        type="button"
-        onClick={handleGiveUp}
-        disabled={finished}
-        className="rounded-md border border-muted px-4 py-2 text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost disabled:opacity-50"
-      >
-        Give up
-      </button>
+      {phase === 'typing' ? (
+        <button
+          type="button"
+          onClick={handleGiveUp}
+          className="rounded-md border border-muted px-4 py-2 text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost"
+        >
+          Give up
+        </button>
+      ) : null}
     </section>
   );
 }

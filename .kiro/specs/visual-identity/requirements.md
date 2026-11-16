@@ -50,6 +50,9 @@ Budget: about one and a half days. The design is deliberately lean: CSS and inli
 - **Runtime_Dependency**: A package in the production dependency tree of the `app` workspace: the packages in `dependencies` of `app/package.json`, and recursively their `dependencies` and `optionalDependencies`, excluding `devDependencies` and `peerDependencies`.
 - **Notices_File**: The text file `app/public/THIRD_PARTY_NOTICES.txt`, served at `THIRD_PARTY_NOTICES.txt` under the site base path. It holds, for each Runtime_Dependency, a header (name, version, licence identifier) and the full text of each of its licence files copied verbatim from `node_modules`.
 - **Notices_Script**: The script `scripts/build-notices.ts`, run as `npm run build:notices`, that writes the Notices_File.
+- **Write_Mode**: The Lay-to-rest component `app/src/modes/WriteMode.tsx`.
+- **Summon_Step**: The Summon component `app/src/modes/SummonStep.tsx`.
+- **Seance_Session**: The session component `SeanceSession`, which shows the result line (`RESULT_TEXT`) for the combined Outcome.
 - **Software_List**: The list of Runtime_Dependencies (name, version, licence identifier) shown in the Software section of the Credits_Screen, defined in `app/src/data/software.ts`.
 
 ---
@@ -276,3 +279,20 @@ Budget: about one and a half days. The design is deliberately lean: CSS and inli
 9. THE Test_Suite SHALL fail IF the Notices_File lacks the name, version, licence identifier or licence text of any Runtime_Dependency.
 10. THE Test_Suite SHALL fail IF the set of packages in the Software_List, with their versions and licence identifiers, differs from the set of packages in the Notices_File.
 11. THE Credits_Screen SHALL include a link whose target is the Notices_File, resolved against the site base path.
+
+### Requirement 17: Post-outcome polish
+
+**User Story:** As a player, I want to see the result of a ghost once and have no dead controls left on screen, so that the end of a rite is clear and calm.
+
+This requirement was requested by the human. It changes no game rule.
+
+#### Acceptance Criteria
+
+1. WHEN the Outcome of a ghost is reached, THE Write_Mode SHALL show an empty status line, so that the result line of the Seance_Session is the only result text on screen.
+2. WHEN the Outcome of a ghost is reached, THE Seance_Session SHALL keep showing its own result line for the combined Outcome, using the existing result texts.
+3. WHEN the player gives up in the Lay-to-rest step, THE Write_Mode SHALL keep showing the message "The ghost reveals itself" while the character is revealed.
+4. WHILE the Lay-to-rest step is loading, THE Write_Mode SHALL show the "Give up" button as disabled.
+5. WHEN the Outcome of the Lay-to-rest step is reached, THE Write_Mode SHALL remove the "Give up" button from the screen.
+6. WHEN the Summon step reaches the forming phase, THE Summon_Step SHALL remove the "Give up" button from the screen, and SHALL keep it absent through the fading phase.
+7. THE App SHALL leave keyboard focus handling unchanged by this requirement, because the Seance_Session already moves focus to "Next ghost" after the Outcome.
+8. THE App SHALL leave the never-reveal rule, the Outcome values, the hint rules and the Summon timings (`SUMMON_HOLD_MS` and `SUMMON_FADE_MS`) unchanged by this requirement.

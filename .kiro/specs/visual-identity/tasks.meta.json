@@ -427,6 +427,25 @@
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794797374236
       }
+    ],
+    "12.1 Single result line and hidden Give up": [
+      {
+        "executionId": "f5b79ffe-198c-472d-b3d5-bc69a537aa49",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794798556023
+      },
+      {
+        "executionId": "f5b79ffe-198c-472d-b3d5-bc69a537aa49",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794798855631
+      }
+    ],
+    "12. Post-outcome polish (requested by the human)": [
+      {
+        "executionId": "f5b79ffe-198c-472d-b3d5-bc69a537aa49",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794798855673
+      }
     ]
   }
 }

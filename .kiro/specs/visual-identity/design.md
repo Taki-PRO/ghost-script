@@ -421,3 +421,23 @@ jsdom has no layout, so pixel widths (32 px keys at 375 px) are checked through 
 - `CangjieGuide`'s `CITATIONS` constant moves to `data/citations.ts`; the rendered output is unchanged.
 - `app/package.json` gains one dependency; the root lockfile changes with it.
 - `app/public/THIRD_PARTY_NOTICES.txt` is a new committed file; the root `package.json` gains `build:notices`. Adding or upgrading a runtime dependency now needs `npm run build:notices` and an update of `software.ts`, or a test fails.
+
+## Post-outcome polish (Requirement 17)
+
+Requested by the human. No game rule changes.
+
+**Single result line.** `SeanceSession` already shows the result line from `RESULT_TEXT` for the combined Outcome ("Laid to rest", "Laid to rest — it will return soon", "The ghost slipped away"). `WriteMode`'s `onComplete` currently also sets a status line ("✓ Laid to rest" or "✓ Laid to rest — but this ghost will return soon"). That text only reflects the write step, so it can disagree with the combined Outcome (summon struggled, write clean). Change: `onComplete` still reports the outcome through `onOutcome` but sets the status line to the empty string. The Give-up message "The ghost reveals itself" describes the reveal animation, not the result, and stays.
+
+**Give up button.**
+- `WriteMode`: render the button only while no outcome has been reached. It stays rendered and disabled during loading, before writing starts. Once the outcome is reached the button is not in the DOM.
+- `SummonStep`: render the button only in the typing phase. In the forming and fading phases it is not in the DOM.
+- Layout: the button sits in a controls row below the surface, so removing it moves no keyboard, surface or status element that the player is using at that moment (the Summon surface and status area keep their reserved size, Requirement 8).
+
+**Focus.** If the hidden button had focus, nothing else changes in this task. `SeanceSession` already moves focus to "Next ghost" after the outcome, so focus is not lost for the Lay-to-rest step. For the Summon step, the step ends by unmounting after the fade, as before. No new focus code is added.
+
+**Unchanged.** The never-reveal rule, Outcome values, hint rules, `SUMMON_HOLD_MS` and `SUMMON_FADE_MS`, and every file in Requirement 14.1.
+
+**Tests (unit and component only).**
+- `WriteMode.test.tsx`: the status line is empty after completion (clean and struggled); the "Give up" button is disabled while loading, enabled while writing, absent after the outcome; the "The ghost reveals itself" message still appears after Give up.
+- `SummonStep.test.tsx`: the "Give up" button is present while typing and absent in the forming and fading phases; the existing never-reveal, hint and timing tests pass unchanged.
+- `SeanceSession.test.tsx` and `App.test.tsx`: replace assertions that find the old WriteMode "Laid to rest" text, or a disabled Give up, with assertions on the `SeanceSession` result line (exactly one result line on screen) and on the absence of the button.

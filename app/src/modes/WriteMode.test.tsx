@@ -44,6 +44,8 @@ const h = vi.hoisted(() => ({
   throwOnCreate: false,
   /** Per-test override of what animateCharacter does after logging (default: resolve). */
   animateImpl: null as null | (() => Promise<void>),
+  /** Per-test override of the promise quiz() returns (default: resolved, i.e. loaded). */
+  quizImpl: null as null | (() => Promise<void>),
 }));
 
 vi.mock('hanzi-writer', () => {
@@ -52,7 +54,7 @@ vi.mock('hanzi-writer', () => {
     const writer: Record<string, unknown> = {};
     writer.quiz = vi.fn((q: unknown) => {
       writer.quizOpts = q;
-      return Promise.resolve();
+      return h.quizImpl ? h.quizImpl() : Promise.resolve();
     });
     writer.cancelQuiz = vi.fn(() => {
       h.log.push('cancelQuiz');
@@ -95,6 +97,11 @@ function setup(config: EngineConfig = DEFAULT_CONFIG, record: CharacterRecord = 
 const quiz = () => lastCall().writer.quizOpts!;
 const mistake = (mistakesOnStroke: number, totalMistakes = 0) =>
   act(() => quiz().onMistake({ mistakesOnStroke, totalMistakes }));
+const loaded = () =>
+  act(async () => {
+    await Promise.resolve();
+    await Promise.resolve();
+  });
 const complete = (totalMistakes = 0) => act(() => quiz().onComplete({ totalMistakes }));
 
 function expectOnce(fn: ReturnType<typeof vi.fn>, arg: string) {
@@ -109,6 +116,7 @@ beforeEach(() => {
   h.calls.length = 0;
   h.throwOnCreate = false;
   h.animateImpl = null;
+  h.quizImpl = null;
 });
 
 // ---------------------------------------------------------------------------
@@ -249,21 +257,22 @@ describe('WriteMode outcomes (Req 5.4-5.8)', () => {
     expect(screen.getByRole('status')).toHaveTextContent(/hint/i);
   });
 
-  it('reveals the character and shows a result message after clean and struggled', () => {
+  it('reveals the character and leaves the status line empty after clean (17.1)', () => {
     setup();
     complete(0);
     expect(lastCall().writer.showCharacter).toHaveBeenCalledTimes(1);
-    expect(screen.getByRole('status')).toHaveTextContent(/laid to rest/i);
+    expect(screen.getByRole('status')).toBeEmptyDOMElement();
+    expect(screen.queryByText(/laid to rest/i)).toBeNull();
   });
-
-  it('reveals the character after struggled with a distinct message', () => {
+  it('reveals the character and leaves the status line empty after struggled (17.1)', () => {
     setup();
     mistake(1);
     mistake(1);
     mistake(1);
     complete(3);
     expect(lastCall().writer.showCharacter).toHaveBeenCalledTimes(1);
-    expect(screen.getByRole('status')).toHaveTextContent(/return soon/i);
+    expect(screen.getByRole('status')).toBeEmptyDOMElement();
+    expect(screen.queryByText(/laid to rest|return soon/i)).toBeNull();
   });
 
   it('does not advance or recreate the writer by itself after resolving', () => {
@@ -278,12 +287,40 @@ describe('WriteMode give up (Req 5.7)', () => {
   it('cancels the quiz, then animates, then reports gave-up; button disables', async () => {
     const user = userEvent.setup();
     const { onOutcome } = setup();
+    await loaded();
     const btn = screen.getByRole('button', { name: 'Give up' });
     expect(btn).toBeEnabled();
     await user.click(btn);
     expect(h.log).toEqual(['cancelQuiz', 'animateCharacter', 'outcome:gave-up']);
     expectOnce(onOutcome, 'gave-up');
-    expect(btn).toBeDisabled();
+    expect(screen.queryByRole('button', { name: 'Give up' })).toBeNull();
+    expect(screen.getByRole('status')).toHaveTextContent('The ghost reveals itself');
+  });
+  it('17.4: Give up is present and disabled while loading, enabled once the quiz has started', async () => {
+    let finishLoading!: () => void;
+    h.quizImpl = () => new Promise<void>((r) => (finishLoading = r));
+    const user = userEvent.setup();
+    const { onOutcome } = setup();
+    expect(screen.getByRole('button', { name: 'Give up' })).toBeDisabled();
+    await user.click(screen.getByRole('button', { name: 'Give up' }));
+    expect(onOutcome).not.toHaveBeenCalled();
+    await act(async () => finishLoading());
+    expect(screen.getByRole('button', { name: 'Give up' })).toBeEnabled();
+  });
+  it('17.5: Give up is absent after a clean and after a struggled outcome', () => {
+    setup();
+    expect(screen.getByRole('button', { name: 'Give up' })).toBeInTheDocument();
+    complete(0);
+    expect(screen.queryByRole('button', { name: 'Give up' })).toBeNull();
+    cleanup();
+    setup();
+    complete(3);
+    expect(screen.queryByRole('button', { name: 'Give up' })).toBeNull();
+  });
+  it('17.5: Give up is absent after the load-failure outcome', () => {
+    setup();
+    act(() => lastCall().opts.onLoadCharDataError(new Error('x')));
+    expect(screen.queryByRole('button', { name: 'Give up' })).toBeNull();
   });
 });
 
@@ -329,13 +366,13 @@ describe('WriteMode give up when the reveal animation fails (Req 5.7, 3.4)', () 
       h.animateImpl = impl;
       const user = userEvent.setup();
       const { onOutcome } = setup();
+      await loaded();
       const btn = screen.getByRole('button', { name: 'Give up' });
       await user.click(btn);
       await flush();
-
       expect(h.log).toEqual(['cancelQuiz', 'animateCharacter', 'outcome:gave-up']);
       expectOnce(onOutcome, 'gave-up');
-      expect(btn).toBeDisabled();
+      expect(screen.queryByRole('button', { name: 'Give up' })).toBeNull();
       expect(screen.getByRole('status')).toHaveTextContent('The ghost reveals itself');
       expect(unhandled).toEqual([]);
     });
@@ -344,6 +381,7 @@ describe('WriteMode give up when the reveal animation fails (Req 5.7, 3.4)', () 
       h.animateImpl = impl;
       const user = userEvent.setup();
       const { onOutcome } = setup();
+      await loaded();
       await user.click(screen.getByRole('button', { name: 'Give up' }));
       await flush();
       complete(0);
@@ -374,6 +412,7 @@ describe('WriteMode exactly-once (Req 3.4)', () => {
   it('a late onComplete after give-up does not produce another outcome', async () => {
     const user = userEvent.setup();
     const { onOutcome } = setup();
+    await loaded();
     await user.click(screen.getByRole('button', { name: 'Give up' }));
     complete(0);
     expect(onOutcome).toHaveBeenCalledTimes(1);
@@ -381,13 +420,10 @@ describe('WriteMode exactly-once (Req 3.4)', () => {
     expect(h.log.filter((e) => e.startsWith('outcome:'))).toEqual(['outcome:gave-up']);
   });
 
-  it('clicking Give up after a clean resolution does nothing', async () => {
-    const user = userEvent.setup();
+  it('after a clean resolution there is no Give up button to press', () => {
     const { onOutcome } = setup();
     complete(0);
-    const btn = screen.getByRole('button', { name: 'Give up' });
-    expect(btn).toBeDisabled();
-    await user.click(btn);
+    expect(screen.queryByRole('button', { name: 'Give up' })).toBeNull();
     expectOnce(onOutcome, 'clean');
     expect(h.log).not.toContain('animateCharacter');
   });
