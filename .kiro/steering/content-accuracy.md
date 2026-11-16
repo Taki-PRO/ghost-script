@@ -47,3 +47,6 @@ Judges may not read Chinese, so they cannot spot a wrong character. Correctness 
 
 ## Game instructions are not claims
 - Statements about how this game works (for example "in this game, a code is one to five keys", "the 25 keys in this game") are instructions, not claims about Cangjie, and need no source as long as they are worded as being about this game.
+
+## Approved claim: character amnesia
+- Allowed, citing the English Wikipedia article "Character amnesia" (https://en.wikipedia.org/wiki/Character_amnesia): character amnesia (提笔忘字) is forgetting how to write characters you once knew, and it is tied to heavy use of input methods such as romanised (phonetic) input. Whenever we say this, we also say, or must not contradict, that how widespread it is is debated. No statistics.
