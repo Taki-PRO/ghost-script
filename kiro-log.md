@@ -426,6 +426,31 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   - **1038 tests pass**; `tsc` clean for root, app and oracle.
 - **Next:** visual identity.
 
+## Nov 16, 2026: visual-identity: ink, paper, ghosts, graveyard, credits
+
+- **What I did:** Wrote the `visual-identity` spec in one pass, answered Kiro's eight questions (approved by Takshil), then ran every task except the log entry and the phone check.
+- **Kiro features:** spec workflow with parallel waves; the `accuracy-reviewer` custom agent run as a task inside the spec.
+- **Result:**
+  - **The look:**
+    - Writing happens on a cream paper surface with a faint red 米字格 practice grid, and strokes draw in near-black ink.
+    - The clue card has a small ghost: it fades away when laid to rest, flickers once and stays half-visible when struggled, and drifts off on give-up. All motion sits behind `prefers-reduced-motion`.
+    - Headings use Cormorant Garamond (SIL OFL, 23 kB); Chinese uses the device's own fonts.
+  - **Graveyard:** all 300 characters as tombstones in learning order: dashed for never met (no glyph, enforced by the data type), red for restless, green for at rest, with counts and accessible names.
+  - **Credits:** every data source and licence (checked against the README by a test), the Huainanzi source, the Cangjie citations, the font, and a "Software" section.
+    - The full licence texts of the 7 runtime packages are generated into `THIRD_PARTY_NOTICES.txt`, and a test fails if that file goes stale. The build strips licence comments, so this closes a real licence gap.
+  - **Phone keyboard:** keeps its 10 / 9 / 6 rows at every width, and the formed character has a fixed space, so the keys no longer jump.
+  - **Accuracy reviewer, real agent, as a spec task:** the first run flagged two unsourced claims about which devices have Chinese fonts, in the design doc itself. They were reworded as unverified assumptions, and the second run returned "No findings".
+  - **Tests:** 106 new (no property tests). **1144 tests pass**; `tsc` clean for root, app and oracle. The new bundle check passes at 132,505 bytes gzipped against a 300,000-byte budget, with `characters.json` excluded.
+- **Automated play-through in headless Chrome** of the production build at 1440, 768 and 375 px wide:
+  - 一 clean, 七 struggled, 九 gave up, 了 and 二 clean. The ghost states matched each time: faded, flickering, drifted.
+  - No character leaked during writing.
+  - The graveyard showed exactly 一七九了二 out of 300, the rest hidden.
+  - The licence link loads.
+  - Phone keys are 32.5 px wide in 10 / 9 / 6 rows with no sideways scroll; tablet keys are 48 px.
+  - No console errors.
+- **Polish noticed:** after a ghost is laid to rest, "Laid to rest" appears twice and a greyed-out "Give up" stays on screen.
+- **Next:** the polish, one job in Kiro CLI or Web, then five testers.
+
 ---
 
 ## Template for new entries
