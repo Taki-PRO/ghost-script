@@ -173,6 +173,42 @@ describe('index.css', () => {
     });
   });
 
+  describe('.summon-keys', () => {
+    const body = (): string => {
+      const i = outside.indexOf('.summon-keys {');
+      expect(i).toBeGreaterThan(-1);
+      return blockAt(outside, i).body;
+    };
+    const share = 'calc((100vw - 2rem - 18px) / 10)';
+
+    it('defines --key-w from the shared width, capped at 48 px', () => {
+      const m = body().match(/--key-w:\s*([^;]+);/);
+      expect(m).not.toBeNull();
+      expect(m![1].trim()).toBe(`clamp(min(32px, ${share}), ${share}, 48px)`);
+    });
+
+    it('keeps the 32 px floor only while the shared width is at least 32 px', () => {
+      // Evaluate the formula: floor = min(32, share), value = clamp(floor, share, 48).
+      const key = (vw: number): number => {
+        const s = (vw - 32 - 18) / 10;
+        return Math.min(Math.max(Math.min(32, s), s), 48);
+      };
+      expect(key(375)).toBeCloseTo(32.5);
+      expect(key(1440)).toBe(48);
+      expect(key(320)).toBeCloseTo(27);
+      // Row 1 (ten keys, nine 2 px gaps) fits inside the page padding at every width.
+      for (const vw of [320, 340, 359, 360, 365, 375]) expect(10 * key(vw) + 18).toBeLessThanOrEqual(vw - 32 + 1e-9);
+    });
+
+    it('adds no animation and no url()', () => {
+      expect(body()).not.toMatch(/animation|url\(/);
+    });
+  });
+
+  it('sets no scroll-behavior anywhere', () => {
+    expect(css).not.toMatch(/scroll-behavior/);
+  });
+
   it("[lang='zh'] holds the exact Chinese font stack, equal to the Tailwind hanzi family", () => {
     const m = outside.match(/\[lang='zh'\]\s*\{([^}]*)\}/);
     expect(m).not.toBeNull();

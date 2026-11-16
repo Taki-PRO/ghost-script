@@ -116,6 +116,14 @@ body::after {
   border-radius: 4px;
 }
 
+/* Summon keyboard key width. Ten keys and nine 2 px gaps must fit the width
+   inside the 2rem page padding. The floor is 32 px, but it gives way to the
+   shared width on very narrow phones, where 32 px keys would overflow. A
+   single clamp() does this without a second @media block. */
+.summon-keys {
+  --key-w: clamp(min(32px, calc((100vw - 2rem - 18px) / 10)), calc((100vw - 2rem - 18px) / 10), 48px);
+}
+
 /* Ghost figure end states. Static, so they apply with or without motion. */
 .ghost-figure {
   opacity: 1;

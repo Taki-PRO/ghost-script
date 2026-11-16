@@ -5,8 +5,9 @@ import realDataJson from '../../public/data/characters.json';
 import type { CharacterDataset } from '../data/charDataLoader';
 import type { CharacterRecord } from '../data/types';
 import { DEFAULT_CONFIG, type EngineConfig } from '../engine/config';
+import { writeSurfaceSize } from '../engine/surfaceSize';
 import { theme } from '../styles/theme';
-import { isHintTriggered, resolveCompletion, surfaceSize, WriteMode } from './WriteMode';
+import { isHintTriggered, resolveCompletion, WriteMode } from './WriteMode';
 
 // ---------------------------------------------------------------------------
 // hanzi-writer mock
@@ -151,14 +152,34 @@ describe('WriteMode setup (Req 5.1, 5.2)', () => {
     expect(o.showOutline).toBe(false);
   });
 
-  it('renders the surface through InkSurface at min(80vw, 420px) with the practice grid', () => {
-    setup();
-    const surface = screen.getByTestId('ink-surface');
-    expect(surface.style.width).toBe('min(80vw, 420px)');
-    expect(surface.querySelector('svg')).not.toBeNull();
-    expect(surface).toContainElement(screen.getByRole('group', { name: /writing area/i }));
+  it.each([
+    [1024, 768],
+    [375, 812],
+  ])('renders the surface through InkSurface at writeSurfaceSize (%i x %i) and gives hanzi-writer the same side', (w, hgt) => {
+    const prevW = window.innerWidth;
+    const prevH = window.innerHeight;
+    window.innerWidth = w;
+    window.innerHeight = hgt;
+    try {
+      setup();
+      const side = writeSurfaceSize(w, hgt);
+      const surface = screen.getByTestId('ink-surface');
+      expect(surface.style.width).toBe(`${side}px`);
+      const o = lastCall().opts as unknown as Record<string, unknown>;
+      expect(o.width).toBe(side);
+      expect(o.height).toBe(side);
+      expect(surface.querySelector('svg')).not.toBeNull();
+      expect(surface).toContainElement(screen.getByRole('group', { name: /writing area/i }));
+    } finally {
+      window.innerWidth = prevW;
+      window.innerHeight = prevH;
+    }
   });
-
+  it('gives the Give up button a 44px minimum height and the root a gap of 8px', () => {
+    setup();
+    expect(screen.getByRole('button', { name: 'Give up' }).className).toContain('min-h-[44px]');
+    expect(screen.getByRole('region', { name: /write mode/i }).className).toContain('gap-2');
+  });
   it('keeps the hint message text after three misses on one stroke', () => {
     setup();
     mistake(3);
@@ -491,8 +512,4 @@ describe('pure helpers', () => {
     expect(isHintTriggered(2, c)).toBe(true);
   });
 
-  it('surfaceSize clamps to 420 and scales to 80% of the viewport', () => {
-    expect(surfaceSize(375)).toBe(300);
-    expect(surfaceSize(1440)).toBe(420);
-  });
 });

@@ -126,7 +126,7 @@ export function Credits({ onBack }: CreditsProps) {
           </h2>
           <ul className="mt-3 list-disc space-y-1 pl-6 text-base text-ink">
             {FONTS.map((f) => (
-              <li key={f.name}>
+              <li key={f.name} className={WRAP}>
                 {f.name}, {f.licence}. {f.copyright}.
               </li>
             ))}

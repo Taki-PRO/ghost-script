@@ -1,49 +1,49 @@
 character,entryIndex,meaningIndex,reviewedBy
-比,2,0,approved by Takshil
-吧,1,0,approved by Takshil
-场,1,0,approved by Takshil
-答,1,0,approved by Takshil
-打,1,0,approved by Takshil
-号,1,6,approved by Takshil
-后,2,0,approved by Takshil
-几,2,0,approved by Takshil
-看,1,0,approved by Takshil
-考,1,4,approved by Takshil
-累,2,0,approved by Takshil
-里,1,2,approved by Takshil
-吗,2,0,approved by Takshil
-么,2,0,approved by Takshil
-跑,1,0,approved by Takshil
-说,1,0,approved by Takshil
-听,1,0,approved by Takshil
-要,1,0,approved by Takshil
-着,6,0,approved by Takshil
-正,1,0,approved by Takshil
-中,1,1,approved by Takshil
-作,1,0,approved by Takshil
-行,2,0,approved by Takshil
-给,0,3,approved by Takshil
-关,1,1,approved by Takshil
-汉,0,1,approved by Takshil
-话,0,2,approved by Takshil
-语,0,1,approved by Takshil
-同,0,1,approved by Takshil
-球,1,0,approved by Takshil
-觉,1,0,approved by Takshil
-地,1,0,approved by Takshil
-穿,0,3,approved by Takshil
-次,0,12,approved by Takshil
-点,0,12,approved by Takshil
-电,0,1,approved by Takshil
-店,0,1,approved by Takshil
-跟,0,4,approved by Takshil
-老,0,1,approved by Takshil
-热,0,2,approved by Takshil
-太,0,2,approved by Takshil
-所,0,1,approved by Takshil
-课,0,4,approved by Takshil
-字,0,2,approved by Takshil
-现,0,2,approved by Takshil
-在,0,1,approved by Takshil
-本,0,8,approved by Takshil
-然,0,2,approved by Takshil
+比,2,0,human-approved
+吧,1,0,human-approved
+场,1,0,human-approved
+答,1,0,human-approved
+打,1,0,human-approved
+号,1,6,human-approved
+后,2,0,human-approved
+几,2,0,human-approved
+看,1,0,human-approved
+考,1,4,human-approved
+累,2,0,human-approved
+里,1,2,human-approved
+吗,2,0,human-approved
+么,2,0,human-approved
+跑,1,0,human-approved
+说,1,0,human-approved
+听,1,0,human-approved
+要,1,0,human-approved
+着,6,0,human-approved
+正,1,0,human-approved
+中,1,1,human-approved
+作,1,0,human-approved
+行,2,0,human-approved
+给,0,3,human-approved
+关,1,1,human-approved
+汉,0,1,human-approved
+话,0,2,human-approved
+语,0,1,human-approved
+同,0,1,human-approved
+球,1,0,human-approved
+觉,1,0,human-approved
+地,1,0,human-approved
+穿,0,3,human-approved
+次,0,12,human-approved
+点,0,12,human-approved
+电,0,1,human-approved
+店,0,1,human-approved
+跟,0,4,human-approved
+老,0,1,human-approved
+热,0,2,human-approved
+太,0,2,human-approved
+所,0,1,human-approved
+课,0,4,human-approved
+字,0,2,human-approved
+现,0,2,human-approved
+在,0,1,human-approved
+本,0,8,human-approved
+然,0,2,human-approved

@@ -778,6 +778,174 @@
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794804494991
       }
+    ],
+    "24.1 Create `app/src/engine/surfaceSize.ts` and its test": [
+      {
+        "executionId": "215d38d6-e6ce-4a18-ad85-5f6e7b41dcfe",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794844502020
+      },
+      {
+        "executionId": "215d38d6-e6ce-4a18-ad85-5f6e7b41dcfe",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794844668705
+      }
+    ],
+    "24.2 Create `app/src/components/scrollToTop.ts` and its test": [
+      {
+        "executionId": "215d38d6-e6ce-4a18-ad85-5f6e7b41dcfe",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794844503225
+      },
+      {
+        "executionId": "215d38d6-e6ce-4a18-ad85-5f6e7b41dcfe",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794844613233
+      }
+    ],
+    "24.3 Add the `.summon-keys` rule to `index.css` and test it": [
+      {
+        "executionId": "215d38d6-e6ce-4a18-ad85-5f6e7b41dcfe",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794844504419
+      },
+      {
+        "executionId": "215d38d6-e6ce-4a18-ad85-5f6e7b41dcfe",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794844613350
+      }
+    ],
+    "24.9 Fix Sources & licences at 320 px in `Credits.tsx`, with a test": [
+      {
+        "executionId": "215d38d6-e6ce-4a18-ad85-5f6e7b41dcfe",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794844505634
+      },
+      {
+        "executionId": "215d38d6-e6ce-4a18-ad85-5f6e7b41dcfe",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794844613950
+      }
+    ],
+    "24.10 Remove the personal name from data and tests, and add the name guard": [
+      {
+        "executionId": "215d38d6-e6ce-4a18-ad85-5f6e7b41dcfe",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794844506417
+      },
+      {
+        "executionId": "215d38d6-e6ce-4a18-ad85-5f6e7b41dcfe",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794844615139
+      }
+    ],
+    "24.4 Add the `compact` prop to `GhostPrompt.tsx` and test it": [
+      {
+        "executionId": "215d38d6-e6ce-4a18-ad85-5f6e7b41dcfe",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794844616375
+      },
+      {
+        "executionId": "215d38d6-e6ce-4a18-ad85-5f6e7b41dcfe",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794844670073
+      }
+    ],
+    "24.5 Fit the Summon step in `SummonStep.tsx` and update its test": [
+      {
+        "executionId": "215d38d6-e6ce-4a18-ad85-5f6e7b41dcfe",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794844671262
+      },
+      {
+        "executionId": "215d38d6-e6ce-4a18-ad85-5f6e7b41dcfe",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794844791934
+      }
+    ],
+    "24.6 Fit the Write step in `WriteMode.tsx` and update its test": [
+      {
+        "executionId": "215d38d6-e6ce-4a18-ad85-5f6e7b41dcfe",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794844672574
+      },
+      {
+        "executionId": "215d38d6-e6ce-4a18-ad85-5f6e7b41dcfe",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794844793135
+      }
+    ],
+    "24.7 Compact layout and next-ghost scroll reset in `SeanceSession.tsx`, with tests": [
+      {
+        "executionId": "215d38d6-e6ce-4a18-ad85-5f6e7b41dcfe",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794844673891
+      },
+      {
+        "executionId": "215d38d6-e6ce-4a18-ad85-5f6e7b41dcfe",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794844794569
+      }
+    ],
+    "24.8 Compact `Shell` and screen-change scroll reset in `App.tsx`, with tests": [
+      {
+        "executionId": "215d38d6-e6ce-4a18-ad85-5f6e7b41dcfe",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794844674701
+      },
+      {
+        "executionId": "215d38d6-e6ce-4a18-ad85-5f6e7b41dcfe",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794844795759
+      }
+    ],
+    "24.11 Extract the e2e helpers and add the 320 px width checks": [
+      {
+        "executionId": "215d38d6-e6ce-4a18-ad85-5f6e7b41dcfe",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794844796748
+      },
+      {
+        "executionId": "6be1f265-eb32-4211-93ee-a0681d09da43",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794844968981
+      },
+      {
+        "executionId": "6be1f265-eb32-4211-93ee-a0681d09da43",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794845050154
+      }
+    ],
+    "24.12 Add the height and scroll-reset checks and update the README": [
+      {
+        "executionId": "6be1f265-eb32-4211-93ee-a0681d09da43",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794845050694
+      },
+      {
+        "executionId": "6be1f265-eb32-4211-93ee-a0681d09da43",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794845142376
+      }
+    ],
+    "24. Fit one screen, scroll reset, 320 px and names (amendment, approved by the human)": [
+      {
+        "executionId": "6be1f265-eb32-4211-93ee-a0681d09da43",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794845142425
+      }
+    ],
+    "25. Final checkpoint - Verify the fit amendments": [
+      {
+        "executionId": "6be1f265-eb32-4211-93ee-a0681d09da43",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794845288162
+      },
+      {
+        "executionId": "6be1f265-eb32-4211-93ee-a0681d09da43",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794845422249
+      }
     ]
   }
 }

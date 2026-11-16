@@ -192,6 +192,13 @@ describe('Credits', () => {
     });
   });
 
+  it('lets every Fonts list item wrap anywhere, so a long copyright line fits 320 px (Requirement 28)', () => {
+    const { container } = render(<Credits onBack={() => {}} />);
+    const items = container.querySelectorAll('section[aria-labelledby="credits-fonts"] ul > li');
+    expect(items).toHaveLength(FONTS.length);
+    for (const li of items) expect(li.className).toContain('[overflow-wrap:anywhere]');
+  });
+
   it('has a 44px Back to menu button that calls onBack', async () => {
     const onBack = vi.fn();
     render(<Credits onBack={onBack} />);

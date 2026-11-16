@@ -106,7 +106,7 @@ Build the visual layer in small steps: theme tokens, font and CSS first; then th
     - _Requirements: 9.8, 12.5, 15.4, 16.6_
   - [~] 8.2 Add entries to `kiro-log.md`
     - One entry per Kiro feature used here (Specs, Steering, MCP oracle, Custom agent), dated the day the task runs, with the font decisions (Latin display font bundled, system Chinese font stack) and their size numbers, the committed third-party notices decision, and the outcome of the accuracy review from task 9.1
-    - Write "the human" or "a human" for people; use "approved by Takshil" only for approvals
+    - Write "the human" or "a human" for people; use "approved by the human" only for approvals
     - _Requirements: 15.2_
 
 - [x] 9. Accuracy review
@@ -139,7 +139,7 @@ Build the visual layer in small steps: theme tokens, font and CSS first; then th
     - Change no scheduling, Outcome, hint or timing code, and no file in Requirement 14.1
     - _Requirements: 17.1, 17.2, 17.3, 17.4, 17.5, 17.6, 17.7, 17.8, 14.3_
 
-- [x] 13. Night scene foundations (tester feedback, approved by Takshil)
+- [x] 13. Night scene foundations (tester feedback, approved by the human)
   - [x] 13.1 Add night and candle tokens, Tailwind colours and contrast tests
     - In `app/src/styles/theme.ts` add `nightTop`, `nightMid`, `nightLow`, `mist`, `moon`, `candle` with the proposed hex values of the design; adjust a hex only to pass a test, never a text token
     - In `app/tailwind.config.ts` add the colours `night-top`, `night-mid`, `night-low`, `mist`, `moon`, `candle` and `boxShadow.candle` (`0 0 20px rgba(240, 184, 102, 0.35)`)
@@ -213,7 +213,7 @@ Build the visual layer in small steps: theme tokens, font and CSS first; then th
     - _Requirements: 19.6, 19.7, 21.9, 18.3_
   - [ ] 19.3 Add entries to `kiro-log.md`
     - One dated entry for the tester-feedback amendment: what was changed (Leave séance, sticky headers, rename, night scene, menu entrance), the decisions (inline `group` prompt with focus on "Stay", caption under the menu button, internal names kept, global candle focus rule, three pseudo-element scene), the amended ghost-game-core rule, and the accuracy-review outcome of task 19.1
-    - Write "the human" or "a human" for people; use "approved by Takshil" only for approvals
+    - Write "the human" or "a human" for people; use "approved by the human" only for approvals
     - Needs tasks 19.1 and 19.2
     - _Requirements: 23.5_
 
@@ -226,7 +226,7 @@ Build the visual layer in small steps: theme tokens, font and CSS first; then th
   - This checkpoint runs after task 21 and task 19.1
   - _Requirements: 23.1, 23.2, 23.6, 14.1_
 
-- [x] 21. Conditional Leave_Prompt text (accuracy finding, approved by Takshil)
+- [x] 21. Conditional Leave_Prompt text (accuracy finding, approved by the human)
   - [x] 21.1 Add `isSavingWorking()` to `app/src/storage/storage.ts` and test it
     - In `createStore` add `let saveFailedThisSession = false` (sticky for the page session). In `saveState`: set it to `true` when no backend is available and set it to `true` in the `catch`; a successful `backend.setItem` never clears it. Add `isSavingWorking(): boolean` to the `Store` interface and the returned object (it returns `!saveFailedThisSession`), and export `const isSavingWorking = (): boolean => defaultStore.isSavingWorking()`
     - Change no schema, no blob field, no existing signature and no existing behaviour; `recordOutcome(char, entry)` stays as it is and updates the flag through `saveState`; `loadState` and `resetToDefaults` do not touch it
@@ -246,7 +246,7 @@ Build the visual layer in small steps: theme tokens, font and CSS first; then th
     - Needs tasks 17.2, 21.1 and 21.2
     - _Requirements: 18.2a, 18.2b, 18.2c_
 
-- [x] 22. Sources & licences fits a phone (bug fix, approved by Takshil)
+- [x] 22. Sources & licences fits a phone (bug fix, approved by the human)
   - [x] 22.1 Add stacked cards and the wrap rule to `Credits.tsx`
     - Add `const WRAP = '[overflow-wrap:anywhere]'`; use it in `TD` instead of `break-words`, on every Cangjie citation `<li>`, and on the legend citation `<p>` (the one that holds the long URL)
     - Give each of the two tables the classes `hidden` and `sm:table` (keep the `overflow-x-auto` wrapper `<div>`), and add `aria-labelledby` to each table pointing at its section `h2` (`credits-sources`, `credits-software`)
@@ -307,6 +307,99 @@ Build the visual layer in small steps: theme tokens, font and CSS first; then th
   - This checkpoint runs after tasks 22.1 to 22.7 and is not in the dependency graph; the manual task 10.1 stays open for the human to re-check 375 px
   - _Requirements: 24.16, 24.17, 14.1, 24.15_
 
+- [x] 24. Fit one screen, scroll reset, 320 px and names (amendment, approved by the human)
+  - [x] 24.1 Create `app/src/engine/surfaceSize.ts` and its test
+    - Export `summonPaperSize(width, height)` = `Math.round(Math.max(96, Math.min(0.4 * width, 160, height - 600)))` and `writeSurfaceSize(width, height)` = `Math.round(Math.max(200, Math.min(0.8 * width, 420, height - 400)))`, with a doc comment that names the budget of the design ("Height budget") as the source of 600 and 400
+    - In `surfaceSize.test.ts` (unit tests, no property tests): `summonPaperSize` gives 160 at 1024 × 768, 150 at 375 × 812, 96 at 320 × 640 and 160 at 1440 × 900; `writeSurfaceSize` gives 368, 300, 240 and 420 at the same four viewports; the floors (height 300 gives 96 and 200) and the caps (4000 × 4000 gives 160 and 420); results are integers
+    - File ownership: `app/src/engine/surfaceSize.ts`, `app/src/engine/surfaceSize.test.ts`
+    - _Requirements: 25.2, 26.2_
+  - [x] 24.2 Create `app/src/components/scrollToTop.ts` and its test
+    - Export `scrollToTop(): void`: return at once when `typeof window === 'undefined'` or `typeof window.scrollTo !== 'function'`, else call `window.scrollTo(0, 0)` with no options (instant scrolling in every motion setting, decision F9)
+    - In `scrollToTop.test.ts`: with `window.scrollTo` mocked, one call with `(0, 0)` and no third argument; with `window.scrollTo` set to `undefined`, no throw
+    - File ownership: `app/src/components/scrollToTop.ts`, `app/src/components/scrollToTop.test.ts`
+    - _Requirements: 27.3, 27.4_
+  - [x] 24.3 Add the `.summon-keys` rule to `index.css` and test it
+    - In `app/src/styles/index.css` add `.summon-keys { --key-w: clamp(min(32px, calc((100vw - 2rem - 18px) / 10)), calc((100vw - 2rem - 18px) / 10), 48px); }` and no media query (as built; approved by the human (narrower keys only below the width where 32px keys fit): the existing test requires exactly one `@media` block, and ten 32 px keys need a 370 px viewport; the first draft had `@media (max-width: 359px)`; add no animation and no `url()`)
+    - In `index.css.test.ts` add tests: the rule exists with that value; the file contains no `scroll-behavior` (Requirement 27.3); every existing test passes without change
+    - File ownership: `app/src/styles/index.css`, `app/src/styles/index.css.test.ts`
+    - _Requirements: 25.8, 25.9, 27.3_
+  - [x] 24.4 Add the `compact` prop to `GhostPrompt.tsx` and test it
+    - Add `compact?: boolean` (default `false`). When true, render the Compact_Card of the design (decision F4): section classes `ghost-card flex items-center gap-3 rounded-lg bg-surface p-2 text-left`; `GhostFigure` with `ghost-figure h-10 w-9 shrink-0 text-ghost`; a `min-w-0` text column with `sr-only` paragraphs "Meaning" and "Pronunciation", the meaning in `text-xl text-ink` and the pinyin in `text-lg text-ghost` with `lang="zh-Latn-pinyin"`. The non-compact markup stays exactly as it is. `data-ghost-state`, the masking and the pinyin text are unchanged
+    - In `GhostPrompt.test.tsx` add tests for the compact case (classes, `sr-only` labels, pinyin `lang`, the target character absent from the DOM text and from attributes, `data-ghost-state` still set); every existing test passes unchanged
+    - File ownership: `app/src/components/GhostPrompt.tsx`, `app/src/components/GhostPrompt.test.tsx`
+    - _Requirements: 25.4, 25.5, 25.10_
+  - [x] 24.5 Fit the Summon step in `SummonStep.tsx` and update its test
+    - Needs `summonPaperSize` and the `.summon-keys` class. Compute `const [side] = useState(() => summonPaperSize(window.innerWidth, window.innerHeight))`; pass `size={`${side}px`}` to `InkSurface` and `width: side, height: side` to `HanziWriter.create`; remove the local `surfaceSize`
+    - Spacing: root `gap-2`; slots `h-12 w-11`; status paragraph `min-h-[2.5rem] text-sm`; fallback character `text-6xl`; "Give up" `min-h-[44px]`; replace the inline `--key-w` style on the keyboard wrapper with the class `summon-keys` (keep the row grid and every `aria-label`)
+    - Change no timer, no `SUMMON_HOLD_MS` or `SUMMON_FADE_MS`, no hint rule, no reducer call and no never-reveal behaviour
+    - In `SummonStep.test.tsx` replace the three `min(60vw, 240px)` assertions (about lines 392 to 400) with: the surface width is `${summonPaperSize(innerWidth, innerHeight)}px` at two viewport sizes (set `window.innerWidth` and `innerHeight`, restore them after), and hanzi-writer receives the same number as `width` and `height`; add tests for the `summon-keys` class, the status `min-h-[2.5rem]` and the 44 px "Give up"; every hold, fade, hint and never-reveal test passes unchanged
+    - File ownership: `app/src/modes/SummonStep.tsx`, `app/src/modes/SummonStep.test.tsx`
+    - Needs tasks 24.1 and 24.3
+    - _Requirements: 25.1, 25.2, 25.3, 25.7, 25.8, 25.9, 25.10, 31.3_
+  - [x] 24.6 Fit the Write step in `WriteMode.tsx` and update its test
+    - Needs `writeSurfaceSize`. Compute the side once with `useState(() => writeSurfaceSize(window.innerWidth, window.innerHeight))`; pass `size={`${side}px`}` to `InkSurface` and `width: side, height: side` to `HanziWriter.create`; remove the exported `surfaceSize` (its test moves to `surfaceSize.test.ts`); root `gap-2`; "Give up" `min-h-[44px]`
+    - Change no quiz option, no callback, no outcome rule and no message
+    - In `WriteMode.test.tsx` replace the `min(80vw, 420px)` assertion (about line 157) and the `surfaceSize` test (about lines 494 to 497) with the `writeSurfaceSize` equivalents at two viewport sizes, add the 44 px "Give up" test; every other test passes unchanged
+    - File ownership: `app/src/modes/WriteMode.tsx`, `app/src/modes/WriteMode.test.tsx`
+    - Needs task 24.1
+    - _Requirements: 26.1, 26.2, 26.3, 26.5, 26.6_
+  - [x] 24.7 Compact layout and next-ghost scroll reset in `SeanceSession.tsx`, with tests
+    - Pass `compact` to `GhostPrompt`; root classes `gap-2 p-2` (were `gap-4 p-4`); step label `text-sm text-muted`; keep the header, the Leave_Prompt, every focus effect and the result block as they are
+    - In `handleAdvance`, in the branch that starts the next ghost (not the branch that calls `onComplete`), call `scrollToTop()` before the state updates
+    - In `SeanceSession.test.tsx` mock `window.scrollTo` (restore after each test): pressing "Next ghost" calls it once with `(0, 0)`; pressing "Finish the séance" does not call it from the session; the clue card has the compact classes; all focus, Escape and Leave tests pass unchanged. Update `SeanceSession.resultLine.test.tsx` only if its setup breaks
+    - File ownership: `app/src/components/SeanceSession.tsx`, `SeanceSession.test.tsx`, `SeanceSession.resultLine.test.tsx`
+    - Needs tasks 24.2 and 24.4
+    - _Requirements: 25.4, 25.6, 27.2, 27.5_
+  - [x] 24.8 Compact `Shell` and screen-change scroll reset in `App.tsx`, with tests
+    - Add `compact?: boolean` to `Shell`: when true the `main` uses `min-h-[100dvh] ... px-2 py-2` instead of `min-h-screen ... px-4 py-6`; render `<Shell compact>` for the `seance` case only
+    - Add `useLayoutEffect(() => { scrollToTop(); }, [view.screen])` (import it; do not move any existing effect). Confirm by reading that no child focuses in a layout effect; if one does, stop and report
+    - In `App.test.tsx` mock `window.scrollTo`: each of menu to graveyard, graveyard back to menu, menu to séance adds a call with `(0, 0)` (assert as an increase, not an exact total, because `SeanceSession` also calls it); the séance `main` has `px-2`, the menu `main` has `px-4`; every existing test and `App.leaveSaved.test.tsx` pass unchanged
+    - File ownership: `app/src/App.tsx`, `app/src/App.test.tsx`, `app/src/App.leaveSaved.test.tsx`
+    - Needs task 24.2
+    - _Requirements: 25.6, 27.1, 27.5_
+  - [x] 24.9 Fix Sources & licences at 320 px in `Credits.tsx`, with a test
+    - Diagnose first, before any change: with a throwaway Playwright script (not committed) at 320 × 640, measure `document.documentElement.scrollWidth` (341 expected), then find the element that drives it, for example by setting `display: none` or `width: 0` on candidates and re-measuring. Check these suspects in order: the Fonts list items (copyright text with a URL, no `WRAP`), the two Licensing paragraphs, the header row (`whitespace-nowrap` "Back to menu" button beside the title). Write the finding in this task's notes (element, selector, why)
+    - Fix the named element: add the `WRAP` class (and any other long-text element of the same kind); only if that is not enough, make the header shrink (for example let the button text wrap or reduce its padding below `sm`) without changing the 44 px height. If the cause is in `App.tsx` (`Shell`), stop and report: `App.tsx` belongs to task 24.8
+    - In `Credits.test.tsx` add a test that the named element carries `[overflow-wrap:anywhere]`; every existing test passes unchanged
+    - Re-measure at 320 × 640 and at 375 × 812 with the throwaway script; both must be within their width
+    - File ownership: `app/src/components/Credits.tsx`, `app/src/components/Credits.test.tsx`
+    - Finding (diagnosed at 320 × 640 with a throwaway Playwright script in `/tmp`): `document.documentElement.scrollWidth` was 334 here, not 341 (`main` and the sticky `header` both ended at 334). Setting `display: none` on `section[aria-labelledby="credits-fonts"] li` brought it to 320. Hiding the Licensing paragraphs, the header button, the h1, the Sources and Software card lists, the legend and the Cangjie section changed nothing. Cause: the Fonts list items (`<li>` in `#credits-fonts`), whose copyright text holds a URL with no break point and had no `WRAP`. The cause is in `Credits.tsx`, not `App.tsx`. Fix: `className={WRAP}` on those `<li>`; the header needed no change. After the fix: 320 at 320 × 640 and 375 at 375 × 812. Test: "lets every Fonts list item wrap anywhere" in `Credits.test.tsx`.
+    - _Requirements: 28.1, 28.2, 28.3, 28.4_
+  - [x] 24.10 Remove the personal name from data and tests, and add the name guard
+    - Record before: `shasum -a 256 app/public/data/characters.json` and a copy of `data/prompt-review.csv` (for example to `/tmp`, not in the repo)
+    - In `data/prompt-overrides.csv` replace the `reviewedBy` value on every row with `human-approved`; in `tests/unit/build-override-errors.test.ts` replace the five override rows' fourth field with `human-approved`
+    - In `tests/unit/oracle-power.test.ts` keep the "personal names" test and make it assert that none of the three Power files matches a name token that the test builds from parts (for example `new RegExp(['Tak', 'shil'].join(''), 'i')`), so the file itself contains no name
+    - Add `tests/unit/no-personal-names.test.ts`: list the tracked files with `git ls-files` (`execFileSync`), skip binary files (by extension: png, jpg, jpeg, gif, webp, ico, woff, woff2, ttf, pdf, zip) and the allowed exceptions `kiro-log.md`, `.kiro/steering/` and every `tasks.meta.json`, and fail with the list of offending paths if any other file contains the same assembled token (case-insensitive). The test file must not contain the name
+    - Run `npm run build:data`. Confirm `shasum -a 256 app/public/data/characters.json` is unchanged; if it changed, stop and report. Confirm `data/prompt-review.csv` changed only in the `reviewedBy` column: parse old and new with the pipeline's CSV parser (a throwaway `tsx` script) and check that every other column is equal on every row and that each changed `reviewedBy` is `human-approved`
+    - Do not edit `kiro-log.md`, any steering file or any `tasks.meta.json`
+    - File ownership: `data/prompt-overrides.csv`, `data/prompt-review.csv` (generated), `tests/unit/build-override-errors.test.ts`, `tests/unit/oracle-power.test.ts`, `tests/unit/no-personal-names.test.ts`
+    - _Requirements: 30.2, 30.3, 30.4, 30.5, 30.6_
+  - [x] 24.11 Extract the e2e helpers and add the 320 px width checks
+    - Create `e2e/helpers.ts` with `seed`, `seedState`, `datasetKeys`, `findOverflow(page, width)` (same logic and thresholds as now, with `width` in place of the constant 375) and `boxInside(page, locator)` (returns the bounding box and the viewport; used by task 24.12). Import them in `e2e/no-horizontal-overflow.spec.ts`
+    - Wrap the five screen tests and the guard test in `for (const vp of [{ width: 375, height: 812 }, { width: 320, height: 640 }])` with `test.describe(`no horizontal overflow at ${vp.width} px`, …)` and `test.use({ viewport: vp })`; `expectViewport` compares with `vp`; the 375 titles stay as they are
+    - Never loosen a check: keep `375.5`/`-0.5` (now `width + 0.5`), `scrollWidth > width`, the `display: none` skip and the guard test
+    - Run `npx tsc -p tsconfig.json`. If a screen other than the Summon step and Sources & licences overflows at 320, stop and report it with the findOverflow lines, and do not change an app file
+    - File ownership: `e2e/helpers.ts`, `e2e/no-horizontal-overflow.spec.ts`
+    - Needs tasks 24.3, 24.5, 24.6, 24.7, 24.8 and 24.9
+    - _Requirements: 29.1, 29.2, 29.8_
+  - [x] 24.12 Add the height and scroll-reset checks and update the README
+    - Create `e2e/fits-one-screen.spec.ts` that loops over `[{ width: 1024, height: 768 }, { width: 375, height: 812 }]` with `test.use({ viewport })` and a viewport precondition, importing `e2e/helpers.ts`. Tests per viewport, as in the design ("E2E extension"): (1) the Summon step: `boxInside` for "Leave séance", the text "Step 1 of 2: Summon", the region "Ghost's clue", the list "Cangjie code", `getByTestId('ink-surface')`, every button in `[data-row="2"]` and the Summon "Give up" button, each with top ≥ 0, bottom ≤ `innerHeight`, left ≥ 0, right ≤ `innerWidth`, and `scrollHeight <= innerHeight`; (2) the Write step: "Leave séance", the write `ink-surface`, "Give up" and `scrollHeight <= innerHeight`; (3) after "Give up" in the Write step (wait until enabled, timeout 10 s) "Next ghost" is inside the viewport; (4) scroll reset: append `div#scroll-spacer` (2000 px) to `document.body`, `scrollTo(0, 500)`, assert `scrollY > 0`, press "Give up" in both steps, press "Next ghost", then `expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0)`
+    - If a check fails, do not loosen it and do not change an app file: stop and report the measured values and the element
+    - In `README.md`, reword the e2e subsection to "five screens at 375 and 320 px and the one-screen fit at 1024 × 768 and 375 × 812", with no claim about download size or run time; `tests/unit/credits-readme.test.ts` must still pass
+    - Run `npx tsc -p tsconfig.json`; the browser run is in task 25
+    - File ownership: `e2e/fits-one-screen.spec.ts`, `README.md`
+    - Needs task 24.11
+    - _Requirements: 29.3, 29.4, 29.5, 29.6, 29.7, 29.9, 26.1, 26.4_
+- [x] 25. Final checkpoint - Verify the fit amendments
+  - Check that `git diff --stat` shows only the files named in tasks 24.1 to 24.12 and the `.kiro/specs` text files, and none of the files in Requirement 14.1, `kiro-log.md`, a steering file or a `tasks.meta.json`
+  - Run `npm test` (output lists no file under `e2e/`), `npx tsc -p tsconfig.json`, `npx tsc -p app/tsconfig.json` and `npx tsc -p oracle/tsconfig.json`
+  - Run `npm run build -w app`, then `npm run check:bundle`
+  - Run `npm run test:e2e`: the 375 and 320 width tests (five screens each plus the guard), and the height and scroll-reset tests at both Rite_Viewports, all pass
+  - Confirm `shasum -a 256 app/public/data/characters.json` equals the value recorded in task 24.10, and run `npx vitest run tests/unit/no-personal-names.test.ts` plus a case-insensitive `grep -ri` for the name token over `.kiro/specs` (only `tasks.meta.json` may match; report the output)
+  - Ensure all tests pass, ask the user if questions arise.
+  - This checkpoint runs after tasks 24.1 to 24.12 and is not in the dependency graph; the manual tasks 10.1 and 19.2 stay open for the human
+  - _Requirements: 31.1, 31.4, 31.5, 30.3_
+
 ## Notes
 
 - Task 12.1 runs after every other task. It is a small change requested by the human and adds no new property-based tests.
@@ -314,34 +407,43 @@ Build the visual layer in small steps: theme tokens, font and CSS first; then th
 - Unit and component tests only. No property-based tests and no mutation tests are added (decision of Nov 15 in `tech.md`).
 - Use the `cangjie-oracle` MCP tools (`lookup`, `decompose`) whenever a task needs a Cangjie code or a decomposition. Never write a code by hand.
 - Never-reveal: the Graveyard renders glyphs only for Met_Characters, and nothing in the ghost visuals renders the Target_Character before the Rite ends.
-- Do not edit the files in Requirement 14.1, except the one `storage.ts` addition of task 21.1 (approved by Takshil). If any other task seems to need it, stop and ask.
+- Do not edit the files in Requirement 14.1, except the one `storage.ts` addition of task 21.1 (approved by the human). If any other task seems to need it, stop and ask.
 - Wave 0 tasks touch disjoint files: 1.1 (theme, tailwind), 1.2 (`app/package.json`, `main.tsx`), 2.1, 2.2, 3.1, 6.4, 7.1 (`scripts/check-bundle-size.ts`, root `package.json`).
 - Task 3.2 needs the font package from 1.2 and edits the root `package.json` after 7.1 (wave 0); task 3.3 edits the root `tsconfig.json` after 8.1 (wave 1); task 6.2 needs `software.ts` from 3.3; task 6.5 needs 6.2.
 - `README.md` is edited only by 8.1 and, if the review finds something, by 9.1 (a later wave). `kiro-log.md` is edited only by 8.2.
 - Pixel checks cannot run in jsdom. A human checks the layout at 375, 768 and 1440 px before deploy (task 10.1, non-coding). Kiro does not run it and does not log it.
-- Approvals are recorded as "approved by Takshil". The approved decisions are in the design under "Approved decisions": the Chinese font stack, Cormorant Garamond 600 Latin with `font-display: swap`, bibliographic names allowed in credits, the Software section with the committed notices file, the colours, the human phone check, one flicker then 0.5 opacity, and 300 kB = 300,000 bytes. No question is open.
+- Approvals are recorded as "approved by the human". The approved decisions are in the design under "Approved decisions": the Chinese font stack, Cormorant Garamond 600 Latin with `font-display: swap`, bibliographic names allowed in credits, the Software section with the committed notices file, the colours, the human phone check, one flicker then 0.5 opacity, and 300 kB = 300,000 bytes. No question is open.
 - Bibliographic names in citations and credits are allowed (`structure.md`); personal names stay out of repo files.
 - The notices file is committed, not generated at build time. After any change to a runtime dependency, run `npm run build:notices` and update `software.ts`.
 - Task 8.2 (`kiro-log.md`) stays in the plan.
 - Task 10.1 is the only manual, non-coding task. Task 11 is a checkpoint and is not in the dependency graph.
 
-### Notes for tasks 13 to 20 (tester feedback, approved by Takshil)
+### Notes for tasks 13 to 20 (tester feedback, approved by the human)
 
 - These tasks amend the spec after tester feedback. They change no game rule and add no property-based test.
 - The superseded "no menu control during a séance" rule is ghost-game-core Requirement 1.5. It is amended in place there, and its test (`SeanceSession.test.tsx`, "has no legend or menu control during the session") is replaced by task 17.1.
 - File ownership (no two tasks of one wave edit the same file): 13.1 `theme.ts`, `theme.test.ts`, `tailwind.config.ts`; 13.2 `index.css`, `index.css.test.ts`; 14.1 `GhostFigure.tsx`, `GhostFigure.test.tsx`, `GhostPrompt.tsx`; 15.1 and 15.2 `StartMenu.tsx`, `StartMenu.test.tsx` (different waves); 16.1 `Credits.tsx`, `Credits.test.tsx`; 16.2 `Graveyard.tsx`, `Graveyard.test.tsx`; 17.1 `SeanceSession.tsx`, `SeanceSession.test.tsx`; 17.2 `App.tsx`, `App.test.tsx`; 18.1 `IntroScreen.tsx`, `CangjieGuide.tsx`, `SessionSummary.tsx` and their tests; 19.3 `kiro-log.md`. Task 19.1 may edit any file named in its list, and runs in a wave of its own with the human task 19.2.
 - Until task 17.2 runs, `App.test.tsx` still looks for the old name "Credits", so run only the tests of your own files in tasks 15 and 16; the whole suite is green again at task 20.
-- Task 21 (accuracy finding, approved by Takshil) makes the Leave_Prompt text conditional on `isSavingWorking()`. It sits after task 20 in the file but runs before 19.1 and 20 (waves 11 and 12 of the graph). 21.1 and 21.2 touch disjoint files and run in parallel; 21.3 follows. Task 19.1 re-runs the `accuracy-reviewer` after task 21, and the final checkpoint 20 runs after 19.1. Requirement 14.1 is amended to allow this one `storage.ts` addition.
+- Task 21 (accuracy finding, approved by the human) makes the Leave_Prompt text conditional on `isSavingWorking()`. It sits after task 20 in the file but runs before 19.1 and 20 (waves 11 and 12 of the graph). 21.1 and 21.2 touch disjoint files and run in parallel; 21.3 follows. Task 19.1 re-runs the `accuracy-reviewer` after task 21, and the final checkpoint 20 runs after 19.1. Requirement 14.1 is amended to allow this one `storage.ts` addition.
 - Internal names (`credits` view, `Credits.tsx`, `onOpenCredits`, `data/credits.ts`) stay; only user-facing text is renamed.
 - Task 19.2 is the second manual, non-coding task (after 10.1). Task 20 is a checkpoint and is not in the dependency graph.
 
-### Notes for tasks 22 and 23 (bug fix, approved by Takshil)
+### Notes for tasks 22 and 23 (bug fix, approved by the human)
 
 - This group fixes Requirement 9 (Credits) at 375 px, reported by the human after a browser check (tables about 975 px wide, page `scrollWidth` 588). It relates to the manual task 10.1, which stays open: the human re-checks 375, 768 and 1440 px after the fix. It changes no game rule and adds no property-based test.
 - File ownership (no two tasks of one wave edit the same file): 22.1 `Credits.tsx`; 22.2 `Credits.test.tsx`; 22.3 root `package.json`, `package-lock.json`, `.gitignore`; 22.4 `e2e/playwright.config.ts`, root `tsconfig.json`; 22.5 `e2e/no-horizontal-overflow.spec.ts`; 22.6 `README.md`; 22.7 `CangjieGuide.tsx`, `CangjieGuide.test.tsx`. There is no `index.css` task: the wrap rule is the Tailwind class `[overflow-wrap:anywhere]` (decision B5).
 - Order: 22.1 and 22.3 run first (wave 15); 22.2, 22.4 and 22.6 follow (wave 16); 22.5 needs the cards and the config (wave 17); 22.7 fixes the guide overflow that 22.5 found (wave 18). Task 23 is a checkpoint and is not in the dependency graph.
 - Task 22.5 does not run the browser. Task 23 runs `npm run test:e2e:install` and `npm run test:e2e`.
 - Not done here, on purpose: a CI step for the E2E_Suite (follow-up B10 in the design), and any change to `kiro-log.md`.
+
+### Notes for tasks 24 and 25 (second browser check, approved by the human)
+
+- These tasks amend the spec after a second browser check. They change no game rule, no timing and no storage, and add no property-based test.
+- File ownership (no two tasks of one wave edit the same file): 24.1 `surfaceSize.ts` and test; 24.2 `scrollToTop.ts` and test; 24.3 `index.css`, `index.css.test.ts`; 24.4 `GhostPrompt.tsx` and test; 24.5 `SummonStep.tsx` and test; 24.6 `WriteMode.tsx` and test; 24.7 `SeanceSession.tsx` and its two tests; 24.8 `App.tsx` and its two tests; 24.9 `Credits.tsx` and test; 24.10 `data/` CSV files and three test files in `tests/unit/`; 24.11 `e2e/helpers.ts`, `e2e/no-horizontal-overflow.spec.ts`; 24.12 `e2e/fits-one-screen.spec.ts`, `README.md`.
+- Order: wave 19 (24.1, 24.2, 24.3, 24.4, 24.9, 24.10) has disjoint files; wave 20 (24.5, 24.6, 24.7, 24.8) needs wave 19; wave 21 (24.11) needs every UI task; wave 22 (24.12) needs 24.11. Task 25 is a checkpoint and is not in the graph.
+- Task 24.10 touches only `data/`, `tests/` and the generated `data/prompt-review.csv`; it has no dependency on the UI tasks. `kiro-log.md`, the steering files and every `tasks.meta.json` are not edited. The spec markdown files were already changed by the maintainer (the approval phrase replaced everywhere); three task titles of this file changed (groups 13, 21 and 22), so their task IDs change when Kiro rewrites `tasks.meta.json`.
+- Deviation, as built in task 24.3; approved by the human (narrower keys only below the width where 32px keys fit): below 370 px the Summon keys are narrower than 32 px (27 px at 320 px), because ten 32 px keys do not fit (design F7).
+- Not in these tasks: the human visual checks 10.1 and 19.2 (still open) and any change to `kiro-log.md`.
 
 ## Task Dependency Graph
 
@@ -366,7 +468,11 @@ Build the visual layer in small steps: theme tokens, font and CSS first; then th
     { "id": 15, "tasks": ["22.1", "22.3"] },
     { "id": 16, "tasks": ["22.2", "22.4", "22.6"] },
     { "id": 17, "tasks": ["22.5"] },
-    { "id": 18, "tasks": ["22.7"] }
+    { "id": 18, "tasks": ["22.7"] },
+    { "id": 19, "tasks": ["24.1", "24.2", "24.3", "24.4", "24.9", "24.10"] },
+    { "id": 20, "tasks": ["24.5", "24.6", "24.7", "24.8"] },
+    { "id": 21, "tasks": ["24.11"] },
+    { "id": 22, "tasks": ["24.12"] }
   ]
 }
 ```

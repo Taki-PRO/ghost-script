@@ -215,7 +215,7 @@ Add the two-step rite to Ghost Script: every ghost is first SUMMONED by typing i
 ## Notes
 
 - There are no optional tasks; nothing is marked with `*`.
-- No new property-based tests are added and no mutation testing is run (approved by Takshil). Existing property tests are updated only where the record shape or pipeline inputs change (tasks 1.12 and 1.13).
+- No new property-based tests are added and no mutation testing is run (approved by the human). Existing property tests are updated only where the record shape or pipeline inputs change (tasks 1.12 and 1.13).
 - The ghost-game-core and character-dataset tasks are not reopened. Their spec documents have been amended already (see "Amendments to other specs" in `requirements.md`).
 - The last task (8.1) is performed by a human and is not logged by Kiro.
 - Never write personal names in repo files; refer to "the human". Do not add `.kiro/` to `.gitignore`.

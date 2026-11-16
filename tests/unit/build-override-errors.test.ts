@@ -60,7 +60,7 @@ function makeOptions(overrideRows: string[]): BuildOptions {
 
 describe('override errors fail the build', () => {
   it('entryIndex too large: fails with entry-index-out-of-range and no output', async () => {
-    const result = await buildDataset(makeOptions(['我,5,0,approved by Takshil']));
+    const result = await buildDataset(makeOptions(['我,5,0,human-approved']));
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect('output' in result).toBe(false);
@@ -70,7 +70,7 @@ describe('override errors fail the build', () => {
   });
 
   it('meaningIndex too large: fails with meaning-index-out-of-range and no output', async () => {
-    const result = await buildDataset(makeOptions(['我,0,7,approved by Takshil']));
+    const result = await buildDataset(makeOptions(['我,0,7,human-approved']));
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect('output' in result).toBe(false);
@@ -80,7 +80,7 @@ describe('override errors fail the build', () => {
   });
 
   it('unknown character: fails with unknown-character and no output', async () => {
-    const result = await buildDataset(makeOptions(['口,0,0,approved by Takshil']));
+    const result = await buildDataset(makeOptions(['口,0,0,human-approved']));
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect('output' in result).toBe(false);
@@ -92,13 +92,13 @@ describe('override errors fail the build', () => {
   it('negative entryIndex is rejected when the CSV is parsed, before any range check', async () => {
     // The CSV parser accepts only non-negative integers, so a negative index
     // never reaches the build's range check; the build throws and writes nothing.
-    await expect(buildDataset(makeOptions(['我,-1,0,approved by Takshil']))).rejects.toThrow(
+    await expect(buildDataset(makeOptions(['我,-1,0,human-approved']))).rejects.toThrow(
       /prompt-overrides\.csv failed validation[\s\S]*我[\s\S]*malformed-row/,
     );
   });
 
   it('a valid override still builds', async () => {
-    const result = await buildDataset(makeOptions(['我,0,0,approved by Takshil']));
+    const result = await buildDataset(makeOptions(['我,0,0,human-approved']));
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     const records = JSON.parse(result.output) as Record<string, { prompt: { meaning: string } }>;

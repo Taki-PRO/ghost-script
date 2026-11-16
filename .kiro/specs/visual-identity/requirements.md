@@ -6,9 +6,11 @@ The visual-identity feature makes Ghost Script memorable on video without changi
 
 The feature changes no scheduling, no Outcome rule, no summon or write rule, no hint rule, no storage schema and no dataset. The Graveyard reads the existing saved history and classifies it with a small pure function in `app/src/engine/`.
 
-Requirements 18 to 23 amend this feature after tester feedback (approved by Takshil): a Leave séance control, sticky headers on two screens, the rename of the Credits screen to "Sources & licences", a night-scene atmosphere and a menu entrance. They change no game rule. Where an earlier criterion is affected, it carries an "Amended" note that points to the new requirement.
+Requirements 18 to 23 amend this feature after tester feedback (approved by the human): a Leave séance control, sticky headers on two screens, the rename of the Credits screen to "Sources & licences", a night-scene atmosphere and a menu entrance. They change no game rule. Where an earlier criterion is affected, it carries an "Amended" note that points to the new requirement.
 
-Requirement 24 amends this feature after a browser check by the human at 375 px (approved by Takshil): the Sources & licences screen overflowed sideways. It fixes Requirement 9 (the Credits_Screen) at 375 px and relates to the manual task 10.1 (the human phone check). It adds stacked cards for narrow screens, a wrap rule for long values, and a dev-only Playwright width check. It changes no game rule.
+Requirement 24 amends this feature after a browser check by the human at 375 px (approved by the human): the Sources & licences screen overflowed sideways. It fixes Requirement 9 (the Credits_Screen) at 375 px and relates to the manual task 10.1 (the human phone check). It adds stacked cards for narrow screens, a wrap rule for long values, and a dev-only Playwright width check. It changes no game rule.
+
+Requirements 25 to 31 amend this feature after a second browser check by the human (approved by the human). They make the whole Rite fit one screen without scrolling at 1024 × 768 and 375 × 812, scroll to the top when a screen or a ghost changes, fix the Sources & licences screen at 320 px, extend the Playwright check to 320 px and to heights, and remove a personal name from repo files. They change no game rule, no timing, no storage and no dataset. Where an earlier criterion is affected, it carries an "Amended" note.
 
 Budget: about one and a half days. The design is deliberately lean: CSS and inline SVG made in this repository, no new runtime dependency except one self-hosted Latin font, and no CJK font file.
 
@@ -41,7 +43,7 @@ Budget: about one and a half days. The design is deliberately lean: CSS and inli
 - **Grave_Classifier**: The pure functions in `app/src/engine/graveyard.ts` that classify characters into Grave_States.
 - **Graveyard_Screen**: The screen showing one grave per character of the dataset.
 - **Grave**: One cell of the Graveyard_Screen. A Grave of a Met_Character is drawn as a tombstone; a Grave of an unmet character is drawn as a wisp.
-- **Credits_Screen**: The screen listing data sources, licences, the legend source, the Cangjie citations and the fonts. *(Amended (approved by Takshil), Requirement 20: this is the internal name. The user-facing name is "Sources & licences". The identifiers `credits`, `Credits.tsx` and `onOpenCredits` stay.)*
+- **Credits_Screen**: The screen listing data sources, licences, the legend source, the Cangjie citations and the fonts. *(Amended (approved by the human), Requirement 20: this is the internal name. The user-facing name is "Sources & licences". The identifiers `credits`, `Credits.tsx` and `onOpenCredits` stay.)*
 - **Cangjie_Guide**: The "How Cangjie works" screen (`CangjieGuide`).
 - **Start_Menu**: The start menu component (`StartMenu`).
 - **Summon_Keyboard**: The 25 on-screen keys of the Summon step, in the rows `QWERTYUIOP`, `ASDFGHJKL` and `XCVBNM`.
@@ -77,9 +79,18 @@ Budget: about one and a half days. The design is deliberately lean: CSS and inli
 - **Software_Cards**: The list in the Credits_Screen that shows each row of `SOFTWARE_CREDITS` as one stacked card.
 - **Wrap_Class**: The Tailwind class `[overflow-wrap:anywhere]`, which lets a long unbroken value break at any character.
 - **E2E_Suite**: The Playwright tests in the `e2e/` folder at the repository root, run by `npm run test:e2e` in Chromium. They are not part of the Test_Suite.
-- **Width_Check**: The check of the E2E_Suite on one screen at a viewport of 375 × 812 CSS pixels: the document `scrollWidth` and the bounding box of every displayed element (Requirements 24.7 and 24.8).
+- **Width_Check**: The check of the E2E_Suite on one screen at a viewport of 375 × 812 CSS pixels (Requirement 29.1 adds the Narrow_Phone): the document `scrollWidth` and the bounding box of every displayed element (Requirements 24.7 and 24.8).
 
 ---
+
+- **Rite_Viewports**: The two viewports 1024 × 768 CSS pixels and 375 × 812 CSS pixels.
+- **Narrow_Phone**: The viewport 320 × 640 CSS pixels.
+- **Compact_Card**: The Ghost_Card as the Seance_Session shows it (prop `compact`): the Ghost_Figure beside the text, tight padding, smaller text.
+- **Surface_Sizes**: The pure functions `summonPaperSize` and `writeSurfaceSize` in `app/src/engine/surfaceSize.ts`. Each takes the viewport width and height in CSS pixels and returns the side of a square in whole CSS pixels.
+- **Scroll_Reset**: One call of `window.scrollTo(0, 0)`.
+- **Last_Keyboard_Row**: The Summon_Keyboard row whose `data-row` attribute is `2` (the keys `XCVBNM`).
+- **Height_Check**: The checks of the E2E_Suite at a Rite_Viewport that named parts of a screen lie fully inside the viewport and that the page does not scroll (Requirement 29).
+- **Personal_Name**: The name of a human who works on this project, in any form, as opposed to a bibliographic name in a citation or credit.
 
 ## Requirements
 
@@ -145,7 +156,7 @@ Budget: about one and a half days. The design is deliberately lean: CSS and inli
 1. WHILE the Rite of a ghost has not ended, THE Ghost_Card SHALL contain the Target_Character in no text node and in no attribute value.
 2. WHILE the Rite of a ghost has not ended, THE Ghost_Figure and its animations SHALL contain no text element and no glyph.
 3. THE Graveyard_Screen SHALL render the glyph of a character only for a Met_Character.
-4. THE Start_Menu, the Graveyard_Screen and the Credits_Screen SHALL be reachable only outside an active séance. *(Amended (approved by Takshil), Requirement 18: the Leave_Button is the one control shown during a séance that leads back to the Start_Menu, and only after the player confirms. The Start_Menu, the Graveyard_Screen and the Credits_Screen themselves stay unreachable during a séance.)*
+4. THE Start_Menu, the Graveyard_Screen and the Credits_Screen SHALL be reachable only outside an active séance. *(Amended (approved by the human), Requirement 18: the Leave_Button is the one control shown during a séance that leads back to the Start_Menu, and only after the player confirms. The Start_Menu, the Graveyard_Screen and the Credits_Screen themselves stay unreachable during a séance.)*
 
 ### Requirement 6: Graveyard States
 
@@ -181,7 +192,7 @@ Budget: about one and a half days. The design is deliberately lean: CSS and inli
 8. THE Graveyard_Screen SHALL read the Review_History and the current time and SHALL write nothing to storage.
 9. WHILE Reduced_Motion is not active, THE Graveyard_Screen SHALL flicker the Graves in the `restless` state; WHILE Reduced_Motion is active, THE Graveyard_Screen SHALL show them without animation.
 10. THE Graveyard_Screen SHALL lay out its graves in a grid that reflows between viewport widths of 375 px and 1440 px without horizontal scrolling.
-11. THE Graveyard_Screen SHALL provide a "Back to menu" button with an accessible name, a minimum height of 44 px and a visible focus ring. *(Amended (approved by Takshil), Requirement 19: the button sits in the Sticky_Header at the top of the screen and no button appears at the bottom.)*
+11. THE Graveyard_Screen SHALL provide a "Back to menu" button with an accessible name, a minimum height of 44 px and a visible focus ring. *(Amended (approved by the human), Requirement 19: the button sits in the Sticky_Header at the top of the screen and no button appears at the bottom.)*
 12. THE Graveyard_Screen SHALL give glyphs and text a contrast ratio of at least 4.5:1 against the background of their Grave.
 
 ### Requirement 8: Summon Step Layout
@@ -192,9 +203,9 @@ Budget: about one and a half days. The design is deliberately lean: CSS and inli
 
 1. THE Summon_Keyboard SHALL show three rows with 10, 9 and 6 keys in the order `QWERTYUIOP`, `ASDFGHJKL`, `XCVBNM`.
 2. THE Summon_Keyboard SHALL keep those three rows at every viewport width from 375 px to 1440 px, without wrapping a row onto a second line.
-3. THE Summon_Keyboard SHALL give each key a width of at least 32 CSS pixels and a height of at least 44 CSS pixels at every viewport width from 375 px to 1440 px.
+3. THE Summon_Keyboard SHALL give each key a width of at least 32 CSS pixels and a height of at least 44 CSS pixels at every viewport width from 375 px to 1440 px. *(Unchanged by Requirement 25.9, which adds a rule below 370 px.)*
 4. THE Summon step SHALL reserve the Summon_Surface space, with the same width and height, from its first render until it ends, in the typing, forming and fading phases.
-5. THE Summon_Surface SHALL be a square whose side is the smaller of 60% of the viewport width and 240 CSS pixels.
+5. THE Summon_Surface SHALL be a square whose side is the smaller of 60% of the viewport width and 240 CSS pixels. *(Amended (approved by the human), Requirement 25: the side is the value of `summonPaperSize`, at most 160 CSS pixels.)*
 6. THE Summon step SHALL show the code slots in one row without wrapping.
 7. THE Summon step SHALL reserve a status area tall enough for two lines of text, so that a longer message does not move the Summon_Keyboard.
 8. THE Summon_Keyboard SHALL keep its current accessible key names and its current hint behaviour.
@@ -205,16 +216,16 @@ Budget: about one and a half days. The design is deliberately lean: CSS and inli
 
 #### Acceptance Criteria
 
-1. WHEN the player presses the "Credits" button in the Start_Menu, THE App SHALL show the Credits_Screen. *(Amended (approved by Takshil), Requirement 20: the button is now labelled "Sources & licences".)*
-2. THE Credits_Screen SHALL list every data source of the README "Data and licences" table, each with its name, version or commit, use, licence and URL as text. *(Amended (approved by Takshil), Requirement 24: in the Narrow_Layout each row is shown as a stacked card with the same five labels and values; in the Wide_Layout it stays a table row.)*
+1. WHEN the player presses the "Credits" button in the Start_Menu, THE App SHALL show the Credits_Screen. *(Amended (approved by the human), Requirement 20: the button is now labelled "Sources & licences".)*
+2. THE Credits_Screen SHALL list every data source of the README "Data and licences" table, each with its name, version or commit, use, licence and URL as text. *(Amended (approved by the human), Requirement 24: in the Narrow_Layout each row is shown as a stacked card with the same five labels and values; in the Wide_Layout it stays a table row.)*
 3. THE Credits_Screen SHALL state that `characters.json` is a combined work that carries the licence terms of each source for its fields, and that the code of Ghost Script is licensed MIT.
 4. THE Credits_Screen SHALL show the legend line 天雨粟，鬼夜哭 with the Huainanzi source citation worded exactly as in the "Approved legend line" section of `content-accuracy.md`, and SHALL state that the English rendering is the project's own.
 5. THE Credits_Screen SHALL cite the English Wikipedia articles "Cangjie input method" and "Chu Bong-Foo", each with its title and its URL as text.
 6. THE Credits_Screen SHALL list each bundled font with its name and licence, and SHALL state that Chinese text is drawn with fonts already installed on the device.
 7. THE Credits_Screen SHALL make no claim about Cangjie beyond those allowed in `content-accuracy.md`.
 8. THE Test_Suite SHALL fail IF the data sources, licences, versions, URLs or the font entry of the Credits_Screen differ from those of the README.
-9. THE Credits_Screen SHALL provide a "Back to menu" button with an accessible name, a minimum height of 44 px and a visible focus ring. *(Amended (approved by Takshil), Requirement 19: the button sits in the Sticky_Header at the top of the screen and no button appears at the bottom.)*
-10. THE Credits_Screen SHALL show a "Software" section that lists every package of the Software_List with its name, version and licence identifier, and SHALL link to the Notices_File. *(Amended (approved by Takshil), Requirement 24: in the Narrow_Layout each package is shown as a stacked card with the same three labels and values.)*
+9. THE Credits_Screen SHALL provide a "Back to menu" button with an accessible name, a minimum height of 44 px and a visible focus ring. *(Amended (approved by the human), Requirement 19: the button sits in the Sticky_Header at the top of the screen and no button appears at the bottom.)*
+10. THE Credits_Screen SHALL show a "Software" section that lists every package of the Software_List with its name, version and licence identifier, and SHALL link to the Notices_File. *(Amended (approved by the human), Requirement 24: in the Narrow_Layout each package is shown as a stacked card with the same three labels and values.)*
 
 ### Requirement 10: Guide Wording
 
@@ -233,9 +244,9 @@ Budget: about one and a half days. The design is deliberately lean: CSS and inli
 
 #### Acceptance Criteria
 
-1. THE Start_Menu SHALL show five buttons in this order: "Begin a Nightly Séance", "Read the legend again", "How Cangjie works", "Graveyard", "Credits". *(Amended (approved by Takshil), Requirement 20: the fifth label is "Sources & licences".)*
+1. THE Start_Menu SHALL show five buttons in this order: "Begin a Nightly Séance", "Read the legend again", "How Cangjie works", "Graveyard", "Credits". *(Amended (approved by the human), Requirement 20: the fifth label is "Sources & licences".)*
 2. WHEN the player presses "Graveyard", THE Start_Menu SHALL call `onOpenGraveyard` once.
-3. WHEN the player presses "Credits", THE Start_Menu SHALL call `onOpenCredits` once. *(Amended (approved by Takshil), Requirement 20: the button is labelled "Sources & licences"; the callback name stays.)*
+3. WHEN the player presses "Credits", THE Start_Menu SHALL call `onOpenCredits` once. *(Amended (approved by the human), Requirement 20: the button is labelled "Sources & licences"; the callback name stays.)*
 4. WHEN the player presses one of the three existing buttons, THE Start_Menu SHALL call the same callback as before.
 5. THE Start_Menu SHALL give every button a visible text label, a minimum height of 44 px and a visible focus ring.
 
@@ -271,7 +282,7 @@ Budget: about one and a half days. The design is deliberately lean: CSS and inli
 
 #### Acceptance Criteria
 
-1. THE implementation of this feature SHALL leave unmodified `app/src/engine/scheduler.ts`, `config.ts`, `outcome.ts`, `learningOrder.ts` and `cangjie.ts`, `app/src/storage/storage.ts`, and `app/public/data/characters.json`. *(Amended (approved by Takshil), Requirement 18: `storage.ts` may gain the one addition `isSavingWorking()`, with no change to the storage schema, to the blob, or to the behaviour of any existing function.)*
+1. THE implementation of this feature SHALL leave unmodified `app/src/engine/scheduler.ts`, `config.ts`, `outcome.ts`, `learningOrder.ts` and `cangjie.ts`, `app/src/storage/storage.ts`, and `app/public/data/characters.json`. *(Amended (approved by the human), Requirement 18: `storage.ts` may gain the one addition `isSavingWorking()`, with no change to the storage schema, to the blob, or to the behaviour of any existing function.)*
 2. THE storage schema version SHALL stay at 2.
 3. THE existing tests for the files in criterion 1, for the hint rules and for the never-reveal rule of the Summon step SHALL pass without change to their assertions.
 
@@ -325,7 +336,7 @@ This requirement was requested by the human. It changes no game rule.
 
 **User Story:** As a player, I want to leave a séance part-way, so that I am not stuck in a session I cannot finish now, and I don't lose ghosts I already finished when this browser can save.
 
-This requirement was requested after tester feedback and is approved by Takshil. It replaces the rule of ghost-game-core Requirement 1.5 that no menu control appears during a séance. It changes no scheduling, Outcome, hint or storage-schema rule. Amended (approved by Takshil): the accuracy review found that the saved-text is false when `localStorage` is unavailable or full, so the Leave_Prompt now has two texts, chosen by Saving_Works. The Storage module gains the read-only `isSavingWorking()`; the blob and the schema version stay as they are.
+This requirement was requested after tester feedback and is approved by the human. It replaces the rule of ghost-game-core Requirement 1.5 that no menu control appears during a séance. It changes no scheduling, Outcome, hint or storage-schema rule. Amended (approved by the human): the accuracy review found that the saved-text is false when `localStorage` is unavailable or full, so the Leave_Prompt now has two texts, chosen by Saving_Works. The Storage module gains the read-only `isSavingWorking()`; the blob and the schema version stay as they are.
 
 #### Acceptance Criteria
 
@@ -425,7 +436,7 @@ This requirement was requested after tester feedback and is approved by Takshil.
 
 **User Story:** As a phone player, I want the Sources & licences screen to fit the width of my screen, so that I can read every source and licence without scrolling sideways.
 
-This requirement is a bug fix approved by Takshil. In a browser check at 375 px the human found that the Credits_Screen overflowed sideways: its tables were about 975 px wide and the page `scrollWidth` was 588 px. It fixes Requirement 9 (Credits) at 375 px and relates to the manual task 10.1. The dev-only Playwright dependency is also approved by Takshil. It changes no game rule, no scheduling, no storage and no dataset. The E2E_Suite later found the same kind of overflow in the Cangjie_Guide (criterion 17), which this requirement also fixes.
+This requirement is a bug fix approved by the human. In a browser check at 375 px the human found that the Credits_Screen overflowed sideways: its tables were about 975 px wide and the page `scrollWidth` was 588 px. It fixes Requirement 9 (Credits) at 375 px and relates to the manual task 10.1. The dev-only Playwright dependency is also approved by the human. It changes no game rule, no scheduling, no storage and no dataset. The E2E_Suite later found the same kind of overflow in the Cangjie_Guide (criterion 17), which this requirement also fixes.
 
 #### Acceptance Criteria
 
@@ -446,3 +457,103 @@ This requirement is a bug fix approved by Takshil. In a browser check at 375 px 
 15. THE implementation of this requirement SHALL leave unmodified every file listed in Requirement 14.1, SHALL add no step to `.github/workflows`, and SHALL add `test-results/` and `playwright-report/` to `.gitignore` without removing the rule that keeps `.kiro/` in the repository.
 16. WHEN the final checkpoint of this requirement runs, THE maintainer SHALL run `npm test`, `npx tsc -p tsconfig.json`, `npx tsc -p app/tsconfig.json`, `npx tsc -p oracle/tsconfig.json`, `npm run build -w app`, `npm run check:bundle`, `npm run test:e2e:install` and `npm run test:e2e`, and all SHALL succeed.
 17. THE Cangjie_Guide SHALL give the Wrap_Class to its citation line and to every other element that holds long unbreakable text, so that the Width_Check passes on the Cangjie_Guide at a viewport of 375 × 812 CSS pixels (fix found by the e2e check: the guide made the page 378 px wide).
+
+### Requirement 25: The Summon Step Fits One Screen
+
+**User Story:** As a phone or laptop player, I want the whole Summon step to fit on one screen, so that I never scroll to reach the keys.
+
+This requirement is approved by the human after a browser check. It changes sizes and spacing only. The heights come from the real layout of `SeanceSession`, `GhostPrompt` and `SummonStep`: at 1024 × 768 the old layout needed about 1080 px (page padding 48, Seance_Session padding 32, header 44, Ghost_Card 208, step label 24, slots 56, Summon_Surface 240, status 48, keyboard 136, notes 40, Give up 42 and gaps 136), so about 320 px have to go.
+
+#### Acceptance Criteria
+
+1. WHILE the Summon_Step is shown at a Rite_Viewport, THE Seance_Session SHALL keep the Leave_Button, the step label, the Compact_Card, the code slots, the Summon_Surface, every key of the three Summon_Keyboard rows and the "Give up" button fully inside the viewport, with the page `scrollY` equal to 0 and no vertical scrolling needed.
+2. THE Summon_Surface SHALL be a square whose side in CSS pixels is `summonPaperSize(width, height)`: the larger of 96 and the smallest of 40% of the viewport width, 160, and the viewport height minus 600, rounded to a whole number. This gives 160 at 1024 × 768, 150 at 375 × 812 and 96 at 320 × 640.
+3. THE Summon_Step SHALL pass the side given by `summonPaperSize` to hanzi-writer as both `width` and `height`, and SHALL give the same side to the Summon_Surface, so that the formed character fills the paper.
+4. THE Seance_Session SHALL show the Ghost_Card as the Compact_Card: the Ghost_Figure at most 40 CSS pixels tall beside the meaning and the pinyin, padding of 8 CSS pixels, meaning text of 1.25 rem and pinyin text of 1.125 rem.
+5. THE Compact_Card SHALL keep the labels "Meaning" and "Pronunciation" in the accessibility tree as visually hidden text, SHALL keep the pinyin `lang` attribute, and SHALL keep the text colours and contrast ratios of the Ghost_Card.
+6. THE Seance_Session SHALL use padding of 8 CSS pixels and a gap of 8 CSS pixels between its parts, and the App SHALL use a page padding of 8 CSS pixels on the séance screen.
+7. THE Summon_Step SHALL use a gap of 8 CSS pixels between its parts, SHALL reserve a status area of at least 2.5 rem with text of 0.875 rem (two lines, as Requirement 8.7), and SHALL give the "Give up" button a height of at least 44 CSS pixels.
+8. THE Summon_Keyboard SHALL keep keys with a height of at least 44 CSS pixels and keep its three-row layout at every viewport width from 320 px to 1440 px.
+9. WHILE the viewport is 370 CSS pixels wide or wider, THE Summon_Keyboard SHALL give each key a width of at least 32 CSS pixels; WHILE the viewport is narrower than 370 CSS pixels, THE Summon_Keyboard SHALL give each key the width `(100vw - 2rem - 18px) / 10`, which is 27 CSS pixels at 320 px, because ten 32 px keys and nine 2 px gaps need 338 px, and `100vw - 2rem` is 338 px only at 370 px. *(As built in task 24.3; approved by the human (narrower keys only below the width where 32px keys fit). The first draft said 360 px, but only 328 px is available at 360 px.)*
+10. THE Summon_Step SHALL keep the never-reveal rule, `SUMMON_HOLD_MS`, `SUMMON_FADE_MS`, the hint rules, the key names and the Outcome rules unchanged.
+
+### Requirement 26: The Write Step Fits One Screen
+
+**User Story:** As a phone or laptop player, I want the writing surface and the Give up button on one screen, so that I can write and give up without scrolling.
+
+#### Acceptance Criteria
+
+1. WHILE the Write_Mode is shown at a Rite_Viewport and the ghost has no result, THE Seance_Session SHALL keep the Leave_Button, the step label, the Compact_Card, the Writing_Surface and the "Give up" button fully inside the viewport, with the page `scrollY` equal to 0 and no vertical scrolling needed.
+2. THE Writing_Surface SHALL be a square whose side in CSS pixels is `writeSurfaceSize(width, height)`: the larger of 200 and the smallest of 80% of the viewport width, 420, and the viewport height minus 400, rounded to a whole number. This gives 368 at 1024 × 768, 300 at 375 × 812, 240 at 320 × 640 and 420 at 1440 × 900.
+3. THE Write_Mode SHALL pass the side given by `writeSurfaceSize` to hanzi-writer as both `width` and `height`, and SHALL give the same side to the Writing_Surface.
+4. WHILE the ghost has a result at a Rite_Viewport, THE Seance_Session SHALL keep the result line and the "Next ghost" button (or "Finish the séance" for the last ghost) fully inside the viewport.
+5. THE Write_Mode SHALL use a gap of 8 CSS pixels between its parts and SHALL give the "Give up" button a height of at least 44 CSS pixels.
+6. THE Write_Mode SHALL keep the quiz options, the hint rule, the Outcome rules and the never-reveal rule unchanged.
+
+### Requirement 27: Scroll Reset
+
+**User Story:** As a player, I want each new screen and each new ghost to start at the top, so that I never land in the middle of a page.
+
+#### Acceptance Criteria
+
+1. WHEN the App changes screen, THE App SHALL perform one Scroll_Reset before the new screen's own focus move runs.
+2. WHEN the player presses the "Next ghost" button, THE Seance_Session SHALL perform one Scroll_Reset before it shows the next ghost.
+3. THE App SHALL scroll instantly in every motion setting: it SHALL use `window.scrollTo(0, 0)` with no `behavior` option, and `app/src/styles/index.css` SHALL contain no `scroll-behavior` declaration.
+4. IF `window.scrollTo` is not a function, THEN THE App SHALL skip the Scroll_Reset and raise no error.
+5. THE App SHALL keep every existing focus move of the screens and of the Seance_Session.
+
+### Requirement 28: Sources & licences Fits 320 px
+
+**User Story:** As a player on a very narrow phone, I want the Sources & licences screen to fit my screen, so that I never scroll sideways.
+
+This requirement is a bug fix approved by the human. At 320 × 640 the Credits_Screen has a document `scrollWidth` of 341 px. The cause is not yet known; the task diagnoses it first, as task 22.7 did for the Cangjie_Guide.
+
+#### Acceptance Criteria
+
+1. WHEN the cause is not known, THE maintainer SHALL find, with a browser at the Narrow_Phone viewport, the element whose minimum content width makes the page 341 px wide, and SHALL record that element in the task notes before changing any code.
+2. THE Credits_Screen SHALL give the Wrap_Class to the element named by the diagnosis and to every other element of the same kind that holds long unbreakable text.
+3. THE Credits_Screen SHALL have a document `scrollWidth` of at most 320 at the Narrow_Phone viewport, and at most 375 at 375 × 812 as before.
+4. THE Test_Suite SHALL fail IF an element named by the diagnosis lacks the Wrap_Class.
+
+### Requirement 29: The E2E Suite Checks 320 px and Heights
+
+**User Story:** As the maintainer, I want the browser check to cover 320 px and the one-screen fit, so that the next layout regression is caught before a human sees it.
+
+#### Acceptance Criteria
+
+1. THE E2E_Suite SHALL run the Width_Check at the Narrow_Phone viewport on the same five screens as at 375 × 812, with the limit 320 in place of 375 (the document `scrollWidth` must not exceed 320, and no displayed element may have a right edge above 320.5 or a left edge below -0.5).
+2. THE E2E_Suite SHALL keep every existing check at 375 × 812 at its present threshold, SHALL keep the guard test, and SHALL loosen no check.
+3. WHEN the Summon_Step is shown at each Rite_Viewport, THE E2E_Suite SHALL check without scrolling that the Leave_Button, the step label, the Ghost_Card, the code slots, the Summon_Surface, the Last_Keyboard_Row and the "Give up" button each have a top edge of at least 0 and a bottom edge of at most `innerHeight`, and that the Last_Keyboard_Row has no key whose left edge is below 0 or whose right edge is above `innerWidth`.
+4. WHEN the Write_Mode is shown at each Rite_Viewport, THE E2E_Suite SHALL check without scrolling that the Leave_Button, the Writing_Surface and the "Give up" button each lie fully inside the viewport.
+5. WHEN the Summon_Step or the Write_Mode is shown at each Rite_Viewport, THE E2E_Suite SHALL check that the document `scrollHeight` is at most `innerHeight`.
+6. WHEN the player has pressed "Give up" in both steps of ghost 1 at each Rite_Viewport, THE E2E_Suite SHALL check that the "Next ghost" button lies fully inside the viewport.
+7. WHEN the page has been scrolled down during ghost 1 (the test adds a tall spacer element to the document body so that scrolling is possible, and first checks that `scrollY` is above 0), the ghost is finished with "Give up" in both steps and "Next ghost" is pressed, THE E2E_Suite SHALL check that `window.scrollY` equals 0.
+8. THE E2E_Suite SHALL run in Chromium only and SHALL stay outside the Test_Suite, as Requirements 24.10 and 24.12 say.
+9. THE README SHALL say that the E2E_Suite checks five screens at 375 and 320 px and the one-screen fit at 1024 × 768 and 375 × 812.
+
+### Requirement 30: No Personal Names in Repo Files
+
+**User Story:** As the maintainer, I want no personal name in the repository files, so that the repo follows the names rule of `structure.md`.
+
+The rule has no exception for approvals. The README and the log are first person ("I approved"). Specs, data files and tests say "approved by the human" or "human-approved". Bibliographic names in citations and credits (for example Chu Bong-Foo, D. C. Lau, Michael Puett, Cangjie) are allowed. The human edits `kiro-log.md` and the steering files; this requirement does not.
+
+#### Acceptance Criteria
+
+1. THE files under `.kiro/specs/` SHALL contain the text "approved by the human" in place of every earlier approval note that named a person, including the titles of tasks in every `tasks.md`.
+2. THE `reviewedBy` column of `data/prompt-overrides.csv` SHALL read "human-approved" on every row, and the tests under `tests/` that build override rows SHALL use "human-approved".
+3. WHEN `npm run build:data` runs after criterion 2 is done, THE data pipeline SHALL write an `app/public/data/characters.json` that is byte-identical to the file before the change, and SHALL write a `data/prompt-review.csv` that differs from the earlier file only in the `reviewedBy` column.
+4. THE test `tests/unit/oracle-power.test.ts` SHALL keep a test that none of the three Power files contains a Personal_Name, built from a name token that the test file assembles from parts so that the file itself contains no Personal_Name.
+5. THE Test_Suite SHALL fail IF a tracked text file contains the name token of criterion 4, case-insensitive, except `kiro-log.md`, the files under `.kiro/steering/` (both maintained by the human) and the tool-generated `tasks.meta.json` files, which the maintainer never edits by hand.
+6. THE maintainer SHALL NOT edit any `tasks.meta.json` by hand and SHALL report which task titles changed, because Kiro derives task IDs from titles.
+
+### Requirement 31: No Game-Rule Change and Verification of the Fit Amendments
+
+**User Story:** As the maintainer, I want proof that Requirements 25 to 30 change only layout, scrolling, tests and names, so that the game still behaves as approved.
+
+#### Acceptance Criteria
+
+1. THE implementation of Requirements 25 to 29 SHALL leave unmodified every file listed in Requirement 14.1, and THE storage schema version SHALL stay at 2.
+2. THE Test_Suite SHALL cover Requirements 25 to 28 and 30 with unit tests and component tests only, and SHALL add no property-based tests and no mutation tests (decision of Nov 15 in `tech.md`).
+3. THE existing assertions of the Summon step about the hold time, the fade time, the hint rules and the never-reveal rule SHALL pass without change; only the assertions about the paper size, the Writing_Surface size and the status area height SHALL change.
+4. WHEN the final checkpoint of these amendments runs, THE maintainer SHALL run `npm test`, `npx tsc -p tsconfig.json`, `npx tsc -p app/tsconfig.json`, `npx tsc -p oracle/tsconfig.json`, `npm run build -w app`, `npm run check:bundle`, `npm run test:e2e` and the dataset byte-identical check, and all SHALL succeed.
+5. THE manual tasks 10.1 and 19.2 SHALL stay open for the human, who re-checks 375, 768 and 1440 px and the new one-screen fit by eye.

@@ -59,7 +59,7 @@ The feature stays small (about one day of work). Tests are Vitest unit tests onl
 5. IF the Dataset_Build fails, THEN THE Data_Check_Command SHALL skip the Dataset_Tests.
 6. WHEN both steps succeed, THE Data_Check_Command SHALL exit with code 0 and print a first line starting with `DATA CHECK PASSED`.
 7. IF a step fails or cannot start, THEN THE Data_Check_Command SHALL exit with code 1 and write to standard error a first line starting with `DATA CHECK FAILED`, the name of the failing step, and the last 40 lines of that step's combined output.
-8. WHEN either the agent or a person saves a file in the Watched_Inputs while the hook file is loaded, THE Data_Check_Hook SHALL fire once for that save (verified by a human, approved by Takshil: a person's save of `data/prompt-overrides.csv` with a bad 吧 entryIndex reported `DATA CHECK FAILED: build:data`, and reverting the row reported `DATA CHECK PASSED`; a window reload was needed after the hook file was first created).
+8. WHEN either the agent or a person saves a file in the Watched_Inputs while the hook file is loaded, THE Data_Check_Hook SHALL fire once for that save (verified by a human, approved by the human: a person's save of `data/prompt-overrides.csv` with a bad 吧 entryIndex reported `DATA CHECK FAILED: build:data`, and reverting the row reported `DATA CHECK PASSED`; a window reload was needed after the hook file was first created).
 
 ### Requirement 2: Override index failures are visible
 
@@ -150,7 +150,7 @@ The feature stays small (about one day of work). Tests are Vitest unit tests onl
 2. THE README SHALL state that the Cangjie_Oracle reads only `app/public/data/characters.json` and returns no generated data.
 3. THE `kiro-log.md` file SHALL contain one dated entry for each Kiro feature used by this feature (hooks, custom agents, MCP, steering, specs and, if built, Powers), each with the fields What I did, Kiro feature, Why and Result.
 4. THE `kiro-log.md` entries written by this feature SHALL contain no personal names and no approval wording.
-5. THE README SHALL state that the Data_Check_Hook is fired by saves made by the agent or by a person once hooks are loaded, that a window reload may be needed after the hook file is first created, and that a person runs the Manual_Check_Command in a terminal to run the same check on demand, because the Kiro IDE offers no way to create a manual-trigger hook (decision approved by Takshil).
+5. THE README SHALL state that the Data_Check_Hook is fired by saves made by the agent or by a person once hooks are loaded, that a window reload may be needed after the hook file is first created, and that a person runs the Manual_Check_Command in a terminal to run the same check on demand, because the Kiro IDE offers no way to create a manual-trigger hook (decision approved by the human).
 
 ### Requirement 9: Tests and no regressions
 

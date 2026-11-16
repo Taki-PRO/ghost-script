@@ -1,4 +1,3 @@
-import type { CSSProperties } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import HanziWriter from 'hanzi-writer';
 import type { CharacterRecord } from '../data/types';
@@ -18,6 +17,7 @@ import {
   type SummonState,
 } from '../engine/cangjie';
 import { maskTarget } from '../engine/mask';
+import { summonPaperSize } from '../engine/surfaceSize';
 import { InkSurface } from '../components/InkSurface';
 import { theme } from '../styles/theme';
 
@@ -58,10 +58,6 @@ function prefersReducedMotion(): boolean {
   );
 }
 
-function surfaceSize(viewportWidth: number): number {
-  return Math.round(Math.min(viewportWidth * 0.6, 240));
-}
-
 /**
  * Summon step: the player types the ghost's Cangjie code; once the code is
  * complete (or the player gives up) the character forms in ink, is held,
@@ -76,6 +72,7 @@ export function SummonStep({ record, dataset, config, onDone }: SummonStepProps)
   const [phase, setPhase] = useState<Phase>('typing');
   const [feedback, setFeedback] = useState('Type the first key of the code');
   const [fallback, setFallback] = useState(false);
+  const [side] = useState(() => summonPaperSize(window.innerWidth, window.innerHeight));
 
   const containerRef = useRef<HTMLDivElement>(null);
   const writerRef = useRef<HanziWriter | null>(null);
@@ -169,10 +166,9 @@ export function SummonStep({ record, dataset, config, onDone }: SummonStepProps)
     };
 
     try {
-      const size = surfaceSize(window.innerWidth);
       const writer = HanziWriter.create(container, record.character, {
-        width: size,
-        height: size,
+        width: side,
+        height: side,
         padding: 12,
         showCharacter: false,
         showOutline: false,
@@ -193,7 +189,7 @@ export function SummonStep({ record, dataset, config, onDone }: SummonStepProps)
       writerRef.current = null;
       container.replaceChildren();
     };
-  }, [started, record.character, dataset]);
+  }, [started, record.character, dataset, side]);
 
   const hintVisible = isKeyHintVisible(state, config);
   const hintKey = hintVisible ? nextExpectedKey(state) : null;
@@ -215,7 +211,7 @@ export function SummonStep({ record, dataset, config, onDone }: SummonStepProps)
       <li
         key={i}
         aria-label={filled ? undefined : `Slot ${i + 1}, empty`}
-        className={`flex h-14 w-12 flex-col items-center justify-center rounded-md border text-ink ${
+        className={`flex h-12 w-11 flex-col items-center justify-center rounded-md border text-ink ${
           isHint ? 'border-ghost ring-2 ring-ghost' : 'border-muted'
         } bg-surface`}
       >
@@ -237,14 +233,14 @@ export function SummonStep({ record, dataset, config, onDone }: SummonStepProps)
   const reduced = prefersReducedMotion();
 
   return (
-    <section aria-label="Summon step" className="flex flex-col items-center gap-3 text-ink">
+    <section aria-label="Summon step" className="flex flex-col items-center gap-2 text-ink">
       <ol aria-label="Cangjie code" className="flex flex-nowrap justify-center gap-2">
         {slots}
       </ol>
 
       <div className="relative">
         <InkSurface
-          size="min(60vw, 240px)"
+          size={`${side}px`}
           containerRef={containerRef}
           hidden={phase === 'typing'}
           style={{
@@ -255,7 +251,7 @@ export function SummonStep({ record, dataset, config, onDone }: SummonStepProps)
         {fallback ? (
           <p
             lang="zh"
-            className="absolute inset-0 flex items-center justify-center text-7xl"
+            className="absolute inset-0 flex items-center justify-center text-6xl"
             style={{
               color: theme.inkOnPaper,
               opacity: fading ? 0 : 1,
@@ -267,16 +263,13 @@ export function SummonStep({ record, dataset, config, onDone }: SummonStepProps)
         ) : null}
       </div>
 
-      <p role="status" aria-live="polite" className="min-h-[3rem] text-center text-ink">
+      <p role="status" aria-live="polite" className="min-h-[2.5rem] text-center text-sm text-ink">
         {hintText ? `${feedback} · ${hintText}` : feedback}
         {' · '}
         {`Mistakes: ${state.mistakes}`}
       </p>
 
-      <div
-        className="flex flex-col items-center gap-[2px]"
-        style={{ '--key-w': 'clamp(32px, calc((100vw - 2rem - 18px) / 10), 48px)' } as CSSProperties}
-      >
+      <div className="summon-keys flex flex-col items-center gap-[2px]">
         {KEY_ROWS.map((row, i) => (
           <div
             key={row}
@@ -324,7 +317,7 @@ export function SummonStep({ record, dataset, config, onDone }: SummonStepProps)
         <button
           type="button"
           onClick={handleGiveUp}
-          className="rounded-md border border-muted px-4 py-2 text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost"
+          className="min-h-[44px] rounded-md border border-muted px-4 py-2 text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost"
         >
           Give up
         </button>

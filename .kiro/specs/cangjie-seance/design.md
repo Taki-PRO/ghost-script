@@ -26,10 +26,10 @@ The shipped app makes no network request for Cangjie codes or stroke data (Requi
 | D7 | Masking is one helper, `maskTarget`, in `app/src/engine/mask.ts`, shared by `GhostPrompt` and `SummonStep`. | One rule for every displayed string. | 5.2 |
 | D8 | The key-face rule is "letters only when the target is any key's face" (`KEY_FACE_CHARACTERS`), not a hard-coded list of 14 characters. | Correct for any dataset; the 14 current characters are one instance. | 5.3 |
 | D9 | `SeanceSession` keeps its props and callback; the Summon Step result is held in a ref and combined when the Lay-to-rest step reports. `App` and `recordOutcome` see one Outcome per ghost. | Smallest change to the recording path; the outcome is recorded once. | 4.5 |
-| D10 | The Summon step ends only after the character has formed (hanzi-writer `animateCharacter()` settled), been held for `SUMMON_HOLD_MS` (1500 ms), and faded for `SUMMON_FADE_MS` (1500 ms), the durations approved by Takshil; then the component unmounts. | The fade is the only guard against copying the character; unmounting removes every trace before writing starts. | 2.4, 5.5 |
+| D10 | The Summon step ends only after the character has formed (hanzi-writer `animateCharacter()` settled), been held for `SUMMON_HOLD_MS` (1500 ms), and faded for `SUMMON_FADE_MS` (1500 ms), the durations approved by the human; then the component unmounts. | The fade is the only guard against copying the character; unmounting removes every trace before writing starts. | 2.4, 5.5 |
 | D11 | Schema version 2 ships with NO migration; version-1 blobs reset through the existing rule. | Smaller code and tests; the cost (one-time progress loss) is accepted (requirements Decision 6). | 8.3 |
 | D12 | `BuildOptions` gains `unihanPath` and `unihanSha256`; `main()` reads the hash from `data/raw/SOURCES.md`. | `buildDataset` stays free of repository paths, so tests pass fixture files and hashes. | 1.9 |
-| D13 | `pickGuideExample` picks the LAST eligible character (2 or 3 keys) in the Learning order, and the guide copy keeps only sourced statements (approved by Takshil). | A new player meets the start of the Learning order first, so a late example is not an Answer_Leak; unsourced Cangjie claims break content-accuracy. | 6.4, 6.5, 6.9 |
+| D13 | `pickGuideExample` picks the LAST eligible character (2 or 3 keys) in the Learning order, and the guide copy keeps only sourced statements (approved by the human). | A new player meets the start of the Learning order first, so a late example is not an Answer_Leak; unsourced Cangjie claims break content-accuracy. | 6.4, 6.5, 6.9 |
 
 ---
 
@@ -462,7 +462,7 @@ Props are unchanged: `{ ghosts, dataset, config, onOutcome(char, outcome, now), 
 
 - `step: 'summon' | 'write'`, initialised for each ghost as `isPlayableInCangjie(record.cangjie) ? 'summon' : 'write'`, and reset in `handleAdvance` for the next ghost.
 - `summonResultRef: Outcome | null`, cleared when the ghost changes.
-- A text label above the step, "Step 1 of 2: Summon" or "Step 2 of 2: Lay to rest" (for a ghost without a Summon step, "Lay to rest"), as approved by Takshil.
+- A text label above the step, "Step 1 of 2: Summon" or "Step 2 of 2: Lay to rest" (for a ghost without a Summon step, "Lay to rest"), as approved by the human.
 - `step === 'summon'` renders `<SummonStep key={record.character} … onDone={handleSummonDone} />`; `handleSummonDone(result)` stores the result in `summonResultRef` and sets `step` to `'write'`. The Summon step has unmounted by then.
 - `step === 'write'` renders `<WriteMode … onOutcome={handleWriteOutcome} />`. `handleWriteOutcome(writeResult)` computes `combineOutcomes(summonResultRef.current, writeResult)` and passes it to the existing `handleOutcome`, which keeps its `resolvedRef` guard so `onOutcome(char, combined, Date.now())` fires once.
 - "Next ghost" and the result text appear only after `handleOutcome` ran, as today.
@@ -530,7 +530,7 @@ Both steps report an `Outcome`. `SeanceSession` keeps the Summon step's result i
 
 ## Correctness Properties
 
-This re-scope adds NO new property-based tests (approved by Takshil; Requirement 9.2). The invariants below are stated as rules and are each covered by unit or component tests (see "Testing Strategy"). They keep the "Validates" traceability to the requirements.
+This re-scope adds NO new property-based tests (approved by the human; Requirement 9.2). The invariants below are stated as rules and are each covered by unit or component tests (see "Testing Strategy"). They keep the "Validates" traceability to the requirements.
 
 - **Rule 1: Completion.** Entering exactly the keys of a code, in order, fills every slot and leaves the state non-`active`; any proper prefix leaves it `active` with `filled` equal to the prefix length. **Validates: Requirements 3.5, 3.8**
 - **Rule 2: Mistake count.** `mistakes` equals the number of key entries that differed from the next expected key at entry time. **Validates: Requirements 3.6**

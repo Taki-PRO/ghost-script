@@ -179,6 +179,43 @@ describe('SeanceSession', () => {
     expect(screen.queryByRole('button', { name: /next ghost|finish the séance/i })).toBeNull();
   });
 
+  describe('compact layout and scroll reset', () => {
+    let scrollTo: ReturnType<typeof vi.fn>;
+    let original: typeof window.scrollTo;
+    beforeEach(() => {
+      original = window.scrollTo;
+      scrollTo = vi.fn();
+      window.scrollTo = scrollTo as unknown as typeof window.scrollTo;
+    });
+    afterEach(() => {
+      window.scrollTo = original;
+    });
+
+    it('Next ghost scrolls to the top once, with (0, 0)', () => {
+      setup(['我', '口']);
+      emit('clean');
+      expect(scrollTo).not.toHaveBeenCalled();
+      fireEvent.click(screen.getByRole('button', { name: 'Next ghost' }));
+      expect(scrollTo).toHaveBeenCalledTimes(1);
+      expect(scrollTo).toHaveBeenCalledWith(0, 0);
+    });
+
+    it('Finish the séance calls onComplete and does not scroll', () => {
+      const { onComplete } = setup(['我']);
+      emit('clean');
+      fireEvent.click(screen.getByRole('button', { name: 'Finish the séance' }));
+      expect(onComplete).toHaveBeenCalledTimes(1);
+      expect(scrollTo).not.toHaveBeenCalled();
+    });
+
+    it('uses the compact clue card', () => {
+      setup(['我']);
+      const card = screen.getByRole('region', { name: "Ghost's clue" });
+      expect(card.className).toContain('p-2');
+      expect(card.className).toContain('flex');
+    });
+  });
+
   it('8.4: Enter and Space activate the focused Next button', async () => {
     const user = userEvent.setup();
     setup(['我', '口', '爱']);

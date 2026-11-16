@@ -133,7 +133,7 @@ Build the three Kiro-native tools in small steps: the data check (pipeline messa
 - The root `package.json` script `oracle` is added in 4.1, not 1.3.
 - Wave 4 is the first point where `oracle/src/index.ts` exists, so the MCP config test (5.2) runs there.
 - Unit tests only. No property-based tests are added.
-- Decisions approved by Takshil: the hook fires on human and agent saves once hooks are loaded (verified by a human); no manual-trigger hook (the IDE cannot create one, so the README documents `npm run check:data`); `verify` upper-cases the code and reports `normalisedCode`; task 6 (Power) stays; `@modelcontextprotocol/sdk` stays on v1 (1.32.2).
+- Decisions approved by the human: the hook fires on human and agent saves once hooks are loaded (verified by a human); no manual-trigger hook (the IDE cannot create one, so the README documents `npm run check:data`); `verify` upper-cases the code and reports `normalisedCode`; task 6 (Power) stays; `@modelcontextprotocol/sdk` stays on v1 (1.32.2).
 - Task 8.1 (`kiro-log.md`) stays in the plan. The human writes it this time rather than Kiro.
 - No tasks were added or removed, so the waves are unchanged.
 - Task 9 is a checkpoint and is not in the dependency graph; it runs after wave 6.

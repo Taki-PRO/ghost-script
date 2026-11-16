@@ -5,6 +5,7 @@ import { makeCharDataLoader, type CharacterDataset } from '../data/charDataLoade
 import type { EngineConfig } from '../engine/config';
 import type { Outcome } from '../engine/scheduler';
 import { resolveCompletion } from '../engine/outcome';
+import { writeSurfaceSize } from '../engine/surfaceSize';
 import { theme } from '../styles/theme';
 import { InkSurface } from '../components/InkSurface';
 
@@ -30,11 +31,6 @@ export function isHintTriggered(
   return mistakesOnStroke >= config.strokeHintAfterConsecutiveMisses;
 }
 
-/** Pixel size handed to hanzi-writer: matches CSS `min(80vw, 420px)`. */
-export function surfaceSize(viewportWidth: number): number {
-  return Math.round(Math.min(viewportWidth * 0.8, 420));
-}
-
 type Status = 'writing' | 'resolved' | 'failed';
 
 /**
@@ -55,6 +51,8 @@ export function WriteMode({ record, dataset, config, onOutcome }: WriteModeProps
   const configRef = useRef(config);
   configRef.current = config;
 
+  // Computed once per mount so the surface and hanzi-writer always agree.
+  const [side] = useState(() => writeSurfaceSize(window.innerWidth, window.innerHeight));
   const [status, setStatus] = useState<Status>('writing');
   const [loading, setLoading] = useState(true);
   const [mistakes, setMistakes] = useState(0);
@@ -86,10 +84,9 @@ export function WriteMode({ record, dataset, config, onOutcome }: WriteModeProps
     };
 
     try {
-      const size = surfaceSize(window.innerWidth);
       const writer = HanziWriter.create(container, record.character, {
-        width: size,
-        height: size,
+        width: side,
+        height: side,
         padding: 12,
         showCharacter: false,
         showOutline: false,
@@ -145,6 +142,7 @@ export function WriteMode({ record, dataset, config, onOutcome }: WriteModeProps
       writerRef.current = null;
       container.replaceChildren();
     };
+    // `side` is fixed for the life of the component.
   }, [record.character, dataset]);
 
   const handleGiveUp = () => {
@@ -163,9 +161,9 @@ export function WriteMode({ record, dataset, config, onOutcome }: WriteModeProps
   };
 
   return (
-    <section aria-label="Write mode" className="flex flex-col items-center gap-3 text-ink">
+    <section aria-label="Write mode" className="flex flex-col items-center gap-2 text-ink">
       <InkSurface
-        size="min(80vw, 420px)"
+        size={`${side}px`}
         containerRef={containerRef}
         role="group"
         ariaLabel="Writing area: draw the character from memory, stroke by stroke"
@@ -179,7 +177,7 @@ export function WriteMode({ record, dataset, config, onOutcome }: WriteModeProps
           type="button"
           onClick={handleGiveUp}
           disabled={loading}
-          className="rounded-md border border-muted px-4 py-2 text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost disabled:opacity-50"
+          className="min-h-[44px] rounded-md border border-muted px-4 py-2 text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost disabled:opacity-50"
         >
           Give up
         </button>

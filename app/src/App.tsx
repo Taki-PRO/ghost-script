@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import { loadDataset, type CharacterDataset } from './data/charDataLoader';
 import type { CharacterRecord } from './data/types';
 import { DEFAULT_CONFIG, type EngineConfig } from './engine/config';
@@ -24,6 +24,7 @@ import { StartMenu } from './components/StartMenu';
 import { SeanceSession } from './components/SeanceSession';
 import { Graveyard } from './components/Graveyard';
 import { Credits } from './components/Credits';
+import { scrollToTop } from './components/scrollToTop';
 import { SessionSummary, type SessionResults } from './components/SessionSummary';
 
 /**
@@ -61,9 +62,10 @@ type View =
   | { screen: 'seance'; dataset: CharacterDataset; ghosts: CharacterRecord[]; sessionId: number }
   | { screen: 'summary'; dataset: CharacterDataset; results: SessionResults };
 
-function Shell({ children }: { children: React.ReactNode }) {
+function Shell({ children, compact = false }: { children: React.ReactNode; compact?: boolean }) {
+  const sizing = compact ? 'min-h-[100dvh] px-2 py-2' : 'min-h-screen px-4 py-6';
   return (
-    <main className="min-h-screen w-full flex items-center justify-center text-ink px-4 py-6">
+    <main className={`${sizing} w-full flex items-center justify-center text-ink`}>
       <div className="w-full max-w-3xl flex flex-col items-center">{children}</div>
     </main>
   );
@@ -91,6 +93,10 @@ export default function App() {
       active = false;
     };
   }, []);
+
+  useLayoutEffect(() => {
+    scrollToTop();
+  }, [view.screen]);
 
   const startSeance = useCallback(
     (dataset: CharacterDataset) => {
@@ -211,7 +217,7 @@ export default function App() {
     case 'seance': {
       const { dataset, ghosts, sessionId } = view;
       return (
-        <Shell>
+        <Shell compact>
           <SeanceSession
             key={sessionId}
             ghosts={ghosts}

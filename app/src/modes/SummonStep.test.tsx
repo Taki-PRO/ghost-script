@@ -4,6 +4,7 @@ import realDataJson from '../../public/data/characters.json';
 import type { CharacterDataset } from '../data/charDataLoader';
 import type { CharacterRecord } from '../data/types';
 import { DEFAULT_CONFIG } from '../engine/config';
+import { summonPaperSize } from '../engine/surfaceSize';
 import { SUMMON_FADE_MS, SUMMON_HOLD_MS, SummonStep } from './SummonStep';
 
 // ---------------------------------------------------------------------------
@@ -12,6 +13,7 @@ import { SUMMON_FADE_MS, SUMMON_HOLD_MS, SummonStep } from './SummonStep';
 interface CreateCall {
   el: HTMLElement;
   char: string;
+  options: { width: number; height: number };
 }
 
 const h = vi.hoisted(() => ({
@@ -21,12 +23,12 @@ const h = vi.hoisted(() => ({
 }));
 
 vi.mock('hanzi-writer', () => {
-  const create = (el: HTMLElement, char: string) => {
+  const create = (el: HTMLElement, char: string, options: { width: number; height: number }) => {
     if (h.throwOnCreate) throw new Error('boom');
     const svg = document.createElement('span');
     svg.setAttribute('data-testid', 'fake-svg');
     el.appendChild(svg);
-    h.calls.push({ el, char });
+    h.calls.push({ el, char, options });
     return {
       animateCharacter: () =>
         h.rejectAnimate ? Promise.reject(new Error('load failed')) : Promise.resolve(),
@@ -60,7 +62,7 @@ const clickKey = (letter: string) =>
 const slots = () => screen.getByRole('list', { name: 'Cangjie code' }).querySelectorAll('li');
 const filledCount = () => Array.from(slots()).filter((li) => li.textContent !== '').length;
 const status = () => screen.getByRole('status');
-const fallbackEl = () => document.querySelector('p.text-7xl');
+const fallbackEl = () => document.querySelector('p.text-6xl');
 const surface = () => screen.getByTestId('ink-surface');
 const flush = () => act(async () => {});
 
@@ -382,22 +384,58 @@ describe('SummonStep layout', () => {
     for (const b of container.querySelectorAll('[role="group"] button')) {
       expect(b.className).toContain('min-h-[44px]');
     }
+    // The key width now comes from the `.summon-keys` class in index.css (task 24.3),
+    // not from an inline `--key-w` style.
     const wrapper = rows[0]!.parentElement!;
-    expect(wrapper.style.getPropertyValue('--key-w')).toContain('clamp(32px');
+    expect(wrapper.classList.contains('summon-keys')).toBe(true);
+    expect(wrapper.style.getPropertyValue('--key-w')).toBe('');
   });
 
   it('keeps the surface size in every phase and never uses the hidden class', async () => {
     setup(KOU);
+    const expected = `${summonPaperSize(window.innerWidth, window.innerHeight)}px`;
     const size = () => surface().style.width;
-    expect(size()).toBe('min(60vw, 240px)');
+    expect(size()).toBe(expected);
     expect(surface().className).not.toContain('hidden');
     typeCode(KOU.cangjie!);
     await flush();
-    expect(size()).toBe('min(60vw, 240px)');
+    expect(size()).toBe(expected);
     act(() => {
       vi.advanceTimersByTime(SUMMON_HOLD_MS);
     });
-    expect(size()).toBe('min(60vw, 240px)');
+    expect(size()).toBe(expected);
+  });
+
+  describe('paper size follows the viewport', () => {
+    const origW = window.innerWidth;
+    const origH = window.innerHeight;
+    afterEach(() => {
+      window.innerWidth = origW;
+      window.innerHeight = origH;
+    });
+
+    for (const [w, hgt] of [
+      [375, 812],
+      [1024, 768],
+    ] as const) {
+      it(`uses summonPaperSize at ${w} x ${hgt} for the surface and hanzi-writer`, async () => {
+        window.innerWidth = w;
+        window.innerHeight = hgt;
+        const side = summonPaperSize(w, hgt);
+        setup(KOU);
+        expect(surface().style.width).toBe(`${side}px`);
+        typeCode(KOU.cangjie!);
+        await flush();
+        expect(calls()).toHaveLength(1);
+        expect(calls()[0]!.options.width).toBe(side);
+        expect(calls()[0]!.options.height).toBe(side);
+      });
+    }
+  });
+
+  it('gives Give up a 44px minimum height', () => {
+    setup(WO);
+    expect(screen.getByRole('button', { name: 'Give up' }).className).toContain('min-h-[44px]');
   });
 
   it('keeps the writer container empty while typing', () => {
@@ -414,9 +452,10 @@ describe('SummonStep layout', () => {
     expect(surface().parentElement!.contains(fallbackEl())).toBe(true);
   });
 
-  it('reserves two lines for the status and keeps slots on one line', () => {
+  it('reserves 2.5rem for the status and keeps slots on one line', () => {
     setup(WO);
-    expect(status().className).toContain('min-h-[3rem]');
+    expect(status().className).toContain('min-h-[2.5rem]');
+    expect(status().className).toContain('text-sm');
     expect(screen.getByRole('list', { name: 'Cangjie code' }).className).toContain('flex-nowrap');
   });
 });

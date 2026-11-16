@@ -4,7 +4,9 @@
 
 This feature is visual only. It adds one pure engine module for the Graveyard, one tiny pure module for ghost states, a handful of presentational components, CSS in `index.css`, and a size check script. It changes no game rule (Requirement 14).
 
-Amended after tester feedback (approved by Takshil): the section "Amendments from tester feedback (Requirements 18 to 23)" at the end of this document adds a Leave séance control, sticky headers, the "Sources & licences" name, a night scene and a menu entrance. Where it conflicts with an earlier section (the bottom "Back to menu" button, the name "Credits", the flat background, the five-button menu text), the amendment wins.
+Amended after tester feedback (approved by the human): the section "Amendments from tester feedback (Requirements 18 to 23)" at the end of this document adds a Leave séance control, sticky headers, the "Sources & licences" name, a night scene and a menu entrance. Where it conflicts with an earlier section (the bottom "Back to menu" button, the name "Credits", the flat background, the five-button menu text), the amendment wins.
+
+Amended again after a second browser check (approved by the human): the section "Amendment: the Rite fits one screen, scroll reset, 320 px and names (Requirements 25 to 31)" at the end adds one-screen sizes for the Summon and Write steps, a scroll reset, the 320 px fix, e2e height checks and the removal of a personal name from repo files. It wins over earlier sizes.
 
 Property-based testing does not apply. The work is presentation, small mapping functions and copy, and the project decided on Nov 15 (`tech.md`) to add no new property tests. The Correctness Properties section is omitted on purpose (the format validator's warning about it is expected). Pure functions get unit tests with concrete cases; components get component tests.
 
@@ -40,13 +42,13 @@ Property-based testing does not apply. The work is presentation, small mapping f
 
 ### Approved decisions
 
-Each of these is approved by Takshil. None is open.
+Each of these is approved by the human. None is open.
 
 | # | Decision | Effect |
 | --- | --- | --- |
 | 1 | Chinese text uses the Chinese_Font_Stack: `"PingFang SC", "Hiragino Sans GB", "Songti SC", "Microsoft YaHei", "Noto Sans CJK SC", "Noto Serif CJK SC", sans-serif`. No other CJK stack. | Requirement 12.3; `hanzi` font family; `[lang='zh']` rule. |
 | 2 | Cormorant Garamond, weight 600, Latin subset, `font-display: swap`. | Requirement 12.2; task 1.2. |
-| 3 | Bibliographic names in citations and credits are allowed, as `.kiro/steering/structure.md` says. | The Huainanzi and Wikipedia citations may name authors and historical figures (for example Chu Bong-Foo, D. C. Lau, Michael Puett, Cangjie). Personal names stay out of repo files, except "approved by Takshil". |
+| 3 | Bibliographic names in citations and credits are allowed, as `.kiro/steering/structure.md` says. | The Huainanzi and Wikipedia citations may name authors and historical figures (for example Chu Bong-Foo, D. C. Lau, Michael Puett, Cangjie). Personal names stay out of repo files, except "approved by the human". |
 | 4 | The Credits_Screen gains a "Software" section, and the Notices_File is committed and linked. | Requirement 16; tasks 3.2, 3.3, 6.2. |
 | 5 | The proposed Ink_Palette and grave colours are accepted. Task 1.1 adjusts a hex only to reach 4.5:1. | Theme tokens table. |
 | 6 | A human checks the phone layout at 375, 768 and 1440 px. Kiro does not run or log this check. | Task 10.1. |
@@ -184,7 +186,7 @@ Renders `<div class="ink-paper relative" style={{width:size, aspectRatio:'1/1', 
 
 ### `modes/WriteMode.tsx` changes (Requirement 2)
 
-Replace the surface `<div>` with `InkSurface`, size `min(80vw, 420px)` (unchanged). Pass `strokeColor: theme.inkOnPaper`, `outlineColor: theme.gridLine`, `highlightColor: theme.seal`, `drawingColor: theme.drawing`, `drawingWidth: 5`. `showOutline` stays `false`. Nothing else changes: not the quiz options, callbacks, outcome logic, or messages.
+Replace the surface `<div>` with `InkSurface`, size `min(80vw, 420px)` *(amended, Requirement 26.2: now the pixel value of `writeSurfaceSize`)*. Pass `strokeColor: theme.inkOnPaper`, `outlineColor: theme.gridLine`, `highlightColor: theme.seal`, `drawingColor: theme.drawing`, `drawingWidth: 5`. `showOutline` stays `false`. Nothing else changes: not the quiz options, callbacks, outcome logic, or messages.
 
 ### `modes/SummonStep.tsx` changes (Requirement 8)
 
@@ -193,10 +195,10 @@ Replace the surface `<div>` with `InkSurface`, size `min(80vw, 420px)` (unchange
   <div role="group" data-row={i} className="grid justify-center gap-[2px]"
        style={{ gridTemplateColumns: `repeat(${row.length}, var(--key-w))` }}>
   ```
-  with `--key-w` defined once on the keyboard wrapper as `clamp(32px, calc((100vw - 2rem - 18px) / 10), 48px)`. At 375 px wide that is (375 - 32 - 18) / 10 = 32.5 px, so row 1 (10 keys, nine 2 px gaps) fits inside the Shell's `px-4` padding. Rows 2 and 3 use the same column width and are centred, which gives the staggered keyboard shape. Key buttons keep `min-h-[44px]`, `w-full`, `min-w-0`, and the same `aria-label`s. No `flex-wrap`.
-- **Fixed surface.** `InkSurface` is rendered in every phase with size `min(60vw, 240px)`. It replaces `hidden` on the container. `surfaceSize()` in the file stays and still feeds hanzi-writer.
+  with `--key-w` defined once on the keyboard wrapper as `clamp(32px, calc((100vw - 2rem - 18px) / 10), 48px)`. *(Amended, Requirement 25.9: the variable moves to the CSS class `.summon-keys`, and below 370 px it is `calc((100vw - 2rem - 18px) / 10)`. As built in task 24.3: one `clamp(min(32px, calc((100vw - 2rem - 18px) / 10)), calc((100vw - 2rem - 18px) / 10), 48px)`, with no media query.)* At 375 px wide that is (375 - 32 - 18) / 10 = 32.5 px, so row 1 (10 keys, nine 2 px gaps) fits inside the Shell's `px-4` padding. Rows 2 and 3 use the same column width and are centred, which gives the staggered keyboard shape. Key buttons keep `min-h-[44px]`, `w-full`, `min-w-0`, and the same `aria-label`s. No `flex-wrap`.
+- **Fixed surface.** `InkSurface` is rendered in every phase with size `min(60vw, 240px)`. *(Amended (approved by the human), Requirement 25: the size is now the pixel value of `summonPaperSize`, at most 160 px; see "Amendment: the Rite fits one screen".)* It replaces `hidden` on the container. `surfaceSize()` in the file stays and still feeds hanzi-writer.
 - **Slots.** The code slot list uses `flex-nowrap`; 5 slots of 48 px plus gaps is 272 px, less than 343 px.
-- **Status area.** The `role="status"` paragraph gets `min-h-[3rem]` (two lines at the current text size), so a longer message does not push the keyboard.
+- **Status area.** *(Amended, Requirement 25.7: `min-h-[2.5rem]` with `text-sm`, still two lines.)* The `role="status"` paragraph gets `min-h-[3rem]` (two lines at the current text size), so a longer message does not push the keyboard.
 - **Plain-text fallback.** The fallback character paragraph is moved inside the reserved surface (absolutely centred) instead of below it, so it does not change the height either.
 - Behaviour, timers, hint rules, reducer calls and `aria-label`s are unchanged.
 
@@ -446,7 +448,7 @@ Requested by the human. No game rule changes.
 
 ## Amendments from tester feedback (Requirements 18 to 23)
 
-Approved by Takshil. Presentation and navigation only: no scheduler, Outcome, timing or storage change (Requirement 23.1). Research for this section was done by reading the current code: `App.tsx`, `SeanceSession.tsx`, `StartMenu.tsx`, `Graveyard.tsx`, `Credits.tsx`, `IntroScreen.tsx`, `GhostPrompt.tsx`, `styles/theme.ts`, `styles/index.css` and `tailwind.config.ts`.
+Approved by the human. Presentation and navigation only: no scheduler, Outcome, timing or storage change (Requirement 23.1). Research for this section was done by reading the current code: `App.tsx`, `SeanceSession.tsx`, `StartMenu.tsx`, `Graveyard.tsx`, `Credits.tsx`, `IntroScreen.tsx`, `GhostPrompt.tsx`, `styles/theme.ts`, `styles/index.css` and `tailwind.config.ts`.
 
 ### Facts found in the current code
 
@@ -513,7 +515,7 @@ Two constants hold the texts, exactly as in Requirement 18.2a and 18.2b: `LEAVE_
 
 **Why nothing is recorded for the current ghost.** `onOutcome` is the only path to storage and it is called only from `handleOutcome`. A ghost that has not reached an Outcome has not called it. The summon result lives in `summonResultRef` and is dropped with the component. Leaving writes nothing.
 
-**Storage note (amended, approved by Takshil).** The claim "Ghosts you've finished are saved" is true only when the last write succeeded. `saveState` catches a failed write (quota, disabled storage) and keeps nothing, and `App.handleOutcome` ignores the return value of `recordOutcome`, so the player would be told something false. The one allowed change to `storage.ts` is a read-only flag, with no schema change and no change to any existing signature:
+**Storage note (amended, approved by the human).** The claim "Ghosts you've finished are saved" is true only when the last write succeeded. `saveState` catches a failed write (quota, disabled storage) and keeps nothing, and `App.handleOutcome` ignores the return value of `recordOutcome`, so the player would be told something false. The one allowed change to `storage.ts` is a read-only flag, with no schema change and no change to any existing signature:
 
 ```ts
 // in createStore
@@ -527,7 +529,7 @@ let saveFailedThisSession = false;           // sticky: starts false, never clea
 
 **App wiring (`App.tsx`).** `<SeanceSession ... savingWorks={savingWorks} onLeave={() => setView({ screen: 'menu', dataset })} />`. `savingWorks` is state in `App` (it can only go from true to false during a visit, because the storage flag is sticky), initialised from `isSavingWorking()` and refreshed with `setSavingWorks(isSavingWorking())` at these points: on mount (the initial state), right after `setIntroSeen(true)`, right after `setCangjieIntroSeen(true)`, in `startSeance` when a séance begins, and in `handleOutcome` right after `recordOutcome`. Every write the App makes is followed by a refresh, so the value is current whenever the prompt opens. The `key={sessionId}` already forces a fresh session next time. The summary screen is not shown.
 
-**The superseded rule.** `.kiro/specs/ghost-game-core/requirements.md` AC 1.5 and the matching line of its design carry an "Amended (approved by Takshil)" note that points to Requirement 18. In `SeanceSession.test.tsx`, the test "has no legend or menu control during the session" is replaced by two tests: the Leave_Button is present in every state; and no button named like the legend, the Cangjie guide, the Graveyard, Sources & licences or "Back to menu" is present, before and after an Outcome.
+**The superseded rule.** `.kiro/specs/ghost-game-core/requirements.md` AC 1.5 and the matching line of its design carry an "Amended (approved by the human)" note that points to Requirement 18. In `SeanceSession.test.tsx`, the test "has no legend or menu control during the session" is replaced by two tests: the Leave_Button is present in every state; and no button named like the legend, the Cangjie guide, the Graveyard, Sources & licences or "Back to menu" is present, before and after an Outcome.
 
 **Tests (component, jsdom).**
 - `SeanceSession.test.tsx`: Leave_Button is the first button in the DOM and is present while summoning, while writing and after an Outcome; pressing it shows the prompt text and two buttons and no `window.confirm` call (spy); the group's accessible name is the question; `aria-expanded` toggles; focus is on "Stay"; "Stay" and Escape close the prompt, restore focus to the Leave_Button and keep `onOutcome` and `onComplete` uncalled; "Leave" calls `onLeave` once; after "Leave" a late outcome emit calls neither callback; leaving after the summon step finished (real SummonStep with fake timers, as in the existing two-step suite) calls `onOutcome` zero times; an Outcome reached while the prompt is open is reported once and focus stays inside the prompt; the 44 px classes.
@@ -686,7 +688,7 @@ Unit tests and component tests only (Vitest, Testing Library, and plain Node fil
 
 ## Amendment: Sources & licences fits a phone (Requirement 24)
 
-Bug fix approved by Takshil. It fixes Requirement 9 (the Credits_Screen) at 375 px and relates to the manual task 10.1 (the human phone check, which found it). Presentation and test tooling only: no scheduler, Outcome, timing, storage or dataset change, and no file of Requirement 14.1 is touched. Research was done by reading `Credits.tsx`, `Graveyard.tsx`, `CangjieGuide.tsx`, `SeanceSession.tsx`, `SummonStep.tsx`, `WriteMode.tsx`, `StartMenu.tsx`, `App.tsx`, `storage.ts`, `app/vite.config.ts`, `index.css`, the three Vitest configs, the root `tsconfig.json` and `package.json`, and `.github/workflows/deploy.yml`.
+Bug fix approved by the human. It fixes Requirement 9 (the Credits_Screen) at 375 px and relates to the manual task 10.1 (the human phone check, which found it). Presentation and test tooling only: no scheduler, Outcome, timing, storage or dataset change, and no file of Requirement 14.1 is touched. Research was done by reading `Credits.tsx`, `Graveyard.tsx`, `CangjieGuide.tsx`, `SeanceSession.tsx`, `SummonStep.tsx`, `WriteMode.tsx`, `StartMenu.tsx`, `App.tsx`, `storage.ts`, `app/vite.config.ts`, `index.css`, the three Vitest configs, the root `tsconfig.json` and `package.json`, and `.github/workflows/deploy.yml`.
 
 ### Root cause
 
@@ -853,3 +855,164 @@ export default defineConfig({
 | Files of Requirement 14.1, `characters.json` | untouched | all |
 
 Property-based testing does not apply to this amendment: it is markup, CSS classes and a browser check, and the Nov 15 decision forbids new property tests. The E2E_Suite is neither a unit test nor a component test; it is a separate, opt-in check.
+
+## Amendment: the Rite fits one screen, scroll reset, 320 px and names (Requirements 25 to 31)
+
+Approved by the human. Presentation, scrolling, test tooling and names only: no scheduler, Outcome, timing, hint rule, storage or dataset change, and no file of Requirement 14.1 is touched (Requirement 31.1). Research was done by reading `App.tsx` (the `Shell` and the `view` switch), `SeanceSession.tsx`, `GhostPrompt.tsx`, `Credits.tsx`, `InkSurface.tsx`, `PracticeGrid.tsx`, `SummonStep.tsx`, `WriteMode.tsx`, `index.css`, `e2e/playwright.config.ts` and `e2e/no-horizontal-overflow.spec.ts`, and the tests that assert the old sizes (`SummonStep.test.tsx` lines about `min(60vw, 240px)`, `WriteMode.test.tsx` about `min(80vw, 420px)` and `surfaceSize`, `InkSurface.test.tsx`).
+
+### Facts found in the current code
+
+- `Shell` is `<main class="min-h-screen flex items-center justify-center px-4 py-6">`: 48 px of vertical padding and 32 px of horizontal padding.
+- `SeanceSession` root is `flex flex-col gap-4 p-4 max-w-xl`: 32 px of vertical padding and 16 px gaps. Its children are the header row (the Leave_Button is `min-h-[44px]`), the Ghost_Card, the step label (`text-base`, 24 px), the step, and after a result a block with the result line and the "Next ghost" button (`py-3`, about 50 px).
+- `GhostPrompt` is `p-4` with a `h-16 w-14` figure and `mb-2`, a "Meaning" label (`text-xs`), the meaning (`text-2xl`), `mt-3`, a "Pronunciation" label and the pinyin (`text-xl`): about 208 px for a one-line meaning.
+- `SummonStep` is a column with `gap-3` and seven children: slots (`h-14`, 56 px), the surface (`min(60vw, 240px)`), the status (`min-h-[3rem]`), the keyboard (3 rows of 44 px with 2 px gaps: 136 px), two note lines, and "Give up" (`py-2`, about 42 px). Its keyboard width variable `--key-w` is `clamp(32px, calc((100vw - 2rem - 18px) / 10), 48px)`, written for a 2rem page margin although the real horizontal padding is 4rem.
+- `WriteMode` is a column with `gap-3`: the surface (`min(80vw, 420px)`), the status (`min-h-[1.5rem]`), "Mistakes" (`text-sm`) and "Give up" (about 42 px).
+- Both steps give hanzi-writer a pixel size from `surfaceSize(window.innerWidth)` that mirrors the CSS string. A height rule in CSS alone would make the paper smaller than the SVG that hanzi-writer draws, so the CSS and the SVG must use one number.
+- `index.css` has no `scroll-behavior` declaration (only `scroll-padding-top`). `window.scrollTo(0, 0)` is therefore instant. No component calls `scrollTo` today.
+- At 320 px, ten 32 px keys and nine 2 px gaps are 338 px wide, wider than the viewport.
+
+### Height budget (CSS pixels)
+
+| Part | Old | New |
+| --- | --- | --- |
+| Page padding (top and bottom) | 48 | 16 |
+| Seance_Session padding | 32 | 16 |
+| Header row (Leave_Button) | 44 | 44 |
+| Ghost_Card | 208 | 72 (one-line meaning), 100 (two lines) |
+| Step label | 24 | 20 |
+| Gaps between those four parts | 48 | 24 |
+| Slots | 56 | 48 |
+| Summon_Surface | 240 | 160 at 1024 × 768, 150 at 375 × 812 |
+| Status area | 48 | 40 |
+| Keyboard (three rows) | 136 | 136 |
+| Two note lines | 40 (one line each at 1024) | 36 at 1024, 48 at 375 (the first note wraps) |
+| "Give up" | 42 | 44 |
+| Gaps inside the Summon_Step (6) | 72 | 48 |
+| **Total, Summon step** | about 1080 | about 704 at 1024 × 768 (64 spare), about 734 at 375 × 812 (78 spare) |
+
+The Write step needs the surface plus 112 px (status 24, "Mistakes" 20, "Give up" 44, gaps 24): at 1024 × 768 the surface is 368 and the total is 192 + 368 + 112 = 672 (700 with a two-line card); at 375 × 812 it is 300. After a result, "Give up" is replaced by the result block (about 86 px plus a gap): the total is 714 at 1024 × 768 and 674 at 375 × 812, so "Next ghost" is visible too. The spare space is smallest in the Write step with a result and a two-line card at 1024 × 768: 742 of 768 px, so 26 px spare. At 375 × 812 the same step uses 674 of 812 px (138 spare), and the Summon step uses 734 (78 spare), which allows a three-line meaning.
+
+### Decisions
+
+| # | Decision | Reason |
+| --- | --- | --- |
+| F1 | The sizes are two pure functions in `app/src/engine/surfaceSize.ts`: `summonPaperSize(w, h) = round(max(96, min(0.4 * w, 160, h - 600)))` and `writeSurfaceSize(w, h) = round(max(200, min(0.8 * w, 420, h - 400)))`. Both the surface `div` (inline `width` in px) and hanzi-writer (`width`, `height`) read the value, computed once when the step mounts (`useState` initialiser or `useMemo`). | One number for the paper and the SVG. The paper still needs only to hold the forming character, so 160 px is enough (it was 240). Computing once matches today's behaviour (hanzi-writer is not recreated on resize). |
+| F2 | The Summon constant 600 is the sum of everything else in the Summon step and its session at the tightest card (about 592 px, rounded up); the Write constant 400 is the same sum for the Write step with a result (about 300 px plus the result block and slack). The floors 96 and 200 keep the paper usable on very short screens. | They come from the budget table, not from a guess. On a screen shorter than the sum (for example 375 × 667) the page scrolls a little instead of shrinking the paper below a usable size. Only the two Rite_Viewports are required to fit. |
+| F3 | `GhostPrompt` gets an optional prop `compact` (default `false`). `SeanceSession` passes `compact`. The non-compact markup stays as it is. | Existing `GhostPrompt` tests and any other caller keep working. The Compact_Card is a layout change, not a content change. |
+| F4 | Compact_Card markup: a flex row with the figure (`h-10 w-9 shrink-0`) at the left and a text column (`min-w-0`) at the right; the labels "Meaning" and "Pronunciation" become `sr-only` paragraphs; meaning `text-xl`, pinyin `text-lg`. | The labels cost 32 px of height and carry no information that the position and the `lang` attribute do not. They stay in the accessibility tree. Meaning (20 px) and pinyin (18 px) stay readable. The ghost state classes (`data-ghost-state`, `.ghost-figure`) are unchanged, so the animations still work. |
+| F5 | `Shell` gets a prop `compact`, set only for the `seance` screen: `px-2 py-2` and `min-h-[100dvh]` instead of `px-4 py-6` and `min-h-screen`. | With `px-2` and the session's `p-2`, the total horizontal padding is 32 px, which is the `2rem` that the `--key-w` formula already assumes. `100dvh` avoids the iOS Safari case where `100vh` is taller than the visible area and creates a scroll by itself. Other screens keep their padding. |
+| F6 | The keyboard width variable moves from an inline style to the CSS class `.summon-keys` in `index.css`: `--key-w: clamp(32px, calc((100vw - 2rem - 18px) / 10), 48px)`, and below 370 px it is `calc((100vw - 2rem - 18px) / 10)`. **As built in task 24.3; approved by the human (narrower keys only below the width where 32px keys fit):** one rule, `.summon-keys { --key-w: clamp(min(32px, calc((100vw - 2rem - 18px) / 10)), calc((100vw - 2rem - 18px) / 10), 48px); }`, with no `@media (max-width: 359px)` block. | A media query cannot override an inline style, and a Tailwind arbitrary property with nested `calc` is hard to read. The existing `index.css.test.ts` requires exactly one `@media` block, so the narrow case is inside the `clamp` (its lower bound is the smaller of 32 px and the shared width). The file is already tested by `index.css.test.ts`, so the rule gets a test. No animation or `url()` is added, so the existing rules of Requirement 23.4 still hold. |
+| F7 | **Deviation, as built in task 24.3; approved by the human (narrower keys only below the width where 32px keys fit).** Below 370 px the 32 px key width cannot hold: ten 32 px keys and nine gaps are 338 px, and the row has `100vw - 2rem` (328 px at 360 px). The keys then share the available width (27 px at 320 px, still above the 24 px minimum target size of WCAG 2.2 criterion 2.5.8; the height stays 44 px, in three rows). From 370 px up, the 32 px minimum of Requirement 8.3 holds, and the 375 px target keeps 32.5 px keys. | The Narrow_Phone width check must pass for the Summon step. Any alternative (a two-row layout, a horizontal scroll) would break the three-row shape of Requirement 8.1 and 8.2. |
+| F8 | Scroll reset is one helper, `scrollToTop()` in `app/src/components/scrollToTop.ts`: it returns at once when `window.scrollTo` is not a function, else calls `window.scrollTo(0, 0)`. | One place to mock in tests, and the guard for Requirement 27.4. |
+| F9 | Instant scrolling, always. The helper passes no `behavior`, and `index.css` has no `scroll-behavior`, so every motion setting gets an instant jump. A test reads `index.css` and fails if `scroll-behavior` appears. | A smooth scroll to the top on each screen change is motion that the player did not ask for, and Reduced_Motion users would need a second code path. A jump needs none. |
+| F10 | `App` calls `scrollToTop()` in a `useLayoutEffect` keyed on `view.screen`. `SeanceSession` calls it inside `handleAdvance` for a "Next ghost" press (not for "Finish the séance", which ends in a screen change). | A parent layout effect runs after the children's layout effects and before every passive effect, so the new screen's `useEffect` focus moves run after the reset, and the focused control is not scrolled away. The existing focus moves stay as they are (Requirement 27.5). The reset on the initial `loading` render is harmless. |
+| F11 | The Credits fix starts with a diagnosis at 320 × 640, as task 22.7 did. Likely suspects, to be checked and not assumed: the Fonts list items (the copyright text can hold a long URL; the `<li>` has no `WRAP`), the two Licensing paragraphs, and the header row (the `whitespace-nowrap` "Back to menu" button next to the title). The fix goes on the element the diagnosis names. | The cause is unknown (341 px measured). If the cause is in `App.tsx` (`Shell`), the task stops and reports, because `App.tsx` belongs to another task of the same group. |
+| F12 | E2E: parameterised tests, not a second Playwright project. The width spec loops over `[375 × 812, 320 × 640]` and sets `test.use({ viewport })` inside each `describe`; the new height spec loops over `[1024 × 768, 375 × 812]`. The config file stays unchanged, with its 375 × 812 default. | The existing 375 test titles stay the same, a project would run every spec at both sizes (the height spec at 320 is meaningless), and the config needs no edit. |
+| F13 | Shared helpers move to `e2e/helpers.ts` (`seed`, `seedState`, `datasetKeys`, `findOverflow(page, width)`, `boxInside`). `findOverflow` takes the limit as a parameter and keeps its thresholds (`> width + 0.5`, `< -0.5`, `scrollWidth > width`). | The two spec files would otherwise copy the helpers. Moving code with the same thresholds loosens nothing. |
+| F14 | The scroll test needs something to scroll. Because the one-screen fit leaves no scrollable page, the test appends a 2000 px `div#scroll-spacer` to `document.body` (outside `#root`, so React never removes it), scrolls to 500 and first asserts `scrollY > 0`. | Without the spacer `scrollY` is 0 before and after, and the test could not fail. The precondition proves the spacer works. Height tests run without a spacer. |
+| F15 | Names: `.kiro/specs/**/*.md` were changed with one replace of the approval phrase, `tasks.meta.json` untouched. The name token in tests is assembled from parts (for example `['Tak', 'shil'].join('')`), so the test files contain no name. | The rule has no exception, and a test that names the person to forbid the name would break it. |
+
+### Size decisions in one place
+
+| Viewport | `summonPaperSize` | `writeSurfaceSize` |
+| --- | --- | --- |
+| 1024 × 768 | 160 (40% of width 410, cap 160, height rule 168) | 368 (80% of width 819, cap 420, height rule 368) |
+| 375 × 812 | 150 (40% of width 150) | 300 (80% of width 300) |
+| 320 × 640 | 96 (floor; height rule 40) | 240 (height rule 240) |
+| 1440 × 900 | 160 | 420 |
+
+### Component changes
+
+**`GhostPrompt.tsx`** (Requirements 25.4, 25.5):
+
+```tsx
+<section aria-label="Ghost's clue" data-ghost-state={ghostStateFor(outcome)}
+  className={compact ? 'ghost-card flex items-center gap-3 rounded-lg bg-surface p-2 text-left'
+                     : 'ghost-card rounded-lg bg-surface p-4 text-center'}>
+  <GhostFigure className={compact ? 'ghost-figure h-10 w-9 shrink-0 text-ghost'
+                                  : 'ghost-figure mx-auto mb-2 h-16 w-14 text-ghost'} />
+  {compact ? (
+    <div className="min-w-0">
+      <p className="sr-only">Meaning</p>
+      <p className="text-xl text-ink">{meaning}</p>
+      <p className="sr-only">Pronunciation</p>
+      <p lang="zh-Latn-pinyin" className="text-lg text-ghost">{record.prompt.pinyin}</p>
+    </div>
+  ) : ( /* existing markup */ )}
+</section>
+```
+
+The never-reveal rule is unchanged: the masked meaning and the pinyin are the only text.
+
+**`SeanceSession.tsx`** (Requirements 25.6, 27.2): root `gap-2 p-2`, `<GhostPrompt compact …>`, step label `text-sm`, and `scrollToTop()` as the first statement after the guard in `handleAdvance`'s next-ghost branch. The header, the Leave_Prompt, the focus effects and the result block are unchanged. The result block keeps its markup.
+
+**`SummonStep.tsx`** (Requirements 25.2, 25.3, 25.7 to 25.9): `const [side] = useState(() => summonPaperSize(window.innerWidth, window.innerHeight))`; `InkSurface size={`${side}px`}`; hanzi-writer `width: side, height: side`; remove the local `surfaceSize`; root `gap-2`; slots `h-12 w-11`; status `min-h-[2.5rem] text-sm`; the two notes `text-xs`; "Give up" `min-h-[44px]`; the keyboard wrapper gets the class `summon-keys` instead of the inline `--key-w`. The fallback character stays inside the paper; its size `text-7xl` (72 px) is reduced to `text-6xl` (60 px) so it fits the smaller paper.
+
+**`WriteMode.tsx`** (Requirements 26.2 to 26.5): the same pattern with `writeSurfaceSize`; root `gap-2`; "Give up" `min-h-[44px]`; `export function surfaceSize` is removed and its test moves to `surfaceSize.test.ts`.
+
+**`App.tsx`** (Requirements 27.1, 25.6): `Shell` gets `compact`; `case 'seance'` renders `<Shell compact>`; `useLayoutEffect(() => { scrollToTop(); }, [view.screen])`.
+
+**`index.css`** (Requirement 25.9): the `.summon-keys` rule and its media query, as F6.
+
+**`Credits.tsx`** (Requirement 28): per F11, after the diagnosis.
+
+### Tests (Vitest, jsdom; no property tests)
+
+- `surfaceSize.test.ts`: the worked values of both functions at the four viewports above; the floors (very small heights give 96 and 200); the caps (very large viewports give 160 and 420); results are whole numbers; the paper never exceeds 40% of the width unless the floor applies.
+- `scrollToTop.test.ts`: calls `window.scrollTo` once with `(0, 0)`; does nothing and does not throw when `window.scrollTo` is undefined.
+- `index.css.test.ts`: `.summon-keys` holds the single `--key-w` clamp (as built in task 24.3: no `max-width: 359px` media query, because the test requires exactly one `@media` block); the file contains no `scroll-behavior`; the existing animation, `url()` and token tests pass unchanged.
+- `GhostPrompt.test.tsx`: with `compact`, the section has the compact classes, the figure is `h-10`, "Meaning" and "Pronunciation" exist as `sr-only` text, the pinyin keeps its `lang`, and the target character never appears; without `compact`, every existing assertion passes unchanged.
+- `SummonStep.test.tsx`: the surface width is `${summonPaperSize(innerWidth, innerHeight)}px` and hanzi-writer receives the same number as `width` and `height` (set `window.innerWidth` and `innerHeight` for two viewports); the keyboard wrapper has the class `summon-keys`; the status area has `min-h-[2.5rem]`; "Give up" has `min-h-[44px]`. Hold, fade, hint and never-reveal assertions are unchanged (Requirement 31.3).
+- `WriteMode.test.tsx`: the same for `writeSurfaceSize`; "Give up" has `min-h-[44px]`.
+- `SeanceSession.test.tsx`: `window.scrollTo` is mocked; pressing "Next ghost" calls it once with `(0, 0)`; finishing the last ghost does not call it from the session; the Compact_Card is used (`ghost-card` has `p-2`); the focus tests pass unchanged.
+- `App.test.tsx`: `window.scrollTo` is mocked; each screen change (menu, graveyard, back to menu, séance) adds a call with `(0, 0)`, asserted as a relative increase so that the session's own calls do not break the count; the séance screen's `main` has `px-2`.
+- `Credits.test.tsx`: the element named by the diagnosis carries the Wrap_Class.
+- jsdom cannot lay out or scroll, so the real fit is checked by the E2E_Suite.
+
+### E2E extension (Requirements 29.1 to 29.9)
+
+```
+e2e/
+├── playwright.config.ts            (unchanged)
+├── helpers.ts                      (new: seed, seedState, datasetKeys, findOverflow(page, width), boxInside)
+├── no-horizontal-overflow.spec.ts  (loops over 375 × 812 and 320 × 640)
+└── fits-one-screen.spec.ts         (new: heights and scroll reset at 1024 × 768 and 375 × 812)
+```
+
+- **Width spec.** The five screen tests and the guard test move inside `for (const vp of [375 × 812, 320 × 640])` with `test.use({ viewport: vp })`. The describe title keeps the form "no horizontal overflow at 375 px", so the existing 375 test names do not change. `expectViewport` compares with the loop's `vp`. At 320 the Summon step needs the F6 rule and the Credits fix; if another screen overflows at 320 (the Graveyard grid or the Cangjie_Guide are the likely ones), the task stops and reports it instead of changing the app.
+- **Height spec.** For each of `1024 × 768` and `375 × 812`:
+  1. *Summon step fits.* Seed both intro flags, open the menu, press "Begin a Nightly Séance", wait for the region "Summon step". Without scrolling, check with `boxInside` (top ≥ 0, bottom ≤ `innerHeight`, left ≥ 0, right ≤ `innerWidth`) the button "Leave séance", the text "Step 1 of 2: Summon", the region "Ghost's clue", the list "Cangjie code", `getByTestId('ink-surface')`, every button inside `[data-row="2"]`, and the "Give up" button of the Summon step. The last row's bottom is the one the requirement names. Also `document.documentElement.scrollHeight <= innerHeight`.
+  2. *Write step fits.* Press "Give up" in the Summon step, wait for the region "Write mode" (timeout 10 s), and check "Leave séance", the write `ink-surface`, the "Give up" button, and `scrollHeight <= innerHeight`.
+  3. *Next ghost fits.* Press "Give up" in the Write step (wait until it is enabled), wait for "Next ghost", and check it is inside the viewport.
+  4. *Scroll reset.* Seed, start the séance, append `div#scroll-spacer` (2000 px) to `document.body`, `window.scrollTo(0, 500)`, assert `scrollY > 0`, press "Give up" in both steps, press "Next ghost", and assert `scrollY === 0` (poll with `expect.poll` for up to 2 s, because the reset runs in the click handler and the assertion could otherwise race the re-render).
+- **Guard.** The existing guard test stays and runs in the width loop.
+- **Nothing loosened.** Existing thresholds (`375.5`, `-0.5`, `scrollWidth > width`) and the five screen tests keep their behaviour. The new `scrollHeight` check is an addition.
+- **README.** The e2e subsection is reworded to "five screens at 375 and 320 px and the one-screen fit at 1024 × 768 and 375 × 812" (Requirement 29.9). It stays free of claims about download size or run time.
+
+### Names cleanup (Requirement 30)
+
+- **Specs (done in this pass).** Every `approved by <name>` in `.kiro/specs/**/*.md` now reads `approved by the human`. `tasks.meta.json` files are not edited. Task IDs are derived from titles, so a title that changed gets a new ID: the three top-level titles of this spec's `tasks.md` (groups 13, 21 and 22) changed, and the old IDs stay in `tasks.meta.json` as orphans until Kiro rewrites the file. No title of another spec changed (the other replacements are in requirements, design and notes).
+- **Data and tests (a task).** `data/prompt-overrides.csv` (49 rows, column `reviewedBy`) and the rows built in `tests/unit/build-override-errors.test.ts` change to `human-approved`; `data/prompt-review.csv` is regenerated by `npm run build:data` and changes only in `reviewedBy`; `app/public/data/characters.json` must be byte-identical (SHA-256 before and after). `tests/unit/oracle-power.test.ts` keeps its "personal names" test with a token assembled from parts. A new `tests/unit/no-personal-names.test.ts` lists the tracked files with `git ls-files`, skips `kiro-log.md`, `.kiro/steering/**` and `tasks.meta.json`, and fails if any other text file contains the token (case-insensitive).
+- **Not touched.** `kiro-log.md` and the steering files (the human edits them), and any `tasks.meta.json`.
+
+### Impact on existing code and tests
+
+| Item | Change | Task |
+| --- | --- | --- |
+| `app/src/engine/surfaceSize.ts` and test | new | 24.1 |
+| `app/src/components/scrollToTop.ts` and test | new | 24.2 |
+| `index.css`, `index.css.test.ts` | `.summon-keys` rule; no `scroll-behavior` test | 24.3 |
+| `GhostPrompt.tsx`, `GhostPrompt.test.tsx` | `compact` prop | 24.4 |
+| `SummonStep.tsx`, `SummonStep.test.tsx` | pixel size, spacing, key class; size assertions change | 24.5 |
+| `WriteMode.tsx`, `WriteMode.test.tsx` | pixel size, spacing; `surfaceSize` assertions move | 24.6 |
+| `SeanceSession.tsx`, tests | compact card, spacing, scroll reset | 24.7 |
+| `App.tsx`, `App.test.tsx` | `Shell compact`, layout effect | 24.8 |
+| `Credits.tsx`, `Credits.test.tsx` | 320 px fix | 24.9 |
+| `data/prompt-overrides.csv`, `data/prompt-review.csv`, three test files | names | 24.10 |
+| `e2e/helpers.ts`, `e2e/no-horizontal-overflow.spec.ts` | shared helpers, 320 loop | 24.11 |
+| `e2e/fits-one-screen.spec.ts`, `README.md` | new height spec, README wording | 24.12 |
+| `InkSurface.tsx`, `PracticeGrid.tsx`, `e2e/playwright.config.ts`, `kiro-log.md`, files of Requirement 14.1, `characters.json` | unchanged | none |
+
+`InkSurface.test.tsx` keeps its test with the string `min(60vw, 240px)`, because the component still accepts any CSS length; only the two modes stop passing that string.
+
+Property-based testing does not apply to this amendment: the sizes are simple arithmetic checked by example at the four viewports, the rest is markup, scrolling and a browser check, and the Nov 15 decision forbids new property tests.

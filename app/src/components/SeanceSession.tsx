@@ -8,6 +8,7 @@ import { combineOutcomes } from '../engine/outcome';
 import { SummonStep } from '../modes/SummonStep';
 import { WriteMode } from '../modes/WriteMode';
 import { GhostPrompt } from './GhostPrompt';
+import { scrollToTop } from './scrollToTop';
 import type { SessionResults } from './SessionSummary';
 
 export interface SeanceSessionProps {
@@ -126,6 +127,7 @@ export function SeanceSession({ ghosts, dataset, config, onOutcome, onComplete, 
       onCompleteRef.current({ total, laidToRest: laidToRestRef.current });
       return;
     }
+    scrollToTop();
     summonResultRef.current = null;
     setResult(null);
     setStep(initialStep(list[index + 1]));
@@ -166,7 +168,7 @@ export function SeanceSession({ ghosts, dataset, config, onOutcome, onComplete, 
       : 'Step 2 of 2: Lay to rest';
 
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-col items-center gap-4 p-4">
+    <div className="mx-auto flex w-full max-w-xl flex-col items-center gap-2 p-2">
       <div className="flex w-full items-center justify-between gap-3">
         <button
           ref={leaveBtnRef}
@@ -205,8 +207,8 @@ export function SeanceSession({ ghosts, dataset, config, onOutcome, onComplete, 
           </div>
         </div>
       )}
-      <GhostPrompt record={record} outcome={result} />
-      <p className="text-muted">{stepLabel}</p>
+      <GhostPrompt record={record} outcome={result} compact />
+      <p className="text-sm text-muted">{stepLabel}</p>
       {step === 'summon' ? (
         <SummonStep
           key={record.character}

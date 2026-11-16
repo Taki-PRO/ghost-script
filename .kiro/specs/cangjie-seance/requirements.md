@@ -227,23 +227,23 @@ The steering files (`product.md`, `tech.md`, `content-accuracy.md`) are updated 
 
 ## Decisions
 
-All approved by Takshil; no open questions remain.
+All approved by the human; no open questions remain.
 
-1. One rite, no mode choice: every ghost goes through Summon then Lay to rest in one Séance (approved by Takshil).
-2. Ghosts without a playable code (null, or starting with X: 别 and 错) skip the Summon step; 身 stays playable; 298 of 300 ghosts have a Summon step (approved by Takshil).
-3. One Combined outcome per ghost, recorded once at the end of the Lay-to-rest step with `applyReview` and `recordOutcome(char, entry)`; one Review history; the scheduler and Learning order are unchanged (approved by Takshil).
-4. Each step's mistakes are compared to `cleanMistakeThreshold` separately (approved by Takshil).
-5. Cut: "Reveal its shape", the IDS layout parser and StructureHint component, the mode choice, per-Mode histories and the version-1 to version-2 migration (approved by Takshil).
-6. Schema version 2 gains `cangjieIntroSeen`; no migration ships (approved by Takshil).
-7. Kept: Unihan `kCangjie` data with both SHA-256 values, the X-code exclusion, letters-only on-screen keys for the 14 single-key characters, IME handling, the automatic Key hint after 3 consecutive wrong keys, the never-reveal rule, and the "How Cangjie works" screen (approved by Takshil).
-8. "How Cangjie works" says "developed in the 1970s", matching the content-accuracy.md whitelist, instead of a specific year (approved by Takshil).
-9. Tests: unit and component tests only, no new property tests, no mutation testing (approved by Takshil).
-10. The last task is a manual check by a human, not by Kiro (approved by Takshil).
+1. One rite, no mode choice: every ghost goes through Summon then Lay to rest in one Séance (approved by the human).
+2. Ghosts without a playable code (null, or starting with X: 别 and 错) skip the Summon step; 身 stays playable; 298 of 300 ghosts have a Summon step (approved by the human).
+3. One Combined outcome per ghost, recorded once at the end of the Lay-to-rest step with `applyReview` and `recordOutcome(char, entry)`; one Review history; the scheduler and Learning order are unchanged (approved by the human).
+4. Each step's mistakes are compared to `cleanMistakeThreshold` separately (approved by the human).
+5. Cut: "Reveal its shape", the IDS layout parser and StructureHint component, the mode choice, per-Mode histories and the version-1 to version-2 migration (approved by the human).
+6. Schema version 2 gains `cangjieIntroSeen`; no migration ships (approved by the human).
+7. Kept: Unihan `kCangjie` data with both SHA-256 values, the X-code exclusion, letters-only on-screen keys for the 14 single-key characters, IME handling, the automatic Key hint after 3 consecutive wrong keys, the never-reveal rule, and the "How Cangjie works" screen (approved by the human).
+8. "How Cangjie works" says "developed in the 1970s", matching the content-accuracy.md whitelist, instead of a specific year (approved by the human).
+9. Tests: unit and component tests only, no new property tests, no mutation testing (approved by the human).
+10. The last task is a manual check by a human, not by Kiro (approved by the human).
 11. Accepted trade-off: writing right after seeing the character tests short-term memory; the hold and fade times are named constants (`SUMMON_HOLD_MS`, `SUMMON_FADE_MS`), one constant each, so they are easy to change.
 12. The verbatim-code check is an exhaustive unit test over all 300 records, not a property test, which honours "no new property tests".
-13. Give up in the Summon step reveals the code; the character forms and fades; the ghost still proceeds to the Lay-to-rest step with the Combined outcome fixed at `gave-up` (approved by Takshil).
-14. The formed character holds 1.5 s and fades over 1.5 s (approved by Takshil).
-15. The Summon step shows the one-line note "Codes: Unicode Unihan kCangjie", in addition to the statement in the guide (approved by Takshil).
-16. Step labels are "Step 1 of 2: Summon" and "Step 2 of 2: Lay to rest" (approved by Takshil).
-17. `SeanceSession` combines the two Step results internally, so `App` and `recordOutcome(char, entry)` keep their current form (approved by Takshil).
-18. The guide example is the last eligible character in the Learning order (Playable, code of 2 or 3 keys) to avoid an Answer_Leak, and the guide keeps only sourced statements: "each key stands for a family of related shapes" cites "Cangjie input method"; the X key is labelled 難 on screen without any claim about its meaning (approved by Takshil).
+13. Give up in the Summon step reveals the code; the character forms and fades; the ghost still proceeds to the Lay-to-rest step with the Combined outcome fixed at `gave-up` (approved by the human).
+14. The formed character holds 1.5 s and fades over 1.5 s (approved by the human).
+15. The Summon step shows the one-line note "Codes: Unicode Unihan kCangjie", in addition to the statement in the guide (approved by the human).
+16. Step labels are "Step 1 of 2: Summon" and "Step 2 of 2: Lay to rest" (approved by the human).
+17. `SeanceSession` combines the two Step results internally, so `App` and `recordOutcome(char, entry)` keep their current form (approved by the human).
+18. The guide example is the last eligible character in the Learning order (Playable, code of 2 or 3 keys) to avoid an Answer_Leak, and the guide keeps only sourced statements: "each key stands for a family of related shapes" cites "Cangjie input method"; the X key is labelled 難 on screen without any claim about its meaning (approved by the human).

@@ -468,3 +468,72 @@ describe('App integration', () => {
     });
   });
 });
+
+describe('screen-change scroll reset and compact séance shell', () => {
+  const home = () => seed({ introSeen: true, cangjieIntroSeen: true });
+  const spyScroll = () => vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+  const mainOf = () => document.querySelector('main')!;
+
+  it('scrolls to (0, 0) on menu -> Graveyard and Graveyard -> menu', async () => {
+    home();
+    const scroll = spyScroll();
+    const user = await openApp();
+    await user.click(await screen.findByRole('button', { name: /^graveyard$/i }));
+    expect(scroll).toHaveBeenLastCalledWith(0, 0);
+    const afterOpen = scroll.mock.calls.length;
+    await user.click(screen.getByRole('button', { name: /back to menu/i }));
+    expect(scroll.mock.calls.length).toBeGreaterThan(afterOpen);
+    expect(scroll).toHaveBeenLastCalledWith(0, 0);
+  });
+
+  it('scrolls to (0, 0) on menu -> Sources & licences', async () => {
+    home();
+    const scroll = spyScroll();
+    const user = await openApp();
+    const before = (await screen.findByRole('button', { name: 'Sources & licences' }), scroll.mock.calls.length);
+    await user.click(screen.getByRole('button', { name: 'Sources & licences' }));
+    expect(scroll.mock.calls.length).toBeGreaterThan(before);
+    expect(scroll).toHaveBeenLastCalledWith(0, 0);
+  });
+
+  it('scrolls on menu -> séance, and the séance shell is compact while the menu is not', async () => {
+    home();
+    const scroll = spyScroll();
+    const user = await openApp();
+    const button = await screen.findByRole('button', { name: /begin a nightly séance/i });
+    expect(mainOf().className).toContain('px-4');
+    const before = scroll.mock.calls.length;
+    await user.click(button);
+    expect(scroll.mock.calls.length).toBeGreaterThan(before);
+    expect(scroll).toHaveBeenCalledWith(0, 0);
+    expect(mainOf().className).toContain('px-2');
+    expect(mainOf().className).not.toContain('px-4');
+  });
+
+  it('scrolls on séance -> menu via Leave', async () => {
+    home();
+    const scroll = spyScroll();
+    const user = await openApp();
+    await user.click(await screen.findByRole('button', { name: /begin a nightly séance/i }));
+    await user.click(screen.getByRole('button', { name: /leave séance/i }));
+    const before = scroll.mock.calls.length;
+    await user.click(screen.getByRole('button', { name: /^leave$/i }));
+    expect(screen.getByRole('button', { name: /begin a nightly séance/i })).toBeTruthy();
+    expect(scroll.mock.calls.length).toBeGreaterThan(before);
+    expect(scroll).toHaveBeenLastCalledWith(0, 0);
+  });
+
+  it('scrolls when the summary screen opens and when "Begin another Séance" leaves it', async () => {
+    home();
+    const scroll = spyScroll();
+    const user = await openApp();
+    await user.click(await screen.findByRole('button', { name: /begin a nightly séance/i }));
+    const beforeSummary = scroll.mock.calls.length;
+    await playSeance(user, Array<Outcome>(10).fill('clean'));
+    expect(scroll.mock.calls.length).toBeGreaterThan(beforeSummary);
+    const beforeAgain = scroll.mock.calls.length;
+    await user.click(await screen.findByRole('button', { name: /begin another séance/i }));
+    expect(scroll.mock.calls.length).toBeGreaterThan(beforeAgain);
+    expect(scroll).toHaveBeenLastCalledWith(0, 0);
+  });
+});

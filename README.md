@@ -88,7 +88,7 @@ npm run test:e2e:install
 npm run test:e2e
 ```
 
-Run `npm run test:e2e:install` once; it downloads Chromium. `npm run test:e2e` then builds the app, serves it with `vite preview` on port 4173 under `/ghost-script/`, and opens five screens at 375 px wide: Sources & licences, the Graveyard, How Cangjie works, the Summon step and the Write step. For each screen it checks that the page does not scroll sideways.
+Run `npm run test:e2e:install` once; it downloads Chromium. `npm run test:e2e` then builds the app, serves it with `vite preview` on port 4173 under `/ghost-script/`, and runs two spec files. `e2e/no-horizontal-overflow.spec.ts` opens five screens at 375 and 320 px wide (Sources & licences, the Graveyard, How Cangjie works, the Summon step and the Write step) and checks that the page does not scroll sideways. `e2e/fits-one-screen.spec.ts` runs at 1024 × 768 and 375 × 812: it checks that the Summon step and the Write step fit in the viewport without vertical scrolling, that "Next ghost" is inside the viewport, and that the page scrolls back to the top on "Next ghost". It moves through the steps with "Give up" and never types a Cangjie code.
 
 `npm test` does not run this check, and the deploy workflow does not run it either.
 

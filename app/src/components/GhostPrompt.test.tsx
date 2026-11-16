@@ -129,6 +129,43 @@ describe('GhostPrompt', () => {
     }
   });
 
+  it('renders the compact card with the F4 classes and sr-only labels', () => {
+    const r = rec('山');
+    const { container } = render(<GhostPrompt record={r} compact />);
+    const section = container.querySelector('section');
+    expect(section?.className).toBe(
+      'ghost-card flex items-center gap-3 rounded-lg bg-surface p-2 text-left',
+    );
+    expect(section?.getAttribute('data-ghost-state')).toBe('haunting');
+    expect(container.querySelector('svg.ghost-figure')?.getAttribute('class')).toContain(
+      'h-10 w-9 shrink-0 text-ghost',
+    );
+    expect(container.querySelector('div.min-w-0')).toBeTruthy();
+    expect(screen.getByText('Meaning').className).toContain('sr-only');
+    expect(screen.getByText('Pronunciation').className).toContain('sr-only');
+    expect(screen.getByText('mountain; hill').className).toBe('text-xl text-ink');
+    const pinyin = screen.getByText(r.prompt.pinyin);
+    expect(pinyin.getAttribute('lang')).toBe('zh-Latn-pinyin');
+    expect(pinyin.className).toBe('text-lg text-ghost');
+  });
+
+  it('keeps data-ghost-state per outcome in compact mode', () => {
+    const { container } = render(
+      <GhostPrompt record={rec('山')} outcome="struggled" compact />,
+    );
+    expect(container.querySelector('section')?.getAttribute('data-ghost-state')).toBe(
+      'flickering',
+    );
+  });
+
+  it('never reveals the target in compact mode, text or attributes', () => {
+    for (const r of [rec('么'), rec('第'), rec('山')]) {
+      const { container } = render(<GhostPrompt record={r} compact />);
+      expect(allRenderedStrings(container).some((s) => s.includes(r.character))).toBe(false);
+      cleanup();
+    }
+  });
+
   it('leaves the clue text without an opacity style in every state', () => {
     for (const outcome of [null, 'clean', 'struggled', 'gave-up'] as const) {
       const { container } = render(<GhostPrompt record={rec('山')} outcome={outcome} />);
