@@ -49,9 +49,18 @@ export function Graveyard({ dataset, history, now, onBack }: GraveyardProps) {
   const noneMet = model.counts.unmet === total;
 
   return (
-    <main className="min-h-screen bg-background px-4 py-8 text-ink">
+    <main className="min-h-screen px-4 pb-8 text-ink">
       <div className="mx-auto flex max-w-3xl flex-col gap-6">
-        <h1 className="font-display text-3xl font-semibold">Graveyard</h1>
+        <header className="sticky top-0 z-20 -mx-4 flex min-h-[64px] items-center justify-between gap-3 border-b border-muted/40 bg-night-top px-4 py-2">
+          <h1 className="min-w-0 font-display text-2xl font-semibold sm:text-3xl">Graveyard</h1>
+          <button
+            type="button"
+            onClick={onBack}
+            className={`min-h-[44px] shrink-0 whitespace-nowrap rounded-md border border-muted bg-surface px-6 py-2 text-base text-ink ${focusRing}`}
+          >
+            Back to menu
+          </button>
+        </header>
         <p className="text-base text-ink">
           Every ghost in the game, in the order you will meet them. A ghost you have not met stays
           hidden.
@@ -96,13 +105,6 @@ export function Graveyard({ dataset, history, now, onBack }: GraveyardProps) {
             </li>
           ))}
         </ul>
-        <button
-          type="button"
-          onClick={onBack}
-          className={`min-h-[44px] self-start rounded-md border border-muted bg-surface px-6 py-3 text-base text-ink ${focusRing}`}
-        >
-          Back to menu
-        </button>
       </div>
     </main>
   );

@@ -18,7 +18,15 @@ export interface SeanceSessionProps {
   onOutcome: (char: string, outcome: Outcome, now: number) => void;
   /** Called exactly once when the séance ends. */
   onComplete: (results: SessionResults) => void;
+  /** Called once when the player confirms leaving. Records nothing for the current ghost. */
+  onLeave: () => void;
+  /** False when a write failed in this browser; changes the Leave prompt text. */
+  savingWorks: boolean;
 }
+
+export const LEAVE_TEXT_SAVED = "Leave now? Ghosts you've finished are saved.";
+export const LEAVE_TEXT_NOT_SAVING =
+  "Leave now? This browser didn't save all your progress, so some finished ghosts may be lost.";
 
 /** Keep the first occurrence of each character (Req 3.5). */
 export function dedupeGhosts(ghosts: readonly CharacterRecord[]): CharacterRecord[] {
@@ -38,6 +46,9 @@ function initialStep(record: CharacterRecord | undefined): Step {
   return record && isPlayableInCangjie(record.cangjie) ? 'summon' : 'write';
 }
 
+const BTN =
+  'min-h-[44px] rounded-md border border-muted bg-surface px-4 py-2 text-base text-ink hover:bg-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost';
+
 const RESULT_TEXT: Record<Outcome, string> = {
   clean: 'Laid to rest',
   struggled: 'Laid to rest — it will return soon',
@@ -48,7 +59,7 @@ const RESULT_TEXT: Record<Outcome, string> = {
  * One séance: walks the player through each ghost in order. Advances only
  * after a terminal outcome and an explicit button press (Req 3.2).
  */
-export function SeanceSession({ ghosts, dataset, config, onOutcome, onComplete }: SeanceSessionProps) {
+export function SeanceSession({ ghosts, dataset, config, onOutcome, onComplete, onLeave, savingWorks }: SeanceSessionProps) {
   const list = useMemo(() => dedupeGhosts(ghosts), [ghosts]);
   const total = list.length;
 
@@ -66,7 +77,23 @@ export function SeanceSession({ ghosts, dataset, config, onOutcome, onComplete }
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
 
+  const [confirmingLeave, setConfirmingLeave] = useState(false);
+  const leaveBtnRef = useRef<HTMLButtonElement>(null);
+  const stayBtnRef = useRef<HTMLButtonElement>(null);
+  const leftRef = useRef(false);
+  const confirmingRef = useRef(false);
+  confirmingRef.current = confirmingLeave;
+  const wasConfirmingRef = useRef(false);
+  const onLeaveRef = useRef(onLeave);
+  onLeaveRef.current = onLeave;
+
   const record = list[index];
+
+  useEffect(() => {
+    if (confirmingLeave) stayBtnRef.current?.focus();
+    else if (wasConfirmingRef.current) leaveBtnRef.current?.focus();
+    wasConfirmingRef.current = confirmingLeave;
+  }, [confirmingLeave]);
 
   useEffect(() => {
     if (total === 0 && !completedRef.current) {
@@ -76,12 +103,12 @@ export function SeanceSession({ ghosts, dataset, config, onOutcome, onComplete }
   }, [total]);
 
   useEffect(() => {
-    if (result !== null) nextRef.current?.focus();
+    if (result !== null && !confirmingRef.current) nextRef.current?.focus();
   }, [result]);
 
   const handleOutcome = useCallback(
     (outcome: Outcome) => {
-      if (!record || resolvedRef.current) return;
+      if (!record || resolvedRef.current || leftRef.current) return;
       resolvedRef.current = true;
       if (outcome !== 'gave-up') laidToRestRef.current += 1;
       setResult(outcome);
@@ -106,6 +133,7 @@ export function SeanceSession({ ghosts, dataset, config, onOutcome, onComplete }
   }, [index, total, list]);
 
   const handleSummonDone = useCallback((summonResult: Outcome) => {
+    if (leftRef.current) return;
     summonResultRef.current = summonResult;
     setStep('write');
   }, []);
@@ -116,6 +144,14 @@ export function SeanceSession({ ghosts, dataset, config, onOutcome, onComplete }
     },
     [handleOutcome],
   );
+
+  const openLeave = () => setConfirmingLeave(true);
+  const stay = () => setConfirmingLeave(false);
+  const leave = () => {
+    if (leftRef.current) return;
+    leftRef.current = true;
+    onLeaveRef.current();
+  };
 
   if (!record) {
     return <p className="text-center text-muted">No ghosts tonight.</p>;
@@ -131,9 +167,44 @@ export function SeanceSession({ ghosts, dataset, config, onOutcome, onComplete }
 
   return (
     <div className="mx-auto flex w-full max-w-xl flex-col items-center gap-4 p-4">
-      <h2 className="text-lg text-ink">
-        Ghost {index + 1} of {total}
-      </h2>
+      <div className="flex w-full items-center justify-between gap-3">
+        <button
+          ref={leaveBtnRef}
+          type="button"
+          aria-expanded={confirmingLeave}
+          aria-controls="leave-prompt"
+          onClick={openLeave}
+          className={BTN}
+        >
+          Leave séance
+        </button>
+        <h2 className="text-lg text-ink">
+          Ghost {index + 1} of {total}
+        </h2>
+      </div>
+      {confirmingLeave && (
+        <div
+          id="leave-prompt"
+          role="group"
+          aria-labelledby="leave-question"
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') stay();
+          }}
+          className="w-full rounded-lg border border-candle bg-surface p-4 text-center"
+        >
+          <p id="leave-question" className="text-ink">
+            {savingWorks ? LEAVE_TEXT_SAVED : LEAVE_TEXT_NOT_SAVING}
+          </p>
+          <div className="mt-3 flex justify-center gap-3">
+            <button type="button" onClick={leave} className={BTN}>
+              Leave
+            </button>
+            <button ref={stayBtnRef} type="button" onClick={stay} className={BTN}>
+              Stay
+            </button>
+          </div>
+        </div>
+      )}
       <GhostPrompt record={record} outcome={result} />
       <p className="text-muted">{stepLabel}</p>
       {step === 'summon' ? (

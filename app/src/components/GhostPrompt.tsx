@@ -4,6 +4,7 @@ import { maskTarget } from '../engine/mask';
 import { cleanupMeaning } from '../engine/promptCleanup';
 import { ghostStateFor } from '../engine/ghostVisual';
 import type { Outcome } from '../engine/scheduler';
+import { GhostFigure } from './GhostFigure';
 
 export interface GhostPromptProps {
   record: CharacterRecord;
@@ -32,19 +33,7 @@ export function GhostPrompt({ record, outcome = null }: GhostPromptProps) {
       data-ghost-state={ghostStateFor(outcome)}
       className="ghost-card rounded-lg bg-surface p-4 text-center"
     >
-      <svg
-        aria-hidden="true"
-        focusable="false"
-        className="ghost-figure mx-auto mb-2 h-16 w-14 text-ghost"
-        viewBox="0 0 64 80"
-      >
-        <path
-          d="M8 76 V32 C8 14 20 4 32 4 C44 4 56 14 56 32 V76 L48 68 L40 76 L32 68 L24 76 L16 68 Z"
-          fill="currentColor"
-        />
-        <circle cx="24" cy="34" r="4" fill="#0b0b10" />
-        <circle cx="40" cy="34" r="4" fill="#0b0b10" />
-      </svg>
+      <GhostFigure className="ghost-figure mx-auto mb-2 h-16 w-14 text-ghost" />
       <div>
         <p className="text-xs uppercase tracking-wide text-muted">Meaning</p>
         <p className="text-2xl text-ink">{meaning}</p>

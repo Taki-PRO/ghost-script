@@ -77,3 +77,10 @@ describe('SessionSummary controls (Req 3.6)', () => {
     expect(onPlayAgain).toHaveBeenCalledTimes(1);
   });
 });
+
+describe('SessionSummary wrapper (Req 21.11)', () => {
+  it('has no bg-background class on the wrapper', () => {
+    setup(10, 7);
+    expect(screen.getByRole('main')).not.toHaveClass('bg-background');
+  });
+});

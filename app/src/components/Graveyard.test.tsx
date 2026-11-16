@@ -86,6 +86,19 @@ describe('Graveyard', () => {
     });
   });
 
+  it('has one Back to menu button, in the sticky header with the h1', () => {
+    show({});
+    const buttons = screen.getAllByRole('button', { name: 'Back to menu' });
+    expect(buttons).toHaveLength(1);
+    const h1 = screen.getByRole('heading', { level: 1, name: 'Graveyard' });
+    const header = h1.closest('header');
+    expect(header).not.toBeNull();
+    expect(header?.contains(buttons[0])).toBe(true);
+    for (const cls of ['sticky', 'top-0', 'bg-night-top']) {
+      expect(header?.classList.contains(cls)).toBe(true);
+    }
+  });
+
   it('calls onBack from the Back to menu button', () => {
     const onBack = vi.fn();
     show({}, onBack);

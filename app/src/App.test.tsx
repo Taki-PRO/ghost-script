@@ -361,12 +361,96 @@ describe('App integration', () => {
     it('Menu -> Credits -> Back returns to the menu', async () => {
       seed({ introSeen: true, cangjieIntroSeen: true });
       const user = await openApp();
-      await user.click(await screen.findByRole('button', { name: /^credits$/i }));
-      expect(screen.getByRole('heading', { name: /^credits$/i })).toBeTruthy();
+      await user.click(await screen.findByRole('button', { name: 'Sources & licences' }));
+      expect(screen.getByRole('heading', { name: 'Sources & licences' })).toBeTruthy();
       await user.click(screen.getByRole('button', { name: /back to menu/i }));
       expect(screen.getByRole('button', { name: /begin a nightly séance/i })).toBeTruthy();
     });
 
+    it('Leave séance -> Leave returns to the menu, keeping ghost 1 and not ghost 2', async () => {
+      seed({ introSeen: true, cangjieIntroSeen: true });
+      const user = await openApp();
+      await user.click(await screen.findByRole('button', { name: /begin a nightly séance/i }));
+      const first = stub.summon!.record.character;
+      emit('clean');
+      await user.click(await screen.findByRole('button', { name: /next ghost/i }));
+      const second = stub.summon!.record.character;
+      finishSummon();
+      await user.click(screen.getByRole('button', { name: /leave séance/i }));
+      await user.click(screen.getByRole('button', { name: /^leave$/i }));
+      expect(screen.getByRole('button', { name: /begin a nightly séance/i })).toBeTruthy();
+      const history = loadState().history;
+      expect(Object.keys(history)).toContain(first);
+      expect(Object.keys(history)).not.toContain(second);
+    });
+
+    it('Leave séance -> Stay keeps the séance on screen', async () => {
+      seed({ introSeen: true, cangjieIntroSeen: true });
+      const user = await openApp();
+      await user.click(await screen.findByRole('button', { name: /begin a nightly séance/i }));
+      await user.click(screen.getByRole('button', { name: /leave séance/i }));
+      await user.click(screen.getByRole('button', { name: /^stay$/i }));
+      expect(screen.getByText('Ghost 1 of 10')).toBeTruthy();
+      expect(screen.queryByRole('button', { name: /begin a nightly séance/i })).toBeNull();
+    });
+
+    it('18.2b, 18.2c: with a throwing setItem the Leave prompt says progress is not saved', async () => {
+      seed({ introSeen: true, cangjieIntroSeen: true });
+      vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+        throw new Error('disabled');
+      });
+      const user = await openApp();
+      await user.click(await screen.findByRole('button', { name: /begin a nightly séance/i }));
+      emit('clean');
+      await user.click(await screen.findByRole('button', { name: /leave séance/i }));
+      expect(
+        screen.getByRole('group', {
+          name: "Leave now? This browser didn't save all your progress, so some finished ghosts may be lost.",
+        }),
+      ).toBeTruthy();
+    });
+    it('18.2a, 18.2d: a failed write for ghost 1 keeps the not-saving text after ghost 2 saves', async () => {
+      seed({ introSeen: true, cangjieIntroSeen: true });
+      const realSetItem = Storage.prototype.setItem;
+      let calls = 0;
+      vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function (
+        this: Storage,
+        k: string,
+        v: string,
+      ) {
+        calls += 1;
+        if (calls === 1) throw new Error('quota');
+        realSetItem.call(this, k, v);
+      });
+      const user = await openApp();
+      await user.click(await screen.findByRole('button', { name: /begin a nightly séance/i }));
+      const first = stub.summon!.record.character;
+      emit('clean');
+      await user.click(await screen.findByRole('button', { name: /next ghost/i }));
+      const second = stub.summon!.record.character;
+      emit('clean');
+      expect(Object.keys(loadState().history)).toEqual([second]); // ghost 1 was never persisted
+      expect(Object.keys(loadState().history)).not.toContain(first);
+      await user.click(await screen.findByRole('button', { name: /leave séance/i }));
+      expect(
+        screen.getByRole('group', {
+          name: "Leave now? This browser didn't save all your progress, so some finished ghosts may be lost.",
+        }),
+      ).toBeTruthy();
+    });
+    it('18.2c: on a first visit with a throwing setItem, the Leave prompt before any outcome says progress is not saved', async () => {
+      vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+        throw new Error('disabled');
+      });
+      const user = await openApp();
+      await beginFirstVisit(user);
+      await user.click(await screen.findByRole('button', { name: /leave séance/i }));
+      expect(
+        screen.getByRole('group', {
+          name: "Leave now? This browser didn't save all your progress, so some finished ghosts may be lost.",
+        }),
+      ).toBeTruthy();
+    });
     it('after one recorded outcome only that character shows a glyph', async () => {
       seed({ introSeen: true, cangjieIntroSeen: true });
       const user = await openApp();

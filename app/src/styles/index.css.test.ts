@@ -79,6 +79,100 @@ describe('index.css', () => {
     expect(withoutDataUris).not.toMatch(/url\(/);
   });
 
+  describe('night scene', () => {
+    const rgb = (hex: string): [number, number, number] => [
+      parseInt(hex.slice(1, 3), 16),
+      parseInt(hex.slice(3, 5), 16),
+      parseInt(hex.slice(5, 7), 16),
+    ];
+    const lum = (c: readonly number[]): number => {
+      const [r, g, b] = c.map((v) => {
+        const s = v / 255;
+        return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+      });
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    };
+    const blend = (base: number[], top: number[], a: number): number[] =>
+      base.map((v, i) => v * (1 - a) + top[i] * a);
+    const varValue = (name: string): string => {
+      const m = outside.match(new RegExp(`${name}:\\s*([^;]+);`));
+      expect(m, name).not.toBeNull();
+      return m![1].trim();
+    };
+    const ruleBody = (selector: string): string => {
+      const i = outside.indexOf(`${selector} {`);
+      expect(i, selector).toBeGreaterThan(-1);
+      return blockAt(outside, i).body;
+    };
+
+    it('night variables equal the theme tokens', () => {
+      expect(varValue('--night-top')).toBe(theme.nightTop);
+      expect(varValue('--night-mid')).toBe(theme.nightMid);
+      expect(varValue('--night-low')).toBe(theme.nightLow);
+      expect(varValue('--mist')).toBe(theme.mist);
+      expect(varValue('--moon')).toBe(theme.moon);
+      expect(varValue('--candle')).toBe(theme.candle);
+    });
+
+    it('mist and moon channel triples equal their hex', () => {
+      const [mr, mg, mb] = rgb(theme.mist);
+      expect(outside).toContain(`rgb(${mr} ${mg} ${mb} / var(--mist-peak-alpha))`);
+      const [or, og, ob] = rgb(theme.moon);
+      expect(outside).toContain(`rgb(${or} ${og} ${ob} / var(--moon-peak-alpha))`);
+      expect(outside).not.toMatch(/rgb\((?!91 111 154|114 131 171)\d+ \d+ \d+ \/ var\(--(mist|moon)/);
+    });
+
+    it('every url( is followed by data:', () => {
+      // A url( inside a data: URI (the SVG filter reference) is part of the inline data.
+      const stripped = css.replace(/url\("data:[^"]*"\)|url\('data:[^']*'\)/g, 'DATA').replace(/url\(data:[^)]*\)/g, 'DATA');
+      expect(stripped).toContain('DATA');
+      expect(stripped).not.toMatch(/url\(/);
+    });
+
+    it('keeps scroll padding for the sticky header', () => {
+      const m = outside.match(/html\s*\{[^}]*scroll-padding-top:\s*([\d.]+)rem/);
+      expect(m).not.toBeNull();
+      expect(parseFloat(m![1])).toBeGreaterThanOrEqual(4);
+    });
+
+    it('scene pseudo-elements ignore pointer events', () => {
+      for (const s of ['body::before', 'body::after', '#root::before', '.moon-glow::before']) {
+        expect(ruleBody(s)).toMatch(/pointer-events:\s*none/);
+      }
+      expect(ruleBody('#root')).toMatch(/position:\s*relative/);
+      expect(ruleBody('#root')).toMatch(/z-index:\s*1/);
+    });
+
+    it('colours every focus ring with the candle', () => {
+      expect(ruleBody('*:focus-visible')).toMatch(/--tw-ring-color:\s*var\(--candle\)\s*!important/);
+    });
+
+    it('mist animations are in the motion block and take at least 90 s', () => {
+      const a = media.body.match(/mist-drift-a\s+(\d+(?:\.\d+)?)s/);
+      const b = media.body.match(/mist-drift-b\s+(\d+(?:\.\d+)?)s/);
+      expect(a && parseFloat(a[1])).toBeGreaterThanOrEqual(90);
+      expect(b && parseFloat(b[1])).toBeGreaterThanOrEqual(90);
+      expect(media.body).toContain('@keyframes mist-drift-a');
+      expect(media.body).toContain('@keyframes mist-drift-b');
+      expect(media.body).toMatch(/\.menu-figure\s*\{[^}]*ghost-float/);
+    });
+
+    it('text tokens keep 4.5:1 on the worst-case composite background', () => {
+      const mistA = parseFloat(varValue('--mist-peak-alpha'));
+      const moonA = parseFloat(varValue('--moon-peak-alpha'));
+      let bg = rgb(theme.nightLow) as number[];
+      bg = blend(bg, rgb(theme.mist), mistA);
+      bg = blend(bg, rgb(theme.mist), mistA);
+      bg = blend(bg, rgb(theme.moon), moonA);
+      const bgL = lum(bg);
+      for (const t of ['ink', 'muted', 'ghost', 'success', 'error'] as const) {
+        const fl = lum(rgb(theme[t]));
+        const ratio = (Math.max(fl, bgL) + 0.05) / (Math.min(fl, bgL) + 0.05);
+        expect(ratio, t).toBeGreaterThanOrEqual(4.5);
+      }
+    });
+  });
+
   it("[lang='zh'] holds the exact Chinese font stack, equal to the Tailwind hanzi family", () => {
     const m = outside.match(/\[lang='zh'\]\s*\{([^}]*)\}/);
     expect(m).not.toBeNull();

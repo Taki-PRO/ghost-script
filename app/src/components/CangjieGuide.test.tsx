@@ -213,3 +213,10 @@ describe('CangjieGuide Continue', () => {
     expect(onContinue).toHaveBeenCalledTimes(1);
   });
 });
+
+describe('CangjieGuide wrapper (Req 21.11)', () => {
+  it('has no bg-background class on the wrapper', () => {
+    renderGuide();
+    expect(screen.getByRole('main')).not.toHaveClass('bg-background');
+  });
+});

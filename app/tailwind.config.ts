@@ -21,6 +21,15 @@ export default {
         'grave-restless': theme.graveRestless,
         'grave-rest': theme.graveRest,
         'grave-wisp': theme.graveWisp,
+        'night-top': theme.nightTop,
+        'night-mid': theme.nightMid,
+        'night-low': theme.nightLow,
+        mist: theme.mist,
+        moon: theme.moon,
+        candle: theme.candle,
+      },
+      boxShadow: {
+        candle: '0 0 20px rgba(240, 184, 102, 0.35)',
       },
       fontFamily: {
         display: ['"Cormorant Garamond"', 'Georgia', 'serif'],

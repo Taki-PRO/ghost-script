@@ -509,3 +509,119 @@ describe('default module-level store on jsdom localStorage', () => {
     expect(defaults.recordOutcome('女', e).history['女']).toEqual(e);
   });
 });
+
+describe('isSavingWorking (visual-identity 21.1)', () => {
+  const fresh = () => {
+    const b = makeBackend();
+    return { b, store: createStore({ backend: b, key: KEY }) };
+  };
+
+  it('is true before any write', () => {
+    expect(fresh().store.isSavingWorking()).toBe(true);
+  });
+
+  it('is true after a successful write', () => {
+    const { store } = fresh();
+    store.saveState(store.defaultState);
+    expect(store.isSavingWorking()).toBe(true);
+  });
+
+  it('is false after setItem throws, through saveState', () => {
+    const { b, store } = fresh();
+    b.throwOn.setItem = true;
+    store.saveState(store.defaultState);
+    expect(store.isSavingWorking()).toBe(false);
+  });
+
+  it('is false after setItem throws, through recordOutcome', () => {
+    const { b, store } = fresh();
+    b.throwOn.setItem = true;
+    store.recordOutcome('女', entry());
+    expect(store.isSavingWorking()).toBe(false);
+  });
+
+  it('is false after setItem throws, through setIntroSeen', () => {
+    const { b, store } = fresh();
+    b.throwOn.setItem = true;
+    store.setIntroSeen(true);
+    expect(store.isSavingWorking()).toBe(false);
+  });
+
+  it('is false when no backend is available and a save is attempted', () => {
+    const store = createStore({ backend: () => undefined, key: KEY });
+    expect(store.isSavingWorking()).toBe(true);
+    store.saveState(store.defaultState);
+    expect(store.isSavingWorking()).toBe(false);
+  });
+
+  it('is false when the backend resolver throws and a save is attempted', () => {
+    const store = createStore({
+      backend: () => {
+        throw new Error('denied');
+      },
+      key: KEY,
+    });
+    store.setIntroSeen(true);
+    expect(store.isSavingWorking()).toBe(false);
+  });
+
+  it('stays false after a later successful write (sticky for the session)', () => {
+    const { b, store } = fresh();
+    b.throwOn.setItem = true;
+    store.recordOutcome('女', entry());
+    expect(store.isSavingWorking()).toBe(false);
+    b.throwOn.setItem = false;
+    store.recordOutcome('女', entry());
+    expect(store.isSavingWorking()).toBe(false);
+  });
+  it('starts true again in a new store (a new page session) on the same backend', () => {
+    const { b, store } = fresh();
+    b.throwOn.setItem = true;
+    store.recordOutcome('女', entry());
+    expect(store.isSavingWorking()).toBe(false);
+    b.throwOn.setItem = false;
+    expect(createStore({ backend: b, key: KEY }).isSavingWorking()).toBe(true);
+  });
+
+  it('is not changed by loadState or resetToDefaults', () => {
+    const { b, store } = fresh();
+    store.loadState();
+    store.resetToDefaults();
+    expect(store.isSavingWorking()).toBe(true);
+
+    b.throwOn.setItem = true;
+    store.saveState(store.defaultState);
+    b.throwOn.setItem = false;
+    store.loadState();
+    store.resetToDefaults();
+    expect(store.isSavingWorking()).toBe(false);
+
+    b.throwOn.getItem = true;
+    b.throwOn.removeItem = true;
+    store.loadState();
+    store.resetToDefaults();
+    expect(store.isSavingWorking()).toBe(false);
+  });
+
+  it('keeps a separate flag per store', () => {
+    const a = fresh();
+    const c = fresh();
+    a.b.throwOn.setItem = true;
+    a.store.setIntroSeen(true);
+    expect(a.store.isSavingWorking()).toBe(false);
+    expect(c.store.isSavingWorking()).toBe(true);
+  });
+
+  it('module-level wrapper returns the default store flag', () => {
+    localStorage.clear();
+    const spy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('quota');
+    });
+    defaults.setIntroSeen(true);
+    expect(defaults.isSavingWorking()).toBe(false);
+    spy.mockRestore();
+    defaults.setIntroSeen(true);
+    expect(defaults.isSavingWorking()).toBe(false); // sticky for the session
+    localStorage.clear();
+  });
+});

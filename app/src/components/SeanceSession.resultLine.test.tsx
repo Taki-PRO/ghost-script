@@ -39,6 +39,8 @@ function setup() {
       dataset={dataset}
       config={DEFAULT_CONFIG}
       onOutcome={vi.fn()}
+      onLeave={vi.fn()}
+      savingWorks={true}
       onComplete={vi.fn()}
     />,
   );

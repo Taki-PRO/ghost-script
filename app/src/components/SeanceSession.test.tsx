@@ -60,7 +60,7 @@ vi.mock('../modes/SummonStep', async (importOriginal) => {
 });
 
 import { SUMMON_FADE_MS, SUMMON_HOLD_MS } from '../modes/SummonStep';
-import { SeanceSession, dedupeGhosts } from './SeanceSession';
+import { LEAVE_TEXT_NOT_SAVING, LEAVE_TEXT_SAVED, SeanceSession, dedupeGhosts } from './SeanceSession';
 
 const all = raw as unknown as Record<string, CharacterRecord>;
 const rec = (ch: string): CharacterRecord => {
@@ -82,9 +82,10 @@ const emit = (o: Outcome) => {
   act(() => lastProps().onOutcome(o));
 };
 
-function setup(chars: string[], strict = false) {
+function setup(chars: string[], strict = false, savingWorks = true) {
   const onOutcome = vi.fn();
   const onComplete = vi.fn();
+  const onLeave = vi.fn();
   const ui = (
     <SeanceSession
       ghosts={chars.map(rec)}
@@ -92,10 +93,12 @@ function setup(chars: string[], strict = false) {
       config={DEFAULT_CONFIG}
       onOutcome={onOutcome}
       onComplete={onComplete}
+      onLeave={onLeave}
+      savingWorks={savingWorks}
     />
   );
   render(strict ? <StrictMode>{ui}</StrictMode> : ui);
-  return { onOutcome, onComplete };
+  return { onOutcome, onComplete, onLeave };
 }
 
 beforeEach(() => {
@@ -244,12 +247,145 @@ describe('SeanceSession', () => {
     expect(onComplete).toHaveBeenCalledWith({ total: 0, laidToRest: 0 });
   });
 
-  it('has no legend or menu control during the session', () => {
-    setup(['我', '口']);
-    expect(screen.queryByRole('button', { name: /legend|menu/i })).toBeNull();
-    emit('clean');
-    expect(screen.queryByRole('button', { name: /legend|menu/i })).toBeNull();
+  describe('Leave séance', () => {
+    const leaveBtn = () => screen.getByRole('button', { name: 'Leave séance' });
+    const prompt = () => screen.queryByRole('group', { name: "Leave now? Ghosts you've finished are saved." });
+
+    it('the Leave button is the first button and is present while summoning, writing and after an Outcome', () => {
+      setup(['我', '口']);
+      expect(screen.getAllByRole('button')[0]).toBe(leaveBtn());
+      finishSummon();
+      expect(screen.getAllByRole('button')[0]).toBe(leaveBtn());
+      act(() => lastProps().onOutcome('clean'));
+      expect(screen.getAllByRole('button')[0]).toBe(leaveBtn());
+    });
+
+    it('has no legend, guide, Graveyard, Sources or Back to menu button, before and after an Outcome', () => {
+      setup(['我', '口']);
+      const re = /legend|guide|graveyard|sources|back to menu/i;
+      expect(screen.queryByRole('button', { name: re })).toBeNull();
+      emit('clean');
+      expect(screen.queryByRole('button', { name: re })).toBeNull();
+    });
+
+    it('opens an inline prompt with exact text, role, name and aria-expanded, without a browser dialog', async () => {
+      const confirm = vi.spyOn(window, 'confirm');
+      const alert = vi.spyOn(window, 'alert');
+      setup(['我', '口']);
+      expect(prompt()).toBeNull();
+      expect(leaveBtn().getAttribute('aria-expanded')).toBe('false');
+      expect(leaveBtn().getAttribute('aria-controls')).toBe('leave-prompt');
+      await userEvent.click(leaveBtn());
+      expect(prompt()).toBeTruthy();
+      expect(prompt()!.id).toBe('leave-prompt');
+      expect(leaveBtn().getAttribute('aria-expanded')).toBe('true');
+      expect(screen.getByRole('button', { name: 'Leave' })).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'Stay' })).toBeTruthy();
+      expect(confirm).not.toHaveBeenCalled();
+      expect(alert).not.toHaveBeenCalled();
+      confirm.mockRestore();
+      alert.mockRestore();
+    });
+
+    it('moves focus to Stay on open; Stay closes and returns focus to the Leave button', async () => {
+      const { onOutcome, onComplete, onLeave } = setup(['我', '口']);
+      await userEvent.click(leaveBtn());
+      expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Stay' }));
+      await userEvent.click(screen.getByRole('button', { name: 'Stay' }));
+      expect(prompt()).toBeNull();
+      expect(leaveBtn().getAttribute('aria-expanded')).toBe('false');
+      expect(document.activeElement).toBe(leaveBtn());
+      expect(onOutcome).not.toHaveBeenCalled();
+      expect(onComplete).not.toHaveBeenCalled();
+      expect(onLeave).not.toHaveBeenCalled();
+    });
+
+    it('Escape inside the prompt closes it and returns focus to the Leave button', async () => {
+      const { onLeave } = setup(['我', '口']);
+      await userEvent.click(leaveBtn());
+      await userEvent.keyboard('{Escape}');
+      expect(prompt()).toBeNull();
+      expect(document.activeElement).toBe(leaveBtn());
+      expect(onLeave).not.toHaveBeenCalled();
+    });
+
+    it('Leave calls onLeave once; a late outcome afterwards calls nothing', async () => {
+      const { onOutcome, onComplete, onLeave } = setup(['我', '口']);
+      finishSummon();
+      const props = lastProps();
+      await userEvent.click(leaveBtn());
+      const btn = screen.getByRole('button', { name: 'Leave' });
+      fireEvent.click(btn);
+      fireEvent.click(btn);
+      expect(onLeave).toHaveBeenCalledTimes(1);
+      act(() => props.onOutcome('clean'));
+      expect(onOutcome).not.toHaveBeenCalled();
+      expect(onComplete).not.toHaveBeenCalled();
+    });
+
+    it('an Outcome while the prompt is open is reported once and focus stays in the prompt', async () => {
+      const { onOutcome } = setup(['我', '口']);
+      finishSummon();
+      await userEvent.click(leaveBtn());
+      const stay = screen.getByRole('button', { name: 'Stay' });
+      act(() => lastProps().onOutcome('clean'));
+      act(() => lastProps().onOutcome('clean'));
+      expect(onOutcome).toHaveBeenCalledTimes(1);
+      expect(screen.getByRole('button', { name: 'Next ghost' })).toBeTruthy();
+      expect(document.activeElement).toBe(stay);
+    });
+
+    it('18.2a: with savingWorks true the group is named by the saved text and the not-saving text is absent', async () => {
+      setup(['我', '口'], false, true);
+      await userEvent.click(leaveBtn());
+      expect(screen.getByRole('group', { name: LEAVE_TEXT_SAVED })).toBeTruthy();
+      expect(screen.getByRole('group').getAttribute('aria-labelledby')).toBe('leave-question');
+      expect(screen.queryByText(LEAVE_TEXT_NOT_SAVING)).toBeNull();
+    });
+
+    it('18.2b: with savingWorks false the group is named by the not-saving text and the saved text is absent', async () => {
+      setup(['我', '口'], false, false);
+      await userEvent.click(leaveBtn());
+      expect(
+        screen.getByRole('group', {
+          name: "Leave now? This browser didn't save all your progress, so some finished ghosts may be lost.",
+        }),
+      ).toBeTruthy();
+      expect(screen.queryByText(LEAVE_TEXT_SAVED)).toBeNull();
+    });
+
+    it('18.3: with savingWorks false the buttons, focus, Escape and Leave behave the same', async () => {
+      const { onOutcome, onComplete, onLeave } = setup(['我', '口'], false, false);
+      expect(screen.getAllByRole('button')[0]).toBe(leaveBtn());
+      expect(leaveBtn().getAttribute('aria-expanded')).toBe('false');
+      await userEvent.click(leaveBtn());
+      expect(leaveBtn().getAttribute('aria-expanded')).toBe('true');
+      expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Stay' }));
+      await userEvent.keyboard('{Escape}');
+      expect(screen.queryByRole('group')).toBeNull();
+      expect(document.activeElement).toBe(leaveBtn());
+      await userEvent.click(leaveBtn());
+      await userEvent.click(screen.getByRole('button', { name: 'Stay' }));
+      expect(screen.queryByRole('group')).toBeNull();
+      expect(document.activeElement).toBe(leaveBtn());
+      await userEvent.click(leaveBtn());
+      const btn = screen.getByRole('button', { name: 'Leave' });
+      fireEvent.click(btn);
+      fireEvent.click(btn);
+      expect(onLeave).toHaveBeenCalledTimes(1);
+      expect(onOutcome).not.toHaveBeenCalled();
+      expect(onComplete).not.toHaveBeenCalled();
+    });
+
+    it('the buttons keep the 44 px minimum height', async () => {
+      setup(['我']);
+      expect(leaveBtn().className).toContain('min-h-[44px]');
+      await userEvent.click(leaveBtn());
+      expect(screen.getByRole('button', { name: 'Leave' }).className).toContain('min-h-[44px]');
+      expect(screen.getByRole('button', { name: 'Stay' }).className).toContain('min-h-[44px]');
+    });
   });
+
 });
 
 // ---------------------------------------------------------------------------
@@ -326,6 +462,17 @@ describe('SeanceSession two-step flow', () => {
     emit('gave-up');
     expect(onOutcome).toHaveBeenCalledTimes(1);
     expect(onOutcome.mock.calls[0]!.slice(0, 2)).toEqual(['口', 'gave-up']);
+  });
+
+  it('leaving after a finished Summon step calls onOutcome zero times', async () => {
+    const { onOutcome, onLeave } = setup(['口']);
+    typeCode('R');
+    await runFade();
+    expect(writeShown()).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: 'Leave séance' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Leave' }));
+    expect(onLeave).toHaveBeenCalledTimes(1);
+    expect(onOutcome).not.toHaveBeenCalled();
   });
 
   it('别 and 错 skip the Summon step; 身 has one', () => {

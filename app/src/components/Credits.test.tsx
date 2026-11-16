@@ -74,6 +74,27 @@ describe('Credits', () => {
     expect(anchors[0]).toHaveTextContent('Full licence texts (THIRD_PARTY_NOTICES.txt)');
   });
 
+  it('names the heading and the landmark "Sources & licences" and never says Credits', () => {
+    render(<Credits onBack={() => {}} />);
+    expect(screen.getByRole('heading', { level: 1, name: 'Sources & licences' })).toBeInTheDocument();
+    expect(screen.getByRole('main', { name: 'Sources & licences' })).toBeInTheDocument();
+    expect(text()).not.toMatch(/\bcredits\b/i);
+  });
+
+  it('has one Back to menu button, in the same sticky header as the h1', () => {
+    render(<Credits onBack={() => {}} />);
+    const buttons = screen.getAllByRole('button', { name: 'Back to menu' });
+    expect(buttons).toHaveLength(1);
+    const h1 = screen.getByRole('heading', { level: 1 });
+    const header = h1.closest('header') as HTMLElement;
+    expect(header).not.toBeNull();
+    expect(header).toContainElement(buttons[0]);
+    const classes = header.className.split(/\s+/);
+    expect(classes).toContain('sticky');
+    expect(classes).toContain('top-0');
+    expect(classes).toContain('bg-night-top');
+  });
+
   it('has a 44px Back to menu button that calls onBack', async () => {
     const onBack = vi.fn();
     render(<Credits onBack={onBack} />);

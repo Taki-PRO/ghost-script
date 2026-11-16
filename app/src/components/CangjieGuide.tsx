@@ -40,7 +40,7 @@ export function CangjieGuide({ dataset, onContinue }: CangjieGuideProps) {
   return (
     <main
       aria-labelledby="guide-title"
-      className="min-h-screen bg-background text-ink flex items-center justify-center px-6 py-10"
+      className="min-h-screen text-ink flex items-center justify-center px-6 py-10"
     >
       <div className="w-full max-w-xl">
         <h1 id="guide-title" className="text-3xl font-semibold tracking-wide text-ink">

@@ -17,12 +17,25 @@ export function Credits({ onBack }: CreditsProps) {
   return (
     <main
       aria-labelledby="credits-title"
-      className="min-h-screen bg-background text-ink px-4 py-10 flex justify-center"
+      className="min-h-screen text-ink px-4 pb-10 pt-0 flex justify-center"
     >
       <div className="w-full max-w-3xl">
-        <h1 id="credits-title" className="text-3xl font-semibold tracking-wide text-ink font-display">
-          Credits
-        </h1>
+        <header className="sticky top-0 z-20 -mx-4 flex min-h-[64px] items-center justify-between gap-3 border-b border-muted/40 bg-night-top px-4 py-2">
+          <h1
+            id="credits-title"
+            className="min-w-0 font-display text-2xl font-semibold tracking-wide text-ink sm:text-3xl"
+          >
+            Sources &amp; licences
+          </h1>
+          <button
+            type="button"
+            onClick={onBack}
+            aria-label="Back to menu"
+            className="min-h-[44px] shrink-0 whitespace-nowrap rounded-md border border-muted bg-surface px-4 py-2 text-base text-ink hover:bg-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          >
+            Back to menu
+          </button>
+        </header>
 
         <section aria-labelledby="credits-sources" className="mt-8">
           <h2 id="credits-sources" className={H2}>
@@ -140,15 +153,6 @@ export function Credits({ onBack }: CreditsProps) {
             </a>
           </p>
         </section>
-
-        <button
-          type="button"
-          onClick={onBack}
-          aria-label="Back to menu"
-          className="mt-10 min-h-[44px] rounded-lg border border-ghost bg-surface px-8 py-3 text-lg font-medium text-ink hover:bg-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-        >
-          Back to menu
-        </button>
       </div>
     </main>
   );

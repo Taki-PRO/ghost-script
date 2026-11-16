@@ -4,6 +4,8 @@
 
 This feature is visual only. It adds one pure engine module for the Graveyard, one tiny pure module for ghost states, a handful of presentational components, CSS in `index.css`, and a size check script. It changes no game rule (Requirement 14).
 
+Amended after tester feedback (approved by Takshil): the section "Amendments from tester feedback (Requirements 18 to 23)" at the end of this document adds a Leave séance control, sticky headers, the "Sources & licences" name, a night scene and a menu entrance. Where it conflicts with an earlier section (the bottom "Back to menu" button, the name "Credits", the flat background, the five-button menu text), the amendment wins.
+
 Property-based testing does not apply. The work is presentation, small mapping functions and copy, and the project decided on Nov 15 (`tech.md`) to add no new property tests. The Correctness Properties section is omitted on purpose (the format validator's warning about it is expected). Pure functions get unit tests with concrete cases; components get component tests.
 
 ### Kiro features used
@@ -416,7 +418,7 @@ jsdom has no layout, so pixel widths (32 px keys at 375 px) are checked through 
 
 ## Impact on existing code and tests
 
-- `scheduler.ts`, `config.ts`, `outcome.ts`, `learningOrder.ts`, `cangjie.ts`, `storage.ts` and `characters.json` stay untouched (checked with `git diff --stat` in the final checkpoint).
+- `scheduler.ts`, `config.ts`, `outcome.ts`, `learningOrder.ts`, `cangjie.ts` and `characters.json` stay untouched, and `storage.ts` gains only `isSavingWorking()` (Requirement 14.1 as amended; checked with `git diff --stat` in the final checkpoint).
 - The `hidden` class on the Summon container goes away; tests that look for it are updated.
 - `CangjieGuide`'s `CITATIONS` constant moves to `data/citations.ts`; the rendered output is unchanged.
 - `app/package.json` gains one dependency; the root lockfile changes with it.
@@ -441,3 +443,243 @@ Requested by the human. No game rule changes.
 - `WriteMode.test.tsx`: the status line is empty after completion (clean and struggled); the "Give up" button is disabled while loading, enabled while writing, absent after the outcome; the "The ghost reveals itself" message still appears after Give up.
 - `SummonStep.test.tsx`: the "Give up" button is present while typing and absent in the forming and fading phases; the existing never-reveal, hint and timing tests pass unchanged.
 - `SeanceSession.test.tsx` and `App.test.tsx`: replace assertions that find the old WriteMode "Laid to rest" text, or a disabled Give up, with assertions on the `SeanceSession` result line (exactly one result line on screen) and on the absence of the button.
+
+## Amendments from tester feedback (Requirements 18 to 23)
+
+Approved by Takshil. Presentation and navigation only: no scheduler, Outcome, timing or storage change (Requirement 23.1). Research for this section was done by reading the current code: `App.tsx`, `SeanceSession.tsx`, `StartMenu.tsx`, `Graveyard.tsx`, `Credits.tsx`, `IntroScreen.tsx`, `GhostPrompt.tsx`, `styles/theme.ts`, `styles/index.css` and `tailwind.config.ts`.
+
+### Facts found in the current code
+
+- `App.Shell` wraps every screen in a `<main class="min-h-screen ... bg-background ...">`; `StartMenu`, `Graveyard`, `Credits`, `IntroScreen`, `CangjieGuide` and `SessionSummary` each add their own `<main class="min-h-screen bg-background">`. These opaque wrappers would hide any page background, so they must become transparent (Requirement 21.11). The nested `<main>` elements already exist and are left as they are.
+- Outcomes are recorded inside `App.handleOutcome`, called through `SeanceSession.onOutcome` at the moment a ghost's Outcome is reached. The summon result is only held in `summonResultRef` inside `SeanceSession` until the Write step ends. So leaving needs no storage code: a ghost that has no Outcome has no record.
+- `SeanceSession` has an effect that moves focus to "Next ghost" when `result` becomes non-null. This would steal focus from an open Leave_Prompt, so it needs a guard.
+- The only test that encodes the old rule is `SeanceSession.test.tsx`, "has no legend or menu control during the session" (it looks for a button named `/legend|menu/i`).
+- The ghost figure SVG lives inline in `GhostPrompt.tsx` (path in a `64 x 80` viewBox, two eye circles filled `#0b0b10`).
+- `index.css` already holds one `@media (prefers-reduced-motion: no-preference)` block and one `url("data:image/svg+xml...")` (the paper noise). `index.html` has `<div id="root">`.
+- Tailwind ring utilities read `--tw-ring-color`; components use `focus-visible:ring-ghost`.
+
+### Decisions
+
+| # | Decision | Reason |
+| --- | --- | --- |
+| A1 | The Leave_Prompt is an inline `role="group"` named by its question. Focus goes to "Stay" (the safe choice), not to the group. Escape means "Stay". It is not `alertdialog`. | `alertdialog` promises modal behaviour (focus trap, inert background). The prompt does not trap focus, so a plain labelled group is the honest role. Focusing "Stay" lets a screen reader read the group name and the button, and a stray Enter cannot leave. |
+| A2 | The Leave_Button stays visible while the prompt is open, with `aria-expanded` and `aria-controls`. | The state is announced, and the prompt sits right after it in reading order. |
+| A3 | The Sources_Caption goes under the menu button, not under the heading. | The tester was confused before opening the screen ("what is the credits button for?"). The screen's own sections already explain themselves. |
+| A4 | Internal names stay: view `credits`, file `Credits.tsx`, `CreditsProps`, `onOpenCredits`, `data/credits.ts`, ids `credits-*`. Only user-facing text changes. | The README cross-check test and the spec history use these names; renaming adds churn with no user effect. |
+| A5 | One global rule makes every focus ring candle-coloured: `:focus-visible { --tw-ring-color: var(--candle) !important; }`. | One place, no sweep over twenty `ring-ghost` classes, testable as CSS text. |
+| A6 | The Night_Scene is three fixed pseudo-elements, no extra DOM: `body::before` (sky), `body::after` (mist A), `#root::before` (mist B). `#root` gets `position: relative; z-index: 1`. | CSS only, hidden from assistive technology, no pointer events. Fixed pseudo-elements avoid the iOS Safari problem with `background-attachment: fixed`. |
+| A7 | Mist moves with `transform: translateX` on a 200%-wide fixed layer, not by animating `background-position`. | Transforms animate without repainting. Slow periods (120 s and 180 s). |
+| A8 | The Moon_Glow is a class `.moon-glow` on the menu hero wrapper, drawn by `::before`. It is not part of the page-wide scene. | The brief says "behind the title". |
+| A9 | The page wrapper `<main>` elements drop `bg-background`. `body` keeps `bg-background` as the fallback colour. | Requirement 21.11. |
+
+### 18. Leave séance (Requirement 18)
+
+**Props and state (`SeanceSession.tsx`).** New required props `onLeave: () => void` and `savingWorks: boolean` (the text of the Leave_Prompt follows it). New state `confirmingLeave: boolean`. New refs: `leaveBtnRef`, `stayBtnRef`, `leftRef` (set to `true` when the player leaves), `confirmingRef` (mirror of the state for the focus effect).
+
+**Layout.** The first element of the session is a top row:
+
+```tsx
+<div className="flex w-full items-center justify-between gap-3">
+  <button ref={leaveBtnRef} type="button" aria-expanded={confirmingLeave}
+          aria-controls="leave-prompt" onClick={openLeave}
+          className="min-h-[44px] rounded-md border border-muted bg-surface px-4 py-2 text-base text-ink ...focus ring">
+    Leave séance
+  </button>
+  <h2 className="text-lg text-ink">Ghost {index + 1} of {total}</h2>
+</div>
+{confirmingLeave && (
+  <div id="leave-prompt" role="group" aria-labelledby="leave-question" onKeyDown={escapeIsStay}
+       className="w-full rounded-lg border border-candle bg-surface p-4 text-center">
+    <p id="leave-question" className="text-ink">{savingWorks ? LEAVE_TEXT_SAVED : LEAVE_TEXT_NOT_SAVING}</p>
+    <div className="mt-3 flex justify-center gap-3">
+      <button type="button" onClick={leave} className="min-h-[44px] ...">Leave</button>
+      <button ref={stayBtnRef} type="button" onClick={stay} className="min-h-[44px] ...">Stay</button>
+    </div>
+  </div>
+)}
+```
+
+Two constants hold the texts, exactly as in Requirement 18.2a and 18.2b: `LEAVE_TEXT_SAVED = "Leave now? Ghosts you've finished are saved."` and `LEAVE_TEXT_NOT_SAVING = "Leave now? This browser didn't save all your progress, so some finished ghosts may be lost."`. `aria-labelledby="leave-question"` points at the same `<p>`, so the group's accessible name follows the text shown. The texts use a straight apostrophe, exactly as in the requirement. The button names are exactly "Leave séance", "Leave" and "Stay"; tests must match them exactly (a regex `/leave/i` would match two buttons).
+
+**Behaviour.**
+
+| Event | Effect |
+| --- | --- |
+| Press "Leave séance" | `setConfirmingLeave(true)`; an effect moves focus to `stayBtnRef` when the prompt mounts. |
+| Press "Stay", or Escape with focus inside the group (`onKeyDown` on the group, `event.key === 'Escape'`) | `setConfirmingLeave(false)`; an effect returns focus to `leaveBtnRef` when the prompt unmounts. Nothing else changes, and timers keep running (the prompt does not pause the game). |
+| Press "Leave" | `leftRef.current = true`, then `onLeave()` once. No call to `onOutcome` or `onComplete`. |
+| Outcome reached while the prompt is open | `handleOutcome` records it as usual (`onOutcome`), sets `result`, but the focus effect for "Next ghost" is skipped while `confirmingRef.current` is true. Focus stays on the prompt. After "Stay", focus returns to the Leave_Button as in every case. |
+| Late event after leaving (a Write quiz callback or a Summon timer) | `handleOutcome` and `handleSummonDone` return at once when `leftRef.current` is true. The Summon step also unmounts, which clears its timers. |
+
+**Why nothing is recorded for the current ghost.** `onOutcome` is the only path to storage and it is called only from `handleOutcome`. A ghost that has not reached an Outcome has not called it. The summon result lives in `summonResultRef` and is dropped with the component. Leaving writes nothing.
+
+**Storage note (amended, approved by Takshil).** The claim "Ghosts you've finished are saved" is true only when the last write succeeded. `saveState` catches a failed write (quota, disabled storage) and keeps nothing, and `App.handleOutcome` ignores the return value of `recordOutcome`, so the player would be told something false. The one allowed change to `storage.ts` is a read-only flag, with no schema change and no change to any existing signature:
+
+```ts
+// in createStore
+let saveFailedThisSession = false;           // sticky: starts false, never cleared
+// saveState: no backend -> saveFailedThisSession = true; setItem throws -> saveFailedThisSession = true; a successful setItem changes nothing
+// Store gains:  isSavingWorking(): boolean   // returns !saveFailedThisSession
+// module level: export const isSavingWorking = (): boolean => defaultStore.isSavingWorking();
+```
+
+`recordOutcome`, `setIntroSeen` and `setCangjieIntroSeen` go through `saveState`, so they update the flag; `loadState` and `resetToDefaults` do not. The flag is per store and lives in memory only. It is sticky for the page session: once a write fails it stays false even if a later write succeeds, because the failed write's Outcome was never persisted (an earlier version followed only the latest write, so "Ghosts you've finished are saved" could be shown after ghost 1 failed and ghost 2 saved; an accuracy finding, fixed). A new page session creates a new store and starts true again. Before any write it is true, so on a browser that cannot save, the first Leave_Prompt before any write may still show the saved text. At that point no ghost is finished, so the text promises nothing that is lost. Once the intro flag or the first Outcome is written, the flag is correct for every write so far. The wording of the not-saving text says "may be lost" because a write can fail after earlier Outcomes were saved (resolving an accuracy finding; approved option kept).
+
+**App wiring (`App.tsx`).** `<SeanceSession ... savingWorks={savingWorks} onLeave={() => setView({ screen: 'menu', dataset })} />`. `savingWorks` is state in `App` (it can only go from true to false during a visit, because the storage flag is sticky), initialised from `isSavingWorking()` and refreshed with `setSavingWorks(isSavingWorking())` at these points: on mount (the initial state), right after `setIntroSeen(true)`, right after `setCangjieIntroSeen(true)`, in `startSeance` when a séance begins, and in `handleOutcome` right after `recordOutcome`. Every write the App makes is followed by a refresh, so the value is current whenever the prompt opens. The `key={sessionId}` already forces a fresh session next time. The summary screen is not shown.
+
+**The superseded rule.** `.kiro/specs/ghost-game-core/requirements.md` AC 1.5 and the matching line of its design carry an "Amended (approved by Takshil)" note that points to Requirement 18. In `SeanceSession.test.tsx`, the test "has no legend or menu control during the session" is replaced by two tests: the Leave_Button is present in every state; and no button named like the legend, the Cangjie guide, the Graveyard, Sources & licences or "Back to menu" is present, before and after an Outcome.
+
+**Tests (component, jsdom).**
+- `SeanceSession.test.tsx`: Leave_Button is the first button in the DOM and is present while summoning, while writing and after an Outcome; pressing it shows the prompt text and two buttons and no `window.confirm` call (spy); the group's accessible name is the question; `aria-expanded` toggles; focus is on "Stay"; "Stay" and Escape close the prompt, restore focus to the Leave_Button and keep `onOutcome` and `onComplete` uncalled; "Leave" calls `onLeave` once; after "Leave" a late outcome emit calls neither callback; leaving after the summon step finished (real SummonStep with fake timers, as in the existing two-step suite) calls `onOutcome` zero times; an Outcome reached while the prompt is open is reported once and focus stays inside the prompt; the 44 px classes.
+- `App.test.tsx`: start a séance, finish ghost 1 (stub WriteMode as the existing tests do), start ghost 2, press Leave séance, then Leave; the menu shows; `loadState().history` has an entry for ghost 1 and none for ghost 2; pressing "Stay" instead keeps the séance on screen.
+
+### 19. Sticky header on Graveyard and Sources & licences (Requirement 19)
+
+**Structure.** In both screens the `<header>` is the first child of the content container (the element as tall as the whole screen, so `position: sticky` has room to stick), and the bottom "Back to menu" button is deleted.
+
+```tsx
+<header className="sticky top-0 z-20 -mx-4 flex min-h-[64px] items-center justify-between gap-3 border-b border-muted/40 bg-night-top px-4 py-2">
+  <h1 className="min-w-0 font-display text-2xl font-semibold sm:text-3xl">Graveyard</h1>
+  <button type="button" onClick={onBack} className="min-h-[44px] shrink-0 whitespace-nowrap rounded-md border border-muted bg-surface px-4 py-2 text-base text-ink ...focus ring">Back to menu</button>
+</header>
+```
+
+- `bg-night-top` is the opaque darkest sky colour (token from task 13.1), so no content shows through and the header text contrast is the token-on-token ratio checked in the theme test (Requirement 19.8). `z-20` sits above the graves (`.grave` is `position: relative`; the restless grave also has `clip-path` and an animation, which create stacking contexts at the default level). `-mx-4 px-4` extends the bar to the edge of the 16 px page padding.
+- The `<main>` loses its top padding (`pt-0`) so the header sits flush when stuck. The Sources screen does the same (`py-10` becomes `pb-10`) and keeps its `h1` id `credits-title` for `aria-labelledby`, now with the text "Sources & licences".
+- Height: 44 px button plus 2 x 8 px padding is 60 px; `min-h-[64px]` makes it 64 px, within the 72 px limit. At 375 px the title at `text-2xl` (24 px, Cormorant, "Sources & licences" about 180 px) and a 140 px button fit in 343 px; the title has `min-w-0` and may shrink, never the button. jsdom cannot measure this, so the human check of task 19.2 covers it.
+- **Scroll padding.** `html { scroll-padding-top: 5rem; }` in `index.css` (80 px, above the 64 px header) so a focused or scrolled-to element does not hide behind the stuck header (Requirement 19.6). It is global and harmless on other screens.
+- The Graveyard keeps its existing intro line, legend, empty-history line and grid; only the title and the button move.
+
+**Tests.** `Graveyard.test.tsx` and `Credits.test.tsx`: exactly one "Back to menu" button; it is inside the same `<header>` as the `h1`; the header class list contains `sticky`, `top-0` and an opaque `bg-night-top` (no `/` opacity suffix); the button is not the last focusable element; `onBack` called once; 44 px class and focus ring classes. `index.css.test.ts` (task 13.2): `scroll-padding-top` is at least 4rem.
+
+### 20. Sources & licences (Requirement 20)
+
+- `StartMenu.tsx`: the fifth button text and accessible name become "Sources & licences" (written as the JSX text `Sources &amp; licences`, which renders the ampersand). It is wrapped with the caption:
+
+```tsx
+<div className="flex flex-col gap-2">
+  <button type="button" onClick={onOpenCredits} aria-describedby="menu-sources-hint" className={...}>Sources &amp; licences</button>
+  <p id="menu-sources-hint" className="text-center text-sm text-muted">Where the words, strokes, codes and fonts come from.</p>
+</div>
+```
+
+  The caption is exactly "Where the words, strokes, codes and fonts come from." The words come from CC-CEDICT, the strokes from hanzi-writer-data, the codes from Unihan, and the fonts from the font package: each is listed on the screen, so the line makes no claim beyond the screen's content. The button's accessible name stays "Sources & licences"; the caption is its description.
+- `Credits.tsx`: the `h1` text and the landmark name (`aria-labelledby` points to the `h1`) become "Sources & licences". Section headings, table and the Software link are unchanged. The old `aria-label="Back to menu"` on the button stays.
+- Internal names stay (decision A4). The glossary note in the requirements says so.
+- A search for the word "Credits" over `StartMenu.tsx` and `Credits.tsx` user-facing strings must find nothing; code comments and identifiers may keep it.
+- **Tests.** `StartMenu.test.tsx`: the five names in order end with "Sources & licences"; the button has the accessible description of the caption; the caption text is exact; the callback fires once and no other. `Credits.test.tsx`: heading and landmark name; the rendered text has no `/\bcredits\b/i` match. `App.test.tsx`: the flow opens by the new name and finds the heading "Sources & licences".
+
+### 21. Night scene (Requirement 21)
+
+**Tokens (`theme.ts`, `tailwind.config.ts`; proposed, task 13.1 may adjust a hex only to pass its contrast test; no text token changes).**
+
+| Token | Proposed | Use |
+| --- | --- | --- |
+| `nightTop` | `#050813` | darkest sky stop; header background |
+| `nightMid` | `#0a1126` | middle sky stop |
+| `nightLow` | `#12203f` | lightest sky stop |
+| `mist` | `#5b6f9a` | mist colour (dim, so it cannot lift the background much) |
+| `moon` | `#7283ab` | moon glow colour (dim, same reason) |
+| `candle` | `#f0b866` | main button, focus ring |
+
+Tailwind adds `night-top`, `night-mid`, `night-low`, `candle` (and `mist`, `moon`) colours and a `boxShadow.candle` of `0 0 20px rgba(240, 184, 102, 0.35)`. The existing `background` (`#0e0f13`) stays as the body fallback, the `text-background` colour on the candle button and the ring-offset colour.
+
+**CSS (`index.css`).** New `:root` variables, same hex as the tokens (a test checks it): `--night-top`, `--night-mid`, `--night-low`, `--mist`, `--moon`, `--candle`, plus `--mist-peak-alpha: 0.05` and `--moon-peak-alpha: 0.06`.
+
+```css
+html { scroll-padding-top: 5rem; }
+body::before {            /* sky */
+  content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: linear-gradient(180deg, var(--night-top) 0%, var(--night-mid) 55%, var(--night-low) 100%);
+}
+body::after {             /* mist layer A */
+  content: ''; position: fixed; top: 0; bottom: 0; left: 0; width: 200%; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 30% 22% at 15% 70%, rgb(91 111 154 / var(--mist-peak-alpha)), transparent 70%),
+    radial-gradient(ellipse 26% 18% at 60% 40%, rgb(91 111 154 / var(--mist-peak-alpha)), transparent 70%);
+}
+#root { position: relative; z-index: 1; }
+#root::before {           /* mist layer B */
+  content: ''; position: fixed; top: 0; bottom: 0; left: 0; width: 200%; z-index: -1; pointer-events: none;
+  background: radial-gradient(ellipse 34% 20% at 35% 80%, rgb(91 111 154 / var(--mist-peak-alpha)), transparent 70%),
+              radial-gradient(ellipse 28% 16% at 80% 25%, rgb(91 111 154 / var(--mist-peak-alpha)), transparent 70%);
+}
+.moon-glow { position: relative; isolation: isolate; }
+.moon-glow::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none;
+  left: 50%; top: 40%; width: min(90vw, 28rem); aspect-ratio: 1; transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgb(114 131 171 / var(--moon-peak-alpha)) 0%, transparent 65%);
+}
+*:focus-visible { --tw-ring-color: var(--candle) !important; }
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes mist-drift-a { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @keyframes mist-drift-b { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+  body::after { animation: mist-drift-a 120s linear infinite alternate; will-change: transform; }
+  #root::before { animation: mist-drift-b 180s linear infinite alternate; will-change: transform; }
+  .menu-figure { animation: ghost-float 4s ease-in-out infinite alternate; }
+}
+```
+
+(The existing `@media` block is extended, not duplicated, so there is one block.) The rgb values above are the `mist` and `moon` tokens written as channel triples because CSS cannot split a hex custom property; the test derives the triple from the token and compares. The `rgb(r g b / var(...))` syntax keeps the peak alpha in one variable the test can read. Reduced motion: the layers stay at their start position, static.
+
+**Page wrappers.** `bg-background` is removed from the wrapper `<main>` of `App.Shell` (task 17.2), `StartMenu` (15.2), `Graveyard` (16.2), `Credits` (16.1), and from `IntroScreen`, `CangjieGuide` and `SessionSummary` (18.1). Buttons, cards and graves keep `bg-surface` and the grave tokens. `hover:bg-background` and `ring-offset-background` stay.
+
+**Candle accent.** The main button changes from `bg-ghost` to `bg-candle text-background shadow-candle`. The global focus rule colours every ring. Ring width, offset and `focus-visible` behaviour are unchanged, so rings remain visible; the offset colour `background` separates the ring from the button.
+
+**Contrast tests.**
+- `theme.test.ts` (task 13.1): each text token (`ink`, `muted`, `ghost`, `success`, `error`) at least 4.5:1 against `nightTop`, `nightMid` and `nightLow`; `candle` at least 3:1 against `nightTop`, `nightLow` and `background`; `background` text on `candle` at least 4.5:1; `ink`/`muted` on `nightTop` (header) at least 4.5:1; the darkest stop is `nightTop` and the lightest is `nightLow` (by luminance).
+- `index.css.test.ts` (task 13.2): the worst-case composite is computed in the test: start from `nightLow`, blend `mist` at `--mist-peak-alpha` twice (both layers overlap), then blend `moon` at `--moon-peak-alpha`; every text token must reach 4.5:1 on that colour. Hand calculation with the proposed values gives a worst-case background relative luminance of about 0.041, which puts `muted` (the tightest token, luminance about 0.386) at about 4.8:1; if a run fails, the task lowers the alpha variables or darkens `mist` or `moon`, never changes a text token.
+- Motion: every `animation` property and every `@keyframes` lies inside the `prefers-reduced-motion: no-preference` block; the file has exactly one such block.
+- `url()`: every match of `url(` in `index.css` is followed by `"data:`, `'data:` or `data:`.
+- Variables equal tokens; `scroll-padding-top` at least `4rem`; `pointer-events: none` on the three scene pseudo-elements; the `:focus-visible` rule sets `--tw-ring-color` to `var(--candle)`.
+
+**Bundle.** About 1.5 kB of CSS (about 0.6 kB gzip); no new dependency, no file. Checked by `check:bundle` at the final checkpoint.
+
+### 22. Menu entrance (Requirement 22)
+
+**`components/GhostFigure.tsx` (new).**
+
+```tsx
+export interface GhostFigureProps { className?: string }
+export function GhostFigure({ className = '' }: GhostFigureProps) {
+  return (
+    <svg aria-hidden="true" focusable="false" viewBox="0 0 64 80" className={className}>
+      <path d="M8 76 V32 C8 14 20 4 32 4 C44 4 56 14 56 32 V76 L48 68 L40 76 L32 68 L24 76 L16 68 Z" fill="currentColor" />
+      <circle cx="24" cy="34" r="4" fill={theme.background} />
+      <circle cx="40" cy="34" r="4" fill={theme.background} />
+    </svg>
+  );
+}
+```
+
+The path is the one already in `GhostPrompt`; moving it changes nothing visible. The eye fill comes from the theme token (it was the literal `#0b0b10`; `theme.background` is `#0e0f13`, a one-step difference on a 4 px eye that is not user-visible, and the token is the one place to change). `GhostPrompt` renders `<GhostFigure className="ghost-figure mx-auto mb-2 h-16 w-14 text-ghost" />`; `data-ghost-state` and the CSS selectors do not change.
+
+**`StartMenu.tsx` hero.**
+
+```tsx
+<div className="moon-glow flex flex-col items-center">
+  <GhostFigure className="menu-figure mb-4 h-24 w-20 text-ghost" />
+  <h1 className="mb-10 text-center font-display text-5xl font-semibold tracking-wide sm:text-7xl">Ghost Script</h1>
+</div>
+```
+
+`text-5xl` is 3rem (48 px) and `sm:text-7xl` is 4.5rem. The existing five buttons follow in the same order; the main button uses `bg-candle text-background shadow-candle`. The wrapper `<main>` drops `bg-background`. The menu figure has no `data-ghost-state`, so only its own float animation applies; the float is in the `no-preference` block.
+
+**Tests.** `GhostFigure.test.tsx`: `aria-hidden="true"`, `focusable="false"`, no `<text>`, same path in two renders. `GhostPrompt.test.tsx` (existing): still passes unchanged (figure present, no text element, state attribute). `StartMenu.test.tsx`: the `h1` "Ghost Script" has class `font-display` and `text-5xl`; the figure appears before the `h1` in document order; the figure is `aria-hidden`; only one `h1`; the main button has `bg-candle`; five buttons in order.
+
+### Impact on existing code and tests
+
+| Item | Change | Task |
+| --- | --- | --- |
+| `SeanceSession.test.tsx` "has no legend or menu control during the session" | replaced | 17.1 |
+| `StartMenu.test.tsx` name list ends with "Credits" | now "Sources & licences" | 15.1 |
+| `Credits.test.tsx` heading and bottom button tests | new heading; button in header | 16.1 |
+| `Graveyard.test.tsx` button tests | button in header | 16.2 |
+| `App.test.tsx` "Menu -> Credits -> Back" | new names; plus Leave tests | 17.2 |
+| `GhostPrompt.test.tsx` | unchanged, must pass | 14.1 |
+| Files of Requirement 14.1 (except `storage.ts`), `characters.json` | untouched | all |
+| `storage.ts` | one addition, `isSavingWorking()` (sticky for the session); existing assertions unchanged | 14.1, 18.2d |
+
+### Testing strategy for the amendments
+
+Unit tests and component tests only (Vitest, Testing Library, and plain Node file reads for CSS and tokens). Property-based testing does not apply: the work is presentation, focus handling and copy, and the Nov 15 decision forbids new property tests. jsdom cannot lay out or animate, so the sticky behaviour, the one-row header at 375 px and the look of the night scene are checked by class and CSS-text tests plus the human check of task 19.2.

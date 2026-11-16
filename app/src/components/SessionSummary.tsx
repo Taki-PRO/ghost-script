@@ -36,7 +36,7 @@ export function SessionSummary({ results, onPlayAgain }: SessionSummaryProps) {
   return (
     <main
       aria-labelledby="summary-title"
-      className="min-h-screen bg-background text-ink flex items-center justify-center px-6 py-10"
+      className="min-h-screen text-ink flex items-center justify-center px-6 py-10"
     >
       <div className="w-full max-w-xl text-center">
         <h1 id="summary-title" className="text-3xl font-semibold tracking-wide text-ink">

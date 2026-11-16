@@ -52,6 +52,8 @@ export interface Store {
   getCangjieIntroSeen(): boolean;
   setCangjieIntroSeen(seen: boolean): void;
   resetToDefaults(): void;
+  /** False once any write has failed or had no backend during this page session; never reverts. */
+  isSavingWorking(): boolean;
 }
 
 /**
@@ -123,6 +125,7 @@ export function createStore(options: StoreOptions = {}): Store {
   const migrations = options.migrations ?? SHIPPED_MIGRATIONS;
   const key = options.key ?? STORAGE_KEY;
   const backendOpt = options.backend;
+  let saveFailedThisSession = false; // sticky: set by any failed write, never cleared
 
   const defaultState: PersistedState = Object.freeze({
     schemaVersion: version,
@@ -172,7 +175,10 @@ export function createStore(options: StoreOptions = {}): Store {
   function saveState(state: PersistedState): void {
     try {
       const backend = getBackend();
-      if (!backend) return;
+      if (!backend) {
+        saveFailedThisSession = true;
+        return;
+      }
       const blob: PersistedState = {
         schemaVersion: version,
         introSeen: state.introSeen,
@@ -181,6 +187,7 @@ export function createStore(options: StoreOptions = {}): Store {
       };
       backend.setItem(key, JSON.stringify(blob));
     } catch {
+      saveFailedThisSession = true;
       // quota exceeded / storage disabled: progress is simply not persisted
     }
   }
@@ -229,11 +236,16 @@ export function createStore(options: StoreOptions = {}): Store {
     }
   }
 
+  function isSavingWorking(): boolean {
+    return !saveFailedThisSession;
+  }
+
   return { defaultState, loadState, saveState, recordOutcome, getIntroSeen,
     setIntroSeen,
     getCangjieIntroSeen,
     setCangjieIntroSeen,
     resetToDefaults,
+    isSavingWorking,
   };
 }
 
@@ -251,3 +263,4 @@ export const setIntroSeen = (seen: boolean): void => defaultStore.setIntroSeen(s
 export const getCangjieIntroSeen = (): boolean => defaultStore.getCangjieIntroSeen();
 export const setCangjieIntroSeen = (seen: boolean): void => defaultStore.setCangjieIntroSeen(seen);
 export const resetToDefaults = (): void => defaultStore.resetToDefaults();
+export const isSavingWorking = (): boolean => defaultStore.isSavingWorking();

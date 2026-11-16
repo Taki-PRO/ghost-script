@@ -10,7 +10,7 @@ export function IntroScreen({ onBegin }: IntroScreenProps) {
   return (
     <main
       aria-labelledby="intro-title"
-      className="min-h-screen bg-background text-ink flex items-center justify-center px-6 py-10"
+      className="min-h-screen text-ink flex items-center justify-center px-6 py-10"
     >
       <div className="w-full max-w-xl text-center">
         <h1 id="intro-title" className="text-4xl font-semibold tracking-wide text-ink">

@@ -21,6 +21,12 @@ export const theme = {
   graveRestless: '#261c24', // dark tint of surface
   graveRest: '#1a2420', // dark tint of surface
   graveWisp: '#14161c', // dark tint of surface
+  nightTop: '#050813', // darkest sky stop; sticky header background
+  nightMid: '#0a1126', // middle sky stop
+  nightLow: '#12203f', // lightest sky stop
+  mist: '#5b6f9a', // mist colour (dim, drawn at low alpha)
+  moon: '#7283ab', // moon glow colour (dim, drawn at low alpha)
+  candle: '#f0b866', // main button, focus ring
 } as const;
 
 export type ThemeToken = keyof typeof theme;

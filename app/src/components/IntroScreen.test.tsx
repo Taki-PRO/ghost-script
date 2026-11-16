@@ -77,3 +77,10 @@ describe('IntroScreen', () => {
     expect(onBegin).not.toHaveBeenCalled();
   });
 });
+
+describe('IntroScreen wrapper (Req 21.11)', () => {
+  it('has no bg-background class on the wrapper', () => {
+    render(<IntroScreen onBegin={() => {}} />);
+    expect(screen.getByRole('main')).not.toHaveClass('bg-background');
+  });
+});

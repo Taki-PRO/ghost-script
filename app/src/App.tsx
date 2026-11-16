@@ -12,6 +12,7 @@ import {
 import {
   getCangjieIntroSeen,
   getIntroSeen,
+  isSavingWorking,
   loadState,
   recordOutcome,
   setCangjieIntroSeen,
@@ -62,7 +63,7 @@ type View =
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <main className="min-h-screen w-full flex items-center justify-center bg-background text-ink px-4 py-6">
+    <main className="min-h-screen w-full flex items-center justify-center text-ink px-4 py-6">
       <div className="w-full max-w-3xl flex flex-col items-center">{children}</div>
     </main>
   );
@@ -71,6 +72,7 @@ function Shell({ children }: { children: React.ReactNode }) {
 export default function App() {
   const [view, setView] = useState<View>({ screen: 'loading' });
   const [sessionCounter, setSessionCounter] = useState(0);
+  const [savingWorks, setSavingWorks] = useState(() => isSavingWorking());
 
   useEffect(() => {
     let active = true;
@@ -94,6 +96,7 @@ export default function App() {
     (dataset: CharacterDataset) => {
       const now = Date.now();
       const ghosts = buildSession(dataset, loadState().history, now, DEFAULT_CONFIG);
+      setSavingWorks(isSavingWorking());
       setSessionCounter((n) => n + 1);
       setView({ screen: 'seance', dataset, ghosts, sessionId: sessionCounter + 1 });
     },
@@ -115,6 +118,7 @@ export default function App() {
   const handleOutcome = useCallback((char: string, outcome: Outcome, now: number) => {
     const prior = priorEntry(loadState().history, char);
     recordOutcome(char, applyReview(prior, outcome, now, DEFAULT_CONFIG));
+    setSavingWorks(isSavingWorking());
   }, []);
 
   switch (view.screen) {
@@ -142,6 +146,7 @@ export default function App() {
           <IntroScreen
             onBegin={() => {
               setIntroSeen(true);
+              setSavingWorks(isSavingWorking());
               beginSeance(dataset);
             }}
           />
@@ -195,6 +200,7 @@ export default function App() {
             dataset={dataset}
             onContinue={() => {
               setCangjieIntroSeen(true);
+              setSavingWorks(isSavingWorking());
               if (origin === 'before-seance') startSeance(dataset);
               else setView({ screen: 'menu', dataset });
             }}
@@ -212,6 +218,8 @@ export default function App() {
             dataset={dataset}
             config={DEFAULT_CONFIG}
             onOutcome={handleOutcome}
+            savingWorks={savingWorks}
+            onLeave={() => setView({ screen: 'menu', dataset })}
             onComplete={(results) => setView({ screen: 'summary', dataset, results })}
           />
         </Shell>

@@ -6,6 +6,8 @@ The visual-identity feature makes Ghost Script memorable on video without changi
 
 The feature changes no scheduling, no Outcome rule, no summon or write rule, no hint rule, no storage schema and no dataset. The Graveyard reads the existing saved history and classifies it with a small pure function in `app/src/engine/`.
 
+Requirements 18 to 23 amend this feature after tester feedback (approved by Takshil): a Leave séance control, sticky headers on two screens, the rename of the Credits screen to "Sources & licences", a night-scene atmosphere and a menu entrance. They change no game rule. Where an earlier criterion is affected, it carries an "Amended" note that points to the new requirement.
+
 Budget: about one and a half days. The design is deliberately lean: CSS and inline SVG made in this repository, no new runtime dependency except one self-hosted Latin font, and no CJK font file.
 
 ### Kiro features used
@@ -37,7 +39,7 @@ Budget: about one and a half days. The design is deliberately lean: CSS and inli
 - **Grave_Classifier**: The pure functions in `app/src/engine/graveyard.ts` that classify characters into Grave_States.
 - **Graveyard_Screen**: The screen showing one grave per character of the dataset.
 - **Grave**: One cell of the Graveyard_Screen. A Grave of a Met_Character is drawn as a tombstone; a Grave of an unmet character is drawn as a wisp.
-- **Credits_Screen**: The screen listing data sources, licences, the legend source, the Cangjie citations and the fonts.
+- **Credits_Screen**: The screen listing data sources, licences, the legend source, the Cangjie citations and the fonts. *(Amended (approved by Takshil), Requirement 20: this is the internal name. The user-facing name is "Sources & licences". The identifiers `credits`, `Credits.tsx` and `onOpenCredits` stay.)*
 - **Cangjie_Guide**: The "How Cangjie works" screen (`CangjieGuide`).
 - **Start_Menu**: The start menu component (`StartMenu`).
 - **Summon_Keyboard**: The 25 on-screen keys of the Summon step, in the rows `QWERTYUIOP`, `ASDFGHJKL` and `XCVBNM`.
@@ -53,6 +55,17 @@ Budget: about one and a half days. The design is deliberately lean: CSS and inli
 - **Write_Mode**: The Lay-to-rest component `app/src/modes/WriteMode.tsx`.
 - **Summon_Step**: The Summon component `app/src/modes/SummonStep.tsx`.
 - **Seance_Session**: The session component `SeanceSession`, which shows the result line (`RESULT_TEXT`) for the combined Outcome.
+- **Leave_Button**: The button named "Leave séance" at the top of the Seance_Session (Requirement 18).
+- **Saving_Works**: The boolean returned by `isSavingWorking()` of the Storage module. It is true until any write fails during this visit (this page session), and false from the first write that threw or was attempted with no storage backend available. A later successful write does not make it true again, because the failed write's Outcome was never persisted. A new page session starts true again.
+- **Leave_Prompt**: The inline confirmation, shown inside the Seance_Session, that asks "Leave now? Ghosts you've finished are saved." while Saving_Works is true, or "Leave now? This browser didn't save all your progress, so some finished ghosts may be lost." while Saving_Works is false, and offers the buttons "Leave" and "Stay".
+- **Sticky_Header**: A header row that stays at the top edge of the viewport while its screen scrolls, and holds the screen title and the "Back to menu" button (Requirement 19).
+- **Sources_Caption**: The line "Where the words, strokes, codes and fonts come from." shown under the "Sources & licences" button of the Start_Menu.
+- **Night_Scene**: The page background made only with CSS: the Sky_Gradient and two Mist_Layers (Requirement 21).
+- **Sky_Gradient**: The deep blue-black vertical gradient of the Night_Scene, from the darkest stop (`nightTop`) through `nightMid` to the lightest stop (`nightLow`).
+- **Mist_Layer**: One of two translucent, slowly drifting cloud layers of the Night_Scene.
+- **Moon_Glow**: A faint radial glow behind the title of the Start_Menu.
+- **Candle_Accent**: The warm amber colour `candle`, used for the main button of the Start_Menu and for focus rings.
+- **GhostFigure**: The shared component `app/src/components/GhostFigure.tsx` that draws the Ghost_Figure. The Ghost_Card and the Start_Menu both use it.
 - **Software_List**: The list of Runtime_Dependencies (name, version, licence identifier) shown in the Software section of the Credits_Screen, defined in `app/src/data/software.ts`.
 
 ---
@@ -121,7 +134,7 @@ Budget: about one and a half days. The design is deliberately lean: CSS and inli
 1. WHILE the Rite of a ghost has not ended, THE Ghost_Card SHALL contain the Target_Character in no text node and in no attribute value.
 2. WHILE the Rite of a ghost has not ended, THE Ghost_Figure and its animations SHALL contain no text element and no glyph.
 3. THE Graveyard_Screen SHALL render the glyph of a character only for a Met_Character.
-4. THE Start_Menu, the Graveyard_Screen and the Credits_Screen SHALL be reachable only outside an active séance.
+4. THE Start_Menu, the Graveyard_Screen and the Credits_Screen SHALL be reachable only outside an active séance. *(Amended (approved by Takshil), Requirement 18: the Leave_Button is the one control shown during a séance that leads back to the Start_Menu, and only after the player confirms. The Start_Menu, the Graveyard_Screen and the Credits_Screen themselves stay unreachable during a séance.)*
 
 ### Requirement 6: Graveyard States
 
@@ -157,7 +170,7 @@ Budget: about one and a half days. The design is deliberately lean: CSS and inli
 8. THE Graveyard_Screen SHALL read the Review_History and the current time and SHALL write nothing to storage.
 9. WHILE Reduced_Motion is not active, THE Graveyard_Screen SHALL flicker the Graves in the `restless` state; WHILE Reduced_Motion is active, THE Graveyard_Screen SHALL show them without animation.
 10. THE Graveyard_Screen SHALL lay out its graves in a grid that reflows between viewport widths of 375 px and 1440 px without horizontal scrolling.
-11. THE Graveyard_Screen SHALL provide a "Back to menu" button with an accessible name, a minimum height of 44 px and a visible focus ring.
+11. THE Graveyard_Screen SHALL provide a "Back to menu" button with an accessible name, a minimum height of 44 px and a visible focus ring. *(Amended (approved by Takshil), Requirement 19: the button sits in the Sticky_Header at the top of the screen and no button appears at the bottom.)*
 12. THE Graveyard_Screen SHALL give glyphs and text a contrast ratio of at least 4.5:1 against the background of their Grave.
 
 ### Requirement 8: Summon Step Layout
@@ -181,7 +194,7 @@ Budget: about one and a half days. The design is deliberately lean: CSS and inli
 
 #### Acceptance Criteria
 
-1. WHEN the player presses the "Credits" button in the Start_Menu, THE App SHALL show the Credits_Screen.
+1. WHEN the player presses the "Credits" button in the Start_Menu, THE App SHALL show the Credits_Screen. *(Amended (approved by Takshil), Requirement 20: the button is now labelled "Sources & licences".)*
 2. THE Credits_Screen SHALL list every data source of the README "Data and licences" table, each with its name, version or commit, use, licence and URL as text.
 3. THE Credits_Screen SHALL state that `characters.json` is a combined work that carries the licence terms of each source for its fields, and that the code of Ghost Script is licensed MIT.
 4. THE Credits_Screen SHALL show the legend line 天雨粟，鬼夜哭 with the Huainanzi source citation worded exactly as in the "Approved legend line" section of `content-accuracy.md`, and SHALL state that the English rendering is the project's own.
@@ -189,7 +202,7 @@ Budget: about one and a half days. The design is deliberately lean: CSS and inli
 6. THE Credits_Screen SHALL list each bundled font with its name and licence, and SHALL state that Chinese text is drawn with fonts already installed on the device.
 7. THE Credits_Screen SHALL make no claim about Cangjie beyond those allowed in `content-accuracy.md`.
 8. THE Test_Suite SHALL fail IF the data sources, licences, versions, URLs or the font entry of the Credits_Screen differ from those of the README.
-9. THE Credits_Screen SHALL provide a "Back to menu" button with an accessible name, a minimum height of 44 px and a visible focus ring.
+9. THE Credits_Screen SHALL provide a "Back to menu" button with an accessible name, a minimum height of 44 px and a visible focus ring. *(Amended (approved by Takshil), Requirement 19: the button sits in the Sticky_Header at the top of the screen and no button appears at the bottom.)*
 10. THE Credits_Screen SHALL show a "Software" section that lists every package of the Software_List with its name, version and licence identifier, and SHALL link to the Notices_File.
 
 ### Requirement 10: Guide Wording
@@ -209,9 +222,9 @@ Budget: about one and a half days. The design is deliberately lean: CSS and inli
 
 #### Acceptance Criteria
 
-1. THE Start_Menu SHALL show five buttons in this order: "Begin a Nightly Séance", "Read the legend again", "How Cangjie works", "Graveyard", "Credits".
+1. THE Start_Menu SHALL show five buttons in this order: "Begin a Nightly Séance", "Read the legend again", "How Cangjie works", "Graveyard", "Credits". *(Amended (approved by Takshil), Requirement 20: the fifth label is "Sources & licences".)*
 2. WHEN the player presses "Graveyard", THE Start_Menu SHALL call `onOpenGraveyard` once.
-3. WHEN the player presses "Credits", THE Start_Menu SHALL call `onOpenCredits` once.
+3. WHEN the player presses "Credits", THE Start_Menu SHALL call `onOpenCredits` once. *(Amended (approved by Takshil), Requirement 20: the button is labelled "Sources & licences"; the callback name stays.)*
 4. WHEN the player presses one of the three existing buttons, THE Start_Menu SHALL call the same callback as before.
 5. THE Start_Menu SHALL give every button a visible text label, a minimum height of 44 px and a visible focus ring.
 
@@ -247,7 +260,7 @@ Budget: about one and a half days. The design is deliberately lean: CSS and inli
 
 #### Acceptance Criteria
 
-1. THE implementation of this feature SHALL leave unmodified `app/src/engine/scheduler.ts`, `config.ts`, `outcome.ts`, `learningOrder.ts` and `cangjie.ts`, `app/src/storage/storage.ts`, and `app/public/data/characters.json`.
+1. THE implementation of this feature SHALL leave unmodified `app/src/engine/scheduler.ts`, `config.ts`, `outcome.ts`, `learningOrder.ts` and `cangjie.ts`, `app/src/storage/storage.ts`, and `app/public/data/characters.json`. *(Amended (approved by Takshil), Requirement 18: `storage.ts` may gain the one addition `isSavingWorking()`, with no change to the storage schema, to the blob, or to the behaviour of any existing function.)*
 2. THE storage schema version SHALL stay at 2.
 3. THE existing tests for the files in criterion 1, for the hint rules and for the never-reveal rule of the Summon step SHALL pass without change to their assertions.
 
@@ -296,3 +309,103 @@ This requirement was requested by the human. It changes no game rule.
 6. WHEN the Summon step reaches the forming phase, THE Summon_Step SHALL remove the "Give up" button from the screen, and SHALL keep it absent through the fading phase.
 7. THE App SHALL leave keyboard focus handling unchanged by this requirement, because the Seance_Session already moves focus to "Next ghost" after the Outcome.
 8. THE App SHALL leave the never-reveal rule, the Outcome values, the hint rules and the Summon timings (`SUMMON_HOLD_MS` and `SUMMON_FADE_MS`) unchanged by this requirement.
+
+### Requirement 18: Leave a Séance
+
+**User Story:** As a player, I want to leave a séance part-way, so that I am not stuck in a session I cannot finish now, and I don't lose ghosts I already finished when this browser can save.
+
+This requirement was requested after tester feedback and is approved by Takshil. It replaces the rule of ghost-game-core Requirement 1.5 that no menu control appears during a séance. It changes no scheduling, Outcome, hint or storage-schema rule. Amended (approved by Takshil): the accuracy review found that the saved-text is false when `localStorage` is unavailable or full, so the Leave_Prompt now has two texts, chosen by Saving_Works. The Storage module gains the read-only `isSavingWorking()`; the blob and the schema version stay as they are.
+
+#### Acceptance Criteria
+
+1. WHILE a séance is active, THE Seance_Session SHALL show the Leave_Button as the first control in its reading and tab order, at the top of the session, in every state of every ghost (summoning, writing, and after the Outcome while "Next ghost" is shown).
+2. WHEN the player activates the Leave_Button, THE Seance_Session SHALL show the Leave_Prompt inline in the page, containing the buttons "Leave" and "Stay", and SHALL use no browser dialog (`window.confirm`, `window.alert` or `window.prompt`).
+2a. WHEN the Leave_Prompt is shown and the `savingWorks` prop of the Seance_Session is true, THE Seance_Session SHALL show the text "Leave now? Ghosts you've finished are saved.".
+2b. WHEN the Leave_Prompt is shown and the `savingWorks` prop of the Seance_Session is false, THE Seance_Session SHALL show the text "Leave now? This browser didn't save all your progress, so some finished ghosts may be lost." instead of the text in criterion 2a.
+2c. THE App SHALL read the Saving_Works value when it mounts, after each write of the intro flag or the Cangjie-guide flag, when a Seance_Session starts, and after each Outcome is recorded, and SHALL pass the most recently read value to the Seance_Session as `savingWorks`, so that the Leave_Prompt text reflects whether any write has failed during this visit.
+2d. THE Storage module SHALL provide `isSavingWorking(): boolean` that returns true until any write fails during the page session, and returns false from the first write that threw or was attempted with no storage backend available, for the rest of the page session; a later successful write SHALL NOT make it true again, and a new store (a new page session) SHALL start true.
+3. THE Leave_Prompt SHALL have the role `group` with the text shown by criterion 2a or 2b as its accessible name, and THE Leave_Button SHALL expose `aria-expanded` with the value `true` while the Leave_Prompt is open and `false` otherwise.
+4. WHEN the Leave_Prompt opens, THE Seance_Session SHALL move keyboard focus to the "Stay" button.
+5. WHEN the player activates "Stay", or presses the Escape key while focus is inside the Leave_Prompt, THE Seance_Session SHALL close the Leave_Prompt and SHALL return keyboard focus to the Leave_Button.
+6. WHEN the Leave_Prompt closes through "Stay" or Escape, THE Seance_Session SHALL leave the current ghost, its step and its Outcome state as they were before the Leave_Prompt opened.
+7. WHEN the player activates "Leave", THE Seance_Session SHALL call `onLeave` once, and THE App SHALL end the séance and show the Start_Menu.
+8. WHEN the player activates "Leave", THE App SHALL record nothing for the current ghost, including when its Summon step has finished and its Lay-to-rest step has not, and SHALL keep every Outcome that was already recorded.
+9. WHEN the player has activated "Leave", THE Seance_Session SHALL call neither `onOutcome` nor `onComplete` afterwards, including when a late event of the Summon step or the Write_Mode arrives.
+10. WHILE the Leave_Prompt is open and the Outcome of the current ghost is reached, THE Seance_Session SHALL record that Outcome as it does at any other time and SHALL keep keyboard focus inside the Leave_Prompt.
+11. THE Leave_Button, "Leave" and "Stay" SHALL each have a visible text label, a minimum height of 44 px and a visible focus ring.
+12. WHILE a séance is active, THE Seance_Session SHALL show no control other than the Leave_Button that leads to the Start_Menu, the legend, the Cangjie_Guide, the Graveyard_Screen or the Credits_Screen.
+
+### Requirement 19: Sticky Header on Graveyard and Sources & licences
+
+**User Story:** As a player, I want the title and the way back to stay at the top while I scroll a long screen, so that I can always return to the menu without scrolling to the bottom.
+
+#### Acceptance Criteria
+
+1. THE Graveyard_Screen and the Credits_Screen SHALL each begin with one Sticky_Header that holds the screen's `h1` title and the "Back to menu" button.
+2. WHILE the player scrolls the Graveyard_Screen or the Credits_Screen, THE Sticky_Header SHALL stay at the top edge of the viewport, above the screen content, with an opaque background.
+3. THE Graveyard_Screen and the Credits_Screen SHALL each contain exactly one "Back to menu" button, located in the Sticky_Header, and no button at the bottom of the screen.
+4. WHEN the player activates "Back to menu", THE Graveyard_Screen and the Credits_Screen SHALL call `onBack` once.
+5. THE "Back to menu" button SHALL have an accessible name, a minimum height of 44 px and a visible focus ring.
+6. WHEN keyboard focus moves to an element below the Sticky_Header, THE App SHALL keep that element out from under the Sticky_Header by reserving a scroll padding at the top of the page that is at least as tall as the Sticky_Header.
+7. THE Sticky_Header SHALL keep its title and its button on one row, no taller than 72 CSS pixels, at every viewport width from 375 px to 1440 px.
+8. THE Sticky_Header SHALL give its title and its button text a contrast ratio of at least 4.5:1 against the header background.
+
+### Requirement 20: Sources & licences
+
+**User Story:** As a player, I want the screen that lists where everything comes from to have a name that says so, so that I understand what the button does before I press it.
+
+#### Acceptance Criteria
+
+1. THE Start_Menu SHALL label its fifth button "Sources & licences".
+2. THE Credits_Screen SHALL show the heading "Sources & licences" as its `h1`, and its landmark SHALL have the accessible name "Sources & licences".
+3. THE Start_Menu and the Credits_Screen SHALL contain no visible text, accessible name or accessible description that contains the word "Credits".
+4. WHEN the player presses "Sources & licences", THE Start_Menu SHALL call `onOpenCredits` once and call no other callback.
+5. THE Start_Menu SHALL show the Sources_Caption directly under the "Sources & licences" button, and THE "Sources & licences" button SHALL reference the Sources_Caption through `aria-describedby`.
+6. THE Sources_Caption SHALL read exactly "Where the words, strokes, codes and fonts come from." and SHALL be shown as muted text whose contrast meets Requirement 21.6.
+7. THE tests of the Start_Menu, the Credits_Screen and the App SHALL assert the new name, and SHALL no longer look for the name "Credits".
+
+### Requirement 21: Night Scene
+
+**User Story:** As a player, I want a calm night atmosphere behind the game instead of a flat black page, so that the game feels haunted and memorable without hurting readability.
+
+#### Acceptance Criteria
+
+1. THE App SHALL paint the Night_Scene behind every screen, using only CSS gradients and inline `data:` URIs, so that no new image file, font file or network request is added.
+2. THE Night_Scene SHALL contain a Sky_Gradient from a darkest stop to a lightest stop, both blue-black, defined as the tokens `nightTop`, `nightMid` and `nightLow` in `app/src/styles/theme.ts`.
+3. THE Night_Scene SHALL contain two Mist_Layers that drift in opposite horizontal directions, each with a drift period of at least 90 seconds.
+4. THE Start_Menu SHALL show a Moon_Glow behind its title, whose peak opacity is at most 0.10.
+5. THE main button of the Start_Menu ("Begin a Nightly Séance") SHALL use the Candle_Accent as its background, and every focus ring in the App SHALL use the Candle_Accent colour.
+6. THE App SHALL give every text colour token a contrast ratio of at least 4.5:1 against the darkest stop, against the lightest stop, and against the worst-case composite of the lightest stop, both Mist_Layers at their peak opacity and the Moon_Glow at its peak opacity.
+7. THE Candle_Accent SHALL have a contrast ratio of at least 3:1 against the darkest stop, the lightest stop and the ring-offset colour, and THE focus ring SHALL stay visible on every screen.
+8. THE text on the main button SHALL have a contrast ratio of at least 4.5:1 against the Candle_Accent.
+9. THE App SHALL declare every animation of the Night_Scene and of the menu figure inside a `@media (prefers-reduced-motion: no-preference)` block, and WHILE Reduced_Motion is active, THE Mist_Layers SHALL be static.
+10. THE Night_Scene SHALL let mouse, touch and pen events reach the controls above it and SHALL add no element to the accessibility tree.
+11. THE page wrappers of the screens SHALL have a transparent background so that the Night_Scene shows through, while cards, buttons and graves keep their opaque backgrounds.
+12. THE `url()` values in `app/src/styles/index.css` SHALL all be inline `data:` URIs.
+13. THE Night_Scene SHALL add no runtime dependency, and the Bundle_Check SHALL still pass against the Bundle_Budget.
+
+### Requirement 22: Menu Entrance
+
+**User Story:** As a player, I want the menu to feel like the entrance to a haunted place, so that the first screen sets the mood.
+
+#### Acceptance Criteria
+
+1. THE Start_Menu SHALL show, above its buttons and in this order, the Ghost_Figure and the `h1` "Ghost Script".
+2. THE `h1` of the Start_Menu SHALL use the Cormorant Garamond display font at a size of at least 3rem (48 CSS pixels).
+3. THE Ghost_Card and the Start_Menu SHALL both draw their Ghost_Figure through the one component GhostFigure.
+4. THE GhostFigure SHALL be hidden from assistive technology, SHALL be unfocusable, SHALL contain no text element, and SHALL have the same shape in every place it is used.
+5. WHILE Reduced_Motion is not active, THE Ghost_Figure of the Start_Menu SHALL float with a slow vertical movement of at most 6 CSS pixels; WHILE Reduced_Motion is active, THE Ghost_Figure of the Start_Menu SHALL be static.
+6. THE Start_Menu SHALL keep its five buttons in the order of Requirement 11.1, with their callbacks of Requirement 11.2 to 11.4.
+
+### Requirement 23: No Game-Rule Change and Verification of the Amendments
+
+**User Story:** As the maintainer, I want proof that the tester-feedback changes are presentation and navigation only, and that the new copy is accurate, so that the game still behaves as approved and ships correct.
+
+#### Acceptance Criteria
+
+1. THE implementation of Requirements 18 to 22 SHALL leave unmodified every file listed in Requirement 14.1, and THE storage schema version SHALL stay at 2.
+2. THE Test_Suite SHALL cover Requirements 18 to 22 with unit tests and component tests only, and SHALL add no property-based tests and no mutation tests (decision of Nov 15 in `tech.md`).
+3. THE Test_Suite SHALL replace the test of the SeanceSession that asserts no legend or menu control during a séance with tests of Requirement 18.1 and 18.12.
+4. THE Test_Suite SHALL fail IF a CSS animation of `app/src/styles/index.css` lies outside a `@media (prefers-reduced-motion: no-preference)` block, IF a `url()` value of that file is not a `data:` URI, IF a custom property of the Night_Scene differs from its token in `app/src/styles/theme.ts`, or IF a contrast ratio of Requirement 21.6 to 21.8 falls below its limit.
+5. WHEN all new copy exists, THE maintainer SHALL run the Accuracy_Reviewer over the Start_Menu copy, the "Sources & licences" screen, the Leave_Prompt text and the README, and SHALL fix every finding within the scope of this spec.
+6. WHEN the final checkpoint of the amendments runs, THE maintainer SHALL run `npm test`, `npx tsc -p tsconfig.json`, `npx tsc -p app/tsconfig.json`, `npx tsc -p oracle/tsconfig.json`, `npm run build -w app` and `npm run check:bundle` (budget 300,000 bytes of gzip), and all SHALL succeed.

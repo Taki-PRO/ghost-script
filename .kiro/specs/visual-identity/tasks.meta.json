@@ -446,6 +446,235 @@
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794798855673
       }
+    ],
+    "13.1 Add night and candle tokens, Tailwind colours and contrast tests": [
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800288346
+      },
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800378372
+      }
+    ],
+    "14.1 Create `GhostFigure.tsx` and use it in `GhostPrompt.tsx`": [
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800289538
+      },
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800378693
+      }
+    ],
+    "15.1 Rename the button to \"Sources & licences\" and add the caption in `StartMenu.tsx`": [
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800290736
+      },
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800379937
+      }
+    ],
+    "17.1 Add the Leave_Button and Leave_Prompt to `SeanceSession.tsx` and replace the old rule test": [
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800291882
+      },
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800381106
+      }
+    ],
+    "14. Shared ghost figure": [
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800378724
+      }
+    ],
+    "13.2 Add the night scene, moon glow, candle focus rule and scroll padding to `app/src/styles/index.css`, with CSS tests": [
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800382722
+      },
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800532689
+      }
+    ],
+    "16.1 Rename the heading and add the sticky header in `Credits.tsx`": [
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800383900
+      },
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800532837
+      }
+    ],
+    "16.2 Add the sticky header to `Graveyard.tsx`": [
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800384718
+      },
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800534091
+      }
+    ],
+    "18.1 Make the wrappers of the intro, guide and summary transparent": [
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800385709
+      },
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800535231
+      }
+    ],
+    "13. Night scene foundations (tester feedback, approved by Takshil)": [
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800532725
+      }
+    ],
+    "16. Sticky headers (Graveyard and Sources & licences)": [
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800534119
+      }
+    ],
+    "18. Remaining page wrappers": [
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800535261
+      }
+    ],
+    "15.2 Build the menu entrance in `StartMenu.tsx`": [
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800536860
+      },
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800608886
+      }
+    ],
+    "17.2 Wire `onLeave`, make the Shell transparent and update `App.test.tsx`": [
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800537679
+      },
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800609918
+      }
+    ],
+    "15. Start menu": [
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800608918
+      }
+    ],
+    "17. Leave séance": [
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800609946
+      }
+    ],
+    "19.1 Run the `accuracy-reviewer` agent over the new copy and fix findings": [
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800610980
+      },
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794802124692
+      }
+    ],
+    "21.1 Add `isSavingWorking()` to `app/src/storage/storage.ts` and test it": [
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800978147
+      },
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794801052698
+      }
+    ],
+    "21.2 Add the `savingWorks` prop and both texts to `SeanceSession.tsx` and test them": [
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794800979128
+      },
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794801054382
+      }
+    ],
+    "21.3 Wire `savingWorks` in `App.tsx` and add the App test": [
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794801055113
+      },
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794801207542
+      }
+    ],
+    "21. Conditional Leave_Prompt text (accuracy finding, approved by Takshil)": [
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794801207592
+      }
+    ],
+    "20. Final checkpoint - Verify the amendments": [
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794802135010
+      },
+      {
+        "executionId": "cc0b01f7-f34f-4b57-a9c6-51f630718c8a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794802248837
+      }
     ]
   }
 }

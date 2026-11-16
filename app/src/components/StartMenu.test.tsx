@@ -7,7 +7,8 @@ const BEGIN = 'Begin a Nightly Séance';
 const LEGEND = 'Read the legend again';
 const GUIDE = 'How Cangjie works';
 const GRAVEYARD = 'Graveyard';
-const CREDITS = 'Credits';
+const CREDITS = 'Sources & licences';
+const CAPTION = 'Where the words, strokes, codes and fonts come from.';
 
 function setup() {
   const onStartSeance = vi.fn();
@@ -48,6 +49,47 @@ describe('StartMenu (Req 1.5, 3.6, 7.1, 7.2, 9.4)', () => {
       GRAVEYARD,
       CREDITS,
     ]);
+  });
+
+  it('shows a hidden ghost figure before the single display-font h1', () => {
+    setup();
+    const h1s = document.querySelectorAll('h1');
+    expect(h1s).toHaveLength(1);
+    const h1 = h1s[0];
+    expect(h1.className).toContain('font-display');
+    expect(h1.className).toContain('text-5xl');
+    const svg = document.querySelector('svg.menu-figure');
+    expect(svg).not.toBeNull();
+    expect(svg?.getAttribute('aria-hidden')).toBe('true');
+    expect(
+      svg!.compareDocumentPosition(h1) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(svg!.closest('.moon-glow')).toBe(h1.closest('.moon-glow'));
+  });
+
+  it('styles the main button with candle colours and leaves the wrapper without bg-background', () => {
+    setup();
+    const begin = screen.getByRole('button', { name: BEGIN });
+    expect(begin.className).toContain('bg-candle');
+    expect(begin.className).toContain('shadow-candle');
+    expect(begin.className).toContain('focus-visible:ring-2');
+    expect(document.querySelector('main')?.className).not.toContain('bg-background');
+  });
+
+  it('shows the exact Sources caption and describes the button with it', () => {
+    setup();
+    expect(screen.getByText(CAPTION).textContent).toBe(CAPTION);
+    const button = screen.getByRole('button', { name: CREDITS });
+    expect(button.getAttribute('aria-describedby')).toBe('menu-sources-hint');
+    expect(document.getElementById('menu-sources-hint')?.textContent).toBe(CAPTION);
+  });
+
+  it('shows no visible text or accessible name containing "credits"', () => {
+    setup();
+    expect(document.body.textContent ?? '').not.toMatch(/\bcredits\b/i);
+    for (const b of screen.getAllByRole('button')) {
+      expect(b.getAttribute('aria-label') ?? '').not.toMatch(/\bcredits\b/i);
+    }
   });
 
   it('offers no mode choice', () => {
@@ -92,7 +134,7 @@ describe('StartMenu (Req 1.5, 3.6, 7.1, 7.2, 9.4)', () => {
     expect(m.onReviewCangjieGuide).not.toHaveBeenCalled();
   });
 
-  it('Credits calls only onOpenCredits', async () => {
+  it('Sources & licences calls only onOpenCredits', async () => {
     const m = setup();
     await m.user.click(screen.getByRole('button', { name: CREDITS }));
     expect(m.onOpenCredits).toHaveBeenCalledTimes(1);

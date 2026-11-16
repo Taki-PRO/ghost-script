@@ -112,6 +112,7 @@ Build the visual layer in small steps: theme tokens, font and CSS first; then th
 - [x] 9. Accuracy review
   - [x] 9.1 Run the `accuracy-reviewer` agent over all new copy and fix findings
     - Files to review: `app/src/components/Credits.tsx`, `Graveyard.tsx`, `CangjieGuide.tsx`, `app/src/data/credits.ts`, `app/src/data/citations.ts`, `app/src/data/software.ts`, the README changes, and this spec folder
+    - Third review: the reviewer found three wording overstatements. (1) `LEAVE_TEXT_NOT_SAVING` said "is not saving progress", which is false when one write failed and later writes succeeded. Changed to "Leave now? This browser didn't save all your progress, so some finished ghosts may be lost." in `SeanceSession.tsx`, its tests (`SeanceSession.test.tsx`, `App.test.tsx`), Req 18.2b, the Leave_Prompt glossary entry, the design Leave section and tasks 21.2 and 21.3; resolves an accuracy finding. (2) ghost-game-core AC 1.5 now says finished ghosts "may be lost" on leaving. (3) ghost-game-core AC 7.6 now says a failed write persists nothing and earlier successful writes stay saved
     - Fix each finding within this spec's scope; re-run until it reports `No findings`; record anything that needs a decision from a human in the task notes instead of changing steering
     - _Requirements: 9.7, 15.2_
 
@@ -138,6 +139,113 @@ Build the visual layer in small steps: theme tokens, font and CSS first; then th
     - Change no scheduling, Outcome, hint or timing code, and no file in Requirement 14.1
     - _Requirements: 17.1, 17.2, 17.3, 17.4, 17.5, 17.6, 17.7, 17.8, 14.3_
 
+- [x] 13. Night scene foundations (tester feedback, approved by Takshil)
+  - [x] 13.1 Add night and candle tokens, Tailwind colours and contrast tests
+    - In `app/src/styles/theme.ts` add `nightTop`, `nightMid`, `nightLow`, `mist`, `moon`, `candle` with the proposed hex values of the design; adjust a hex only to pass a test, never a text token
+    - In `app/tailwind.config.ts` add the colours `night-top`, `night-mid`, `night-low`, `mist`, `moon`, `candle` and `boxShadow.candle` (`0 0 20px rgba(240, 184, 102, 0.35)`)
+    - Extend `app/src/styles/theme.test.ts`: each text token (`ink`, `muted`, `ghost`, `success`, `error`) at least 4.5:1 on `nightTop`, `nightMid` and `nightLow`; `candle` at least 3:1 on `nightTop`, `nightLow` and `background`; `background` on `candle` at least 4.5:1; `ink` and `muted` on `nightTop` at least 4.5:1; `nightTop` is the darkest and `nightLow` the lightest stop by luminance
+    - _Requirements: 21.2, 21.6, 21.7, 21.8, 19.8_
+  - [x] 13.2 Add the night scene, moon glow, candle focus rule and scroll padding to `app/src/styles/index.css`, with CSS tests
+    - Add the `:root` variables (`--night-top`, `--night-mid`, `--night-low`, `--mist`, `--moon`, `--candle`, `--mist-peak-alpha` 0.05, `--moon-peak-alpha` 0.06), `html { scroll-padding-top: 5rem }`, the three fixed pseudo-elements (`body::before`, `body::after`, `#root::before`) with `pointer-events: none`, `#root { position: relative; z-index: 1 }`, `.moon-glow`, and `*:focus-visible { --tw-ring-color: var(--candle) !important; }`
+    - Extend the one existing `@media (prefers-reduced-motion: no-preference)` block with `mist-drift-a` (120 s), `mist-drift-b` (180 s) and `.menu-figure` (reuse `ghost-float`); add no second block and no animation outside it
+    - Extend `app/src/styles/index.css.test.ts`: variables equal the tokens of `theme.ts` (and the mist and moon channel triples equal their hex); every `animation` and `@keyframes` lies inside the single no-preference block; every `url(` is followed by `data:` (with or without a quote); `scroll-padding-top` is at least 4rem; the three pseudo-elements set `pointer-events: none`; the focus rule sets `--tw-ring-color` to `var(--candle)`; worst-case composite contrast (lightest stop, both mist layers at peak, then the moon glow at peak) at least 4.5:1 for every text token; periods of both mist animations at least 90 s
+    - If the composite test fails, lower the two alpha variables or darken `mist` or `moon` (this may need a one-line change to `theme.ts` by the same task); never change a text token
+    - Needs task 13.1
+    - _Requirements: 21.1, 21.2, 21.3, 21.4, 21.5, 21.6, 21.7, 21.9, 21.10, 21.12, 19.6, 23.4_
+
+- [x] 14. Shared ghost figure
+  - [x] 14.1 Create `GhostFigure.tsx` and use it in `GhostPrompt.tsx`
+    - New `app/src/components/GhostFigure.tsx` with the SVG of the design (same path, `aria-hidden`, `focusable="false"`, no text element, eyes filled with `theme.background`, optional `className`); `GhostPrompt.tsx` renders `<GhostFigure className="ghost-figure mx-auto mb-2 h-16 w-14 text-ghost" />` in place of its inline SVG; change nothing else in `GhostPrompt`
+    - Add `GhostFigure.test.tsx` (aria-hidden, unfocusable, no `<text>`, identical markup in two renders); `GhostPrompt.test.tsx` must pass without change to its assertions
+    - _Requirements: 22.3, 22.4, 3.1, 3.2, 3.3, 5.2_
+
+- [x] 15. Start menu
+  - [x] 15.1 Rename the button to "Sources & licences" and add the caption in `StartMenu.tsx`
+    - Button text `Sources &amp; licences` (accessible name "Sources & licences"); wrap it with the caption `<p id="menu-sources-hint">` reading exactly "Where the words, strokes, codes and fonts come from." in `text-sm text-muted`; give the button `aria-describedby="menu-sources-hint"`; keep the prop name `onOpenCredits` and every other button as is
+    - Update `StartMenu.test.tsx`: the five names in order end with "Sources & licences"; accessible description equals the caption; the caption text is exact; the button calls `onOpenCredits` once and no other callback; no visible text or name matches `/\bcredits\b/i`
+    - _Requirements: 20.1, 20.3, 20.4, 20.5, 20.6, 20.7, 11.1, 11.5_
+  - [x] 15.2 Build the menu entrance in `StartMenu.tsx`
+    - Hero wrapper `moon-glow` holding `<GhostFigure className="menu-figure mb-4 h-24 w-20 text-ghost" />` above the `h1` "Ghost Script" (`font-display text-5xl font-semibold tracking-wide sm:text-7xl`); main button `bg-candle text-background shadow-candle`; remove `bg-background` from the wrapper `<main>`; keep order and callbacks of the five buttons
+    - Extend `StartMenu.test.tsx`: the figure precedes the `h1` in document order and is `aria-hidden`; one `h1`, with `font-display` and `text-5xl`; the main button has `bg-candle`; the wrapper has no `bg-background`
+    - Needs tasks 13.1, 13.2, 14.1 and 15.1
+    - _Requirements: 21.4, 21.5, 21.11, 22.1, 22.2, 22.5, 22.6_
+
+- [x] 16. Sticky headers (Graveyard and Sources & licences)
+  - [x] 16.1 Rename the heading and add the sticky header in `Credits.tsx`
+    - `<header className="sticky top-0 z-20 -mx-4 flex min-h-[64px] items-center justify-between gap-3 border-b border-muted/40 bg-night-top px-4 py-2">` as the first child of the content container, holding the `h1` (id `credits-title`, text "Sources & licences", `min-w-0 font-display text-2xl sm:text-3xl`) and the "Back to menu" button (`shrink-0 whitespace-nowrap`, 44 px, focus ring); delete the bottom button; drop `bg-background` and the top padding of `<main>`
+    - Update `Credits.test.tsx`: heading and landmark name "Sources & licences"; no `/\bcredits\b/i` in the rendered text; exactly one "Back to menu" button, inside the same `<header>` as the `h1`; header classes include `sticky`, `top-0` and `bg-night-top`; `onBack` once; existing section, table and link tests unchanged
+    - Needs task 13.1
+    - _Requirements: 19.1, 19.2, 19.3, 19.4, 19.5, 19.7, 20.2, 20.3, 21.11, 9.9_
+  - [x] 16.2 Add the sticky header to `Graveyard.tsx`
+    - Same `<header>` structure with the `h1` "Graveyard"; delete the bottom button; drop `bg-background` and the top padding of `<main>`; keep the intro line, legend, empty-history line and grid unchanged
+    - Update `Graveyard.test.tsx`: exactly one "Back to menu" button, inside the `<header>` with the `h1`; header classes as in 16.1; `onBack` once; all existing grave, legend and glyph tests pass unchanged
+    - Needs task 13.1
+    - _Requirements: 19.1, 19.2, 19.3, 19.4, 19.5, 19.7, 21.11, 7.11_
+
+- [x] 17. Leave séance
+  - [x] 17.1 Add the Leave_Button and Leave_Prompt to `SeanceSession.tsx` and replace the old rule test
+    - New required prop `onLeave`; top row with the "Leave séance" button (`aria-expanded`, `aria-controls="leave-prompt"`) and the "Ghost N of M" heading; inline `role="group"` prompt named by its question "Leave now? Ghosts you've finished are saved." (made conditional by task 21) with "Leave" and "Stay"; focus to "Stay" on open; "Stay" and Escape (on the group) close it and return focus to the Leave_Button; "Leave" sets a `leftRef` and calls `onLeave` once; `handleOutcome` and `handleSummonDone` return at once when `leftRef` is set; skip the "focus Next ghost" effect while the prompt is open; call `window.confirm`, `alert` and `prompt` nowhere
+    - In `SeanceSession.test.tsx` replace the test "has no legend or menu control during the session" with the tests listed in the design (button present in every state and first in the DOM; no legend, guide, Graveyard, Sources or "Back to menu" button before and after an Outcome; prompt text, role, name and `aria-expanded`; no `window.confirm` call; focus moves; Stay and Escape; Leave once; late emit after Leave calls nothing; leave after a finished Summon step calls `onOutcome` zero times; Outcome while the prompt is open is reported once and focus stays); update the shared `setup` to pass `onLeave`
+    - Do not change `onOutcome`, `onComplete`, the Outcome rules or any timing
+    - _Requirements: 18.1, 18.2, 18.3, 18.4, 18.5, 18.6, 18.7, 18.8, 18.9, 18.10, 18.11, 18.12, 23.3_
+  - [x] 17.2 Wire `onLeave`, make the Shell transparent and update `App.test.tsx`
+    - In `App.tsx` pass `onLeave={() => setView({ screen: 'menu', dataset })}` to `SeanceSession`; remove `bg-background` from the `Shell` `<main>` (keep `text-ink`)
+    - In `App.test.tsx`: open the Sources screen by the name "Sources & licences" and expect the heading "Sources & licences"; add: finish ghost 1, start ghost 2, press "Leave séance" then "Leave", see the menu, and check `loadState().history` has ghost 1 and not ghost 2; pressing "Stay" keeps the séance on screen
+    - Needs tasks 15.1, 16.1 and 17.1
+    - _Requirements: 18.7, 18.8, 20.7, 21.11, 5.4_
+
+- [x] 18. Remaining page wrappers
+  - [x] 18.1 Make the wrappers of the intro, guide and summary transparent
+    - Remove `bg-background` from the wrapper `<main>` of `IntroScreen.tsx`, `CangjieGuide.tsx` and `SessionSummary.tsx` (keep `hover:bg-background` and `ring-offset-background` on buttons); add one test per component that the wrapper has no `bg-background` class; change no text
+    - _Requirements: 21.11_
+
+- [ ] 19. Review and log
+  - [x] 19.1 Run the `accuracy-reviewer` agent over the new copy and fix findings
+    - Review: `StartMenu.tsx` (the Sources_Caption and the five labels), `Credits.tsx` (heading), `SeanceSession.tsx` (both Leave_Prompt texts; the saved text "Ghosts you've finished are saved" is true only while `isSavingWorking()` is true, meaning no write has failed this visit, because each Outcome is written to local storage when it is reached and a failed write keeps nothing, so the not-saving text must show otherwise), `GhostFigure.tsx`, the README, and this spec folder
+    - Run this task after task 21, so the reviewer sees the conditional wording
+    - Findings and fixes (first review): (1) `App.tsx` read `savingWorks` only at mount and in `handleOutcome`, so it ignored the intro-flag and guide-flag writes (Req 18.2c). Fixed by calling `setSavingWorks(isSavingWorking())` after `setIntroSeen(true)`, after `setCangjieIntroSeen(true)` and in `startSeance`; new `App.test.tsx` test for a first visit with a throwing `setItem`. (2) `LEAVE_TEXT_NOT_SAVING` overstated when earlier Outcomes were saved and a later write failed. Changed "will be lost" to "may be lost", resolving an accuracy finding; approved option kept. (3) Req 18.2c, design (storage note and App wiring) and task 21.2 and 21.3 updated to match the code and the new text
+    - Second review: the reviewer found that `isSavingWorking()` reflected only the most recent write, so if ghost 1's write failed and ghost 2's write succeeded, the prompt said "Ghosts you've finished are saved" although ghost 1 was never persisted (Req 18.2a, 18.2d, the Saving_Works entry, design Leave section, tasks 21.1 to 21.3). Fixed by making the flag sticky for the page session (`saveFailedThisSession`); the Leave texts are unchanged. The storage test "back to true after a later successful write" encoded the old rule and was replaced, as an intended semantic change from an accuracy finding, by "stays false after a later successful write (sticky for the session)"; new tests: a new store starts true, and an App test with a first-write failure. Requirements, design and tasks 21.1 to 21.3 updated
+    - Fix each finding within this spec's scope; re-run until it reports `No findings`; record anything that needs a decision from a human in the task notes instead of changing steering
+    - _Requirements: 23.5_
+  - [ ] 19.2 Human visual check of the amendments (non-coding)
+    - This task is NON-CODING and is performed by a human, not by Kiro. Kiro runs nothing for it and does not write its `kiro-log.md` entry; the human records the result in `kiro-log.md` themselves
+    - At 375, 768 and 1440 px check: the sticky header stays put while scrolling the Graveyard and Sources & licences and fits on one row (at most 72 px); the focused element is not hidden under it; the night scene, moon glow and mist look calm and text is readable; with "reduce motion" on, nothing moves; the Leave séance prompt is usable with keyboard (Tab, Enter, Escape) and a screen reader
+    - _Requirements: 19.6, 19.7, 21.9, 18.3_
+  - [ ] 19.3 Add entries to `kiro-log.md`
+    - One dated entry for the tester-feedback amendment: what was changed (Leave séance, sticky headers, rename, night scene, menu entrance), the decisions (inline `group` prompt with focus on "Stay", caption under the menu button, internal names kept, global candle focus rule, three pseudo-element scene), the amended ghost-game-core rule, and the accuracy-review outcome of task 19.1
+    - Write "the human" or "a human" for people; use "approved by Takshil" only for approvals
+    - Needs tasks 19.1 and 19.2
+    - _Requirements: 23.5_
+
+- [x] 20. Final checkpoint - Verify the amendments
+  - Run the root `npm test`
+  - Run `npx tsc -p tsconfig.json`, `npx tsc -p app/tsconfig.json` and `npx tsc -p oracle/tsconfig.json`
+  - Run `npm run build -w app`, then `npm run check:bundle` (budget 300,000 bytes of gzip)
+  - Confirm `git diff --stat` shows no change to `app/public/data/characters.json`, `scheduler.ts`, `config.ts`, `outcome.ts`, `learningOrder.ts` or `cangjie.ts`, and that the diff of `storage.ts` is only `isSavingWorking()` (task 21.1: the `saveFailedThisSession` flag, its two assignments in `saveState`, and the two new exports) with no schema change
+  - Ensure all tests pass, ask the user if questions arise.
+  - This checkpoint runs after task 21 and task 19.1
+  - _Requirements: 23.1, 23.2, 23.6, 14.1_
+
+- [x] 21. Conditional Leave_Prompt text (accuracy finding, approved by Takshil)
+  - [x] 21.1 Add `isSavingWorking()` to `app/src/storage/storage.ts` and test it
+    - In `createStore` add `let saveFailedThisSession = false` (sticky for the page session). In `saveState`: set it to `true` when no backend is available and set it to `true` in the `catch`; a successful `backend.setItem` never clears it. Add `isSavingWorking(): boolean` to the `Store` interface and the returned object (it returns `!saveFailedThisSession`), and export `const isSavingWorking = (): boolean => defaultStore.isSavingWorking()`
+    - Change no schema, no blob field, no existing signature and no existing behaviour; `recordOutcome(char, entry)` stays as it is and updates the flag through `saveState`; `loadState` and `resetToDefaults` do not touch it
+    - In `storage.test.ts` add: true on a fresh store; true after a successful `saveState`; false after a `setItem` that throws; false after a save with no backend (backend resolver returns `undefined` or throws); stays false after a later successful write (sticky for the session); a new store starts true again; `recordOutcome` and `setIntroSeen` update it; `loadState` does not change it; existing assertions pass unchanged
+    - File ownership: `storage.ts`, `storage.test.ts`
+    - _Requirements: 18.2d, 14.1, 14.2_
+  - [x] 21.2 Add the `savingWorks` prop and both texts to `SeanceSession.tsx` and test them
+    - New required prop `savingWorks: boolean`. Add the constants `LEAVE_TEXT_SAVED` ("Leave now? Ghosts you've finished are saved.") and `LEAVE_TEXT_NOT_SAVING` ("Leave now? This browser didn't save all your progress, so some finished ghosts may be lost.") and show the one that matches the prop in `<p id="leave-question">`; the group keeps `aria-labelledby="leave-question"`, so its accessible name follows the text
+    - In `SeanceSession.test.tsx`: with `savingWorks` true, the group is named by the saved text; with false, by the not-saving text and the saved text is absent; the buttons, focus, Escape and Leave behaviour are unchanged in both cases; update the shared `setup` to pass `savingWorks` (default true)
+    - File ownership: `SeanceSession.tsx`, `SeanceSession.test.tsx` (and `SeanceSession.resultLine.test.tsx` if its setup needs the new prop)
+    - Needs task 17.1
+    - _Requirements: 18.2, 18.2a, 18.2b, 18.3_
+  - [x] 21.3 Wire `savingWorks` in `App.tsx` and add the App test
+    - In `App.tsx` keep `const [savingWorks, setSavingWorks] = useState(() => isSavingWorking())`, call `setSavingWorks(isSavingWorking())` in `handleOutcome` right after `recordOutcome(...)`, after `setIntroSeen(true)`, after `setCangjieIntroSeen(true)` and in `startSeance` (added by task 19.1), and pass `savingWorks={savingWorks}` to `SeanceSession`. Do not use the return value of `recordOutcome` and do not change any game rule
+    - In `App.test.tsx` add tests: with a `localStorage` whose `setItem` throws, finish a ghost, press "Leave séance" and see the group named "Leave now? This browser didn't save all your progress, so some finished ghosts may be lost."; with a `setItem` that throws on the first Outcome write and works afterwards, finish ghost 1 and ghost 2, press "Leave séance" and still see the not-saving text. With a working `localStorage`, the same steps show "Leave now? Ghosts you've finished are saved."; that test lives in `App.leaveSaved.test.tsx` because the flag is sticky in the default store and would otherwise leak from the failing-write tests in `App.test.tsx`
+    - File ownership: `App.tsx`, `App.test.tsx`, `App.leaveSaved.test.tsx`
+    - Needs tasks 17.2, 21.1 and 21.2
+    - _Requirements: 18.2a, 18.2b, 18.2c_
+
 ## Notes
 
 - Task 12.1 runs after every other task. It is a small change requested by the human and adds no new property-based tests.
@@ -145,7 +253,7 @@ Build the visual layer in small steps: theme tokens, font and CSS first; then th
 - Unit and component tests only. No property-based tests and no mutation tests are added (decision of Nov 15 in `tech.md`).
 - Use the `cangjie-oracle` MCP tools (`lookup`, `decompose`) whenever a task needs a Cangjie code or a decomposition. Never write a code by hand.
 - Never-reveal: the Graveyard renders glyphs only for Met_Characters, and nothing in the ghost visuals renders the Target_Character before the Rite ends.
-- Do not edit the files in Requirement 14.1. If a task seems to need it, stop and ask.
+- Do not edit the files in Requirement 14.1, except the one `storage.ts` addition of task 21.1 (approved by Takshil). If any other task seems to need it, stop and ask.
 - Wave 0 tasks touch disjoint files: 1.1 (theme, tailwind), 1.2 (`app/package.json`, `main.tsx`), 2.1, 2.2, 3.1, 6.4, 7.1 (`scripts/check-bundle-size.ts`, root `package.json`).
 - Task 3.2 needs the font package from 1.2 and edits the root `package.json` after 7.1 (wave 0); task 3.3 edits the root `tsconfig.json` after 8.1 (wave 1); task 6.2 needs `software.ts` from 3.3; task 6.5 needs 6.2.
 - `README.md` is edited only by 8.1 and, if the review finds something, by 9.1 (a later wave). `kiro-log.md` is edited only by 8.2.
@@ -155,6 +263,16 @@ Build the visual layer in small steps: theme tokens, font and CSS first; then th
 - The notices file is committed, not generated at build time. After any change to a runtime dependency, run `npm run build:notices` and update `software.ts`.
 - Task 8.2 (`kiro-log.md`) stays in the plan.
 - Task 10.1 is the only manual, non-coding task. Task 11 is a checkpoint and is not in the dependency graph.
+
+### Notes for tasks 13 to 20 (tester feedback, approved by Takshil)
+
+- These tasks amend the spec after tester feedback. They change no game rule and add no property-based test.
+- The superseded "no menu control during a séance" rule is ghost-game-core Requirement 1.5. It is amended in place there, and its test (`SeanceSession.test.tsx`, "has no legend or menu control during the session") is replaced by task 17.1.
+- File ownership (no two tasks of one wave edit the same file): 13.1 `theme.ts`, `theme.test.ts`, `tailwind.config.ts`; 13.2 `index.css`, `index.css.test.ts`; 14.1 `GhostFigure.tsx`, `GhostFigure.test.tsx`, `GhostPrompt.tsx`; 15.1 and 15.2 `StartMenu.tsx`, `StartMenu.test.tsx` (different waves); 16.1 `Credits.tsx`, `Credits.test.tsx`; 16.2 `Graveyard.tsx`, `Graveyard.test.tsx`; 17.1 `SeanceSession.tsx`, `SeanceSession.test.tsx`; 17.2 `App.tsx`, `App.test.tsx`; 18.1 `IntroScreen.tsx`, `CangjieGuide.tsx`, `SessionSummary.tsx` and their tests; 19.3 `kiro-log.md`. Task 19.1 may edit any file named in its list, and runs in a wave of its own with the human task 19.2.
+- Until task 17.2 runs, `App.test.tsx` still looks for the old name "Credits", so run only the tests of your own files in tasks 15 and 16; the whole suite is green again at task 20.
+- Task 21 (accuracy finding, approved by Takshil) makes the Leave_Prompt text conditional on `isSavingWorking()`. It sits after task 20 in the file but runs before 19.1 and 20 (waves 11 and 12 of the graph). 21.1 and 21.2 touch disjoint files and run in parallel; 21.3 follows. Task 19.1 re-runs the `accuracy-reviewer` after task 21, and the final checkpoint 20 runs after 19.1. Requirement 14.1 is amended to allow this one `storage.ts` addition.
+- Internal names (`credits` view, `Credits.tsx`, `onOpenCredits`, `data/credits.ts`) stay; only user-facing text is renamed.
+- Task 19.2 is the second manual, non-coding task (after 10.1). Task 20 is a checkpoint and is not in the dependency graph.
 
 ## Task Dependency Graph
 
@@ -168,7 +286,14 @@ Build the visual layer in small steps: theme tokens, font and CSS first; then th
     { "id": 4, "tasks": ["6.5"] },
     { "id": 5, "tasks": ["9.1", "10.1"] },
     { "id": 6, "tasks": ["8.2"] },
-    { "id": 7, "tasks": ["12.1"] }
+    { "id": 7, "tasks": ["12.1"] },
+    { "id": 8, "tasks": ["13.1", "14.1", "15.1", "17.1"] },
+    { "id": 9, "tasks": ["13.2", "16.1", "16.2", "18.1"] },
+    { "id": 10, "tasks": ["15.2", "17.2"] },
+    { "id": 11, "tasks": ["21.1", "21.2"] },
+    { "id": 12, "tasks": ["21.3"] },
+    { "id": 13, "tasks": ["19.1", "19.2"] },
+    { "id": 14, "tasks": ["19.3"] }
   ]
 }
 ```
