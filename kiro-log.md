@@ -469,7 +469,7 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   - **The README named "character amnesia" without a source.** Fixed: it now cites the Wikipedia article and says how widespread it is is debated.
   - **The README didn't state that each field of `characters.json` carries its source's licence.** Fixed.
   - **Two flags on the Graveyard showing a gave-up character.** Not leaks: giving up reveals the character on screen, so it is no longer hidden. Recorded as a human decision in `content-accuracy.md`.
-- **CLI vs IDE:** _(one or two sentences from me to add)_
+- **CLI vs IDE:** It felt good: different from the IDE but easy to use and easy to understand. The agent's welcome line, the tool-call summary and the credit cost per turn were all on screen, so it was clear what it read and what it cost.
 
 ---
 
