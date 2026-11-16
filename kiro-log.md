@@ -496,6 +496,17 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   - **Bug found:** on a phone (375 px) the sources screen's tables are about 975 px wide, so the whole page scrolls sideways.
 - **Next:** fix the phone overflow, then more testers.
 
+## Nov 16, 2026: Phone overflow fixed, with a real-browser width test
+
+- **What I did:** Asked Kiro to fix the sideways scroll on the sources screen and to add a test that would catch it. Kiro pointed out that the existing jsdom tests can't measure widths (every element reports 0), so a real-browser test was needed. I chose Playwright as a dev-only tool, approved by Takshil.
+- **Kiro features:** spec amendment (Requirement 24, tasks 22.1–23); parallel sub-agents; a diagnosis done with a throwaway browser script.
+- **Result:**
+  - **Narrow screens:** below 640 px, each data source and software package is a stacked card instead of a table row. Long commit hashes and URLs wrap.
+  - **New `npm run test:e2e`:** `@playwright/test` 1.65.1, dev-only, not in the shipped bundle or `npm test`. It builds the app, serves it under `/ghost-script/`, and checks five screens at 375 × 812 for any element wider than the page. A guard test adds a 600 px element and checks it gets reported, so the check can't pass by accident.
+  - **The new test caught a second bug I hadn't seen:** the "How Cangjie works" guide was 378 px wide on a phone. Kiro traced it, by hiding elements one at a time in a real browser, to the long Wikipedia URL in its sources line, and applied the same wrap fix.
+  - **1229 unit tests and 6 e2e tests pass**; `tsc` clean; bundle 134,346 bytes gzipped.
+- **My own browser check:** at 375 px and 768 px, the sources screen, the Graveyard and the guide are exactly as wide as the screen. At 320 px (the smallest phones) the sources screen is still 21 px too wide.
+
 ---
 
 ## Template for new entries
