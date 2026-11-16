@@ -151,6 +151,13 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 - **Spec fix:** Kiro flagged that design Property 16 allowed only three categories of codepoint in IDS strings. Checked against the real `characters.json`: it contains 11 CJK Radicals Supplement codepoints, so the old wording would have rejected valid data. Corrected Property 16 to the same five component blocks as Requirement 4.7 and Property 8.
 - **Next:** tasks 16–20 (integration test on the real data, end-to-end run, README, final checkpoint).
 
+## Nov 9, 2026: Spec 1, task 14.5: prompt-selection property tests (Properties 18, 19, 20)
+
+- **What I did:** Added `tests/property/prompt-selection.test.ts` exercising `selectPrompt` (DEFAULT rule) against `arbitraryCcCedictEntry()`. Property 18 (meaning is a bound-form-stripped source gloss of the chosen entry), Property 19 (pinyin is `numberedToToneMarks` of the chosen entry's reading), Property 20 (no skipped-prefix meaning). Added a justification check for `no-usable-sense` failures and a bonus same-entry check.
+- **Kiro feature:** Property-based tests (fast-check + Vitest).
+- **Why:** These prove the ghost clue never shows a surname/variant/abbr gloss and that meaning + reading always come from one CC-CEDICT entry — correctness judges cannot verify by reading Chinese.
+- **Result:** `npx tsc --noEmit` clean; all 5 tests pass (numRuns 200). No bug surfaced in `prompt.ts`; no changes to source needed.
+
 ## Nov 9, 2026: Spec 1 (`character-dataset`) complete
 
 - **What I did:** Ran tasks 16–20: an integration test on the real data, the end-to-end build, the README, and the final checkpoint.
@@ -400,7 +407,7 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
     - Changing 吧's override to entry 9 fails with: "吧: override entry-index-out-of-range … Fix this row in data/prompt-overrides.csv (column entryIndex). No output written." Reverting it passes.
     - **Not yet confirmed:** the hook did not visibly fire when Kiro's own agent saved the file, even though the docs say agent saves trigger it. To be checked by hand in the IDE.
   - **`accuracy-reviewer` agent** (`.kiro/agents/`): read-only, with file writes and shell commands denied. It checks text against `content-accuracy.md` and reports `path:line [rule] "quote"`.
-    - **Its first review found a real answer leak.** The "How Cangjie works" guide used 七 (JU) as its example, and 七 is the second ghost a new player meets, so the guide gave away that ghost's code.
+    - **Its first review, run as an emulation (a Kiro sub-agent following the reviewer's prompt, not the custom agent itself), found a real answer leak.** The "How Cangjie works" guide used 七 (JU) as its example, and 七 is the second ghost a new player meets, so the guide gave away that ghost's code.
     - It also flagged an uncited history line in the README and three unsourced sentences in the guide.
   - **Cangjie Oracle MCP server** (`oracle/`, stdio, SDK 1.32.2, no network): `lookup`, `verify` and `decompose` answer only from the committed dataset. Called over real stdio: 我 → HQI from Unihan 18.0.0 `kCangjie` (marked provisional), playable; "hqi" verifies as HQI; 好 → ⿰女子 from Make Me a Hanzi.
     - Registered in `.kiro/settings/mcp.json`. Kiro is blocked from writing its own settings folder, so I created that file myself.
@@ -517,10 +524,3 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 - **Kiro feature:**
 - **Why:**
 - **Result:**
-
-## Task 14.5: Prompt-selection property tests (Properties 18, 19, 20)
-
-- **What I did:** Added `tests/property/prompt-selection.test.ts` exercising `selectPrompt` (DEFAULT rule) against `arbitraryCcCedictEntry()`. Property 18 (meaning is a bound-form-stripped source gloss of the chosen entry), Property 19 (pinyin is `numberedToToneMarks` of the chosen entry's reading), Property 20 (no skipped-prefix meaning). Added a justification check for `no-usable-sense` failures and a bonus same-entry check.
-- **Kiro feature:** Property-based tests (fast-check + Vitest).
-- **Why:** These prove the ghost clue never shows a surname/variant/abbr gloss and that meaning + reading always come from one CC-CEDICT entry — correctness judges cannot verify by reading Chinese.
-- **Result:** `npx tsc --noEmit` clean; all 5 tests pass (numRuns 200). No bug surfaced in `prompt.ts`; no changes to source needed.
