@@ -2,6 +2,7 @@ import type { CharacterDataset } from '../data/charDataLoader';
 import { CANGJIE_KEYS } from '../engine/cangjie';
 import { isPlayableInCangjie } from '../engine/cangjieRules';
 import { learningOrder } from '../engine/learningOrder';
+import { CANGJIE_CITATIONS } from '../data/citations';
 
 export interface CangjieGuideProps {
   dataset: CharacterDataset;
@@ -27,11 +28,6 @@ export function pickGuideExample(
   return null;
 }
 
-const CITATIONS: readonly { title: string; url: string }[] = [
-  { title: 'Cangjie input method', url: 'https://en.wikipedia.org/wiki/Cangjie_input_method' },
-  { title: 'Chu Bong-Foo', url: 'https://en.wikipedia.org/wiki/Chu_Bong-Foo' },
-];
-
 /**
  * "How Cangjie works" screen (Requirement 6). History claims are limited to the
  * four in content-accuracy.md; no statistics and no other historical claims.
@@ -52,17 +48,20 @@ export function CangjieGuide({ dataset, onContinue }: CangjieGuideProps) {
         </h1>
 
         <p className="mt-4 text-lg leading-relaxed text-ink">
-          Each ghost is summoned by typing its Cangjie code. A code is one to five keys, typed in
-          order.
+          Each ghost is summoned by typing its Cangjie code. In this game, a code is one to five
+          keys, typed in order.
         </p>
         <p className="mt-3 text-lg leading-relaxed text-ink">
           Each key stands for a family of related shapes. Only the base shape of the family is
           shown on the key.
         </p>
 
+        <h2 id="guide-keys" className="mt-6 text-xl font-semibold text-ink">
+          The 25 keys in this game
+        </h2>
         <ul
-          aria-label="The 25 Cangjie keys"
-          className="mt-6 grid grid-cols-5 gap-2 sm:grid-cols-5"
+          aria-labelledby="guide-keys"
+          className="mt-3 grid grid-cols-5 gap-2 sm:grid-cols-5"
         >
           {CANGJIE_KEYS.map(({ key, shape }) => (
             <li
@@ -103,7 +102,7 @@ export function CangjieGuide({ dataset, onContinue }: CangjieGuideProps) {
           </ul>
           <p className="mt-3 text-sm text-muted">
             Sources for the statements about keys, shapes and history above (English Wikipedia):{' '}
-            {CITATIONS.map((c, i) => (
+            {CANGJIE_CITATIONS.map((c, i) => (
               <span key={c.url}>
                 {i > 0 ? '; ' : ''}
                 &ldquo;{c.title}&rdquo; {c.url}

@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import HanziWriter from 'hanzi-writer';
 import type { CharacterRecord } from '../data/types';
@@ -17,6 +18,7 @@ import {
   type SummonState,
 } from '../engine/cangjie';
 import { maskTarget } from '../engine/mask';
+import { InkSurface } from '../components/InkSurface';
 import { theme } from '../styles/theme';
 
 /** Time the formed character stays on screen before it fades (Req 2.4). */
@@ -174,7 +176,7 @@ export function SummonStep({ record, dataset, config, onDone }: SummonStepProps)
         padding: 12,
         showCharacter: false,
         showOutline: false,
-        strokeColor: theme.ink,
+        strokeColor: theme.inkOnPaper,
         charDataLoader: makeCharDataLoader(dataset),
         onLoadCharDataError: useFallback,
       });
@@ -236,41 +238,53 @@ export function SummonStep({ record, dataset, config, onDone }: SummonStepProps)
 
   return (
     <section aria-label="Summon step" className="flex flex-col items-center gap-3 text-ink">
-      <ol aria-label="Cangjie code" className="flex flex-wrap justify-center gap-2">
+      <ol aria-label="Cangjie code" className="flex flex-nowrap justify-center gap-2">
         {slots}
       </ol>
 
-      <div
-        ref={containerRef}
-        aria-hidden="true"
-        className={`rounded-lg bg-surface ${phase === 'typing' ? 'hidden' : ''}`}
-        style={{
-          opacity: fading ? 0 : 1,
-          transition: fading && !reduced ? `opacity ${SUMMON_FADE_MS}ms linear` : 'none',
-        }}
-      />
-      {fallback ? (
-        <p
-          lang="zh"
-          className="text-7xl"
+      <div className="relative">
+        <InkSurface
+          size="min(60vw, 240px)"
+          containerRef={containerRef}
+          hidden={phase === 'typing'}
           style={{
             opacity: fading ? 0 : 1,
             transition: fading && !reduced ? `opacity ${SUMMON_FADE_MS}ms linear` : 'none',
           }}
-        >
-          {record.character}
-        </p>
-      ) : null}
+        />
+        {fallback ? (
+          <p
+            lang="zh"
+            className="absolute inset-0 flex items-center justify-center text-7xl"
+            style={{
+              color: theme.inkOnPaper,
+              opacity: fading ? 0 : 1,
+              transition: fading && !reduced ? `opacity ${SUMMON_FADE_MS}ms linear` : 'none',
+            }}
+          >
+            {record.character}
+          </p>
+        ) : null}
+      </div>
 
-      <p role="status" aria-live="polite" className="min-h-[1.5rem] text-center text-ink">
+      <p role="status" aria-live="polite" className="min-h-[3rem] text-center text-ink">
         {hintText ? `${feedback} · ${hintText}` : feedback}
         {' · '}
         {`Mistakes: ${state.mistakes}`}
       </p>
 
-      <div className="flex flex-col items-center gap-1">
-        {KEY_ROWS.map((row) => (
-          <div key={row} className="flex flex-wrap justify-center gap-1">
+      <div
+        className="flex flex-col items-center gap-[2px]"
+        style={{ '--key-w': 'clamp(32px, calc((100vw - 2rem - 18px) / 10), 48px)' } as CSSProperties}
+      >
+        {KEY_ROWS.map((row, i) => (
+          <div
+            key={row}
+            role="group"
+            data-row={i}
+            className="grid justify-center gap-[2px]"
+            style={{ gridTemplateColumns: `repeat(${row.length}, var(--key-w))` }}
+          >
             {row.split('').map((letter) => {
               const key = letter as CangjieKey;
               const shape = SHAPE_BY_KEY.get(key) ?? '';
@@ -282,7 +296,7 @@ export function SummonStep({ record, dataset, config, onDone }: SummonStepProps)
                   aria-label={lettersOnly ? `Key ${key}` : `Key ${key}, ${shapeFor(shape)}`}
                   disabled={finished}
                   onClick={() => enterKey(key)}
-                  className={`flex min-h-[44px] min-w-[44px] flex-col items-center justify-center rounded-md border px-1 text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost disabled:opacity-50 ${
+                  className={`flex min-h-[44px] w-full min-w-0 flex-col items-center justify-center rounded-md border px-0 text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost disabled:opacity-50 ${
                     isHint ? 'border-ghost ring-2 ring-ghost' : 'border-muted'
                   }`}
                 >

@@ -5,6 +5,7 @@ import realDataJson from '../../public/data/characters.json';
 import type { CharacterDataset } from '../data/charDataLoader';
 import type { CharacterRecord } from '../data/types';
 import { DEFAULT_CONFIG, type EngineConfig } from '../engine/config';
+import { theme } from '../styles/theme';
 import { isHintTriggered, resolveCompletion, surfaceSize, WriteMode } from './WriteMode';
 
 // ---------------------------------------------------------------------------
@@ -129,6 +130,33 @@ describe('WriteMode setup (Req 5.1, 5.2)', () => {
     expect(surface.getAttribute('style')).toMatch(/touch-action:\s*none/);
     expect(view.container.textContent).not.toContain(WO.character);
     expect(view.container.innerHTML).not.toContain(WO.character);
+  });
+
+  it('gives hanzi-writer the ink palette colours and keeps the outline hidden', () => {
+    setup();
+    const o = lastCall().opts as unknown as Record<string, unknown>;
+    expect(o.strokeColor).toBe(theme.inkOnPaper);
+    expect(o.outlineColor).toBe(theme.gridLine);
+    expect(o.highlightColor).toBe(theme.seal);
+    expect(o.drawingColor).toBe(theme.drawing);
+    expect(o.drawingWidth).toBe(5);
+    expect(o.showOutline).toBe(false);
+  });
+
+  it('renders the surface through InkSurface at min(80vw, 420px) with the practice grid', () => {
+    setup();
+    const surface = screen.getByTestId('ink-surface');
+    expect(surface.style.width).toBe('min(80vw, 420px)');
+    expect(surface.querySelector('svg')).not.toBeNull();
+    expect(surface).toContainElement(screen.getByRole('group', { name: /writing area/i }));
+  });
+
+  it('keeps the hint message text after three misses on one stroke', () => {
+    setup();
+    mistake(3);
+    expect(screen.getByRole('status')).toHaveTextContent(
+      '✗ Not that stroke — try again. 💡 Hint: the next stroke is shown',
+    );
   });
 
   it('passes strokeHintAfterConsecutiveMisses to quiz as showHintAfterMisses', () => {

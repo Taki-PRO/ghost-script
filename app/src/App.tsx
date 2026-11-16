@@ -21,6 +21,8 @@ import { IntroScreen } from './components/IntroScreen';
 import { CangjieGuide } from './components/CangjieGuide';
 import { StartMenu } from './components/StartMenu';
 import { SeanceSession } from './components/SeanceSession';
+import { Graveyard } from './components/Graveyard';
+import { Credits } from './components/Credits';
 import { SessionSummary, type SessionResults } from './components/SessionSummary';
 
 /**
@@ -52,6 +54,8 @@ type View =
   | { screen: 'error' }
   | { screen: 'intro'; dataset: CharacterDataset }
   | { screen: 'menu'; dataset: CharacterDataset }
+  | { screen: 'graveyard'; dataset: CharacterDataset; history: ReviewHistory; now: number }
+  | { screen: 'credits'; dataset: CharacterDataset }
   | { screen: 'cangjie-guide'; dataset: CharacterDataset; origin: 'before-seance' | 'review' }
   | { screen: 'seance'; dataset: CharacterDataset; ghosts: CharacterRecord[]; sessionId: number }
   | { screen: 'summary'; dataset: CharacterDataset; results: SessionResults };
@@ -154,7 +158,32 @@ export default function App() {
             onReviewCangjieGuide={() =>
               setView({ screen: 'cangjie-guide', dataset, origin: 'review' })
             }
+            onOpenGraveyard={() =>
+              setView({ screen: 'graveyard', dataset, history: loadState().history, now: Date.now() })
+            }
+            onOpenCredits={() => setView({ screen: 'credits', dataset })}
           />
+        </Shell>
+      );
+    }
+    case 'graveyard': {
+      const { dataset, history, now } = view;
+      return (
+        <Shell>
+          <Graveyard
+            dataset={dataset}
+            history={history}
+            now={now}
+            onBack={() => setView({ screen: 'menu', dataset })}
+          />
+        </Shell>
+      );
+    }
+    case 'credits': {
+      const { dataset } = view;
+      return (
+        <Shell>
+          <Credits onBack={() => setView({ screen: 'menu', dataset })} />
         </Shell>
       );
     }

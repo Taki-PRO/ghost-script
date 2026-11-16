@@ -13,7 +13,10 @@
   "include": [
     "scripts/**/*.ts",
     "tests/**/*.ts",
-    "app/src/data/types.ts"
+    "app/src/data/types.ts",
+    "app/src/data/credits.ts",
+    "app/src/data/citations.ts",
+    "app/src/data/software.ts"
   ],
   "exclude": [
     "node_modules",

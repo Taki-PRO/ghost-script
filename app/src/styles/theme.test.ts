@@ -17,4 +17,19 @@ describe('theme contrast (WCAG AA)', () => {
       });
     }
   }
+
+  for (const t of ['inkOnPaper', 'drawing', 'seal'] as const) {
+    it(`${t} on paper is >= 4.5:1`, () => {
+      expect(contrastRatio(theme[t], theme.paper)).toBeGreaterThanOrEqual(4.5);
+    });
+  }
+
+  const graves = ['graveRestless', 'graveRest', 'graveWisp'] as const;
+  for (const t of ['ink', 'ghost'] as const) {
+    for (const g of graves) {
+      it(`${t} on ${g} is >= 4.5:1`, () => {
+        expect(contrastRatio(theme[t], theme[g])).toBeGreaterThanOrEqual(4.5);
+      });
+    }
+  }
 });

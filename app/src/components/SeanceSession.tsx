@@ -134,7 +134,7 @@ export function SeanceSession({ ghosts, dataset, config, onOutcome, onComplete }
       <h2 className="text-lg text-ink">
         Ghost {index + 1} of {total}
       </h2>
-      <GhostPrompt record={record} />
+      <GhostPrompt record={record} outcome={result} />
       <p className="text-muted">{stepLabel}</p>
       {step === 'summon' ? (
         <SummonStep

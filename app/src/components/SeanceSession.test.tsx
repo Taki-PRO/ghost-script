@@ -141,6 +141,26 @@ describe('SeanceSession', () => {
     expect(screen.getByText('Laid to rest')).toBeTruthy();
   });
 
+  it('passes the result to the ghost card; result text and Next appear immediately', () => {
+    setup(['我', '口']);
+    finishSummon();
+    const card = () => screen.getByRole('region', { name: "Ghost's clue" });
+    expect(card().getAttribute('data-ghost-state')).toBe('haunting');
+    const cases: [Outcome, string, string][] = [
+      ['clean', 'faded', 'Laid to rest'],
+      ['struggled', 'flickering', 'Laid to rest — it will return soon'],
+      ['gave-up', 'drifted', 'The ghost slipped away'],
+    ];
+    for (const [outcome, state, text] of cases) {
+      cleanup();
+      setup(['我', '口']);
+      emit(outcome);
+      expect(card().getAttribute('data-ghost-state')).toBe(state);
+      expect(screen.getByText(text)).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'Next ghost' })).toBeTruthy();
+      expect(card().innerHTML).not.toContain('我');
+    }
+  });
   it('3.2: Next ghost gets focus, advances without remount, then disappears', async () => {
     setup(['我', '口']);
     emit('clean');

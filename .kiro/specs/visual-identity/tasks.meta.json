@@ -1,0 +1,432 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Add theme tokens, Tailwind colours and font families": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796489354
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796499333
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796604624
+      }
+    ],
+    "1.2 Add the Latin display font": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796489378
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796500357
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796604770
+      }
+    ],
+    "1.3 Add paper, ghost and grave styles to `app/src/styles/index.css`": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796489404
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796692792
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796820174
+      }
+    ],
+    "2.1 Create `app/src/engine/graveyard.ts` and `graveyard.test.ts`": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796489430
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796501570
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796605781
+      }
+    ],
+    "2.2 Create `app/src/engine/ghostVisual.ts` and `ghostVisual.test.ts`": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796489451
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796502956
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796606963
+      }
+    ],
+    "3.1 Create `app/src/data/citations.ts`, `app/src/data/credits.ts` and `credits.test.ts`": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796489470
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796609616
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796691058
+      }
+    ],
+    "3.2 Create `scripts/build-notices.ts`, the `build:notices` script, the committed notices file and `tests/unit/third-party-notices.test.ts`": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796489487
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796694153
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796821576
+      }
+    ],
+    "3.3 Create `app/src/data/software.ts` and its test": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796489507
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796824945
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796990617
+      }
+    ],
+    "4.1 Create `PracticeGrid.tsx`, `InkSurface.tsx` and their tests": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796489527
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796826166
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796991797
+      }
+    ],
+    "4.2 Update `app/src/modes/WriteMode.tsx` and its tests": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796489545
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796995743
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794797145841
+      }
+    ],
+    "4.3 Update `app/src/modes/SummonStep.tsx` and its tests": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796489563
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796996940
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794797144381
+      }
+    ],
+    "5.1 Update `GhostPrompt.tsx`, `SeanceSession.tsx` and their tests": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796489594
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796827339
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796992987
+      }
+    ],
+    "6.1 Create `app/src/components/Graveyard.tsx` and `Graveyard.test.tsx`": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796489612
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796828450
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796994598
+      }
+    ],
+    "6.2 Create `app/src/components/Credits.tsx` and `Credits.test.tsx`": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796489630
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796998143
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794797147010
+      }
+    ],
+    "6.3 Reword `CangjieGuide.tsx` and update `CangjieGuide.test.tsx`": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796489651
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796695256
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796822778
+      }
+    ],
+    "6.4 Add the two buttons to `StartMenu.tsx` and update `StartMenu.test.tsx`": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796489669
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796503960
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796608175
+      }
+    ],
+    "6.5 Wire the screens in `App.tsx` and update `App.test.tsx`": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796489688
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794797148208
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794797222305
+      }
+    ],
+    "7.1 Create `scripts/check-bundle-size.ts`, the root script and `tests/unit/bundle-size.test.ts`": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796489706
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796610531
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796691592
+      }
+    ],
+    "8.1 Update `README.md` and add `tests/unit/credits-readme.test.ts`": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796489725
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796696155
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796823977
+      }
+    ],
+    "8.2 Add entries to `kiro-log.md`": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796489744
+      }
+    ],
+    "9.1 Run the `accuracy-reviewer` agent over all new copy and fix findings": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796489760
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794797223289
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794797374198
+      }
+    ],
+    "10.1 Human check of the phone layout at 375, 768 and 1440 px": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796489778
+      }
+    ],
+    "11. Final checkpoint - Verify the whole change": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796489794
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794797375098
+      },
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794797430983
+      }
+    ],
+    "2. Pure engine modules": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796606986
+      }
+    ],
+    "7. Bundle size check": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796691619
+      }
+    ],
+    "1. Foundations: tokens, font, CSS": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796820212
+      }
+    ],
+    "3. Data modules": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796990647
+      }
+    ],
+    "5. Ghost card": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794796993015
+      }
+    ],
+    "4. Ink surface and the two modes": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794797145873
+      }
+    ],
+    "6. Screens": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794797222344
+      }
+    ],
+    "9. Accuracy review": [
+      {
+        "executionId": "198e996a-f7da-43ef-bee1-223501f7102b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794797374236
+      }
+    ]
+  }
+}

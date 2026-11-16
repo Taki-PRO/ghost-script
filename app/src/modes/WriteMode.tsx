@@ -6,6 +6,7 @@ import type { EngineConfig } from '../engine/config';
 import type { Outcome } from '../engine/scheduler';
 import { resolveCompletion } from '../engine/outcome';
 import { theme } from '../styles/theme';
+import { InkSurface } from '../components/InkSurface';
 
 export interface WriteModeProps {
   record: CharacterRecord;
@@ -90,9 +91,11 @@ export function WriteMode({ record, dataset, config, onOutcome }: WriteModeProps
         padding: 12,
         showCharacter: false,
         showOutline: false,
-        strokeColor: theme.ink,
-        highlightColor: theme.ghost,
-        drawingColor: theme.ghost,
+        strokeColor: theme.inkOnPaper,
+        outlineColor: theme.gridLine,
+        highlightColor: theme.seal,
+        drawingColor: theme.drawing,
+        drawingWidth: 5,
         charDataLoader: makeCharDataLoader(dataset),
         onLoadCharDataError: fail,
       });
@@ -159,12 +162,11 @@ export function WriteMode({ record, dataset, config, onOutcome }: WriteModeProps
 
   return (
     <section aria-label="Write mode" className="flex flex-col items-center gap-3 text-ink">
-      <div
-        ref={containerRef}
+      <InkSurface
+        size="min(80vw, 420px)"
+        containerRef={containerRef}
         role="group"
-        aria-label="Writing area: draw the character from memory, stroke by stroke"
-        className="touch-none rounded-lg bg-surface"
-        style={{ touchAction: 'none', width: 'min(80vw, 420px)', aspectRatio: '1 / 1' }}
+        ariaLabel="Writing area: draw the character from memory, stroke by stroke"
       />
       <p role="status" aria-live="polite" className="min-h-[1.5rem] text-center text-ink">
         {feedback}

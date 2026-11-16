@@ -2,6 +2,8 @@ export interface StartMenuProps {
   onStartSeance: () => void;
   onReviewLegend: () => void;
   onReviewCangjieGuide: () => void;
+  onOpenGraveyard: () => void;
+  onOpenCredits: () => void;
 }
 
 const focusRing =
@@ -12,7 +14,13 @@ const focusRing =
  * legend never interrupts a session (Req 3.6). The component holds no session
  * state; the parent decides when it is rendered.
  */
-export function StartMenu({ onStartSeance, onReviewLegend, onReviewCangjieGuide }: StartMenuProps) {
+export function StartMenu({
+  onStartSeance,
+  onReviewLegend,
+  onReviewCangjieGuide,
+  onOpenGraveyard,
+  onOpenCredits,
+}: StartMenuProps) {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-8 text-ink">
       <h1 className="mb-8 text-center text-3xl font-semibold sm:text-4xl">Ghost Script</h1>
@@ -37,6 +45,20 @@ export function StartMenu({ onStartSeance, onReviewLegend, onReviewCangjieGuide 
           className={`min-h-[44px] rounded-md border border-muted bg-surface px-6 py-3 text-base text-ink ${focusRing}`}
         >
           How Cangjie works
+        </button>
+        <button
+          type="button"
+          onClick={onOpenGraveyard}
+          className={`min-h-[44px] rounded-md border border-muted bg-surface px-6 py-3 text-base text-ink ${focusRing}`}
+        >
+          Graveyard
+        </button>
+        <button
+          type="button"
+          onClick={onOpenCredits}
+          className={`min-h-[44px] rounded-md border border-muted bg-surface px-6 py-3 text-base text-ink ${focusRing}`}
+        >
+          Credits
         </button>
       </div>
     </main>

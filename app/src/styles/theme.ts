@@ -13,6 +13,14 @@ export const theme = {
   ghost: '#9fc4d6', // accent
   success: '#8fd19e', // accepted
   error: '#f19188', // rejected
+  paper: '#e6dcc3', // writing surface background
+  inkOnPaper: '#1c1914', // completed strokes, text on paper
+  drawing: '#3a342a', // the stroke being drawn
+  seal: '#a3301f', // hint highlight (red seal)
+  gridLine: '#a3301f', // practice grid lines (decorative, drawn at low opacity)
+  graveRestless: '#261c24', // dark tint of surface
+  graveRest: '#1a2420', // dark tint of surface
+  graveWisp: '#14161c', // dark tint of surface
 } as const;
 
 export type ThemeToken = keyof typeof theme;

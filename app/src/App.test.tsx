@@ -347,4 +347,40 @@ describe('App integration', () => {
     expect(loadState().history).toEqual({});
     expect(getIntroSeen()).toBe(false);
   });
+
+  describe('Graveyard and Credits views', () => {
+    it('Menu -> Graveyard -> Back returns to the menu', async () => {
+      seed({ introSeen: true, cangjieIntroSeen: true });
+      const user = await openApp();
+      await user.click(await screen.findByRole('button', { name: /^graveyard$/i }));
+      expect(screen.getByRole('heading', { name: /^graveyard$/i })).toBeTruthy();
+      await user.click(screen.getByRole('button', { name: /back to menu/i }));
+      expect(screen.getByRole('button', { name: /begin a nightly séance/i })).toBeTruthy();
+    });
+
+    it('Menu -> Credits -> Back returns to the menu', async () => {
+      seed({ introSeen: true, cangjieIntroSeen: true });
+      const user = await openApp();
+      await user.click(await screen.findByRole('button', { name: /^credits$/i }));
+      expect(screen.getByRole('heading', { name: /^credits$/i })).toBeTruthy();
+      await user.click(screen.getByRole('button', { name: /back to menu/i }));
+      expect(screen.getByRole('button', { name: /begin a nightly séance/i })).toBeTruthy();
+    });
+
+    it('after one recorded outcome only that character shows a glyph', async () => {
+      seed({ introSeen: true, cangjieIntroSeen: true });
+      const user = await openApp();
+      await user.click(await screen.findByRole('button', { name: /begin a nightly séance/i }));
+      const first = stub.summon!.record.character;
+      emit('clean');
+      cleanup();
+      await openApp();
+      await user.click(await screen.findByRole('button', { name: /^graveyard$/i }));
+      const graves = screen.getByRole('list', { name: 'Graves' });
+      const glyphs = graves.querySelectorAll('[lang="zh"]');
+      expect(glyphs).toHaveLength(1);
+      expect(glyphs[0]!.textContent).toBe(first);
+      expect(graves.querySelectorAll('li')).toHaveLength(dataset.size);
+    });
+  });
 });

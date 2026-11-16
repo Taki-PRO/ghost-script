@@ -25,15 +25,31 @@ Property-based testing does not apply. The work is presentation, small mapping f
 
 ### Decisions
 
-1. **Fonts.** A Latin display font (Cormorant Garamond, 600, Latin subset, 23.4 kB) for headings and the title. No CJK font file. Chinese text uses a system font stack. Reasons:
+1. **Fonts.** A Latin display font (Cormorant Garamond, 600, Latin subset, 23.4 kB) for headings and the title. No CJK font file. Chinese text uses the Chinese_Font_Stack (system fonts). Reasons:
    - Size. Current JS is 66,304 B gzip and CSS 2,840 B gzip (measured from `app/dist`). Adding about 10 kB of new JS and CSS and the 23.4 kB font gives about 103 kB, well under 300,000 B. A CJK subset would add an estimated 100 to 170 kB and still leave the budget met, but with little room, for one weight only.
-   - Effort. A reproducible CJK subset needs an OFL source font file, a subsetting tool (for example fonttools or `subset-font`) and a script with a pinned input. That is about half a day of the 1.5 days for a gain that is mostly invisible on iOS, macOS, Windows and Android, which all ship a Chinese font.
-   - Risk. Linux or ChromeOS devices without a Chinese font would show empty boxes. This is accepted and listed as an open question.
+   - Effort. A reproducible CJK subset needs an OFL source font file, a subsetting tool (for example fonttools or `subset-font`) and a script with a pinned input. That is about half a day of the 1.5 days for a gain that we expect to be small, because we assume most phones and laptops already have a Chinese font. We have not verified this.
+   - Risk. A device without a Chinese font would show fallback boxes instead of characters. We have not checked which devices these are. This is accepted (see Decisions, "Approved decisions").
 2. **Practice grid and paper as components, not hanzi-writer internals.** An `InkSurface` wrapper draws Paper and the Practice_Grid and hosts the hanzi-writer container. Both modes use it, so the grid is identical in Summon and Write.
 3. **Ghost state from the Outcome only.** `ghostStateFor(outcome)` has no access to the character, so no animation can depend on it (Requirement 4.7).
 4. **Animations on the figure, not on the text.** The clue text stays at full opacity so it stays readable and keeps its contrast (Requirement 3.4).
 5. **Graveyard unmet graves carry no character.** The model type for an unmet grave has no `char` field (Requirement 6.11).
 6. **Bundle check as a script plus a pure function.** The function is unit tested; the script reads `app/dist`.
+7. **Third-party notices are committed, not generated at build time.** `app/public/THIRD_PARTY_NOTICES.txt` is produced by `scripts/build-notices.ts` and committed. A unit test fails when the committed file differs from a fresh run. Reasons: the static host serves `app/public` as it is, the deploy workflow needs no extra step or dev tool, and the file is reviewable in the repository by judges. A build-time generation step would add `tsx` to the build path for no gain.
+
+### Approved decisions
+
+Each of these is approved by Takshil. None is open.
+
+| # | Decision | Effect |
+| --- | --- | --- |
+| 1 | Chinese text uses the Chinese_Font_Stack: `"PingFang SC", "Hiragino Sans GB", "Songti SC", "Microsoft YaHei", "Noto Sans CJK SC", "Noto Serif CJK SC", sans-serif`. No other CJK stack. | Requirement 12.3; `hanzi` font family; `[lang='zh']` rule. |
+| 2 | Cormorant Garamond, weight 600, Latin subset, `font-display: swap`. | Requirement 12.2; task 1.2. |
+| 3 | Bibliographic names in citations and credits are allowed, as `.kiro/steering/structure.md` says. | The Huainanzi and Wikipedia citations may name authors and historical figures (for example Chu Bong-Foo, D. C. Lau, Michael Puett, Cangjie). Personal names stay out of repo files, except "approved by Takshil". |
+| 4 | The Credits_Screen gains a "Software" section, and the Notices_File is committed and linked. | Requirement 16; tasks 3.2, 3.3, 6.2. |
+| 5 | The proposed Ink_Palette and grave colours are accepted. Task 1.1 adjusts a hex only to reach 4.5:1. | Theme tokens table. |
+| 6 | A human checks the phone layout at 375, 768 and 1440 px. Kiro does not run or log this check. | Task 10.1. |
+| 7 | One flicker (1200 ms) on the `struggled` outcome, then the figure stays at opacity 0.5. | Requirement 4.2. |
+| 8 | 300 kB means 300,000 bytes (gzip, `BUNDLE_BUDGET_BYTES`). | Requirement 12.6, `check-bundle-size.ts`. |
 
 ## Architecture
 
@@ -49,6 +65,9 @@ flowchart LR
     App -->|loadState history, Date.now| GY
     CR --> CD[data/credits.ts]
     CR --> CI[data/citations.ts]
+    CR --> SW[data/software.ts]
+    CR -.->|link| NF[public/THIRD_PARTY_NOTICES.txt]
+    NS[scripts/build-notices.ts] -->|writes| NF
     Guide[CangjieGuide] --> CI
     SS[SeanceSession] -->|outcome| GP[GhostPrompt]
     GP --> EV[engine/ghostVisual.ts]
@@ -68,6 +87,8 @@ app/src/
   engine/ghostVisual.ts          NEW  Outcome -> GhostState
   data/citations.ts              NEW  Cangjie citations + legend source (shared)
   data/credits.ts                NEW  data sources, fonts, licences (matches README)
+  data/software.ts               NEW  Software_List: runtime packages, versions, licences
+  ../public/THIRD_PARTY_NOTICES.txt  NEW  generated, committed licence texts
   components/PracticeGrid.tsx    NEW
   components/InkSurface.tsx      NEW
   components/Graveyard.tsx       NEW
@@ -84,9 +105,10 @@ app/src/
 app/tailwind.config.ts           CHANGED  colours, font families
 app/package.json                 CHANGED  one font dependency
 scripts/check-bundle-size.ts     NEW
-package.json (root)              CHANGED  script check:bundle
-tsconfig.json (root)             CHANGED  include app/src/data/credits.ts for the README test
-tests/unit/                      NEW  bundle-size test, credits-vs-README test
+scripts/build-notices.ts         NEW  writes app/public/THIRD_PARTY_NOTICES.txt
+package.json (root)              CHANGED  scripts check:bundle, build:notices
+tsconfig.json (root)             CHANGED  include credits.ts, citations.ts, software.ts for the root tests
+tests/unit/                      NEW  bundle-size test, credits-vs-README test, third-party-notices test
 README.md, kiro-log.md           CHANGED
 ```
 
@@ -233,11 +255,67 @@ export interface FontCredit { name: string; licence: string }
 export const FONTS: readonly FontCredit[];                 // [{ name: 'Cormorant Garamond', licence: 'SIL Open Font License 1.1' }]
 ```
 
-`data/citations.ts` exports `CANGJIE_CITATIONS` (moved from `CangjieGuide`, same two entries) and `LEGEND_SOURCE`: the zh line `天雨粟，鬼夜哭`, the English rendering already in `IntroScreen`, and the citation string copied exactly from the "Approved legend line" section of `content-accuracy.md`. The names in that citation appear only in `data/citations.ts` and `content-accuracy.md`, not in this spec.
+`data/citations.ts` exports `CANGJIE_CITATIONS` (moved from `CangjieGuide`, same two entries) and `LEGEND_SOURCE`: the zh line `天雨粟，鬼夜哭`, the English rendering already in `IntroScreen`, and the citation string copied exactly from the "Approved legend line" section of `content-accuracy.md`. Bibliographic names in the citation (authors, historical figures) are allowed in credits and citations (approved decision 3, as `structure.md` says); the citation text lives in `data/citations.ts` and is copied from `content-accuracy.md`, not retyped.
 
-`Credits` renders sections: Data sources (a `<table>` with `scope="col"` headers, or a definition list on narrow screens), Licensing (combined-work note, MIT), Legend, Cangjie, Fonts (including "Chinese text uses fonts already installed on your device"), and a `Back to menu` button. URLs are text, not links.
+`Credits` renders sections: Data sources (a `<table>` with `scope="col"` headers, or a definition list on narrow screens), Licensing (combined-work note, MIT), Legend, Cangjie, Fonts (including "Chinese text uses fonts already installed on your device"), Software, and a `Back to menu` button. URLs are text, not links. The one link is in the Software section: "Full licence texts (THIRD_PARTY_NOTICES.txt)", with `href={import.meta.env.BASE_URL + 'THIRD_PARTY_NOTICES.txt'}` so it works under the `/ghost-script/` base of the production build.
 
 README cross-check test (`tests/unit/credits-readme.test.ts`, root node project): parse the README table rows under "Data and licences", and for each compare name, version/commit, use, licence and URL with `DATA_SOURCES`; check the `Fonts` line in the README names the same font and licence as `FONTS`; check `LEGEND_SOURCE.citation` appears in `content-accuracy.md` and in the README.
+
+### Software credits and third-party notices (Requirement 16)
+
+**Which packages.** The Runtime_Dependency tree of `app/package.json` as installed. At the pinned versions this is `react`, `react-dom`, `hanzi-writer`, `scheduler` (a dependency of `react-dom`), `loose-envify` and `js-tokens` (dependencies of `react`, `react-dom` and `scheduler`), and `@fontsource/cormorant-garamond` (the font package, once task 1.2 adds it). The script lists the whole tree, not only what ends up in the JavaScript bundle, because it cannot tell which packages Vite keeps; listing a package that is dropped is harmless, omitting one that is kept would not be. Development dependencies (Vite, Tailwind, Vitest, Testing Library, TypeScript) are not listed because they are not shipped.
+
+**Script** `scripts/build-notices.ts` (Node + TypeScript, run with `tsx`, ESM direct-execution guard like `data-check.ts`):
+
+```ts
+export interface LicenceFile { readonly fileName: string; readonly text: string }
+export interface NoticePackage {
+  readonly name: string; readonly version: string; readonly licence: string; // SPDX id from package.json
+  readonly files: readonly LicenceFile[];
+}
+export function collectRuntimePackages(appDir: string): NoticePackage[]; // sorted by name
+export function renderNotices(packages: readonly NoticePackage[]): string;
+export function runtimeSummary(packages: readonly NoticePackage[]): { name: string; version: string; licence: string }[];
+```
+
+- `collectRuntimePackages` reads `<appDir>/package.json`, walks `dependencies` and `optionalDependencies` recursively, and resolves each package the way Node does: look in `node_modules` of the requiring package's directory, then in each parent directory up to the filesystem root (npm hoists workspace dependencies to the root `node_modules`). It tracks visited `name@version` pairs, so cycles end. It never reads `devDependencies` or `peerDependencies`.
+- Licence files: every regular file in the package directory whose name matches `/^(licen[cs]e|copying)(\..*)?$/i`. This takes `LICENSE`, `LICENSE.md`, `LICENCE`, and `COPYING.md` (which `hanzi-writer` ships next to its MIT `LICENSE`, with an Arphic note). The text is read as UTF-8 and kept byte for byte.
+- Licence identifier: the `license` string in `package.json`; a legacy `licenses` array or object form is not accepted. A missing identifier or no licence file throws an error naming the package (Requirement 16.5); `main()` catches it, prints it, exits 1 and does not write the file, because rendering happens before the write.
+- `renderNotices` output, in this exact layout:
+
+```
+Third-party notices for the runtime dependencies of Ghost Script.
+Generated by scripts/build-notices.ts. Do not edit by hand.
+
+================================================================================
+react 18.3.1
+Licence: MIT
+File: LICENSE
+================================================================================
+<licence text, verbatim; one "\n" is added only if the text does not end with one>
+
+================================================================================
+react-dom 18.3.1
+...
+```
+
+  Packages are sorted with a plain code-unit comparison of the name (not `localeCompare`), licence files likewise by file name. Line endings are LF in the added lines; the verbatim text is not altered, so a licence file with CRLF keeps its CRLF. There is no date, path or hostname anywhere in the output.
+- `main()` computes the output, then writes `app/public/THIRD_PARTY_NOTICES.txt` with `fs.writeFileSync`. Root script: `"build:notices": "tsx scripts/build-notices.ts"`.
+
+**Credits Software list.** `app/src/data/software.ts` exports `SOFTWARE_CREDITS: readonly { name: string; version: string; licence: string }[]`, in ascending name order, one entry per package of the notices file (including `@fontsource/cormorant-garamond` with licence `OFL-1.1`). It is written by hand; the test below forces it to stay in step with the notices, so a dependency change makes a test fail until both the file and the list are updated. `Credits` renders a table (name, version, licence) and the link.
+
+**Why committed, not generated at build time.** Stated in Decision 7: the static host serves the committed file; the unit test replaces the build step as the guard. The file counts toward the Bundle_Budget (it is copied into `app/dist`); the licence texts are a few tens of kilobytes of text, compressing to a few kilobytes, and the final checkpoint's `check:bundle` confirms the total.
+
+**Tests** (`tests/unit/third-party-notices.test.ts`, root node project):
+
+1. *Up to date.* `renderNotices(collectRuntimePackages('app'))` equals the committed file's text exactly. The failure message tells the reader to run `npm run build:notices`.
+2. *Deterministic.* Two consecutive runs give identical strings.
+3. *Complete.* For each package of `collectRuntimePackages('app')`, the committed file contains its header (name, version, licence id) and the full text of each of its licence files. The package list contains `react`, `react-dom`, `hanzi-writer`, `scheduler` and `@fontsource/cormorant-garamond`, and no package from `devDependencies` of `app/package.json` that is not also a runtime package.
+4. *Font licence.* The font package's licence text starts with the SIL Open Font License heading and appears in the file.
+5. *Credits match.* `SOFTWARE_CREDITS` (name, version, licence) equals the packages parsed from the headers of the committed file, as a set and in order.
+6. *Script behaviour on a fixture tree* (a temporary directory built by the test with a few small packages): dev dependencies are skipped; a hoisted dependency is found in the parent `node_modules`; a cycle terminates; a missing licence file throws an error naming the package; a missing `license` field throws; a package with two licence files prints both, sorted by file name; `renderNotices` on shuffled input gives the same string.
+
+`Credits.test.tsx` also checks the Software table shows every `SOFTWARE_CREDITS` row and that the link `href` ends with `THIRD_PARTY_NOTICES.txt` and starts with the base URL (in tests `import.meta.env.BASE_URL` is `/`).
 
 ### `components/CangjieGuide.tsx` (Requirement 10)
 
@@ -263,11 +341,13 @@ Added tokens (proposed; the theme test confirms each pair at 4.5:1 or better and
 | `gridLine` | `#a3301f` | Practice_Grid lines, shown at opacity 0.25 (decorative) |
 | `graveRestless`, `graveRest`, `graveWisp` | dark tints of `surface` | Grave backgrounds; text on them `ink` or `ghost` |
 
-Tailwind `fontFamily`: `display: ['"Cormorant Garamond"', 'Georgia', 'serif']` and `hanzi: ['"Songti SC"', '"Noto Serif CJK SC"', '"Source Han Serif SC"', '"Noto Serif SC"', 'SimSun', 'serif']`. Elements with `lang="zh"` use `font-hanzi` through one rule in `index.css` (`[lang='zh'] { font-family: … }`).
+These values are accepted (approved decision 5).
+
+Tailwind `fontFamily`: `display: ['"Cormorant Garamond"', 'Georgia', 'serif']` and `hanzi: ['"PingFang SC"', '"Hiragino Sans GB"', '"Songti SC"', '"Microsoft YaHei"', '"Noto Sans CJK SC"', '"Noto Serif CJK SC"', 'sans-serif']` (the Chinese_Font_Stack, exactly this order). Elements with `lang="zh"` use `font-hanzi` through one rule in `index.css` (`[lang='zh'] { font-family: "PingFang SC", "Hiragino Sans GB", "Songti SC", "Microsoft YaHei", "Noto Sans CJK SC", "Noto Serif CJK SC", sans-serif; }`). The `index.css` test checks that the rule contains this exact list and that the Tailwind `hanzi` family equals it.
 
 ### Fonts (Requirement 12)
 
-`npm install -w app --save-exact @fontsource/cormorant-garamond@5.3.0`; in `main.tsx`, `import '@fontsource/cormorant-garamond/latin-600.css'`. That file declares one `@font-face` with `font-display: swap`, `unicode-range` for Latin, and a self-hosted `woff2`. No network request to another host. The headings (`h1`, `h2`) and the "Ghost Script" title use `font-display`. README records: Cormorant Garamond, package `@fontsource/cormorant-garamond` 5.3.0, SIL OFL 1.1 (SPDX `OFL-1.1`), copyright "2015 The Cormorant Project Authors".
+`npm install -w app --save-exact @fontsource/cormorant-garamond@5.3.0`; in `main.tsx`, `import '@fontsource/cormorant-garamond/latin-600.css'`. That file declares one `@font-face` with `font-display: swap`, `unicode-range` for Latin, and a self-hosted `woff2`. Only weight 600 and the Latin subset are imported. No network request to another host. The headings (`h1`, `h2`) and the "Ghost Script" title use `font-display`. README records (the OFL text itself is in the Notices_File, Requirement 16.3): Cormorant Garamond, package `@fontsource/cormorant-garamond` 5.3.0, SIL OFL 1.1 (SPDX `OFL-1.1`), copyright "2015 The Cormorant Project Authors".
 
 ### `scripts/check-bundle-size.ts` (Requirement 12.6 to 12.8)
 
@@ -292,7 +372,9 @@ No stored data changes. `PersistedState` stays at schema 2. New in-memory types:
 | History entry with a non-finite `nextDue` | Treated as 0 (due), so `restless`; no throw. |
 | History key for a character outside the dataset | Ignored. |
 | Font file fails to load | `font-display: swap` keeps the fallback serif visible; no layout dependency on the font. |
-| Device without a Chinese font | Boxes instead of glyphs; accepted (Decision 1, open question). |
+| Device without a Chinese font | Fallback boxes instead of glyphs; an unverified risk, accepted (approved decision 1). |
+| A runtime dependency has no licence file or no `license` field | `build:notices` prints the package name, exits 1 and leaves the committed file as it was. |
+| Committed notices differ from a fresh run | The unit test fails and says to run `npm run build:notices`. |
 | `app/dist` missing when running the Bundle_Check | Exit 1 with a message to build first. |
 | Reduced motion | Static end states from CSS; no JavaScript branch needed. |
 
@@ -305,10 +387,11 @@ Unit tests and component tests only (Vitest, Testing Library). No property-based
 - `engine/graveyard.test.ts`: `classifyEntry` for each rule row, built with the real `applyReview` (clean, struggled, gave-up) and fixed `now`; boundary `nextDue === now` is `restless`, `nextDue === now + 1` with `clean` is `at-rest`; non-finite and negative `nextDue`; `cleanStreak` cases (3 clean after a miss, a miss last, no `history`); `buildGraveyard` order equals `learningOrder`, counts sum to the dataset size, unknown history keys ignored, duplicate order entries skipped, unmet graves have no `char` property, keys like `constructor` do not hit the prototype.
 - `engine/ghostVisual.test.ts`: the four mappings.
 - `data/credits.test.ts`: every `DATA_SOURCES` entry has non-empty fields and an `https://` URL; the citations constants have the two titles and URLs.
-- `styles/index.css.test.ts`: read `index.css` as text; every `animation` declaration sits inside a `prefers-reduced-motion: no-preference` block; the `:root` palette values equal `theme.ts`; the `[data-ghost-state]` end states exist for `faded`, `flickering`, `drifted`.
+- `styles/index.css.test.ts`: read `index.css` as text; the `[lang='zh']` rule holds the exact Chinese_Font_Stack, equal to the Tailwind `hanzi` family; every `animation` declaration sits inside a `prefers-reduced-motion: no-preference` block; the `:root` palette values equal `theme.ts`; the `[data-ghost-state]` end states exist for `faded`, `flickering`, `drifted`.
 - `styles/theme.test.ts` (extended): contrast of `inkOnPaper`, `drawing`, `seal` on `paper`; text tokens on the grave backgrounds.
 - `tests/unit/bundle-size.test.ts`: `summariseBundle` under, at and over budget; `data/characters.json` excluded; only the five largest listed.
 - `tests/unit/credits-readme.test.ts`: as above.
+- `tests/unit/third-party-notices.test.ts`: described in "Software credits and third-party notices".
 
 ### New and updated component tests
 
@@ -324,7 +407,7 @@ Unit tests and component tests only (Vitest, Testing Library). No property-based
 - `StartMenu.test.tsx`: five buttons in order; the two new callbacks fire once; the existing three still fire theirs.
 - `App.test.tsx`: Menu to Graveyard to Back, Menu to Credits to Back.
 
-jsdom has no layout, so pixel widths (32 px keys at 375 px) are checked through the computed style tokens in tests and by a manual look at 375, 768 and 1440 px before deploy (open question for the human).
+jsdom has no layout, so pixel widths (32 px keys at 375 px) are checked through the computed style tokens in tests and by the human check at 375, 768 and 1440 px before deploy (task 10.1; approved decision 6).
 
 ### Test notes
 
@@ -337,4 +420,4 @@ jsdom has no layout, so pixel widths (32 px keys at 375 px) are checked through 
 - The `hidden` class on the Summon container goes away; tests that look for it are updated.
 - `CangjieGuide`'s `CITATIONS` constant moves to `data/citations.ts`; the rendered output is unchanged.
 - `app/package.json` gains one dependency; the root lockfile changes with it.
-- Open questions for the human are listed in the final message of the spec run and repeated in the task notes.
+- `app/public/THIRD_PARTY_NOTICES.txt` is a new committed file; the root `package.json` gains `build:notices`. Adding or upgrading a runtime dependency now needs `npm run build:notices` and an update of `software.ts`, or a test fails.

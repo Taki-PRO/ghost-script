@@ -12,7 +12,9 @@
     "build:data": "tsx scripts/build-data.ts",
     "test": "vitest run",
     "test:data": "vitest run --project node",
+    "build:notices": "tsx scripts/build-notices.ts",
     "check:data": "tsx scripts/data-check.ts",
+    "check:bundle": "tsx scripts/check-bundle-size.ts",
     "oracle": "tsx oracle/src/index.ts"
   },
   "devDependencies": {

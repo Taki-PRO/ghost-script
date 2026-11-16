@@ -30,7 +30,7 @@ function renderGuide(onContinue: () => void = () => {}) {
 describe('CangjieGuide keys (Req 6.4)', () => {
   it('lists all 25 keys with their shapes, X as 難', () => {
     renderGuide();
-    const items = screen.getByRole('list', { name: 'The 25 Cangjie keys' }).querySelectorAll('li');
+    const items = screen.getByRole('list', { name: 'The 25 keys in this game' }).querySelectorAll('li');
     expect(items).toHaveLength(25);
     expect(CANGJIE_KEYS).toHaveLength(25);
     CANGJIE_KEYS.forEach(({ key, shape }, i) => {
@@ -38,6 +38,26 @@ describe('CangjieGuide keys (Req 6.4)', () => {
     });
     const x = CANGJIE_KEYS.find((k) => k.key === 'X');
     expect(x?.shape).toBe('難');
+  });
+});
+
+describe('CangjieGuide wording (Req 10)', () => {
+  it('says the rules are about this game and labels the key list with a visible heading', () => {
+    const { container } = renderGuide();
+    const text = container.textContent ?? '';
+    expect(text).toContain('In this game, a code is one to five keys');
+    const heading = screen.getByRole('heading', { name: 'The 25 keys in this game' });
+    expect(heading.textContent).toBe('The 25 keys in this game');
+    expect(screen.getByRole('list', { name: 'The 25 keys in this game' })).toBeTruthy();
+  });
+
+  it('no longer contains the old sentence or the old list label', () => {
+    const { container } = renderGuide();
+    const text = container.textContent ?? '';
+    expect(text).not.toContain('A code is one to five keys');
+    expect(text).not.toContain('The 25 Cangjie keys');
+    expect(screen.queryByRole('list', { name: 'The 25 Cangjie keys' })).toBeNull();
+    expect(container.querySelector('[aria-label="The 25 Cangjie keys"]')).toBeNull();
   });
 });
 

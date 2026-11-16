@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The visual-identity feature makes Ghost Script memorable on video without changing any game rule. It adds a practice grid (米字格) and an ink-on-paper look to the writing surface, turns the clue card into a ghost that fades, flickers or drifts away when its rite ends, adds a Graveyard screen that shows all 300 characters by state, fixes the Summon step layout on phones, adds a Credits screen, rewords two lines of "How Cangjie works", and settles fonts and bundle size.
+The visual-identity feature makes Ghost Script memorable on video without changing any game rule. It adds a practice grid (米字格) and an ink-on-paper look to the writing surface, turns the clue card into a ghost that fades, flickers or drifts away when its rite ends, adds a Graveyard screen that shows all 300 characters by state, fixes the Summon step layout on phones, adds a Credits screen with a Software section and a shipped file of third-party licence texts, rewords two lines of "How Cangjie works", and settles fonts and bundle size.
 
 The feature changes no scheduling, no Outcome rule, no summon or write rule, no hint rule, no storage schema and no dataset. The Graveyard reads the existing saved history and classifies it with a small pure function in `app/src/engine/`.
 
@@ -46,6 +46,11 @@ Budget: about one and a half days. The design is deliberately lean: CSS and inli
 - **Bundle_Check**: The script `scripts/check-bundle-size.ts`, run as `npm run check:bundle`.
 - **Test_Suite**: The Vitest tests run by the repository's root `npm test`.
 - **Accuracy_Reviewer**: The read-only custom agent in `.kiro/agents/accuracy-reviewer.json`.
+- **Chinese_Font_Stack**: The CSS font list `"PingFang SC", "Hiragino Sans GB", "Songti SC", "Microsoft YaHei", "Noto Sans CJK SC", "Noto Serif CJK SC", sans-serif`, used for Chinese text.
+- **Runtime_Dependency**: A package in the production dependency tree of the `app` workspace: the packages in `dependencies` of `app/package.json`, and recursively their `dependencies` and `optionalDependencies`, excluding `devDependencies` and `peerDependencies`.
+- **Notices_File**: The text file `app/public/THIRD_PARTY_NOTICES.txt`, served at `THIRD_PARTY_NOTICES.txt` under the site base path. It holds, for each Runtime_Dependency, a header (name, version, licence identifier) and the full text of each of its licence files copied verbatim from `node_modules`.
+- **Notices_Script**: The script `scripts/build-notices.ts`, run as `npm run build:notices`, that writes the Notices_File.
+- **Software_List**: The list of Runtime_Dependencies (name, version, licence identifier) shown in the Software section of the Credits_Screen, defined in `app/src/data/software.ts`.
 
 ---
 
@@ -182,6 +187,7 @@ Budget: about one and a half days. The design is deliberately lean: CSS and inli
 7. THE Credits_Screen SHALL make no claim about Cangjie beyond those allowed in `content-accuracy.md`.
 8. THE Test_Suite SHALL fail IF the data sources, licences, versions, URLs or the font entry of the Credits_Screen differ from those of the README.
 9. THE Credits_Screen SHALL provide a "Back to menu" button with an accessible name, a minimum height of 44 px and a visible focus ring.
+10. THE Credits_Screen SHALL show a "Software" section that lists every package of the Software_List with its name, version and licence identifier, and SHALL link to the Notices_File.
 
 ### Requirement 10: Guide Wording
 
@@ -213,8 +219,8 @@ Budget: about one and a half days. The design is deliberately lean: CSS and inli
 #### Acceptance Criteria
 
 1. THE App SHALL bundle only fonts licensed under the SIL Open Font License.
-2. THE App SHALL bundle at most one font family, a Latin display font, in one weight, as a self-hosted `woff2` Latin subset taken from an npm package pinned to an exact version.
-3. THE App SHALL bundle no CJK font file and SHALL draw Chinese text with a font stack of fonts installed on the device.
+2. THE App SHALL bundle exactly one font family, Cormorant Garamond, in weight 600, as the self-hosted `woff2` Latin subset of the `@fontsource/cormorant-garamond` npm package pinned to an exact version, loaded with `font-display: swap`.
+3. THE App SHALL bundle no CJK font file and SHALL draw Chinese text with the Chinese_Font_Stack, in exactly that order.
 4. THE App SHALL request no font or stylesheet from a third-party host at runtime.
 5. THE README SHALL record the name, the exact version, the licence and the copyright line of each bundled font.
 6. THE Bundle_Check SHALL compute the gzip size of every file in `app/dist` except `data/characters.json` and SHALL compare the sum with the Bundle_Budget.
@@ -251,4 +257,22 @@ Budget: about one and a half days. The design is deliberately lean: CSS and inli
 1. THE Test_Suite SHALL cover this feature with unit tests and component tests only, and SHALL add no property-based tests and no mutation tests (decision of Nov 15 in `tech.md`).
 2. WHEN all new copy exists, THE maintainer SHALL run the Accuracy_Reviewer over the Credits_Screen, the Graveyard_Screen, the Cangjie_Guide changes and the README changes, and SHALL fix every finding within the scope of this spec.
 3. WHEN the final checkpoint runs, THE maintainer SHALL run `npm test`, `npx tsc -p tsconfig.json`, `npx tsc -p app/tsconfig.json`, `npx tsc -p oracle/tsconfig.json`, `npm run build -w app` and `npm run check:bundle`, and all SHALL succeed.
-4. THE README SHALL be updated with the font record of Requirement 12.5 and with the Huainanzi source of Requirement 9.4.
+4. THE README SHALL be updated with the font record of Requirement 12.5, with the Huainanzi source of Requirement 9.4, and with a note on the Notices_File and the `build:notices` script.
+
+### Requirement 16: Third-Party Software Notices
+
+**User Story:** As a judge or a maintainer, I want the full licence text of every bundled runtime library shipped with the site and listed in the app, so that the project meets the notice terms of those licences.
+
+#### Acceptance Criteria
+
+1. THE Notices_Script SHALL read the Runtime_Dependency tree of the `app` workspace and SHALL include no package that is only a development dependency.
+2. THE Notices_Script SHALL write to the Notices_File, for each Runtime_Dependency, a header with its name, version and licence identifier, followed by the full text of each licence file found in the package directory (a file whose name starts with LICENSE, LICENCE or COPYING, in any letter case), copied verbatim from `node_modules`.
+3. THE Notices_File SHALL include the SIL Open Font License text of `@fontsource/cormorant-garamond`.
+4. THE Notices_Script SHALL write the Notices_File deterministically: packages in ascending order of name, licence files in ascending order of file name, LF line endings, and no timestamp, path or other value that depends on the machine or the run.
+5. IF a Runtime_Dependency has no licence file or no licence identifier, THEN THE Notices_Script SHALL exit with a non-zero status and name the package, and SHALL leave the Notices_File unchanged.
+6. THE repository SHALL contain the Notices_File as a committed file, so that the static site serves it without a generation step at build time.
+7. THE root `package.json` SHALL provide the script `build:notices` that runs the Notices_Script.
+8. THE Test_Suite SHALL fail IF regenerating the Notices_File gives output that differs from the committed file.
+9. THE Test_Suite SHALL fail IF the Notices_File lacks the name, version, licence identifier or licence text of any Runtime_Dependency.
+10. THE Test_Suite SHALL fail IF the set of packages in the Software_List, with their versions and licence identifiers, differs from the set of packages in the Notices_File.
+11. THE Credits_Screen SHALL include a link whose target is the Notices_File, resolved against the site base path.

@@ -61,6 +61,7 @@ const slots = () => screen.getByRole('list', { name: 'Cangjie code' }).querySele
 const filledCount = () => Array.from(slots()).filter((li) => li.textContent !== '').length;
 const status = () => screen.getByRole('status');
 const fallbackEl = () => document.querySelector('p.text-7xl');
+const surface = () => screen.getByTestId('ink-surface');
 const flush = () => act(async () => {});
 
 /** Complete the code with the physical keyboard. */
@@ -201,7 +202,7 @@ describe('SummonStep results', () => {
       vi.advanceTimersByTime(1);
     });
     // Fading now: the writer is still in the DOM and fully transparent target set.
-    expect(calls()[0]!.el.style.opacity).toBe('0');
+    expect(surface().style.opacity).toBe('0');
     expect(calls()[0]!.el.querySelector('[data-testid="fake-svg"]')).not.toBeNull();
     expect(onDone).not.toHaveBeenCalled();
 
@@ -344,4 +345,58 @@ describe('SummonStep never reveals the target before completion', () => {
       expect(calls()).toHaveLength(0);
     });
   }
+});
+
+describe('SummonStep layout', () => {
+  it('has three row groups of 10, 9 and 6 keys in order, without flex-wrap', () => {
+    const { container } = setup(WO);
+    const rows = Array.from(container.querySelectorAll<HTMLElement>('[role="group"][data-row]'));
+    expect(rows.map((r) => r.querySelectorAll('button').length)).toEqual([10, 9, 6]);
+    const letters = rows.map((r) =>
+      Array.from(r.querySelectorAll('button'))
+        .map((b) => b.getAttribute('aria-label')!.charAt(4))
+        .join(''),
+    );
+    expect(letters).toEqual(['QWERTYUIOP', 'ASDFGHJKL', 'XCVBNM']);
+    expect(container.innerHTML).not.toContain('flex-wrap');
+    for (const b of container.querySelectorAll('[role="group"] button')) {
+      expect(b.className).toContain('min-h-[44px]');
+    }
+    const wrapper = rows[0]!.parentElement!;
+    expect(wrapper.style.getPropertyValue('--key-w')).toContain('clamp(32px');
+  });
+
+  it('keeps the surface size in every phase and never uses the hidden class', async () => {
+    setup(KOU);
+    const size = () => surface().style.width;
+    expect(size()).toBe('min(60vw, 240px)');
+    expect(surface().className).not.toContain('hidden');
+    typeCode(KOU.cangjie!);
+    await flush();
+    expect(size()).toBe('min(60vw, 240px)');
+    act(() => {
+      vi.advanceTimersByTime(SUMMON_HOLD_MS);
+    });
+    expect(size()).toBe('min(60vw, 240px)');
+  });
+
+  it('keeps the writer container empty while typing', () => {
+    setup(WO);
+    press('B');
+    expect(screen.getByTestId('ink-container').childElementCount).toBe(0);
+  });
+
+  it('puts the fallback character inside the surface wrapper', async () => {
+    h.throwOnCreate = true;
+    setup(KOU);
+    typeCode(KOU.cangjie!);
+    await flush();
+    expect(surface().parentElement!.contains(fallbackEl())).toBe(true);
+  });
+
+  it('reserves two lines for the status and keeps slots on one line', () => {
+    setup(WO);
+    expect(status().className).toContain('min-h-[3rem]');
+    expect(screen.getByRole('list', { name: 'Cangjie code' }).className).toContain('flex-nowrap');
+  });
 });

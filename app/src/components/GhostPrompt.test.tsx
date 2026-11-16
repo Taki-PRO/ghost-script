@@ -96,4 +96,49 @@ describe('GhostPrompt', () => {
     render(<GhostPrompt record={r} />);
     expect(r).toEqual(before);
   });
+
+  it('has data-ghost-state per outcome (haunting when none)', () => {
+    const expected = [
+      [undefined, 'haunting'],
+      [null, 'haunting'],
+      ['clean', 'faded'],
+      ['struggled', 'flickering'],
+      ['gave-up', 'drifted'],
+    ] as const;
+    for (const [outcome, state] of expected) {
+      const { container } = render(<GhostPrompt record={rec('山')} outcome={outcome} />);
+      expect(container.querySelector('section')?.getAttribute('data-ghost-state')).toBe(state);
+      cleanup();
+    }
+  });
+
+  it('draws an aria-hidden figure with no <text> element', () => {
+    const { container } = render(<GhostPrompt record={rec('山')} />);
+    const fig = container.querySelector('svg.ghost-figure');
+    expect(fig?.getAttribute('aria-hidden')).toBe('true');
+    expect(fig?.querySelector('text')).toBeNull();
+  });
+
+  it('keeps the target out of innerHTML in every state', () => {
+    for (const r of [rec('么'), rec('第'), rec('山')]) {
+      for (const outcome of [null, 'clean', 'struggled', 'gave-up'] as const) {
+        const { container } = render(<GhostPrompt record={r} outcome={outcome} />);
+        expect(container.innerHTML).not.toContain(r.character);
+        cleanup();
+      }
+    }
+  });
+
+  it('leaves the clue text without an opacity style in every state', () => {
+    for (const outcome of [null, 'clean', 'struggled', 'gave-up'] as const) {
+      const { container } = render(<GhostPrompt record={rec('山')} outcome={outcome} />);
+      const text = container.querySelectorAll('p');
+      expect(text.length).toBe(4);
+      for (const p of Array.from(text)) {
+        expect(p.getAttribute('style') ?? '').not.toContain('opacity');
+        expect(p.className).not.toMatch(/opacity/);
+      }
+      cleanup();
+    }
+  });
 });

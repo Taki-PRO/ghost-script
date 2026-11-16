@@ -12,3 +12,116 @@
     @apply bg-background text-ink;
   }
 }
+
+/* Ink palette. Same values as theme.ts (index.css.test.ts checks they match). */
+:root {
+  --paper: #e6dcc3;
+  --ink-on-paper: #1c1914;
+  --drawing: #3a342a;
+  --seal: #a3301f;
+  --grid-line: #a3301f;
+  --grave-restless: #261c24;
+  --grave-rest: #1a2420;
+  --grave-wisp: #14161c;
+}
+
+/* Chinese text uses the Chinese_Font_Stack (system fonts, no font file). */
+[lang='zh'] {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Songti SC", "Microsoft YaHei", "Noto Sans CJK SC", "Noto Serif CJK SC", sans-serif;
+}
+
+/* Paper: warm base, soft vignette, and one inline SVG noise (our own, no file). */
+.ink-paper {
+  background-color: var(--paper);
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.05 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    radial-gradient(ellipse at center, rgba(255, 250, 235, 0.35) 0%, rgba(255, 250, 235, 0) 60%),
+    linear-gradient(160deg, rgba(120, 90, 50, 0.1) 0%, rgba(120, 90, 50, 0) 50%, rgba(60, 40, 20, 0.14) 100%);
+  box-shadow: inset 0 0 40px rgba(60, 40, 20, 0.25);
+  border-radius: 4px;
+}
+
+/* Ghost figure end states. Static, so they apply with or without motion. */
+.ghost-figure {
+  opacity: 1;
+}
+[data-ghost-state='faded'] .ghost-figure {
+  opacity: 0;
+}
+[data-ghost-state='flickering'] .ghost-figure {
+  opacity: 0.5;
+}
+[data-ghost-state='drifted'] .ghost-figure {
+  opacity: 0;
+  transform: translate(12px, -24px);
+}
+
+/* Graves. Shape differs by state, so colour is never the only signal. */
+.grave {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 48px;
+  color: #ece6d6;
+}
+.grave-wisp {
+  background: var(--grave-wisp);
+  border: 2px dashed #a9a79f;
+  border-radius: 9999px 9999px 8px 8px;
+}
+.grave-restless {
+  background: var(--grave-restless);
+  border: 3px double #f19188;
+  border-radius: 40% 60% 8px 8px / 50% 50% 8px 8px;
+  clip-path: polygon(0 12%, 15% 0, 35% 8%, 55% 0, 75% 8%, 100% 0, 100% 100%, 0 100%);
+}
+.grave-rest {
+  background: var(--grave-rest);
+  border: 2px solid #8fd19e;
+  border-radius: 9999px 9999px 4px 4px;
+}
+
+/* All motion lives here. Reduced-motion users get the static end states above. */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes ghost-float {
+    from { transform: translateY(-6px); }
+    to { transform: translateY(6px); }
+  }
+  @keyframes ghost-fade {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+  @keyframes ghost-flicker {
+    0% { opacity: 1; }
+    20% { opacity: 0.2; }
+    40% { opacity: 0.9; }
+    60% { opacity: 0.15; }
+    80% { opacity: 0.8; }
+    100% { opacity: 0.5; }
+  }
+  @keyframes ghost-drift {
+    from { opacity: 1; transform: translate(0, 0); }
+    to { opacity: 0; transform: translate(12px, -24px); }
+  }
+  @keyframes grave-flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.75; }
+  }
+
+  [data-ghost-state='haunting'] .ghost-figure {
+    animation: ghost-float 4s ease-in-out infinite alternate;
+  }
+  [data-ghost-state='faded'] .ghost-figure {
+    animation: ghost-fade 1.5s ease-out forwards;
+  }
+  [data-ghost-state='flickering'] .ghost-figure {
+    animation: ghost-flicker 1.2s steps(12, end) forwards;
+  }
+  [data-ghost-state='drifted'] .ghost-figure {
+    animation: ghost-drift 2s ease-in forwards;
+  }
+  .grave-restless {
+    animation: grave-flicker 2.5s ease-in-out infinite;
+  }
+}
