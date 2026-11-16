@@ -4,6 +4,9 @@ import { isPlayableInCangjie } from '../engine/cangjieRules';
 import { learningOrder } from '../engine/learningOrder';
 import { CANGJIE_CITATIONS } from '../data/citations';
 
+/** Lets long unbreakable text (URLs) wrap at 375 px, as in Credits.tsx. */
+const WRAP = '[overflow-wrap:anywhere]';
+
 export interface CangjieGuideProps {
   dataset: CharacterDataset;
   onContinue: () => void;
@@ -100,7 +103,7 @@ export function CangjieGuide({ dataset, onContinue }: CangjieGuideProps) {
             <li>It was the first Chinese input method to use the standard QWERTY keyboard.</li>
             <li>It was released to the public in 1982.</li>
           </ul>
-          <p className="mt-3 text-sm text-muted">
+          <p className={`mt-3 text-sm text-muted ${WRAP}`} data-testid="guide-citations">
             Sources for the statements about keys, shapes and history above (English Wikipedia):{' '}
             {CANGJIE_CITATIONS.map((c, i) => (
               <span key={c.url}>

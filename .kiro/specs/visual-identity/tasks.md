@@ -246,6 +246,67 @@ Build the visual layer in small steps: theme tokens, font and CSS first; then th
     - Needs tasks 17.2, 21.1 and 21.2
     - _Requirements: 18.2a, 18.2b, 18.2c_
 
+- [x] 22. Sources & licences fits a phone (bug fix, approved by Takshil)
+  - [x] 22.1 Add stacked cards and the wrap rule to `Credits.tsx`
+    - Add `const WRAP = '[overflow-wrap:anywhere]'`; use it in `TD` instead of `break-words`, on every Cangjie citation `<li>`, and on the legend citation `<p>` (the one that holds the long URL)
+    - Give each of the two tables the classes `hidden` and `sm:table` (keep the `overflow-x-auto` wrapper `<div>`), and add `aria-labelledby` to each table pointing at its section `h2` (`credits-sources`, `credits-software`)
+    - After each table add a card `<ul aria-labelledby="…" className="mt-3 flex flex-col gap-3 sm:hidden">` with one `<li>` per row of `DATA_SOURCES` or `SOFTWARE_CREDITS`; each `<li>` holds a `<dl>` of `<div>` groups with one `<dt>` and one `<dd>` per column, using the table's column labels ("Name", "Version or commit", "Use", "Licence", "URL"; "Name", "Version", "Licence"); the `<dt>` colon comes from CSS (`after:content-[':']`), the `<dd>` carries `WRAP`; keep `bg-surface`, `text-ink`, `text-muted` tokens only
+    - Keep the single link, the sticky header, the `h1` id and every other section unchanged; add no `index.css` rule (decision B5)
+    - File ownership: `app/src/components/Credits.tsx`
+    - _Requirements: 24.1, 24.2, 24.3, 24.4, 24.5, 24.6, 9.2, 9.10_
+  - [x] 22.2 Add the layout tests to `Credits.test.tsx`
+    - Both layouts exist: two tables with `hidden` and `sm:table`, two card lists with `sm:hidden`; every `DATA_SOURCES` and `SOFTWARE_CREDITS` row appears in its table (scoped with `within(table)`) and as a card with the right labels and values; each `<dt>` text equals a column label and each card is a `<dl>`; every table cell, every `<dd>`, the legend citation and each Cangjie citation carry `[overflow-wrap:anywhere]`
+    - Scope the existing queries that read table rows to the table (the rowheader-based Software test already is); keep every existing assertion's intent, including "exactly one `<a>`"; remember that jsdom loads no Tailwind CSS, so both layouts are present and visible in these tests
+    - File ownership: `app/src/components/Credits.test.tsx`
+    - Needs task 22.1
+    - _Requirements: 24.3, 24.4, 24.5, 24.6, 24.13_
+  - [x] 22.3 Add the Playwright dependency, the two scripts and the ignore rules
+    - Run `npm install --save-dev --save-exact @playwright/test@1.65.1` at the repository root (first re-check the version with `npm view @playwright/test version`; pin whatever exact version is current and record it here; re-checked: `1.65.1` is current and pinned); confirm `package.json` shows the version without `^` or `~` and `app/package.json` is unchanged
+    - Add `"test:e2e": "playwright test -c e2e/playwright.config.ts"` and `"test:e2e:install": "playwright install chromium"` to the root `scripts`; leave `"test": "vitest run"` as it is
+    - Add `test-results/` and `playwright-report/` to `.gitignore` under a comment; do not touch `!.kiro/` and never add `.kiro/`
+    - File ownership: root `package.json`, `package-lock.json`, `.gitignore`
+    - _Requirements: 24.11, 24.12, 24.15_
+  - [x] 22.4 Create `e2e/playwright.config.ts` and type-check `e2e/`
+    - Config as in the design: `testDir: '.'`, `testMatch: '**/*.spec.ts'`, viewport 375 × 812, one Chromium project, `baseURL` `http://127.0.0.1:4173`, `webServer` with the command `npm run build -w app && npm run preview -w app -- --host 127.0.0.1 --port 4173 --strictPort --base /ghost-script/`, `cwd` the repository root, `url` `http://127.0.0.1:4173/ghost-script/`, `reuseExistingServer: false`, `timeout: 180_000`, reporters `list` and `html` with `open: 'never'`
+    - Add `"e2e/**/*.ts"` to the `include` of the root `tsconfig.json` (no `e2e/tsconfig.json`); run `npx tsc -p tsconfig.json`
+    - Confirm by reading the three Vitest configs that no `include` matches `e2e/*.spec.ts`
+    - File ownership: `e2e/playwright.config.ts`, root `tsconfig.json`
+    - Needs task 22.3
+    - _Requirements: 24.10, 24.11, 24.12, 24.15_
+  - [x] 22.5 Create `e2e/no-horizontal-overflow.spec.ts`
+    - A `seed(page, state)` helper using `page.addInitScript` (key `ghost-script:state`, schema 2, set only when the key is absent) and a `findOverflow(page)` helper that waits for `document.fonts.ready`, reports `scrollWidth` above 375, and reports every element not `display: none` whose `getBoundingClientRect()` has `right` above 375.5 or `left` below -0.5, with a selector (`tag#id.class` plus `aria-label`) in each line
+    - Five screen tests, one per screen, reached through the UI as in the design table: Sources & licences, Graveyard (seeded history for the first three keys of `app/public/data/characters.json`), How Cangjie works, the Summon step (fail with a clear message if the Summon step is absent), and the Write step (click "Give up" in the Summon step, wait up to 10 s for the "Write mode" region); each asserts `expect(problems, problems.join('\n')).toEqual([])`
+    - One guard test that appends a 600 px wide `div` and expects `findOverflow` to name it; one viewport precondition per test; comment that pseudo-element mist layers are not elements and fixed layers add no scroll width
+    - Do not change any app file; if a screen other than Sources & licences overflows, stop and report it
+    - Run `npx tsc -p tsconfig.json`; the browser run itself is in task 23
+    - File ownership: `e2e/no-horizontal-overflow.spec.ts`
+    - Needs tasks 22.1 and 22.4
+    - _Requirements: 24.7, 24.8, 24.9, 24.10_
+  - [x] 22.6 Add the e2e note to `README.md`
+    - Under Usage, after "Run the tests", add the subsection "Check the layout width in a real browser": `npm run test:e2e:install` once (downloads Chromium), then `npm run test:e2e` (builds the app, serves it with `vite preview` on port 4173 under `/ghost-script/`, checks four screens at 375 px); say that `npm test` does not run it and that it is not in the deploy workflow
+    - Make no claim about browser download size or run time; the README cross-check test (`tests/unit/credits-readme.test.ts`) must still pass
+    - File ownership: `README.md`
+    - Needs task 22.3
+    - _Requirements: 24.14_
+
+  - [x] 22.7 Fix the guide overflow at 375 px (fix found by the e2e check)
+    - Diagnose first with Playwright: at 375 px the Cangjie_Guide makes `main.min-h-screen.text-ink.flex` span left -3 to right 378 with no descendant beyond 375.5, so find the element whose min-content width drives the overflow (for example, set each candidate to `display: none` or `width: 0` in `page.evaluate` and re-measure `scrollWidth`); the likely cause is the unbreakable Wikipedia URLs in the citation line
+    - Fix the cause in `CangjieGuide.tsx`: use the `[overflow-wrap:anywhere]` class (a `WRAP` constant, as in `Credits.tsx`) on the citation line and on any other long unbreakable text; only if that is not enough, add `min-w-0` on the guide's wrapper; do not touch `App.tsx` unless the diagnosis shows the cause is there, and if so say why in the task notes
+    - Add a jsdom test to `CangjieGuide.test.tsx` that the citation line carries `[overflow-wrap:anywhere]` (and, if added, every other long-value element)
+    - Re-run `npm run test:e2e` until all six tests (five screens and the guard) pass; do not loosen `findOverflow`, the 375 px viewport or the thresholds in `e2e/no-horizontal-overflow.spec.ts`
+    - File ownership: `app/src/components/CangjieGuide.tsx`, `app/src/components/CangjieGuide.test.tsx`
+    - Needs task 22.5
+    - _Requirements: 24.17, 24.7, 24.8, 24.9_
+- [x] 23. Final checkpoint - Verify the Sources & licences fix
+  - Check that `git diff --stat` shows `package.json`, `package-lock.json`, `.gitignore`, `tsconfig.json`, `README.md`, `Credits.tsx`, `Credits.test.tsx`, `CangjieGuide.tsx`, `CangjieGuide.test.tsx` and the new `e2e/` files only, and none of the files in Requirement 14.1
+  - Run the root `npm test`; confirm its output lists no file under `e2e/`
+  - Run `npx tsc -p tsconfig.json`, `npx tsc -p app/tsconfig.json` and `npx tsc -p oracle/tsconfig.json`
+  - Run `npm run build -w app`, then `npm run check:bundle`
+  - Run `npm run test:e2e:install` (it downloads Chromium), then `npm run test:e2e`; all six tests (five screens and the guard) pass, and no file under `e2e/test-results` or `playwright-report` shows in `git status`
+  - Ensure all tests pass, ask the user if questions arise.
+  - This checkpoint runs after tasks 22.1 to 22.7 and is not in the dependency graph; the manual task 10.1 stays open for the human to re-check 375 px
+  - _Requirements: 24.16, 24.17, 14.1, 24.15_
+
 ## Notes
 
 - Task 12.1 runs after every other task. It is a small change requested by the human and adds no new property-based tests.
@@ -274,6 +335,14 @@ Build the visual layer in small steps: theme tokens, font and CSS first; then th
 - Internal names (`credits` view, `Credits.tsx`, `onOpenCredits`, `data/credits.ts`) stay; only user-facing text is renamed.
 - Task 19.2 is the second manual, non-coding task (after 10.1). Task 20 is a checkpoint and is not in the dependency graph.
 
+### Notes for tasks 22 and 23 (bug fix, approved by Takshil)
+
+- This group fixes Requirement 9 (Credits) at 375 px, reported by the human after a browser check (tables about 975 px wide, page `scrollWidth` 588). It relates to the manual task 10.1, which stays open: the human re-checks 375, 768 and 1440 px after the fix. It changes no game rule and adds no property-based test.
+- File ownership (no two tasks of one wave edit the same file): 22.1 `Credits.tsx`; 22.2 `Credits.test.tsx`; 22.3 root `package.json`, `package-lock.json`, `.gitignore`; 22.4 `e2e/playwright.config.ts`, root `tsconfig.json`; 22.5 `e2e/no-horizontal-overflow.spec.ts`; 22.6 `README.md`; 22.7 `CangjieGuide.tsx`, `CangjieGuide.test.tsx`. There is no `index.css` task: the wrap rule is the Tailwind class `[overflow-wrap:anywhere]` (decision B5).
+- Order: 22.1 and 22.3 run first (wave 15); 22.2, 22.4 and 22.6 follow (wave 16); 22.5 needs the cards and the config (wave 17); 22.7 fixes the guide overflow that 22.5 found (wave 18). Task 23 is a checkpoint and is not in the dependency graph.
+- Task 22.5 does not run the browser. Task 23 runs `npm run test:e2e:install` and `npm run test:e2e`.
+- Not done here, on purpose: a CI step for the E2E_Suite (follow-up B10 in the design), and any change to `kiro-log.md`.
+
 ## Task Dependency Graph
 
 ```json
@@ -293,7 +362,11 @@ Build the visual layer in small steps: theme tokens, font and CSS first; then th
     { "id": 11, "tasks": ["21.1", "21.2"] },
     { "id": 12, "tasks": ["21.3"] },
     { "id": 13, "tasks": ["19.1", "19.2"] },
-    { "id": 14, "tasks": ["19.3"] }
+    { "id": 14, "tasks": ["19.3"] },
+    { "id": 15, "tasks": ["22.1", "22.3"] },
+    { "id": 16, "tasks": ["22.2", "22.4", "22.6"] },
+    { "id": 17, "tasks": ["22.5"] },
+    { "id": 18, "tasks": ["22.7"] }
   ]
 }
 ```

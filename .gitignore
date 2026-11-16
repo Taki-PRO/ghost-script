@@ -5,6 +5,9 @@ build/
 .vite/
 coverage/
 
+# Playwright output
+test-results/
+playwright-report/
 # Environment and OS files
 .env
 .env.*

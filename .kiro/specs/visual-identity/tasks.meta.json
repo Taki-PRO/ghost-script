@@ -675,6 +675,109 @@
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794802248837
       }
+    ],
+    "22.1 Add stacked cards and the wrap rule to `Credits.tsx`": [
+      {
+        "executionId": "df75121e-a915-4016-9ee2-fc3dae1d54ca",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794803113139
+      },
+      {
+        "executionId": "df75121e-a915-4016-9ee2-fc3dae1d54ca",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794803216395
+      }
+    ],
+    "22.3 Add the Playwright dependency, the two scripts and the ignore rules": [
+      {
+        "executionId": "df75121e-a915-4016-9ee2-fc3dae1d54ca",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794803114134
+      },
+      {
+        "executionId": "df75121e-a915-4016-9ee2-fc3dae1d54ca",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794803217585
+      }
+    ],
+    "22.2 Add the layout tests to `Credits.test.tsx`": [
+      {
+        "executionId": "df75121e-a915-4016-9ee2-fc3dae1d54ca",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794803218655
+      },
+      {
+        "executionId": "df75121e-a915-4016-9ee2-fc3dae1d54ca",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794803303234
+      }
+    ],
+    "22.4 Create `e2e/playwright.config.ts` and type-check `e2e/`": [
+      {
+        "executionId": "df75121e-a915-4016-9ee2-fc3dae1d54ca",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794803220035
+      },
+      {
+        "executionId": "df75121e-a915-4016-9ee2-fc3dae1d54ca",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794803304332
+      }
+    ],
+    "22.6 Add the e2e note to `README.md`": [
+      {
+        "executionId": "df75121e-a915-4016-9ee2-fc3dae1d54ca",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794803220788
+      },
+      {
+        "executionId": "df75121e-a915-4016-9ee2-fc3dae1d54ca",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794803305495
+      }
+    ],
+    "22.5 Create `e2e/no-horizontal-overflow.spec.ts`": [
+      {
+        "executionId": "df75121e-a915-4016-9ee2-fc3dae1d54ca",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794803306276
+      },
+      {
+        "executionId": "df75121e-a915-4016-9ee2-fc3dae1d54ca",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794803587582
+      }
+    ],
+    "22.7 Fix the guide overflow at 375 px (fix found by the e2e check)": [
+      {
+        "executionId": "df75121e-a915-4016-9ee2-fc3dae1d54ca",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794803597591
+      },
+      {
+        "executionId": "df75121e-a915-4016-9ee2-fc3dae1d54ca",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794803955481
+      }
+    ],
+    "22. Sources & licences fits a phone (bug fix, approved by Takshil)": [
+      {
+        "executionId": "df75121e-a915-4016-9ee2-fc3dae1d54ca",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794803955524
+      }
+    ],
+    "23. Final checkpoint - Verify the Sources & licences fix": [
+      {
+        "executionId": "df75121e-a915-4016-9ee2-fc3dae1d54ca",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794803960534
+      },
+      {
+        "executionId": "df75121e-a915-4016-9ee2-fc3dae1d54ca",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794804494991
+      }
     ]
   }
 }

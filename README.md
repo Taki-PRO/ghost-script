@@ -81,6 +81,17 @@ npm test
 
 Runs the Vitest suite: unit tests, fast-check property-based tests, smoke tests, and the integration test.
 
+### Check the layout width in a real browser
+
+```
+npm run test:e2e:install
+npm run test:e2e
+```
+
+Run `npm run test:e2e:install` once; it downloads Chromium. `npm run test:e2e` then builds the app, serves it with `vite preview` on port 4173 under `/ghost-script/`, and opens five screens at 375 px wide: Sources & licences, the Graveyard, How Cangjie works, the Summon step and the Write step. For each screen it checks that the page does not scroll sideways.
+
+`npm test` does not run this check, and the deploy workflow does not run it either.
+
 ## Kiro tooling
 
 Three Kiro-native tools sit around the character dataset. None of them changes the game or the shipped web app.

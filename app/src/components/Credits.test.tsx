@@ -95,6 +95,103 @@ describe('Credits', () => {
     expect(classes).toContain('bg-night-top');
   });
 
+  describe('narrow and wide layouts (Requirement 24)', () => {
+    const WRAP = '[overflow-wrap:anywhere]';
+    const SOURCE_LABELS = ['Name', 'Version or commit', 'Use', 'Licence', 'URL'];
+    const SOFTWARE_LABELS = ['Name', 'Version', 'Licence'];
+
+    function parts(container: HTMLElement, id: 'credits-sources' | 'credits-software') {
+      const table = container.querySelector(`table[aria-labelledby="${id}"]`) as HTMLElement;
+      const list = container.querySelector(`ul[aria-labelledby="${id}"]`) as HTMLElement;
+      return { table, list };
+    }
+
+    function cardFor(list: HTMLElement, name: string): HTMLElement {
+      const card = Array.from(list.querySelectorAll('li')).find(
+        (li) => li.querySelector('dd')?.textContent === name,
+      );
+      expect(card, `card for ${name}`).toBeDefined();
+      return card as HTMLElement;
+    }
+
+    function expectCard(card: HTMLElement, labels: string[], values: string[]) {
+      const dl = card.querySelector('dl');
+      expect(dl).not.toBeNull();
+      expect(Array.from(card.querySelectorAll('dt')).map((e) => e.textContent)).toEqual(labels);
+      expect(Array.from(card.querySelectorAll('dd')).map((e) => e.textContent)).toEqual(values);
+    }
+
+    it('renders both layouts: tables hidden below sm, card lists hidden from sm', () => {
+      const { container } = render(<Credits onBack={() => {}} />);
+      for (const id of ['credits-sources', 'credits-software'] as const) {
+        const { table, list } = parts(container, id);
+        expect(table).not.toBeNull();
+        expect(list).not.toBeNull();
+        const t = table.className.split(/\s+/);
+        expect(t).toContain('hidden');
+        expect(t).toContain('sm:table');
+        expect(list.className.split(/\s+/)).toContain('sm:hidden');
+        expect(table).toHaveAccessibleName(id === 'credits-sources' ? 'Data sources' : 'Software');
+        expect(list).toHaveAccessibleName(id === 'credits-sources' ? 'Data sources' : 'Software');
+      }
+    });
+
+    it('shows every data source as a table row and as a card with five labelled values', () => {
+      const { container } = render(<Credits onBack={() => {}} />);
+      const { table, list } = parts(container, 'credits-sources');
+      expect(list.querySelectorAll(':scope > li')).toHaveLength(DATA_SOURCES.length);
+      for (const s of DATA_SOURCES) {
+        const values = [s.name, s.version, s.use, s.licence, s.url];
+        const row = within(table).getByRole('rowheader', { name: s.name }).closest('tr') as HTMLElement;
+        const cells = Array.from(row.querySelectorAll('th,td')).map((c) => c.textContent);
+        expect(cells).toEqual(values);
+        expectCard(cardFor(list, s.name), SOURCE_LABELS, values);
+      }
+    });
+
+    it('shows every software package as a table row and as a card with three labelled values', () => {
+      const { container } = render(<Credits onBack={() => {}} />);
+      const { table, list } = parts(container, 'credits-software');
+      expect(list.querySelectorAll(':scope > li')).toHaveLength(SOFTWARE_CREDITS.length);
+      for (const p of SOFTWARE_CREDITS) {
+        const values = [p.name, p.version, p.licence];
+        const row = within(table).getByRole('rowheader', { name: p.name }).closest('tr') as HTMLElement;
+        const cells = Array.from(row.querySelectorAll('th,td')).map((c) => c.textContent);
+        expect(cells).toEqual(values);
+        expectCard(cardFor(list, p.name), SOFTWARE_LABELS, values);
+      }
+    });
+
+    it('uses the table column labels as the card labels', () => {
+      const { container } = render(<Credits onBack={() => {}} />);
+      for (const id of ['credits-sources', 'credits-software'] as const) {
+        const { table, list } = parts(container, id);
+        const headers = Array.from(table.querySelectorAll('thead th')).map((h) => h.textContent);
+        expect(headers).toEqual(id === 'credits-sources' ? SOURCE_LABELS : SOFTWARE_LABELS);
+        for (const dl of list.querySelectorAll('dl')) {
+          expect(Array.from(dl.querySelectorAll('dt')).map((e) => e.textContent)).toEqual(headers);
+        }
+      }
+    });
+
+    it('lets every table cell, card value, the legend citation and each Cangjie citation wrap anywhere', () => {
+      const { container } = render(<Credits onBack={() => {}} />);
+      const cells = container.querySelectorAll('tbody th, tbody td');
+      expect(cells).toHaveLength(DATA_SOURCES.length * 5 + SOFTWARE_CREDITS.length * 3);
+      for (const c of cells) expect(c.className).toContain(WRAP);
+      const dds = container.querySelectorAll('dd');
+      expect(dds).toHaveLength(DATA_SOURCES.length * 5 + SOFTWARE_CREDITS.length * 3);
+      for (const d of dds) expect(d.className).toContain(WRAP);
+
+      const legend = screen.getByText(LEGEND_SOURCE.citation, { exact: false });
+      expect(legend.className).toContain(WRAP);
+      for (const c of CANGJIE_CITATIONS) {
+        const li = screen.getByText(c.url, { exact: false }).closest('li') as HTMLElement;
+        expect(li.className).toContain(WRAP);
+      }
+    });
+  });
+
   it('has a 44px Back to menu button that calls onBack', async () => {
     const onBack = vi.fn();
     render(<Credits onBack={onBack} />);

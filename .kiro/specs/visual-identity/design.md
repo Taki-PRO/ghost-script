@@ -683,3 +683,173 @@ The path is the one already in `GhostPrompt`; moving it changes nothing visible.
 ### Testing strategy for the amendments
 
 Unit tests and component tests only (Vitest, Testing Library, and plain Node file reads for CSS and tokens). Property-based testing does not apply: the work is presentation, focus handling and copy, and the Nov 15 decision forbids new property tests. jsdom cannot lay out or animate, so the sticky behaviour, the one-row header at 375 px and the look of the night scene are checked by class and CSS-text tests plus the human check of task 19.2.
+
+## Amendment: Sources & licences fits a phone (Requirement 24)
+
+Bug fix approved by Takshil. It fixes Requirement 9 (the Credits_Screen) at 375 px and relates to the manual task 10.1 (the human phone check, which found it). Presentation and test tooling only: no scheduler, Outcome, timing, storage or dataset change, and no file of Requirement 14.1 is touched. Research was done by reading `Credits.tsx`, `Graveyard.tsx`, `CangjieGuide.tsx`, `SeanceSession.tsx`, `SummonStep.tsx`, `WriteMode.tsx`, `StartMenu.tsx`, `App.tsx`, `storage.ts`, `app/vite.config.ts`, `index.css`, the three Vitest configs, the root `tsconfig.json` and `package.json`, and `.github/workflows/deploy.yml`.
+
+### Root cause
+
+`App.Shell` is a flex row (`<main class="flex items-center justify-center">`) that holds a `w-full max-w-3xl` flex column, and the Credits content sits in a `w-full max-w-3xl` block inside it. A flex item has `min-width: auto`, which is its min-content width. The min-content width of that block includes the widest descendant. The two tables have unbreakable values (commit hashes, URLs), and the cells use `break-words` (`overflow-wrap: break-word`), which does not lower min-content width. So the table is about 975 px wide, the flex item refuses to shrink below a width that depends on it, and the page grows (588 px at 375 px; the `overflow-x-auto` wrapper clips only its own box, not the min-content width it adds to its ancestors). `overflow-wrap: anywhere` does lower min-content width, because it allows a break at any character when the intrinsic size is computed. That is why the fix uses `anywhere` and not `break-word`. It also covers a viewport just above 640 px, where a table with `anywhere` cells can shrink instead of widening the page.
+
+### Decisions
+
+| # | Decision | Reason |
+| --- | --- | --- |
+| B1 | Both layouts stay in the DOM. Tables get `hidden sm:table`, the card lists get `sm:hidden`. | Pure CSS, no `matchMedia` hook, no hydration or resize state, no flash. Exactly one is shown at each width (Tailwind `sm` is 640 px: `min-width: 640px`). |
+| B2 | Accessibility of the duplicate: `display: none` removes the hidden layout from the accessibility tree, so a screen reader reads each row once. Both layouts carry the same accessible name through `aria-labelledby` to the section's `h2` (a `<ul>` for the cards, a `<table>` for the tables). | `display: none` (Tailwind `hidden`) is skipped by assistive technology. `sr-only` or `invisible` would not be. |
+| B3 | Card markup: `<ul aria-labelledby="credits-sources">` with one `<li>` per row, and inside each `<li>` a `<dl>` of `<div>` groups, each with one `<dt>` (label) and one `<dd>` (value). The label shows a colon through CSS (`after:content-[':']`), not through text. | `<div>` groups inside `<dl>` are valid HTML. A CSS colon keeps the `<dt>` text equal to the column label, so tests and screen readers see "Name", not "Name:". |
+| B4 | The name of a source or package is the first line of its card (label "Name"), as in the table. No extra heading level. | Same content in both layouts (Requirement 24.5). |
+| B5 | Wrap utility: the Tailwind arbitrary property `[overflow-wrap:anywhere]`, held in one constant `WRAP` in `Credits.tsx`. No `.wrap-anywhere` class in `index.css`, so there is no CSS task. | Tailwind 3.4 supports arbitrary properties, the build already scans `.tsx`, and a class name in the component is directly assertable in jsdom. A second place (CSS) would add a file for no gain. |
+| B6 | The `WRAP` class replaces `break-words` on table cells and Cangjie citation items, and is added to the legend citation paragraph (it holds a long URL). `overflow-wrap` is inherited, but each element carries the class itself, so a test can check it. | A reviewer can see the rule on the element; the inherited value is only a bonus. |
+| B7 | The `overflow-x-auto` wrapper `<div>` around each table stays. | It keeps an intentional scroll box if a table is still wider than its column at 640 px to 700 px. |
+| B8 | Playwright, not jsdom, measures width (see "Why jsdom cannot measure layout"). | jsdom has no layout engine. |
+| B9 | `e2e/` has its own `playwright.config.ts` and no `e2e/tsconfig.json`. `e2e/**/*.ts` is added to the `include` of the root `tsconfig.json`. | The root config is already the one the checkpoint runs (`npx tsc -p tsconfig.json`), it has `types: ["node"]` and the default libraries (which include DOM for the `page.evaluate` callbacks), so `e2e/` is checked with no new command. A second tsconfig would need a new checkpoint command and could drift. |
+| B10 | No CI step now. | Out of scope (Requirement 24.15). Follow-up: add a job to `deploy.yml` or a separate workflow that runs `npm ci`, `npm run test:e2e:install` (with `--with-deps` on Linux) and `npm run test:e2e`, and decide whether it blocks deployment. |
+| B11 | `@playwright/test` is a root devDependency, pinned exactly (`1.65.1`, the version `npm view` returned when this amendment was written; the task re-checks it). It is not in `app/package.json`. | The notices script and the Software_List read only the `app` runtime tree, so a root devDependency adds nothing to `THIRD_PARTY_NOTICES.txt`, `software.ts` or the bundle. `npm ci` in the deploy workflow installs it but downloads no browser, because the browser is a separate `playwright install`. |
+
+### Why jsdom cannot measure layout
+
+The component tests run in jsdom. jsdom builds a DOM and a CSSOM but has no layout engine: `getBoundingClientRect()` returns all zeros, `scrollWidth` and `clientWidth` are 0, and media queries such as `sm` (`min-width: 640px`) are not evaluated against a real viewport. The test setup also does not load the Tailwind stylesheet, so the classes `hidden` and `sm:table` have no effect: in jsdom both layouts are in the DOM and both count as visible. A jsdom test can therefore check only which classes and which text exist (Requirement 24.13), never that a table fits 375 px, that one layout is hidden at that width, or that a long URL wraps. Those three facts need a real browser with real CSS, which is what the E2E_Suite adds. The existing note of this spec ("Pixel checks cannot run in jsdom") stays true for everything else.
+
+### `Credits.tsx` markup (Requirements 24.1 to 24.6)
+
+```tsx
+const WRAP = '[overflow-wrap:anywhere]';
+const TD = `px-3 py-2 align-top text-sm text-ink ${WRAP}`;     // replaces break-words
+const DT = "text-xs font-semibold uppercase tracking-wide text-muted after:content-[':']";   // label, colon from CSS
+const DD = `text-sm text-ink ${WRAP}`;
+
+// Data sources
+<h2 id="credits-sources" ...>Data sources</h2>
+<div className="mt-3 overflow-x-auto">
+  <table aria-labelledby="credits-sources" className="hidden w-full border-collapse sm:table"> …unchanged rows, cells use TD… </table>
+</div>
+<ul aria-labelledby="credits-sources" className="mt-3 flex flex-col gap-3 sm:hidden">
+  {DATA_SOURCES.map((s) => (
+    <li key={s.name} className="rounded-md border border-muted/40 bg-surface p-3">
+      <dl className="flex flex-col gap-2">
+        <div><dt className={DT}>Name</dt><dd className={`${DD} font-medium`}>{s.name}</dd></div>
+        <div><dt className={DT}>Version or commit</dt><dd className={DD}>{s.version}</dd></div>
+        <div><dt className={DT}>Use</dt><dd className={DD}>{s.use}</dd></div>
+        <div><dt className={DT}>Licence</dt><dd className={DD}>{s.licence}</dd></div>
+        <div><dt className={DT}>URL</dt><dd className={DD}>{s.url}</dd></div>
+      </dl>
+    </li>
+  ))}
+</ul>
+```
+
+The Software section is the same with `credits-software`, the labels "Name", "Version", "Licence", and `SOFTWARE_CREDITS`. The `<dt>` and `<dd>` text colours reuse the existing tokens (`muted`, `ink`) on `surface`, which the theme tests already cover for text; the card background `bg-surface` is the existing token. The legend citation `<p>` and each Cangjie citation `<li>` get `WRAP`. The card `<ul>` has `list-none` through Tailwind's preflight (no bullets). Mixing `hidden` with `sm:table` on a `<table>` sets `display: none` below 640 px and `display: table` from 640 px, which restores the default table display.
+
+### Component tests (`Credits.test.tsx`, jsdom; Requirements 24.3 to 24.6, 24.13)
+
+- Both layouts exist: two `<table>` elements with the classes `hidden` and `sm:table`, and two card `<ul>` elements with `sm:hidden` (found through `aria-labelledby` or the section headings).
+- Every `DATA_SOURCES` row appears in the Source_Table (scoped with `within(table)`) and as a card with the five labels and values; every `SOFTWARE_CREDITS` row appears in the Software_Table and as a card with the three labels and values.
+- Each `<dt>` text equals a column label; each card is a `<dl>`.
+- Long-value elements carry `[overflow-wrap:anywhere]`: every `<td>` and `<th scope="row">` of both tables, every `<dd>`, the legend citation paragraph and each Cangjie citation item.
+- Existing tests that read the document text or call `getByText` still pass because the text now appears twice: queries that must find one element are scoped to the table (`within(table)`), and `document.body.textContent` checks (`toContain`) are unchanged. The Software-row test already scopes to the `Software` section and uses `getByRole('rowheader')`, which exists only in the table, so its intent is kept. The "exactly one `<a>`" test stays valid, because the cards contain no link.
+
+### E2E suite (Requirements 24.7 to 24.12, 24.15)
+
+**Files.**
+
+```
+e2e/
+├── playwright.config.ts
+└── no-horizontal-overflow.spec.ts
+```
+
+**`playwright.config.ts`.**
+
+```ts
+import { fileURLToPath } from 'node:url';
+import { defineConfig } from '@playwright/test';
+
+const ROOT = fileURLToPath(new URL('..', import.meta.url));
+const PORT = 4173;
+
+export default defineConfig({
+  testDir: '.',
+  testMatch: '**/*.spec.ts',
+  timeout: 60_000,
+  retries: 0,
+  reporter: [['list'], ['html', { open: 'never' }]],
+  use: {
+    baseURL: `http://127.0.0.1:${PORT}`,
+    viewport: { width: 375, height: 812 },
+  },
+  projects: [{ name: 'chromium', use: { browserName: 'chromium' } }],
+  webServer: {
+    command: `npm run build -w app && npm run preview -w app -- --host 127.0.0.1 --port ${PORT} --strictPort --base /ghost-script/`,
+    cwd: ROOT,
+    url: `http://127.0.0.1:${PORT}/ghost-script/`,
+    reuseExistingServer: false,
+    timeout: 180_000,
+  },
+});
+```
+
+- **Base path.** `app/vite.config.ts` sets `base: '/ghost-script/'` only for the `build` command; `vite preview` resolves the config with the `serve` command, so without a flag it would mount `dist` at `/` while `index.html` asks for `/ghost-script/assets/...` and every asset would 404. The flag `--base /ghost-script/` fixes the mount point. Tests open `/ghost-script/`.
+- **Fixed port, loopback only.** Port 4173 with `--strictPort` (a busy port fails loudly) and `--host 127.0.0.1` (the README rule: never expose the server on the network).
+- **`reuseExistingServer: false`.** A stale preview of an older build would hide a regression.
+- **Chromium only.** One project, one browser. Desktop emulation at 375 × 812 (no `isMobile`), because the requirement is a 375 px layout width; headless Chromium hides scrollbars, so the layout width is 375.
+- **Output folders.** The default `test-results/` (next to the config, so `e2e/test-results/`) and `playwright-report/` are ignored through `.gitignore` entries `test-results/` and `playwright-report/`, which match at any depth. `.kiro/` is never added to `.gitignore`.
+- **Offline.** The app makes no external request at runtime, so the suite needs no network after the browser install.
+
+**How each screen is reached (through the UI of the built app).** A helper `seed(page, state)` calls `page.addInitScript` with the key `ghost-script:state` and a blob `{ schemaVersion: 2, introSeen, cangjieIntroSeen, history }` (the shape in `storage.ts`). The script sets the key only when it is absent, so a reload inside a test never overwrites progress written by the app. Playwright gives every test a fresh browser context, so nothing leaks between tests.
+
+| Screen | Seed | Steps | Ready when |
+| --- | --- | --- | --- |
+| Sources & licences | `introSeen: true`, `cangjieIntroSeen: true`, empty history | open `/ghost-script/`, click the button "Sources & licences" | `h1` "Sources & licences" is visible |
+| Graveyard | same, plus history for the first three keys of `app/public/data/characters.json` (read with `node:fs` in the spec): one `struggled` with `nextDue: 0`, one `clean` with a far-future `nextDue`, one `gave-up` | open, click "Graveyard" | `h1` "Graveyard" is visible |
+| How Cangjie works | `introSeen: true`, `cangjieIntroSeen: false` | open, click "How Cangjie works" | `h1` "How Cangjie works" is visible |
+| Séance, Summon_Step | both flags `true` | open, click "Begin a Nightly Séance" | region "Summon step" is visible |
+| Séance, Write_Mode | continue from the Summon step | click "Give up" in the Summon step, wait through the forming and fading phases (about 3 s, `SUMMON_HOLD_MS` + `SUMMON_FADE_MS`) | region "Write mode" is visible (timeout 10 s) |
+
+- **Reaching the write step without handwriting.** "Give up" in the Summon step is allowed in the typing phase and ends the Summon step with the character formed for the player, then the session moves to the Write step. No code needs to be known, so no Cangjie code is typed by hand in the test (content-accuracy). The Write_Mode surface loads its stroke data from the dataset (no network), so the step is reachable offline. No stroke is drawn.
+- **First ghost.** The first ghost of a new séance is the first character of the Learning_Order. The test requires the Summon step to appear and fails with a clear message if it does not (for example, if a dataset change makes the first ghost unplayable), rather than skipping.
+- **Seeded rows.** The three Graveyard seeds make the grid show one grave of each state and a long list of wisps.
+- **Why not the first-visit path (intro, then guide, then séance).** It is a valid route (the intro button "Begin the Séance" leads to the guide when `cangjieIntroSeen` is false), but it chains three screens in one test and hides which one failed. The seeded menu start gives one test per screen with the same real UI clicks. The intro screen itself is not in the four screens of the requirement.
+
+**The Width_Check helper** `findOverflow(page)` returns a list of strings, empty when the screen fits:
+
+1. Wait for fonts: `await page.evaluate(() => document.fonts.ready)`, so the `swap` font does not change widths after the measure.
+2. Read `document.documentElement.scrollWidth`; when it is greater than 375, add `scrollWidth 588 > 375` (with the measured value).
+3. For every element under `document.body` (and `body` itself): skip when `getComputedStyle(el).display === 'none'`; read `getBoundingClientRect()`; when `right > 375.5` or `left < -0.5`, add a line with a selector and the rounded left and right values.
+4. The selector is `tag#id.class1.class2` (first three classes), plus `[aria-label="…"]` when present, plus the nearest ancestor with an id or `aria-label` as `in <that>`. The failure message of the test is the joined list, so the log names the element.
+
+- **Skipped on purpose.** Elements with `display: none` (they have no box). Nothing else is skipped: no allow-list at the start. If a real element is wider by design (it must be one inside an intentional scroll container), the task adds a narrow, commented exception for that selector, not a general rule.
+- **The mist layers.** `body::after` and `#root::before` are `position: fixed` and 200 % wide by design. They are pseudo-elements, and `querySelectorAll` and `getBoundingClientRect` work on elements only, so the loop never sees them; fixed-position boxes also add nothing to the document `scrollWidth`. The `scrollWidth` check still catches a real page that grows sideways. The helper does not call `getComputedStyle(el, '::before')`.
+- **A guard against a check that always passes.** One extra test opens the menu, appends a `div` 600 px wide to `document.body` with `page.evaluate`, and expects `findOverflow` to return a non-empty list that names the `div`. That proves the helper can fail.
+- **Viewport precondition.** Each test first checks `page.viewportSize()` equals 375 × 812.
+- **Motion.** The default motion setting is kept, so the real animations run; the largest transform (the ghost drift, 12 px by 24 px) cannot reach the edge from the 16 px padding. If a test ever flakes on animation, the task may set `reducedMotion: 'reduce'` in the config.
+
+### Vitest isolation (Requirement 24.12)
+
+`vitest.workspace.ts` lists three projects, and each has an explicit `include`: the root `vitest.config.ts` has `tests/**/*.test.ts`; `app/vitest.config.ts` has `**/*.test.{ts,tsx}` (relative to `app/`, so `e2e/` at the repository root is outside it); `oracle/vitest.config.ts` has `tests/**/*.test.ts`. None matches a file named `*.spec.ts` under `e2e/`. Because every project sets `include`, Vitest's default pattern (which would match `*.spec.ts`) does not apply. `npm test` stays `vitest run`. Playwright's `testMatch` is `**/*.spec.ts` and its `testDir` is `e2e/`, so Playwright does not pick up the Vitest `*.test.*` files either. The checkpoint confirms that `npm test` output lists no `e2e/` file.
+
+### Scripts, ignore rules and docs
+
+- Root `package.json`: `"test:e2e": "playwright test -c e2e/playwright.config.ts"`, `"test:e2e:install": "playwright install chromium"`, and `"@playwright/test": "1.65.1"` in `devDependencies` (added with `npm install --save-dev --save-exact @playwright/test@1.65.1`; the lockfile changes with it).
+- `.gitignore`: add `test-results/` and `playwright-report/` under a new comment. `!.kiro/` stays.
+- Root `tsconfig.json`: add `"e2e/**/*.ts"` to `include`.
+- `README.md`, "Run the tests" under Usage: a short subsection "Check the layout width in a real browser": run `npm run test:e2e:install` once (it downloads Chromium), then `npm run test:e2e` (it builds the app, serves it with `vite preview` on port 4173 and checks four screens at 375 px); `npm test` does not run it.
+- `.github/workflows`: unchanged (follow-up B10).
+- `kiro-log.md` and its tasks: not touched by this amendment.
+
+### Impact on existing code and tests
+
+| Item | Change | Task |
+| --- | --- | --- |
+| `Credits.tsx` | cards added, tables get `hidden sm:table`, `WRAP` replaces `break-words` | 22.1 |
+| `Credits.test.tsx` | new layout tests; table-row queries scoped to the table | 22.2 |
+| `package.json` (root), `package-lock.json`, `.gitignore` | Playwright devDependency, two scripts, two ignore lines | 22.3 |
+| `e2e/playwright.config.ts`, root `tsconfig.json` | new config; `e2e/**/*.ts` in `include` | 22.4 |
+| `e2e/no-horizontal-overflow.spec.ts` | new spec | 22.5 |
+| `README.md` | new e2e note | 22.6 |
+| `CangjieGuide.tsx`, `CangjieGuide.test.tsx` | `WRAP` class on the citation line and long values (fix found by the e2e check) | 22.7 |
+| `index.css`, `Graveyard.tsx`, `SeanceSession.tsx`, `SummonStep.tsx`, `WriteMode.tsx`, `App.tsx`, `vite.config.ts`, `deploy.yml` | unchanged (read only). If the spec finds an overflow on a screen other than Sources & licences, the task that finds it stops and reports it instead of changing the file silently. | none |
+| Files of Requirement 14.1, `characters.json` | untouched | all |
+
+Property-based testing does not apply to this amendment: it is markup, CSS classes and a browser check, and the Nov 15 decision forbids new property tests. The E2E_Suite is neither a unit test nor a component test; it is a separate, opt-in check.

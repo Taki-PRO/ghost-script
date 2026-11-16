@@ -220,3 +220,12 @@ describe('CangjieGuide wrapper (Req 21.11)', () => {
     expect(screen.getByRole('main')).not.toHaveClass('bg-background');
   });
 });
+
+describe('CangjieGuide long text (Req 24.17)', () => {
+  it('lets the citation line wrap anywhere so the long URLs fit at 375 px', () => {
+    renderGuide();
+    const line = screen.getByTestId('guide-citations');
+    expect(line).toHaveClass('[overflow-wrap:anywhere]');
+    expect(line.textContent).toContain('https://en.wikipedia.org/wiki/Cangjie_input_method');
+  });
+});

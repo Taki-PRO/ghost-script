@@ -11,6 +11,8 @@
   "scripts": {
     "build:data": "tsx scripts/build-data.ts",
     "test": "vitest run",
+    "test:e2e": "playwright test -c e2e/playwright.config.ts",
+    "test:e2e:install": "playwright install chromium",
     "test:data": "vitest run --project node",
     "build:notices": "tsx scripts/build-notices.ts",
     "check:data": "tsx scripts/data-check.ts",
@@ -18,6 +20,7 @@
     "oracle": "tsx oracle/src/index.ts"
   },
   "devDependencies": {
+    "@playwright/test": "1.65.1",
     "@types/node": "22.20.5",
     "fast-check": "3.23.2",
     "tsx": "4.19.3",

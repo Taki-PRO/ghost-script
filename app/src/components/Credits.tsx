@@ -8,7 +8,10 @@ export interface CreditsProps {
 
 const H2 = 'text-xl font-semibold text-ink font-display';
 const TH = 'px-3 py-2 text-left text-sm font-semibold text-ink';
-const TD = 'px-3 py-2 align-top text-sm text-ink break-words';
+const WRAP = '[overflow-wrap:anywhere]';
+const TD = `px-3 py-2 align-top text-sm text-ink ${WRAP}`;
+const DT = "text-xs font-semibold uppercase tracking-wide text-muted after:content-[':']";
+const DD = `text-sm text-ink ${WRAP}`;
 
 /** Credits screen (Requirement 9, 13.2, 16.11). URLs are text; the only link is the notices file. */
 export function Credits({ onBack }: CreditsProps) {
@@ -42,7 +45,7 @@ export function Credits({ onBack }: CreditsProps) {
             Data sources
           </h2>
           <div className="mt-3 overflow-x-auto">
-            <table className="w-full border-collapse">
+            <table aria-labelledby="credits-sources" className="hidden w-full border-collapse sm:table">
               <thead>
                 <tr className="border-b border-muted">
                   <th scope="col" className={TH}>Name</th>
@@ -65,6 +68,19 @@ export function Credits({ onBack }: CreditsProps) {
               </tbody>
             </table>
           </div>
+          <ul aria-labelledby="credits-sources" className="mt-3 flex flex-col gap-3 sm:hidden">
+            {DATA_SOURCES.map((s) => (
+              <li key={s.name} className="rounded-md border border-muted/40 bg-surface p-3">
+                <dl className="flex flex-col gap-2">
+                  <div><dt className={DT}>Name</dt><dd className={`${DD} font-medium`}>{s.name}</dd></div>
+                  <div><dt className={DT}>Version or commit</dt><dd className={DD}>{s.version}</dd></div>
+                  <div><dt className={DT}>Use</dt><dd className={DD}>{s.use}</dd></div>
+                  <div><dt className={DT}>Licence</dt><dd className={DD}>{s.licence}</dd></div>
+                  <div><dt className={DT}>URL</dt><dd className={DD}>{s.url}</dd></div>
+                </dl>
+              </li>
+            ))}
+          </ul>
         </section>
 
         <section aria-labelledby="credits-licensing" className="mt-8">
@@ -85,7 +101,7 @@ export function Credits({ onBack }: CreditsProps) {
             {LEGEND_SOURCE.zh}
           </p>
           <p className="mt-2 text-base text-ink">{LEGEND_SOURCE.english}</p>
-          <p className="mt-2 text-sm text-muted">
+          <p className={`mt-2 text-sm text-muted ${WRAP}`}>
             The English rendering is our own. Source: {LEGEND_SOURCE.citation}
           </p>
         </section>
@@ -97,7 +113,7 @@ export function Credits({ onBack }: CreditsProps) {
           <p className="mt-3 text-base text-ink">Sources (English Wikipedia):</p>
           <ul className="mt-2 list-disc space-y-1 pl-6 text-base text-ink">
             {CANGJIE_CITATIONS.map((c) => (
-              <li key={c.url} className="break-words">
+              <li key={c.url} className={WRAP}>
                 &ldquo;{c.title}&rdquo; {c.url}
               </li>
             ))}
@@ -125,7 +141,7 @@ export function Credits({ onBack }: CreditsProps) {
             Software
           </h2>
           <div className="mt-3 overflow-x-auto">
-            <table className="w-full border-collapse">
+            <table aria-labelledby="credits-software" className="hidden w-full border-collapse sm:table">
               <thead>
                 <tr className="border-b border-muted">
                   <th scope="col" className={TH}>Name</th>
@@ -144,6 +160,17 @@ export function Credits({ onBack }: CreditsProps) {
               </tbody>
             </table>
           </div>
+          <ul aria-labelledby="credits-software" className="mt-3 flex flex-col gap-3 sm:hidden">
+            {SOFTWARE_CREDITS.map((p) => (
+              <li key={p.name} className="rounded-md border border-muted/40 bg-surface p-3">
+                <dl className="flex flex-col gap-2">
+                  <div><dt className={DT}>Name</dt><dd className={`${DD} font-medium`}>{p.name}</dd></div>
+                  <div><dt className={DT}>Version</dt><dd className={DD}>{p.version}</dd></div>
+                  <div><dt className={DT}>Licence</dt><dd className={DD}>{p.licence}</dd></div>
+                </dl>
+              </li>
+            ))}
+          </ul>
           <p className="mt-3 text-base">
             <a
               href={noticesHref}

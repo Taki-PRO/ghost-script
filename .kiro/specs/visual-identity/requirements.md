@@ -8,6 +8,8 @@ The feature changes no scheduling, no Outcome rule, no summon or write rule, no 
 
 Requirements 18 to 23 amend this feature after tester feedback (approved by Takshil): a Leave séance control, sticky headers on two screens, the rename of the Credits screen to "Sources & licences", a night-scene atmosphere and a menu entrance. They change no game rule. Where an earlier criterion is affected, it carries an "Amended" note that points to the new requirement.
 
+Requirement 24 amends this feature after a browser check by the human at 375 px (approved by Takshil): the Sources & licences screen overflowed sideways. It fixes Requirement 9 (the Credits_Screen) at 375 px and relates to the manual task 10.1 (the human phone check). It adds stacked cards for narrow screens, a wrap rule for long values, and a dev-only Playwright width check. It changes no game rule.
+
 Budget: about one and a half days. The design is deliberately lean: CSS and inline SVG made in this repository, no new runtime dependency except one self-hosted Latin font, and no CJK font file.
 
 ### Kiro features used
@@ -67,6 +69,15 @@ Budget: about one and a half days. The design is deliberately lean: CSS and inli
 - **Candle_Accent**: The warm amber colour `candle`, used for the main button of the Start_Menu and for focus rings.
 - **GhostFigure**: The shared component `app/src/components/GhostFigure.tsx` that draws the Ghost_Figure. The Ghost_Card and the Start_Menu both use it.
 - **Software_List**: The list of Runtime_Dependencies (name, version, licence identifier) shown in the Software section of the Credits_Screen, defined in `app/src/data/software.ts`.
+- **Narrow_Layout**: A viewport narrower than 640 CSS pixels (below the Tailwind `sm` breakpoint).
+- **Wide_Layout**: A viewport 640 CSS pixels wide or wider.
+- **Source_Table**: The table of data sources in the Credits_Screen (columns Name, Version or commit, Use, Licence, URL).
+- **Software_Table**: The table of the Software_List in the Credits_Screen (columns Name, Version, Licence).
+- **Source_Cards**: The list in the Credits_Screen that shows each row of `DATA_SOURCES` as one stacked card.
+- **Software_Cards**: The list in the Credits_Screen that shows each row of `SOFTWARE_CREDITS` as one stacked card.
+- **Wrap_Class**: The Tailwind class `[overflow-wrap:anywhere]`, which lets a long unbroken value break at any character.
+- **E2E_Suite**: The Playwright tests in the `e2e/` folder at the repository root, run by `npm run test:e2e` in Chromium. They are not part of the Test_Suite.
+- **Width_Check**: The check of the E2E_Suite on one screen at a viewport of 375 × 812 CSS pixels: the document `scrollWidth` and the bounding box of every displayed element (Requirements 24.7 and 24.8).
 
 ---
 
@@ -195,7 +206,7 @@ Budget: about one and a half days. The design is deliberately lean: CSS and inli
 #### Acceptance Criteria
 
 1. WHEN the player presses the "Credits" button in the Start_Menu, THE App SHALL show the Credits_Screen. *(Amended (approved by Takshil), Requirement 20: the button is now labelled "Sources & licences".)*
-2. THE Credits_Screen SHALL list every data source of the README "Data and licences" table, each with its name, version or commit, use, licence and URL as text.
+2. THE Credits_Screen SHALL list every data source of the README "Data and licences" table, each with its name, version or commit, use, licence and URL as text. *(Amended (approved by Takshil), Requirement 24: in the Narrow_Layout each row is shown as a stacked card with the same five labels and values; in the Wide_Layout it stays a table row.)*
 3. THE Credits_Screen SHALL state that `characters.json` is a combined work that carries the licence terms of each source for its fields, and that the code of Ghost Script is licensed MIT.
 4. THE Credits_Screen SHALL show the legend line 天雨粟，鬼夜哭 with the Huainanzi source citation worded exactly as in the "Approved legend line" section of `content-accuracy.md`, and SHALL state that the English rendering is the project's own.
 5. THE Credits_Screen SHALL cite the English Wikipedia articles "Cangjie input method" and "Chu Bong-Foo", each with its title and its URL as text.
@@ -203,7 +214,7 @@ Budget: about one and a half days. The design is deliberately lean: CSS and inli
 7. THE Credits_Screen SHALL make no claim about Cangjie beyond those allowed in `content-accuracy.md`.
 8. THE Test_Suite SHALL fail IF the data sources, licences, versions, URLs or the font entry of the Credits_Screen differ from those of the README.
 9. THE Credits_Screen SHALL provide a "Back to menu" button with an accessible name, a minimum height of 44 px and a visible focus ring. *(Amended (approved by Takshil), Requirement 19: the button sits in the Sticky_Header at the top of the screen and no button appears at the bottom.)*
-10. THE Credits_Screen SHALL show a "Software" section that lists every package of the Software_List with its name, version and licence identifier, and SHALL link to the Notices_File.
+10. THE Credits_Screen SHALL show a "Software" section that lists every package of the Software_List with its name, version and licence identifier, and SHALL link to the Notices_File. *(Amended (approved by Takshil), Requirement 24: in the Narrow_Layout each package is shown as a stacked card with the same three labels and values.)*
 
 ### Requirement 10: Guide Wording
 
@@ -409,3 +420,29 @@ This requirement was requested after tester feedback and is approved by Takshil.
 4. THE Test_Suite SHALL fail IF a CSS animation of `app/src/styles/index.css` lies outside a `@media (prefers-reduced-motion: no-preference)` block, IF a `url()` value of that file is not a `data:` URI, IF a custom property of the Night_Scene differs from its token in `app/src/styles/theme.ts`, or IF a contrast ratio of Requirement 21.6 to 21.8 falls below its limit.
 5. WHEN all new copy exists, THE maintainer SHALL run the Accuracy_Reviewer over the Start_Menu copy, the "Sources & licences" screen, the Leave_Prompt text and the README, and SHALL fix every finding within the scope of this spec.
 6. WHEN the final checkpoint of the amendments runs, THE maintainer SHALL run `npm test`, `npx tsc -p tsconfig.json`, `npx tsc -p app/tsconfig.json`, `npx tsc -p oracle/tsconfig.json`, `npm run build -w app` and `npm run check:bundle` (budget 300,000 bytes of gzip), and all SHALL succeed.
+
+### Requirement 24: Sources & licences Fits a Phone
+
+**User Story:** As a phone player, I want the Sources & licences screen to fit the width of my screen, so that I can read every source and licence without scrolling sideways.
+
+This requirement is a bug fix approved by Takshil. In a browser check at 375 px the human found that the Credits_Screen overflowed sideways: its tables were about 975 px wide and the page `scrollWidth` was 588 px. It fixes Requirement 9 (Credits) at 375 px and relates to the manual task 10.1. The dev-only Playwright dependency is also approved by Takshil. It changes no game rule, no scheduling, no storage and no dataset. The E2E_Suite later found the same kind of overflow in the Cangjie_Guide (criterion 17), which this requirement also fixes.
+
+#### Acceptance Criteria
+
+1. WHILE the viewport is in the Narrow_Layout, THE Credits_Screen SHALL show every row of `DATA_SOURCES` as one card of the Source_Cards and every row of `SOFTWARE_CREDITS` as one card of the Software_Cards, and SHALL show neither the Source_Table nor the Software_Table.
+2. WHILE the viewport is in the Wide_Layout, THE Credits_Screen SHALL show the Source_Table and the Software_Table, and SHALL show neither the Source_Cards nor the Software_Cards.
+3. THE Credits_Screen SHALL give each of the two tables the classes `hidden` and `sm:table`, and each of the two card lists the class `sm:hidden`, so that exactly one layout has `display: none` at every width and assistive technology reads only the layout that is shown.
+4. THE Credits_Screen SHALL draw each card as a description list (`<dl>`) with one "label: value" line per table column, using the column labels of the matching table: "Name", "Version or commit", "Use", "Licence" and "URL" for a Source_Card, and "Name", "Version" and "Licence" for a Software_Card.
+5. THE Credits_Screen SHALL contain every row of `DATA_SOURCES` and every row of `SOFTWARE_CREDITS` in both layouts, with the same values in both.
+6. THE Credits_Screen SHALL give the Wrap_Class to every element that holds a long value: each cell of the Source_Table and the Software_Table, each value line of the Source_Cards and the Software_Cards, the legend citation, and each Cangjie citation.
+7. IF the `scrollWidth` of the document element is greater than 375 at a viewport of 375 × 812 CSS pixels, THEN THE Width_Check SHALL fail and report the measured value.
+8. IF a displayed element has a bounding box whose right edge is greater than 375.5 or whose left edge is less than -0.5 at a viewport of 375 × 812 CSS pixels, THEN THE Width_Check SHALL fail and report a selector for that element. THE Width_Check SHALL skip every element whose computed `display` is `none`.
+9. THE E2E_Suite SHALL run the Width_Check on the Sources & licences screen, the Graveyard_Screen, the Cangjie_Guide, the Summon_Step of a séance, and the Write_Mode step of a séance, each reached through the interface of the built app.
+10. THE E2E_Suite SHALL run in Chromium only, against the built app served by `vite preview` under the base path `/ghost-script/`.
+11. THE root `package.json` SHALL provide the scripts `test:e2e` (`playwright test -c e2e/playwright.config.ts`) and `test:e2e:install` (`playwright install chromium`), and SHALL list `@playwright/test` in `devDependencies` at an exact version.
+12. THE Test_Suite SHALL run no file of the `e2e/` folder, so that `npm test` stays Vitest-only and needs no browser.
+13. THE Test_Suite SHALL fail IF the Credits_Screen lacks a row of `DATA_SOURCES` or `SOFTWARE_CREDITS` in either layout, IF a table or a card list lacks the classes of criterion 3, or IF a long-value element of criterion 6 lacks the Wrap_Class.
+14. THE README SHALL tell the reader to run `npm run test:e2e:install` once and then `npm run test:e2e` to run the E2E_Suite.
+15. THE implementation of this requirement SHALL leave unmodified every file listed in Requirement 14.1, SHALL add no step to `.github/workflows`, and SHALL add `test-results/` and `playwright-report/` to `.gitignore` without removing the rule that keeps `.kiro/` in the repository.
+16. WHEN the final checkpoint of this requirement runs, THE maintainer SHALL run `npm test`, `npx tsc -p tsconfig.json`, `npx tsc -p app/tsconfig.json`, `npx tsc -p oracle/tsconfig.json`, `npm run build -w app`, `npm run check:bundle`, `npm run test:e2e:install` and `npm run test:e2e`, and all SHALL succeed.
+17. THE Cangjie_Guide SHALL give the Wrap_Class to its citation line and to every other element that holds long unbreakable text, so that the Width_Check passes on the Cangjie_Guide at a viewport of 375 × 812 CSS pixels (fix found by the e2e check: the guide made the page 378 px wide).
