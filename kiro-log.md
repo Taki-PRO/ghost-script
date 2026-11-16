@@ -117,7 +117,7 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 - **What I did:** Asked Kiro to fix a design flaw before implementing: meanings and readings were picked from separate lists, so a prompt could pair a meaning with the wrong pronunciation (e.g. 了 "to finish" with *le*). Kiro updated requirements, design and tasks (per-entry senses, `entryIndex` + `meaningIndex` overrides, a new same-entry property), then implemented tasks 4.2, 8.3, 10.3–10.6 and the updated 11.1–11.2.
 - **Kiro feature:** Spec iteration (changing an approved spec in response to real data), sub-agents, unit tests on real fixtures (三, 后, 号, 了, 中).
 - **Result:** 65/65 tests pass; build succeeds; `prompt-review.csv` lists all 300 prompts with every alternative grouped by entry.
-- **Review:** the default rule gave usable but often wrong senses. All 300 characters were screened against the review file and 48 overrides were proposed. All 48 were approved by Takshil, including the six marked "your call" (觉, 地, 本, 所, 现, 然). `reviewedBy` records "approved by Takshil". Notable fixes: 比 had defaulted to a vulgar euphemism (now "to compare"); wrong readings for 说, 听, 看, 要, 跑, 作, 行; rare senses for 号, 后, 几, 打, 电, 店, 跟, 热, 太, 字. All overrides select existing CC-CEDICT senses by index; the build validated every index.
+- **Review:** the default rule gave usable but often wrong senses. All 300 characters were screened against the review file and 48 overrides were proposed. I approved all 48, including the six marked "your call" (觉, 地, 本, 所, 现, 然). `reviewedBy` records "which I approved". Notable fixes: 比 had defaulted to a vulgar euphemism (now "to compare"); wrong readings for 说, 听, 看, 要, 跑, 作, 行; rare senses for 号, 后, 几, 打, 电, 店, 跟, 热, 太, 字. All overrides select existing CC-CEDICT senses by index; the build validated every index.
 - **Still to handle (display, not data):** 午 has only a long astrology-style gloss, and some glosses contain dictionary notes like "(CL:棵[ke1])". These will be trimmed by a display rule in the game-UI spec; the stored data stays identical to the source.
 - **Next:** tasks 13–14, property-based tests.
 
@@ -163,7 +163,7 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 - **What I did:** Ran tasks 16–20: an integration test on the real data, the end-to-end build, the README, and the final checkpoint.
 - **Kiro feature:** Spec task execution; property checks run against the real output.
 - **Result:** **66/66 tasks done, 129 tests across 25 files**, `tsc` clean. The integration test checks Properties 8, 9, 11–16 and 18–22 on all 300 real records; all pass. Kiro noticed the 48 overrides and adjusted the checks correctly (Property 20 only for the 252 default prompts; reviewer attribution for the 48).
-- **Review fixes (no credits):** added the MIT licence file for the HSK character list (`data/raw/hsk30/LICENSE`); made the README say exactly how the overrides were made (approved by Takshil). Kiro's summary guessed 了 was overridden; it wasn't (it keeps the default "(completed action marker)").
+- **Review fixes (no credits):** added the MIT licence file for the HSK character list (`data/raw/hsk30/LICENSE`); made the README say exactly how the overrides were made (I approved each one). Kiro's summary guessed 了 was overridden; it wasn't (it keeps the default "(completed action marker)").
 - **Credits:** 170 of 4,000 hackathon credits used in total (plus 25 of the 50 free-tier credits before they arrived). Tasks 13–20 took 83 (property and smoke tests, integration test, README); everything before took 87.
 - **Spec 1 in numbers:** 300 characters · 3 datasets + 1 list, all pinned · 22 designed properties (21 tested here, 1 deferred) · 129 tests · 10/10 deliberate bugs caught · deterministic across Mac and Linux.
 
@@ -217,7 +217,7 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 
 ## Nov 11, 2026: Requirements change: relearned characters restart at 1 day
 
-- **What I did:** Changed the rule so a clean review after a miss lands on step 0 (1 day), the same as a new character, instead of 3 days. Approved by Takshil.
+- **What I did:** Changed the rule so a clean review after a miss lands on step 0 (1 day), the same as a new character, instead of 3 days. I approved it.
 - **Kiro feature:** Spec-driven change: requirements (AC 6.2, AC 4.2), design (Property 7), code and tests updated together in one pass.
 - **Why:** A character forgotten ten minutes ago shouldn't wait 3 days; mainstream spaced-repetition apps also send relearned cards back to about a day.
 - **Result:** The rule reads the last outcome rather than the step, so it also holds for corrupt or hand-built entries. Sequence miss → clean → clean → clean gives steps 0, 0, 1, 2. **192 tests pass**; `tsc` clean. Leftover descriptions of the old rule in tasks.md and design.md updated to match.
@@ -237,7 +237,7 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 
 ## Nov 13, 2026: Spec fixes and learning order (fewest strokes first)
 
-- **What I did:** Fixed the Property 9 wording, brought the design up to date with what was actually built, removed an unused parameter from the save-data API, and added a new requirement: new characters are introduced fewest strokes first. Approved by Takshil.
+- **What I did:** Fixed the Property 9 wording, brought the design up to date with what was actually built, removed an unused parameter from the save-data API, and added a new requirement: new characters are introduced fewest strokes first. I approved it.
 - **Kiro feature:** Spec-driven change: requirements (AC 6.12, AC 8.7), design, tasks and code updated in one pass; property-based test (Property 12).
 - **Why:** The dataset is stored in Unicode order and the HSK list is alphabetical by pinyin, so neither is a sensible order to learn in. Fewest strokes first suits a handwriting game: a learner writes 一, 二, 十, 人, 口 before anything complex, and all 300 characters are beginner level anyway. It uses stroke counts we already have, so no new data source.
 - **Result:** `learningOrder(dataset)` is a pure function: stroke count ascending, ties by codepoint, and a missing or broken stroke count sorts last instead of crashing. Task 16 now states the session picker must receive `learningOrder(dataset)`, not the file's key order. `recordOutcome` no longer takes an unused time argument. **341 tests pass**; `tsc` clean for root and app.
@@ -259,7 +259,7 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 
 ## Nov 13, 2026: Spec amendments and task 14: the Séance flow
 
-- **What I did:** Amended the spec (approved by Takshil) and ran task 14, SeanceSession, which runs the 10 ghosts one after another.
+- **What I did:** Amended the spec (I approved the changes) and ran task 14, SeanceSession, which runs the 10 ghosts one after another.
   - Req 5.1: the clue hides the answer character with ～.
   - Req 5.2: input is mouse and touch events, not Pointer Events.
   - Req 8.4: every button works by keyboard; drawing needs touch, pen, mouse or trackpad.
@@ -308,7 +308,7 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 - **Kiro feature:** Spec workflow (requirements, then design) with a data check before any requirements were written; cross-spec amendments.
 - **Result:**
   - **Data check first:** Kiro downloaded Unicode's Unihan 18.0.0 (Unicode License V3) and found a Cangjie code for **all 300** characters, coded for the simplified forms directly (e.g. 们 = OLS). 别 and 错 have an undocumented leading X, so they are left out of Cangjie mode: **298 playable**. 身 (HXH) stays, so the on-screen keyboard has 25 keys.
-  - **Decisions (approved by Takshil):** a separate review history per mode (writing by hand and knowing a code are different skills), so saved data moves to schema v2 with the first real migration. Single-key characters such as 口 get a letters-only keyboard, because the key face would be the answer. Empty slots show the code length. The hint stays automatic after 3 misses. Keys are ignored while a system input method is composing.
+  - **Decisions (I approved them):** a separate review history per mode (writing by hand and knowing a code are different skills), so saved data moves to schema v2 with the first real migration. Single-key characters such as 口 get a letters-only keyboard, because the key face would be the answer. Empty slots show the code length. The hint stays automatic after 3 misses. Keys are ignored while a system input method is composing.
   - **History claims are whitelisted:** the "How Cangjie works" screen may say only four things, each cited to Wikipedia: invented in 1976 by Chu Bong-Foo; named after Cangjie, the legendary inventor of writing; the first Chinese input method on a standard QWERTY keyboard; released to the public in 1982. No usage statistics and no "dying" claims.
   - **Write mode gains "Reveal its shape":** an optional layout hint built from the component breakdown, for the 259 characters that have one. It counts as a hint.
   - Kiro amended the two earlier specs to match: the dataset gains a `cangjie` field (the only one allowed to be missing) and a fourth source, and "clean" now means no hint of any kind. Steering docs and a few stale property references were also brought up to date.
@@ -333,7 +333,7 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 
 ## Nov 15, 2026: Spec 3 re-scoped to one rite
 
-- **What I did:** Rewrote `cangjie-seance` to follow the review, approved by Takshil. There is no mode choice any more. Every ghost is one rite: summon it by typing its Cangjie code, watch the character form and fade, then write it from memory.
+- **What I did:** Rewrote `cangjie-seance` to follow the review; I approved it. There is no mode choice any more. Every ghost is one rite: summon it by typing its Cangjie code, watch the character form and fade, then write it from memory.
 - **Kiro feature:** Spec workflow (requirements, design and tasks rewritten together, with waves for parallel execution).
 - **Result:**
   - The tasks are 37 leaf tasks in 8 groups and 13 waves. Kiro checked that no wave has two tasks editing the same file.
@@ -425,7 +425,7 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   - **The guide no longer gives away an early ghost.** Its example is now 想 = DUP (木 山 心), at position 290 of 300 in the learning order, instead of 七, the second ghost. A test checks the example is at position 30 or later.
   - **Guide wording:** dropped the unsourced lines about the X key; the "family of related shapes" sentence now sits under the Wikipedia citation.
   - **Security:** the Oracle's zod went from 3.25.76 to 4.6.7, clearing a high-severity advisory. The remaining audit warnings are all in dev and test tooling.
-  - **The real reviewer** found more: the README premise was worded as fact, the Huainanzi line had no recorded source, and two guide lines about how codes work read like claims about Cangjie. It also flagged the designed summon reveal. Decisions, approved by Takshil:
+  - **The real reviewer** found more: the README premise was worded as fact, the Huainanzi line had no recorded source, and two guide lines about how codes work read like claims about Cangjie. It also flagged the designed summon reveal. Decisions, which I approved:
     - The premise is now worded as a premise.
     - The Huainanzi line is sourced to Lau's concordance (8/62/27–28), as quoted by Puett.
     - Game instructions are worded as being about this game.
@@ -435,7 +435,7 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 
 ## Nov 16, 2026: visual-identity: ink, paper, ghosts, graveyard, credits
 
-- **What I did:** Wrote the `visual-identity` spec in one pass, answered Kiro's eight questions (approved by Takshil), then ran every task except the log entry and the phone check.
+- **What I did:** Wrote the `visual-identity` spec in one pass, answered Kiro's eight questions (I approved the answers), then ran every task except the log entry and the phone check.
 - **Kiro features:** spec workflow with parallel waves; the `accuracy-reviewer` custom agent run as a task inside the spec.
 - **Result:**
   - **The look:**
@@ -486,11 +486,11 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   2. In the Graveyard, "Back to menu" is at the bottom, below 300 tombstones; you have to scroll all the way down to leave.
   3. The Credits button is unclear: "Also what is the credits button for?"
   4. The design is still too plain: "just plain black".
-- **Next:** a spec amendment covering all four (approved by Takshil), built by Kiro.
+- **Next:** a spec amendment covering all four, which I approved, built by Kiro.
 
 ## Nov 16, 2026: Tester fixes: exit, sticky headers, clearer naming, night scene
 
-- **What I did:** Turned the first tester feedback into new requirements in the `visual-identity` spec (approved by Takshil), then had Kiro build them.
+- **What I did:** Turned the first tester feedback into new requirements in the `visual-identity` spec, which I approved, then had Kiro build them.
 - **Kiro features:** spec amendments across two specs; the `accuracy-reviewer` agent run as a spec task, three rounds until clean.
 - **Result:**
   - **Exit:** a "Leave séance" button on every Séance screen, with an inline Leave / Stay prompt instead of a browser dialog. Focus goes to Stay; Escape closes it. Finished ghosts are already saved, and the unfinished one isn't recorded. This replaces the old "no menu during a Séance" rule.
@@ -505,7 +505,7 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 
 ## Nov 16, 2026: Phone overflow fixed, with a real-browser width test
 
-- **What I did:** Asked Kiro to fix the sideways scroll on the sources screen and to add a test that would catch it. Kiro pointed out that the existing jsdom tests can't measure widths (every element reports 0), so a real-browser test was needed. I chose Playwright as a dev-only tool, approved by Takshil.
+- **What I did:** Asked Kiro to fix the sideways scroll on the sources screen and to add a test that would catch it. Kiro pointed out that the existing jsdom tests can't measure widths (every element reports 0), so a real-browser test was needed. I chose Playwright as a dev-only tool, which I approved.
 - **Kiro features:** spec amendment (Requirement 24, tasks 22.1–23); parallel sub-agents; a diagnosis done with a throwaway browser script.
 - **Result:**
   - **Narrow screens:** below 640 px, each data source and software package is a stacked card instead of a table row. Long commit hashes and URLs wrap.

@@ -38,4 +38,4 @@ ghost-script/
 - Keep `kiro-log.md` updated whenever a Kiro feature is used or a decision about Kiro usage is made.
 
 ## Names
-- Never write personal names in repo files (specs, tasks, logs, code, comments), with one exception: approvals anywhere (data files, README, log, specs) are recorded as "approved by Takshil". Otherwise refer to the person as "the human" or "a human". Names of authors and historical figures in citations and credits (for example Chu Bong-Foo, D. C. Lau, Michael Puett, Cangjie) are bibliographic, not personal names, and are allowed.
+- Never write personal names in repo files (specs, tasks, logs, code, comments), and no exception for approvals: the log and README are first person ("I approved"), and specs, data files and tests say "approved by the human" or "human-approved". Otherwise refer to the person as "the human" or "a human". Names of authors and historical figures in citations and credits (for example Chu Bong-Foo, D. C. Lau, Michael Puett, Cangjie) are bibliographic, not personal names, and are allowed.
