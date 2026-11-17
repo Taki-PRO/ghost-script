@@ -5,13 +5,19 @@ import type { CharacterRecord } from './data/types';
 import type { CharacterDataset } from './data/charDataLoader';
 import { DEFAULT_CONFIG } from './engine/config';
 import { learningOrder } from './engine/learningOrder';
-import { applyReview, type Outcome } from './engine/scheduler';
+import { pickWalkthroughGhost } from './engine/walkthrough';
+import { applyReview, type Outcome, type ReviewHistory } from './engine/scheduler';
 import { getIntroSeen, loadState, STORAGE_KEY } from './storage/storage';
 import raw from '../public/data/characters.json';
 
 const stub = vi.hoisted(() => ({
   props: [] as Array<{ record: { character: string; strokeCount: number }; onOutcome: (o: Outcome) => void }>,
-  summon: null as null | { record: { character: string }; onDone: (o: Outcome) => void },
+  summon: null as null | {
+    record: { character: string };
+    onDone: (o: Outcome) => void;
+    firstMeeting?: boolean;
+    walkthroughLines?: readonly string[];
+  },
 }));
 
 vi.mock('./modes/WriteMode', async () => {
@@ -30,7 +36,12 @@ vi.mock('./modes/WriteMode', async () => {
 vi.mock('./modes/SummonStep', async () => {
   const React = await import('react');
   return {
-    SummonStep: (props: { record: { character: string }; onDone: (o: Outcome) => void }) => {
+    SummonStep: (props: {
+      record: { character: string };
+      onDone: (o: Outcome) => void;
+      firstMeeting?: boolean;
+      walkthroughLines?: readonly string[];
+    }) => {
       React.useEffect(() => {
         stub.summon = props;
         return () => {
@@ -68,11 +79,12 @@ function seed(state: { introSeen: boolean; cangjieIntroSeen: boolean; history?: 
   );
 }
 
-/** First visit: legend, then the Cangjie guide, then the first ghost. */
+/** First visit: the legend leads straight to the first ghost (no forced guide). */
 async function beginFirstVisit(user: ReturnType<typeof userEvent.setup>) {
   await user.click(await screen.findByRole('button', { name: /^begin the séance$/i }));
-  await user.click(await screen.findByRole('button', { name: /^continue$/i }));
 }
+
+const walkthroughChar = () => pickWalkthroughGhost(learningOrder(dataset), dataset)!;
 
 function mockFetchOk() {
   vi.stubGlobal(
@@ -156,10 +168,8 @@ describe('App integration', () => {
     await user.click(await screen.findByRole('button', { name: /begin the séance/i }));
     expect(getIntroSeen()).toBe(true);
     expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).introSeen).toBe(true);
-    expect(screen.getByRole('heading', { name: /how cangjie works/i })).toBeTruthy();
-    expect(screen.queryByText('Ghost 1 of 10')).toBeNull();
-    await user.click(screen.getByRole('button', { name: /^continue$/i }));
-    expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).cangjieIntroSeen).toBe(true);
+    expect(screen.queryByRole('heading', { name: /how cangjie works/i })).toBeNull();
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).cangjieIntroSeen).toBe(false);
     expect(screen.getByText('Ghost 1 of 10')).toBeTruthy();
   });
 
@@ -175,11 +185,17 @@ describe('App integration', () => {
       const user = await openApp();
       await beginFirstVisit(user);
       const presented = await playSeance(user, Array<Outcome>(10).fill('clean'));
+      const walk = walkthroughChar();
       expect(presented).toHaveLength(10);
-      expect(presented[0]).toBe('一');
-      expect(presented).toEqual(learningOrder(dataset).slice(0, 10));
-      const counts = presented.map((c) => all[c]!.strokeCount);
-      for (let i = 0; i < counts.length - 1; i++) expect(counts[i]!).toBeLessThanOrEqual(counts[i + 1]!);
+      expect(presented[0]).toBe(walk);
+      expect(presented.slice(1)).toEqual(
+        learningOrder(dataset)
+          .slice(0, 10)
+          .filter((c) => c !== walk)
+          .slice(0, 9),
+      );
+      const rest = presented.slice(1).map((c) => all[c]!.strokeCount);
+      for (let i = 0; i < rest.length - 1; i++) expect(rest[i]!).toBeLessThanOrEqual(rest[i + 1]!);
       for (const c of presented) expect(all[c]!.summonInk.class).toBe('transparent');
     });
   });
@@ -188,7 +204,8 @@ describe('App integration', () => {
     const user = await openApp();
     await beginFirstVisit(user);
     emit('clean');
-    expect(loadState().history['一']).toEqual(applyReview(undefined, 'clean', T, DEFAULT_CONFIG));
+    const walk = walkthroughChar();
+    expect(loadState().history[walk]).toEqual(applyReview(undefined, 'clean', T, DEFAULT_CONFIG));
     expect(screen.getByRole('button', { name: /next ghost/i })).toBeTruthy();
     await user.click(screen.getByRole('button', { name: /next ghost/i }));
     finishSummon();
@@ -217,11 +234,12 @@ describe('App integration', () => {
     finishSummon();
     const sameClock = stub.props.length;
     expect(sameClock).toBeGreaterThan(0);
-    const order = learningOrder(dataset);
-    expect(lastProps().record.character).toBe(order[10]);
-    expect(buildSession(dataset, loadState().history, T, DEFAULT_CONFIG).map((r) => r.character)).toEqual(
-      order.slice(10, 20),
-    );
+    const met = new Set(first);
+    const fresh = learningOrder(dataset)
+      .filter((c) => !met.has(c))
+      .slice(0, 10);
+    expect(lastProps().record.character).toBe(fresh[0]);
+    expect(buildSession(dataset, loadState().history, T, DEFAULT_CONFIG).map((r) => r.character)).toEqual(fresh);
 
     // Advance 11 minutes: missed ghosts become due and come first.
     cleanup();
@@ -282,15 +300,22 @@ describe('App integration', () => {
       expect(screen.getByText('Ghost 1 of 10')).toBeTruthy();
     });
 
-    it('returning visit, guide unseen: the guide comes first, Continue starts the séance', async () => {
+    it('returning visit, guide unseen: no guide before the séance, which starts directly', async () => {
       seed({ introSeen: true, cangjieIntroSeen: false });
       const user = await openApp();
       await user.click(await screen.findByRole('button', { name: /begin a nightly séance/i }));
-      expect(screen.getByRole('heading', { name: /how cangjie works/i })).toBeTruthy();
-      expect(screen.queryByText('Ghost 1 of 10')).toBeNull();
-      await user.click(screen.getByRole('button', { name: /^continue$/i }));
+      expect(screen.queryByRole('heading', { name: /how cangjie works/i })).toBeNull();
       expect(screen.getByText('Ghost 1 of 10')).toBeTruthy();
+      expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).cangjieIntroSeen).toBe(false);
+    });
+
+    it('the guide stays on the menu and Continue still writes cangjieIntroSeen', async () => {
+      seed({ introSeen: true, cangjieIntroSeen: false });
+      const user = await openApp();
+      await user.click(await screen.findByRole('button', { name: /how cangjie works/i }));
+      await user.click(screen.getByRole('button', { name: /^continue$/i }));
       expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).cangjieIntroSeen).toBe(true);
+      expect(screen.getByRole('button', { name: /begin a nightly séance/i })).toBeTruthy();
     });
 
     it('"How Cangjie works" shows the guide and Continue returns to the menu', async () => {
@@ -534,5 +559,84 @@ describe('screen-change scroll reset and compact séance shell', () => {
     await user.click(await screen.findByRole('button', { name: /begin another séance/i }));
     expect(scroll.mock.calls.length).toBeGreaterThan(beforeAgain);
     expect(scroll).toHaveBeenLastCalledWith(0, 0);
+  });
+});
+
+describe('first meeting: walkthrough, first-meeting set and return rows', () => {
+  const home = () => seed({ introSeen: true, cangjieIntroSeen: true });
+
+  it('an empty history starts with the walkthrough ghost; ten ghosts, no duplicate', async () => {
+    home();
+    const user = await openApp();
+    await user.click(await screen.findByRole('button', { name: /begin a nightly séance/i }));
+    expect(stub.summon!.record.character).toBe(walkthroughChar());
+    expect(stub.summon!.walkthroughLines?.length).toBeGreaterThan(0);
+    const presented = await playSeance(user, Array<Outcome>(10).fill('clean'));
+    expect(presented[0]).toBe(walkthroughChar());
+    expect(presented).toHaveLength(10);
+    expect(new Set(presented).size).toBe(10);
+  });
+
+  it('an empty history with failing storage still starts with the walkthrough ghost', async () => {
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('disabled');
+    });
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('disabled');
+    });
+    const user = await openApp();
+    await beginFirstVisit(user);
+    expect(stub.summon!.record.character).toBe(walkthroughChar());
+    expect(stub.summon!.firstMeeting).toBe(true);
+  });
+
+  it('a returning player gets the normal session with no walkthrough', async () => {
+    const order = learningOrder(dataset);
+    const history: ReviewHistory = { [order[0]!]: { step: 1, nextDue: 0, lastOutcome: 'clean' } };
+    seed({ introSeen: true, cangjieIntroSeen: true, history });
+    const expected = buildSession(dataset, history, T, DEFAULT_CONFIG).map((r) => r.character);
+    const user = await openApp();
+    await user.click(await screen.findByRole('button', { name: /begin a nightly séance/i }));
+    const seen: Array<string | undefined> = [];
+    const presented: string[] = [];
+    for (let i = 0; i < expected.length; i++) {
+      presented.push(stub.summon!.record.character);
+      seen.push(stub.summon!.walkthroughLines?.join('|'));
+      emit('clean');
+      await user.click(
+        await screen.findByRole('button', { name: i === expected.length - 1 ? /finish/i : /next ghost/i }),
+      );
+    }
+    expect(presented).toEqual(expected);
+    expect(seen.every((x) => x === undefined)).toBe(true);
+  });
+
+  it('passes the first-meeting set: saved ghosts are returning, new ones are first meetings', async () => {
+    const order = learningOrder(dataset);
+    const history: ReviewHistory = { [order[0]!]: { step: 1, nextDue: 0, lastOutcome: 'clean' } };
+    seed({ introSeen: true, cangjieIntroSeen: true, history });
+    const user = await openApp();
+    await user.click(await screen.findByRole('button', { name: /begin a nightly séance/i }));
+    expect(stub.summon!.record.character).toBe(order[0]);
+    expect(stub.summon!.firstMeeting).toBe(false);
+    emit('clean');
+    await user.click(await screen.findByRole('button', { name: /next ghost/i }));
+    expect(stub.summon!.record.character).not.toBe(order[0]);
+    expect(stub.summon!.firstMeeting).toBe(true);
+  });
+
+  it('the summary lists a return row for every ghost', async () => {
+    home();
+    const user = await openApp();
+    await user.click(await screen.findByRole('button', { name: /begin a nightly séance/i }));
+    const outcomes = Array<Outcome>(10).fill('clean');
+    outcomes[3] = 'gave-up';
+    const presented = await playSeance(user, outcomes);
+    const list = await screen.findByRole('list', { name: 'Ghosts that will return' });
+    const rows = list.querySelectorAll('li');
+    expect(rows).toHaveLength(10);
+    expect(Array.from(rows).map((li) => li.querySelector('[lang="zh"]')?.textContent)).toEqual(presented);
+    expect(rows[3]!.textContent).toMatch(/returns in 10 minutes/);
+    for (const li of rows) expect(li.textContent).toMatch(/returns/);
   });
 });

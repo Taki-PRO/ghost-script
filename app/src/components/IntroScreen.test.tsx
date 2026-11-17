@@ -11,7 +11,7 @@ afterEach(() => {
 });
 
 describe('IntroScreen', () => {
-  it('renders the premise: Cangjie, weeping ghosts, forgotten characters are ghosts laid to rest by writing', () => {
+  it('renders the premise: Cangjie, weeping ghosts, forgotten characters are ghosts, summoned by shapes then written', () => {
     const { container } = render(<IntroScreen onBegin={() => {}} />);
     const text = container.textContent ?? '';
     expect(text).toMatch(/Cangjie/);
@@ -19,7 +19,10 @@ describe('IntroScreen', () => {
     expect(text).toMatch(/ghosts\s+wept/i);
     expect(text).toMatch(/night/i);
     expect(text).toMatch(/forgotten[\s\S]*are ghosts/i);
-    expect(text).toMatch(/lay[\s\S]*to\s+rest[\s\S]*writing/i);
+    expect(text.replace(/\s+/g, ' ')).toContain(
+      'Type its shapes to summon it, then write it from memory.',
+    );
+    expect(text).not.toMatch(/You lay each one to\s+rest by writing it/);
   });
 
   it('attributes the line to the Huainanzi and renders the original Chinese in a zh element', () => {

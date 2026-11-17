@@ -27,7 +27,8 @@ Many people can **read** Chinese but can no longer **write** it by hand, because
    - **Summon:** type the character's Cangjie code (physical or on-screen keyboard); each key reveals one shape until the character forms, then it fades.
    - **Lay to rest:** write it from memory, stroke by stroke, each stroke checked live (finger, pencil, mouse or trackpad).
    - Characters without a playable code skip the summon step.
-3. Wrong answers trigger hints: the next key while summoning, the next stroke while writing. Never the full answer at first.
+   - The first time a ghost is met, its code is shown to copy (approved by the human); when the ghost returns, the code is hidden.
+3. Wrong answers trigger hints: the next key while summoning, the next stroke while writing. Never the full answer at first. This applies to hints after wrong answers, including for a returning ghost; it does not limit the first-meeting code in step 2 (approved by the human).
 4. Correct: the character "comes back to life" in ink and the ghost is laid to rest.
 5. **Haunting** (spaced repetition): characters the player struggled with return sooner; mastered ones return later.
 
@@ -39,7 +40,7 @@ Many people can **read** Chinese but can no longer **write** it by hand, because
 - The Cangjie summon step (spec `cangjie-seance`): every ghost is summoned by typing its Cangjie code, then written. This is the Resurrection core and replaces the earlier "Build mode" and separate-mode ideas.
 - Structure hints based on component breakdowns.
 - Haunting engine (spaced repetition), progress saved locally in the browser.
-- Nightly Séance: a short daily session (about 10 ghosts) drawn from about 300 checked characters.
+- Nightly Séance: a short daily session (about 10 ghosts) drawn from about 300 checked characters. The summary lists when each ghost returns, and a brand-new player's first ghost is a short walkthrough (approved by the human).
 - Legend intro screen. English interface.
 - Cangjie Oracle MCP server (verified character-data lookups) + property-based tests.
 

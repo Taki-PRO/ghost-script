@@ -15,6 +15,8 @@ export interface WriteModeProps {
   config: EngineConfig;
   /** Called exactly once per record, at the moment the outcome is reached. */
   onOutcome: (outcome: Outcome) => void;
+  /** Height in px reserved for a line above the surface (first-meeting walkthrough). Default 0. */
+  reservedPx?: number;
 }
 
 export { resolveCompletion } from '../engine/outcome';
@@ -42,7 +44,7 @@ type Status = 'writing' | 'resolved' | 'failed';
  * next ghost: after resolving it keeps showing the revealed character until the
  * parent changes `record` (SeanceSession owns advancing).
  */
-export function WriteMode({ record, dataset, config, onOutcome }: WriteModeProps) {
+export function WriteMode({ record, dataset, config, onOutcome, reservedPx = 0 }: WriteModeProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const writerRef = useRef<HanziWriter | null>(null);
   const resolvedRef = useRef(false);
@@ -52,7 +54,7 @@ export function WriteMode({ record, dataset, config, onOutcome }: WriteModeProps
   configRef.current = config;
 
   // Computed once per mount so the surface and hanzi-writer always agree.
-  const [side] = useState(() => writeSurfaceSize(window.innerWidth, window.innerHeight));
+  const [side] = useState(() => writeSurfaceSize(window.innerWidth, window.innerHeight, reservedPx));
   const [status, setStatus] = useState<Status>('writing');
   const [loading, setLoading] = useState(true);
   const [mistakes, setMistakes] = useState(0);

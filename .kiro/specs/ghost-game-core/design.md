@@ -87,6 +87,8 @@ The App builds the session character list with the pure `learningOrder(dataset)`
 
 > **Note:** cangjie-seance adds a summon step before writing, a `cangjieIntroSeen` flag and schema version 2 (old data resets; no migration); see its design.
 
+> **Note:** *(Amended (approved by the human): see first-meeting Requirements 3, 5, 6 and 9. The App `startSeance` puts the Walkthrough_Ghost first for a Brand_New_Player and starts directly from the intro, menu and summary controls, with no guide first. The intro names the rite in one line. The session-complete summary also lists when each ghost returns. The scheduler, `selectSession` and `buildSession` are unchanged.)*
+
 ### Directory layout (`app/src/`, consistent with the structure steering doc)
 
 ```

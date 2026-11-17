@@ -189,6 +189,7 @@ Add the two-step rite to Ghost Script: every ghost is first SUMMONED by typing i
 
 - [x] 6. App wiring and never-reveal test
   - [x] 6.1 Wire the guide and the menu in `app/src/App.tsx`
+    - *(Amended (approved by the human): see first-meeting Requirement 5: the `before-seance` origin and `beginSeance` described here were removed by first-meeting task 3.7; the guide no longer precedes a Séance.)*
     - Add the `cangjie-guide` view (`origin: 'before-seance' | 'review'`); add `beginSeance(dataset)` (guide first when `getCangjieIntroSeen()` is false, else `startSeance`); the intro's `onBegin` calls `setIntroSeen(true)` then `beginSeance`; the menu's `onStartSeance` and the summary's `onPlayAgain` call `beginSeance`; the menu's `onReviewCangjieGuide` shows the guide with `origin: 'review'`
     - The guide's `onContinue` calls `setCangjieIntroSeen(true)`, then starts the Séance (`before-seance`) or returns to the menu (`review`); `buildSession` and `handleOutcome` stay unchanged
     - _Requirements: 2.8, 6.1, 6.2, 6.3, 7.2, 7.4_

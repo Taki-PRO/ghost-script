@@ -14,6 +14,7 @@
     "scripts/**/*.ts",
     "tests/**/*.ts",
     "e2e/**/*.ts",
+    "app/src/vite-env.d.ts",
     "app/src/data/types.ts",
     "app/src/data/credits.ts",
     "app/src/data/citations.ts",

@@ -22,8 +22,8 @@ export function IntroScreen({ onBegin }: IntroScreenProps) {
           wept in the night.
         </p>
         <p className="mt-4 text-lg leading-relaxed text-ink">
-          In this game, characters you have forgotten how to write are ghosts. You lay each one to
-          rest by writing it.
+          In this game, characters you have forgotten how to write are ghosts. Type its shapes to
+          summon it, then write it from memory.
         </p>
 
         <figure className="mt-8 rounded-lg bg-surface px-5 py-4">

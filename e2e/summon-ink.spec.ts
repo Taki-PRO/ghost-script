@@ -96,7 +96,11 @@ test('the first key on 明 inks its strokes', async ({ page }) => {
   const record = datasetRecord('明');
   const summon = await beginSeance(page, record);
   expect(await visibleInkPaths(page)).toBe(0);
-  await pressKey(summon, code(record)[0]!);
+  // seedBefore() makes this a first meeting: the next slot shows its faint letter.
+  const first = code(record)[0]!;
+  await expect(summon.getByLabel(`Slot 1, type ${first}`)).toBeVisible();
+  await pressKey(summon, first);
+  await expect(summon.getByLabel(`Slot 1, type ${first}`)).toHaveCount(0);
   const expected = keyStrokesOf(record)[0]!.length;
   expect(expected).toBeGreaterThan(0);
   await expect.poll(() => visibleInkPaths(page), { timeout: 10_000 }).toBe(expected);

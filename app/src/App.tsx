@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { loadDataset, type CharacterDataset } from './data/charDataLoader';
 import type { CharacterRecord } from './data/types';
 import { DEFAULT_CONFIG, type EngineConfig } from './engine/config';
@@ -7,10 +7,13 @@ import {
   applyReview,
   selectSession,
   type Outcome,
+  type ReviewEntry,
   type ReviewHistory,
 } from './engine/scheduler';
+import { firstMeetingSet, isBrandNewPlayer } from './engine/firstMeeting';
+import { composeFirstSession, pickWalkthroughGhost } from './engine/walkthrough';
+import { buildReturnRows } from './engine/formatReturn';
 import {
-  getCangjieIntroSeen,
   getIntroSeen,
   isSavingWorking,
   loadState,
@@ -46,6 +49,40 @@ export function buildSession(
   return records;
 }
 
+export interface SeancePlan {
+  readonly ghosts: CharacterRecord[];
+  readonly firstMeeting: ReadonlySet<string>;
+  readonly walkthroughChar: string | null;
+}
+
+/** Pure: buildSession, then the walkthrough composition for a brand-new player. */
+export function planSeance(
+  dataset: CharacterDataset,
+  history: ReviewHistory,
+  now: number,
+  config: EngineConfig,
+): SeancePlan {
+  const base = buildSession(dataset, history, now, config);
+  let ghosts = base;
+  let walkthroughChar: string | null = null;
+  if (isBrandNewPlayer(history)) {
+    const char = pickWalkthroughGhost(learningOrder(dataset), dataset);
+    const record = char === null ? undefined : dataset.get(char);
+    if (record !== undefined) {
+      ghosts = composeFirstSession(base, record, config.sessionSize);
+      walkthroughChar = record.character;
+    }
+  }
+  return {
+    ghosts,
+    firstMeeting: firstMeetingSet(
+      history,
+      ghosts.map((g) => g.character),
+    ),
+    walkthroughChar,
+  };
+}
+
 /** Own-property lookup so keys like "constructor" never hit the prototype. */
 function priorEntry(history: ReviewHistory, char: string) {
   return Object.prototype.hasOwnProperty.call(history, char) ? history[char] : undefined;
@@ -58,8 +95,8 @@ type View =
   | { screen: 'menu'; dataset: CharacterDataset }
   | { screen: 'graveyard'; dataset: CharacterDataset; history: ReviewHistory; now: number }
   | { screen: 'credits'; dataset: CharacterDataset }
-  | { screen: 'cangjie-guide'; dataset: CharacterDataset; origin: 'before-seance' | 'review' }
-  | { screen: 'seance'; dataset: CharacterDataset; ghosts: CharacterRecord[]; sessionId: number }
+  | { screen: 'cangjie-guide'; dataset: CharacterDataset; }
+  | ({ screen: 'seance'; dataset: CharacterDataset; sessionId: number } & SeancePlan)
   | { screen: 'summary'; dataset: CharacterDataset; results: SessionResults };
 
 function Shell({ children, compact = false }: { children: React.ReactNode; compact?: boolean }) {
@@ -75,6 +112,7 @@ export default function App() {
   const [view, setView] = useState<View>({ screen: 'loading' });
   const [sessionCounter, setSessionCounter] = useState(0);
   const [savingWorks, setSavingWorks] = useState(() => isSavingWorking());
+  const returnsRef = useRef(new Map<string, ReviewEntry>());
 
   useEffect(() => {
     let active = true;
@@ -101,29 +139,20 @@ export default function App() {
   const startSeance = useCallback(
     (dataset: CharacterDataset) => {
       const now = Date.now();
-      const ghosts = buildSession(dataset, loadState().history, now, DEFAULT_CONFIG);
+      const plan = planSeance(dataset, loadState().history, now, DEFAULT_CONFIG);
+      returnsRef.current = new Map();
       setSavingWorks(isSavingWorking());
       setSessionCounter((n) => n + 1);
-      setView({ screen: 'seance', dataset, ghosts, sessionId: sessionCounter + 1 });
+      setView({ screen: 'seance', dataset, sessionId: sessionCounter + 1, ...plan });
     },
     [sessionCounter],
   );
 
-  /** Show the Cangjie guide first when it has never been read, else start. */
-  const beginSeance = useCallback(
-    (dataset: CharacterDataset) => {
-      if (!getCangjieIntroSeen()) {
-        setView({ screen: 'cangjie-guide', dataset, origin: 'before-seance' });
-        return;
-      }
-      startSeance(dataset);
-    },
-    [startSeance],
-  );
-
   const handleOutcome = useCallback((char: string, outcome: Outcome, now: number) => {
     const prior = priorEntry(loadState().history, char);
-    recordOutcome(char, applyReview(prior, outcome, now, DEFAULT_CONFIG));
+    const entry = applyReview(prior, outcome, now, DEFAULT_CONFIG);
+    recordOutcome(char, entry);
+    returnsRef.current.set(char, entry);
     setSavingWorks(isSavingWorking());
   }, []);
 
@@ -153,7 +182,7 @@ export default function App() {
             onBegin={() => {
               setIntroSeen(true);
               setSavingWorks(isSavingWorking());
-              beginSeance(dataset);
+              startSeance(dataset);
             }}
           />
         </Shell>
@@ -164,10 +193,10 @@ export default function App() {
       return (
         <Shell>
           <StartMenu
-            onStartSeance={() => beginSeance(dataset)}
+            onStartSeance={() => startSeance(dataset)}
             onReviewLegend={() => setView({ screen: 'intro', dataset })}
             onReviewCangjieGuide={() =>
-              setView({ screen: 'cangjie-guide', dataset, origin: 'review' })
+              setView({ screen: 'cangjie-guide', dataset })
             }
             onOpenGraveyard={() =>
               setView({ screen: 'graveyard', dataset, history: loadState().history, now: Date.now() })
@@ -199,7 +228,7 @@ export default function App() {
       );
     }
     case 'cangjie-guide': {
-      const { dataset, origin } = view;
+      const { dataset } = view;
       return (
         <Shell>
           <CangjieGuide
@@ -207,15 +236,14 @@ export default function App() {
             onContinue={() => {
               setCangjieIntroSeen(true);
               setSavingWorks(isSavingWorking());
-              if (origin === 'before-seance') startSeance(dataset);
-              else setView({ screen: 'menu', dataset });
+              setView({ screen: 'menu', dataset });
             }}
           />
         </Shell>
       );
     }
     case 'seance': {
-      const { dataset, ghosts, sessionId } = view;
+      const { dataset, ghosts, sessionId, firstMeeting, walkthroughChar } = view;
       return (
         <Shell compact>
           <SeanceSession
@@ -225,8 +253,20 @@ export default function App() {
             config={DEFAULT_CONFIG}
             onOutcome={handleOutcome}
             savingWorks={savingWorks}
+            firstMeeting={firstMeeting}
+            walkthroughChar={walkthroughChar}
             onLeave={() => setView({ screen: 'menu', dataset })}
-            onComplete={(results) => setView({ screen: 'summary', dataset, results })}
+            onComplete={(results) =>
+              setView({
+                screen: 'summary',
+                dataset,
+                results: {
+                  ...results,
+                  returns: buildReturnRows(ghosts, returnsRef.current),
+                  finishedAt: Date.now(),
+                },
+              })
+            }
           />
         </Shell>
       );
@@ -235,7 +275,7 @@ export default function App() {
       const { dataset, results } = view;
       return (
         <Shell>
-          <SessionSummary results={results} onPlayAgain={() => beginSeance(dataset)} />
+          <SessionSummary results={results} onPlayAgain={() => startSeance(dataset)} />
         </Shell>
       );
     }

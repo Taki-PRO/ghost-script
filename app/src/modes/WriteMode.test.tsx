@@ -5,7 +5,7 @@ import realDataJson from '../../public/data/characters.json';
 import type { CharacterDataset } from '../data/charDataLoader';
 import type { CharacterRecord } from '../data/types';
 import { DEFAULT_CONFIG, type EngineConfig } from '../engine/config';
-import { writeSurfaceSize } from '../engine/surfaceSize';
+import { WALKTHROUGH_LINE_PX, writeSurfaceSize } from '../engine/surfaceSize';
 import { theme } from '../styles/theme';
 import { isHintTriggered, resolveCompletion, WriteMode } from './WriteMode';
 
@@ -170,6 +170,40 @@ describe('WriteMode setup (Req 5.1, 5.2)', () => {
       expect(o.height).toBe(side);
       expect(surface.querySelector('svg')).not.toBeNull();
       expect(surface).toContainElement(screen.getByRole('group', { name: /writing area/i }));
+    } finally {
+      window.innerWidth = prevW;
+      window.innerHeight = prevH;
+    }
+  });
+  it('reservedPx makes the surface smaller by the reserved height at a short viewport; without it the size is unchanged', () => {
+    const prevW = window.innerWidth;
+    const prevH = window.innerHeight;
+    window.innerWidth = 1024;
+    window.innerHeight = 768;
+    try {
+      const plain = writeSurfaceSize(1024, 768);
+      const reserved = writeSurfaceSize(1024, 768, WALKTHROUGH_LINE_PX);
+      expect(reserved).toBe(plain - WALKTHROUGH_LINE_PX);
+
+      const first = render(
+        <WriteMode record={WO} dataset={dataset} config={DEFAULT_CONFIG} onOutcome={vi.fn()} />,
+      );
+      expect((lastCall().opts as unknown as Record<string, unknown>).width).toBe(plain);
+      first.unmount();
+
+      render(
+        <WriteMode
+          record={WO}
+          dataset={dataset}
+          config={DEFAULT_CONFIG}
+          onOutcome={vi.fn()}
+          reservedPx={WALKTHROUGH_LINE_PX}
+        />,
+      );
+      const o = lastCall().opts as unknown as Record<string, unknown>;
+      expect(o.width).toBe(reserved);
+      expect(o.height).toBe(reserved);
+      expect(screen.getByTestId('ink-surface').style.width).toBe(`${reserved}px`);
     } finally {
       window.innerWidth = prevW;
       window.innerHeight = prevH;

@@ -8,12 +8,15 @@
  * result block and slack). The floors keep the surface usable on short screens.
  */
 
-/** Side of the Summon paper in CSS px for a viewport of `width` × `height`. */
-export function summonPaperSize(width: number, height: number): number {
-  return Math.round(Math.max(96, Math.min(0.4 * width, 160, height - 600)));
+/** Height in CSS px that the Walkthrough_Line takes from the drawing surface. */
+export const WALKTHROUGH_LINE_PX = 24;
+
+/** Side of the Summon paper in CSS px for a viewport of `width` × `height`, after `reservedPx` is taken from the height. */
+export function summonPaperSize(width: number, height: number, reservedPx = 0): number {
+  return Math.round(Math.max(96, Math.min(0.4 * width, 160, height - reservedPx - 600)));
 }
 
-/** Side of the Write surface in CSS px for a viewport of `width` × `height`. */
-export function writeSurfaceSize(width: number, height: number): number {
-  return Math.round(Math.max(200, Math.min(0.8 * width, 420, height - 400)));
+/** Side of the Write surface in CSS px for a viewport of `width` × `height`, after `reservedPx` is taken from the height. */
+export function writeSurfaceSize(width: number, height: number, reservedPx = 0): number {
+  return Math.round(Math.max(200, Math.min(0.8 * width, 420, height - reservedPx - 400)));
 }

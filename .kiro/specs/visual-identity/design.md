@@ -890,6 +890,8 @@ Approved by the human. Presentation, scrolling, test tooling and names only: no 
 | Gaps inside the Summon_Step (6) | 72 | 48 |
 | **Total, Summon step** | about 1080 | about 704 at 1024 × 768 (64 spare), about 734 at 375 × 812 (78 spare) |
 
+*(Amended (approved by the human): see first-meeting Requirement 10.3: while a Walkthrough_Line is shown, the Summon_Surface and the Writing_Surface formulas subtract a reserved `WALKTHROUGH_LINE_PX` (24) from the viewport height first, so the line takes room from the drawing surface and not from the controls; the table above is the budget without a Walkthrough_Line.)*
+
 The Write step needs the surface plus 112 px (status 24, "Mistakes" 20, "Give up" 44, gaps 24): at 1024 × 768 the surface is 368 and the total is 192 + 368 + 112 = 672 (700 with a two-line card); at 375 × 812 it is 300. After a result, "Give up" is replaced by the result block (about 86 px plus a gap): the total is 714 at 1024 × 768 and 674 at 375 × 812, so "Next ghost" is visible too. The spare space is smallest in the Write step with a result and a two-line card at 1024 × 768: 742 of 768 px, so 26 px spare. At 375 × 812 the same step uses 674 of 812 px (138 spare), and the Summon step uses 734 (78 spare), which allows a three-line meaning.
 
 ### Decisions

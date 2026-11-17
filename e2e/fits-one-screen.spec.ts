@@ -40,6 +40,8 @@ for (const vp of VIEWPORTS) {
       await expectInside(page, "Ghost's clue", page.getByRole('region', { name: "Ghost's clue" }));
       await expectInside(page, 'Cangjie code', page.getByRole('list', { name: 'Cangjie code' }));
       await expectInside(page, 'ink-surface', page.getByTestId('ink-surface'));
+      // seedState() has an empty history, so the first ghost is the walkthrough ghost.
+      await expectInside(page, 'walkthrough line', page.getByTestId('walkthrough-line'));
       const keys = summon.locator('[data-row="2"] button');
       const count = await keys.count();
       expect(count, 'no buttons in [data-row="2"]').toBeGreaterThan(0);
@@ -55,6 +57,7 @@ for (const vp of VIEWPORTS) {
       const write = await giveUpSummon(page, summon);
       await expectInside(page, 'Leave séance', page.getByRole('button', { name: 'Leave séance' }));
       await expectInside(page, 'write ink-surface', page.getByTestId('ink-surface'));
+      await expectInside(page, 'walkthrough write line', page.getByTestId('walkthrough-write-line'));
       await expectInside(page, 'Write Give up', write.getByRole('button', { name: 'Give up' }));
       await expectNoVerticalScroll(page);
     });

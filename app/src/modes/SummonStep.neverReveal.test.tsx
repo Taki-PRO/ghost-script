@@ -53,11 +53,34 @@ function findLeaks(target: string): string[] {
   return leaks;
 }
 
-function mount(record: CharacterRecord) {
+interface Variant {
+  name: string;
+  firstMeeting: boolean;
+  withLines: boolean;
+}
+
+const VARIANTS: readonly Variant[] = [
+  { name: 'returning', firstMeeting: false, withLines: false },
+  { name: 'first meeting', firstMeeting: true, withLines: false },
+  { name: 'first meeting with walkthrough lines', firstMeeting: true, withLines: true },
+  { name: 'returning with walkthrough lines', firstMeeting: false, withLines: true },
+];
+
+function mount(record: CharacterRecord, v: Variant = VARIANTS[0]!) {
+  const lines = v.withLines
+    ? record.cangjie!.split('').map((_, i) => `Walkthrough line ${i + 1}`)
+    : undefined;
   render(
     <>
       <GhostPrompt record={record} />
-      <SummonStep record={record} dataset={dataset} config={DEFAULT_CONFIG} onDone={vi.fn()} />
+      <SummonStep
+        record={record}
+        dataset={dataset}
+        config={DEFAULT_CONFIG}
+        onDone={vi.fn()}
+        firstMeeting={v.firstMeeting}
+        walkthroughLines={lines}
+      />
     </>,
   );
 }
@@ -69,30 +92,32 @@ describe('SummonStep + GhostPrompt never reveal the target before the code is co
     expect(playable.length).toBeGreaterThan(0);
   });
 
-  it.each(playable.map((r) => [r.character, r] as const))('%s', (_char, record) => {
-    mount(record);
-    expect(findLeaks(record.character)).toEqual([]);
+  describe.each(VARIANTS)('$name', (variant) => {
+    it.each(playable.map((r) => [r.character, r] as const))('%s', (_char, record) => {
+      mount(record, variant);
+      expect(findLeaks(record.character)).toEqual([]);
 
-    const wrong = LETTERS.find((l) => l !== record.cangjie![0]!)!;
-    for (let i = 0; i < DEFAULT_CONFIG.strokeHintAfterConsecutiveMisses; i++) {
-      fireEvent.keyDown(window, { key: wrong });
-    }
-    expect(screen.getByRole('status').textContent).toContain('Hint: press');
-    expect(findLeaks(record.character)).toEqual([]);
+      const wrong = LETTERS.find((l) => l !== record.cangjie![0]!)!;
+      for (let i = 0; i < DEFAULT_CONFIG.strokeHintAfterConsecutiveMisses; i++) {
+        fireEvent.keyDown(window, { key: wrong });
+      }
+      expect(screen.getByRole('status').textContent).toContain('Hint: press');
+      expect(findLeaks(record.character)).toEqual([]);
+    });
+
+    it.each(playable.map((r) => [r.character, r] as const))(
+      '%s stays hidden after each correct key before the last',
+      (_char, record) => {
+        mount(record, variant);
+        const code = record.cangjie!.toUpperCase();
+        for (let i = 0; i < code.length - 1; i++) {
+          fireEvent.keyDown(window, { key: code[i] });
+          expect(findLeaks(record.character)).toEqual([]);
+        }
+        if (record.summonInk.class === 'opaque') {
+          expect(screen.getByTestId('opaque-note').textContent).not.toContain(record.character);
+        }
+      },
+    );
   });
-
-  it.each(playable.map((r) => [r.character, r] as const))(
-    '%s stays hidden after each correct key before the last',
-    (_char, record) => {
-      mount(record);
-      const code = record.cangjie!.toUpperCase();
-      for (let i = 0; i < code.length - 1; i++) {
-        fireEvent.keyDown(window, { key: code[i] });
-        expect(findLeaks(record.character)).toEqual([]);
-      }
-      if (record.summonInk.class === 'opaque') {
-        expect(screen.getByTestId('opaque-note').textContent).not.toContain(record.character);
-      }
-    },
-  );
 });

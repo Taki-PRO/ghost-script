@@ -5,6 +5,8 @@ import type { EngineConfig } from '../engine/config';
 import type { Outcome } from '../engine/scheduler';
 import { isPlayableInCangjie } from '../engine/cangjieRules';
 import { combineOutcomes } from '../engine/outcome';
+import { WALKTHROUGH_LINE_PX } from '../engine/surfaceSize';
+import { WALKTHROUGH_WRITE_LINE, walkthroughSummonLines } from '../engine/walkthrough';
 import { SummonStep } from '../modes/SummonStep';
 import { WriteMode } from '../modes/WriteMode';
 import { GhostPrompt } from './GhostPrompt';
@@ -23,7 +25,13 @@ export interface SeanceSessionProps {
   onLeave: () => void;
   /** False when a write failed in this browser; changes the Leave prompt text. */
   savingWorks: boolean;
+  /** Characters met for the first time: their Summon step shows the faint code. Default: none. */
+  firstMeeting?: ReadonlySet<string>;
+  /** The guided first ghost, or null. Default: null. */
+  walkthroughChar?: string | null;
 }
+
+const NO_FIRST_MEETING: ReadonlySet<string> = new Set<string>();
 
 export const LEAVE_TEXT_SAVED = "Leave now? Ghosts you've finished are saved.";
 export const LEAVE_TEXT_NOT_SAVING =
@@ -60,7 +68,17 @@ const RESULT_TEXT: Record<Outcome, string> = {
  * One séance: walks the player through each ghost in order. Advances only
  * after a terminal outcome and an explicit button press (Req 3.2).
  */
-export function SeanceSession({ ghosts, dataset, config, onOutcome, onComplete, onLeave, savingWorks }: SeanceSessionProps) {
+export function SeanceSession({
+  ghosts,
+  dataset,
+  config,
+  onOutcome,
+  onComplete,
+  onLeave,
+  savingWorks,
+  firstMeeting = NO_FIRST_MEETING,
+  walkthroughChar = null,
+}: SeanceSessionProps) {
   const list = useMemo(() => dedupeGhosts(ghosts), [ghosts]);
   const total = list.length;
 
@@ -89,6 +107,11 @@ export function SeanceSession({ ghosts, dataset, config, onOutcome, onComplete, 
   onLeaveRef.current = onLeave;
 
   const record = list[index];
+  const isWalkthrough = record !== undefined && walkthroughChar !== null && record.character === walkthroughChar;
+  const walkthroughLines = useMemo(
+    () => (isWalkthrough && record ? walkthroughSummonLines(record, dataset) : undefined),
+    [isWalkthrough, record, dataset],
+  );
 
   useEffect(() => {
     if (confirmingLeave) stayBtnRef.current?.focus();
@@ -216,9 +239,24 @@ export function SeanceSession({ ghosts, dataset, config, onOutcome, onComplete, 
           dataset={dataset}
           config={config}
           onDone={handleSummonDone}
+          firstMeeting={firstMeeting.has(record.character)}
+          walkthroughLines={walkthroughLines}
         />
       ) : (
-        <WriteMode record={record} dataset={dataset} config={config} onOutcome={handleWriteOutcome} />
+        <>
+          {isWalkthrough && result === null && (
+            <p data-testid="walkthrough-write-line" className="text-center text-ink">
+              {WALKTHROUGH_WRITE_LINE}
+            </p>
+          )}
+          <WriteMode
+            record={record}
+            dataset={dataset}
+            config={config}
+            onOutcome={handleWriteOutcome}
+            reservedPx={isWalkthrough ? WALKTHROUGH_LINE_PX : 0}
+          />
+        </>
       )}
       {result !== null && (
         <div className="flex flex-col items-center gap-3">

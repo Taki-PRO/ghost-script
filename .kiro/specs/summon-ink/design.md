@@ -465,6 +465,8 @@ Generators: a random IDS tree of depth up to 3 using binary operators and the te
 
 As described under `e2e/` above. They run against the built app served by `playwright.config.ts`.
 
+*(Amended (approved by the human): see first-meeting Requirement 1: the e2e test that reaches this ghost by seeding history now meets a First_Meeting ghost whose Faint_Code is visible; only an assertion that assumed empty slots changes, and the ink behaviour is unchanged.)*
+
 ### Existing tests to update
 
 | File | Change |

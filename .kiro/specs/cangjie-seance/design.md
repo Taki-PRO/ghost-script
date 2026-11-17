@@ -119,7 +119,7 @@ stateDiagram-v2
     summary --> seance: Begin another Seance
 ```
 
-`guide_before` and `guide_review` are the same `cangjie-guide` screen with `origin: 'before-seance'` or `'review'`.
+`guide_before` and `guide_review` are the same `cangjie-guide` screen with `origin: 'before-seance'` or `'review'`. *(Amended (approved by the human): see first-meeting Requirement 5: the `guide_before` state and the `origin` field are removed; Begin on the intro, "Begin a Nightly Séance" on the menu and "Begin another Seance" on the summary go straight to `seance`, whatever the guide flag; `guide_review` returns to `menu`.)*
 
 ### One ghost, two steps
 
@@ -417,10 +417,10 @@ export function SummonStep(props: SummonStepProps): JSX.Element;
 
 `SeanceSession` renders it with `key={record.character}`. The component keeps the `SummonState` in a ref plus React state (so handlers never read a stale value) and a `doneRef` guard. It has three phases: `typing`, `forming` and `fading`.
 
-- **Slots (3.1, 3.5).** One box per key of `record.cangjie`. An empty box shows nothing visible and has the accessible name "Slot N, empty". A filled box shows the key's letter and shape (難 for X) with `lang="zh"` on the shape. Each shape string passes through `maskTarget(shape, record.character)` before the step ends, so a shape equal to the target shows "～".
+- **Slots (3.1, 3.5).** One box per key of `record.cangjie`. An empty box shows nothing visible and has the accessible name "Slot N, empty". A filled box shows the key's letter and shape (難 for X) with `lang="zh"` on the shape. Each shape string passes through `maskTarget(shape, record.character)` before the step ends, so a shape equal to the target shows "～". *(Amended (approved by the human): see first-meeting Requirement 1: for a First_Meeting ghost an empty box shows its Faint_Code letter and has the accessible name "Slot N, type LETTER"; the box height is unchanged)*
 - **Physical keyboard (3.2).** While `typing`, a `keydown` listener on `window` calls `applyKeyEvent`. It skips events whose `target` is an `input`, `textarea`, `select` or `contenteditable` element, and calls `preventDefault` only for accepted entries. Z and every other ignored event leave the state untouched.
 - **On-screen keyboard (3.4).** 25 `<button type="button">` elements in QWERTY rows without Z (`Q W E R T Y U I O P`, `A S D F G H J K L`, `X C V B N M`). Each has `aria-label` "Key A" (the shape is added to the label unless letters-only), a minimum size of 44 × 44 px, and the shape with `lang="zh"`. A click calls the same entry function as the physical keyboard. When `KEY_FACE_CHARACTERS.has(record.character)`, every button shows its letter only and its label has no shape (Requirement 5.3). Buttons are `disabled` once the step ends.
-- **Feedback (3.5, 3.6, 3.11).** A `role="status"` `aria-live="polite"` element shows text with a symbol ("✓ Key accepted", "✗ Not that key") and the mistake count.
+- **Feedback (3.5, 3.6, 3.11).** A `role="status"` `aria-live="polite"` element shows text with a symbol ("✓ Key accepted", "✗ Not that key") and the mistake count. *(Amended (approved by the human): see first-meeting Requirement 1: for a First_Meeting ghost the initial status text is "Copy the faint letters, one key at a time")*
 - **Key hint (3.7).** While `isKeyHintVisible` is true, the next slot and the matching on-screen key get a highlighted outline, and the status text says "Hint: press X" (the letter, with its shape unless letters-only). No control requests a hint.
 - **Notes (3.3, 3.13).** A visible IME note ("If typed letters do not appear, turn off your system Chinese input method.") and a visible source note ("Codes: Unicode Unihan kCangjie").
 - **Give up (3.9).** A "Give up" button, enabled only while `typing`. Its handler calls `giveUpSummon`, shows the full code in the slots, and enters `forming`.
@@ -470,7 +470,7 @@ Props are unchanged: `{ ghosts, dataset, config, onOutcome(char, outcome, now), 
 #### `app/src/App.tsx` (Requirements 2.8, 6, 7)
 
 - `buildSession` is unchanged (full Learning order, one history).
-- `View` gains `{ screen: 'cangjie-guide'; dataset; origin: 'before-seance' | 'review' }`.
+- `View` gains `{ screen: 'cangjie-guide'; dataset; origin: 'before-seance' | 'review' }`. *(Amended (approved by the human): see first-meeting Requirement 5: the `origin` field and `beginSeance` are removed; the intro, menu and summary controls call `startSeance` directly and the guide's Continue returns to the menu after `setCangjieIntroSeen(true)`)*
 - A helper `beginSeance(dataset)`: if `getCangjieIntroSeen()` is false, show the guide with `origin: 'before-seance'`; otherwise `startSeance(dataset)`. The intro's `onBegin` calls `setIntroSeen(true)` then `beginSeance`. The menu's `onStartSeance` and the summary's `onPlayAgain` call `beginSeance`.
 - The menu's `onReviewCangjieGuide` shows the guide with `origin: 'review'`.
 - The guide's `onContinue` calls `setCangjieIntroSeen(true)`, then `startSeance(dataset)` for `before-seance` or shows the menu for `review`.
@@ -607,7 +607,7 @@ This feature has no new property-based tests and no mutation tests (Requirement 
 | `app/src/storage/storage.test.ts` | schema 2, `cangjieIntroSeen`, version-1 blob resets, forbidden keys, storage unavailable |
 | `app/src/components/StartMenu.test.tsx` | three buttons and callbacks |
 | `app/src/components/SeanceSession.test.tsx` | two-step flow, one combined Outcome recorded once, skip for 别 and 错, nothing recorded at the end of the Summon step |
-| `app/src/App.test.tsx` | first visit: intro, guide, Séance; returning: menu; guide re-view; version-1 data resets |
+| `app/src/App.test.tsx` | first visit: intro, guide, Séance; returning: menu; guide re-view; version-1 data resets | *(Amended (approved by the human): see first-meeting Requirement 5: first visit is now intro then Séance, with no guide)*
 
 ---
 

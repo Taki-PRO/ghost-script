@@ -210,7 +210,7 @@ A read-only computation over the 300 records of `app/public/data/characters.json
 4. THE Test_Suite SHALL include a spot-check test for 明 早 天 果 里 本 下 干 that reads each code, component list and stroke mapping from the dataset and checks class `transparent`, the key-to-component order and a partition of the strokes.
 5. THE Test_Suite SHALL include the existing-fields check of AC 8.3 until the final checkpoint deletes it (AC 8.5).
 6. THE Test_Suite SHALL include component tests of the Summon_Step with a mocked hanzi-writer for Requirements 4 to 6, and one integration test with the real hanzi-writer in jsdom that shows sequential `animateStroke` calls keep earlier strokes visible and a call made while another runs cancels the earlier one.
-7. THE E2E_Suite SHALL include a test that, after the first correct key for 明, the Paper holds at least one visible stroke path, reaching 明 by seeding the saved Review history through the existing `seed` helper and without a backdoor in the App.
+7. THE E2E_Suite SHALL include a test that, after the first correct key for 明, the Paper holds at least one visible stroke path, reaching 明 by seeding the saved Review history through the existing `seed` helper and without a backdoor in the App. *(Amended (approved by the human): see first-meeting Requirement 1: the ghost reached by seeding history now meets a First_Meeting ghost, so its Faint_Code is visible while the ink is drawn; the ink behaviour this test checks is unchanged)*
 8. THE E2E_Suite SHALL check that the Summon step still fits one screen at 1024 by 768 and at 375 by 812 pixels, including after an ink stroke is drawn.
 9. THE Test_Suite SHALL update the existing tests listed in the design so that all of them pass.
 

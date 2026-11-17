@@ -24,7 +24,13 @@ export interface CangjieKeyInfo {
   readonly shape: string;
 }
 
-/** 25 entries, A–Y. X is shown as 難. There is no Z. */
+/**
+ * 25 entries, A–Y. X is shown as 難. There is no Z.
+ *
+ * Source: the key-to-radical table of the English Wikipedia article
+ * "Cangjie input method", https://en.wikipedia.org/wiki/Cangjie_input_method
+ * (the same citation the Cangjie guide shows).
+ */
 export const CANGJIE_KEYS: readonly CangjieKeyInfo[] = [
   { key: 'A', shape: '日' },
   { key: 'B', shape: '月' },

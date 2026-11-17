@@ -17,7 +17,7 @@ import {
   type SummonState,
 } from '../engine/cangjie';
 import { maskTarget } from '../engine/mask';
-import { summonPaperSize } from '../engine/surfaceSize';
+import { WALKTHROUGH_LINE_PX, summonPaperSize } from '../engine/surfaceSize';
 import { InkSurface } from '../components/InkSurface';
 import { theme } from '../styles/theme';
 
@@ -41,6 +41,10 @@ export interface SummonStepProps {
   config: EngineConfig;
   /** Called exactly once, after the character has formed, been held, faded and been removed. */
   onDone: (stepResult: Outcome) => void;
+  /** True when the ghost has no saved history: show the faint code and the next-key highlight. Default false. */
+  firstMeeting?: boolean;
+  /** One line per key (Walkthrough_Ghost only); the line for the first unfilled key shows while typing. */
+  walkthroughLines?: readonly string[];
 }
 
 type Phase = 'typing' | 'forming' | 'fading';
@@ -72,16 +76,31 @@ function prefersReducedMotion(): boolean {
  * complete (or the player gives up) the character forms in ink, is held,
  * fades and is removed. The target character is never in the DOM before that.
  */
-export function SummonStep({ record, dataset, config, onDone }: SummonStepProps) {
+export function SummonStep({
+  record,
+  dataset,
+  config,
+  onDone,
+  firstMeeting = false,
+  walkthroughLines,
+}: SummonStepProps) {
   const code = record.cangjie ?? '';
   const lettersOnly = KEY_FACE_CHARACTERS.has(record.character);
 
   const stateRef = useRef<SummonState>(startSummon(code));
   const [state, setState] = useState<SummonState>(stateRef.current);
   const [phase, setPhase] = useState<Phase>('typing');
-  const [feedback, setFeedback] = useState('Type the first key of the code');
+  const [feedback, setFeedback] = useState(
+    firstMeeting ? 'Copy the faint letters, one key at a time' : 'Type the first key of the code',
+  );
   const [fallback, setFallback] = useState(false);
-  const [side] = useState(() => summonPaperSize(window.innerWidth, window.innerHeight));
+  const [side] = useState(() =>
+    summonPaperSize(
+      window.innerWidth,
+      window.innerHeight,
+      walkthroughLines ? WALKTHROUGH_LINE_PX : 0,
+    ),
+  );
 
   const containerRef = useRef<HTMLDivElement>(null);
   const writerRef = useRef<HanziWriter | null>(null);
@@ -298,6 +317,12 @@ export function SummonStep({ record, dataset, config, onDone }: SummonStepProps)
       : `Hint: press ${hintKey} (${maskTarget(hintShape, record.character)})`
     : null;
 
+  const teach = firstMeeting && phase === 'typing' && state.status === 'active';
+  const nextKey: CangjieKey | null =
+    teach && state.filled < code.length ? (code[state.filled] as CangjieKey) : null;
+  const walkthroughLine =
+    phase === 'typing' && walkthroughLines ? walkthroughLines[state.filled] ?? '' : '';
+
   const shapeFor = (shape: string) => (finished ? shape : maskTarget(shape, record.character));
 
   const slots = Array.from({ length: code.length }, (_, i) => {
@@ -305,13 +330,18 @@ export function SummonStep({ record, dataset, config, onDone }: SummonStepProps)
     const filled = finished || i < state.filled;
     const shape = SHAPE_BY_KEY.get(letter) ?? '';
     const isHint = hintKey !== null && i === state.filled;
+    const isNext = nextKey !== null && i === state.filled;
+    const faint = teach && !filled;
     return (
       <li
         key={i}
-        aria-label={filled ? undefined : `Slot ${i + 1}, empty`}
+        aria-label={
+          filled ? undefined : faint ? `Slot ${i + 1}, type ${letter}` : `Slot ${i + 1}, empty`
+        }
+        aria-current={isNext ? 'true' : undefined}
         className={`flex h-12 w-11 flex-col items-center justify-center rounded-md border text-ink ${
-          isHint ? 'border-ghost ring-2 ring-ghost' : 'border-muted'
-        } bg-surface`}
+          isHint || isNext ? 'border-ghost ring-2 ring-ghost' : 'border-muted'
+        } ${faint && !isNext ? 'border-dashed' : ''} bg-surface`}
       >
         {filled ? (
           <>
@@ -322,6 +352,10 @@ export function SummonStep({ record, dataset, config, onDone }: SummonStepProps)
               {shapeFor(shape)}
             </span>
           </>
+        ) : faint ? (
+          <span aria-hidden="true" className="text-sm text-muted">
+            {letter}
+          </span>
         ) : null}
       </li>
     );
@@ -332,6 +366,15 @@ export function SummonStep({ record, dataset, config, onDone }: SummonStepProps)
 
   return (
     <section aria-label="Summon step" className="flex flex-col items-center gap-2 text-ink">
+      {walkthroughLines ? (
+        <p
+          data-testid="walkthrough-line"
+          className="min-h-6 whitespace-nowrap text-center text-sm text-ink"
+        >
+          {walkthroughLine}
+        </p>
+      ) : null}
+
       <ol aria-label="Cangjie code" className="flex flex-nowrap justify-center gap-2">
         {slots}
       </ol>
@@ -386,18 +429,23 @@ export function SummonStep({ record, dataset, config, onDone }: SummonStepProps)
               const key = letter as CangjieKey;
               const shape = SHAPE_BY_KEY.get(key) ?? '';
               const isHint = hintKey === key;
+              const isNext = nextKey === key;
+              const baseName = lettersOnly ? `Key ${key}` : `Key ${key}, ${shapeFor(shape)}`;
               return (
                 <button
                   key={key}
                   type="button"
-                  aria-label={lettersOnly ? `Key ${key}` : `Key ${key}, ${shapeFor(shape)}`}
+                  aria-label={isNext ? `${baseName}, next` : baseName}
                   disabled={finished}
                   onClick={() => enterKey(key)}
                   className={`flex min-h-[44px] w-full min-w-0 flex-col items-center justify-center rounded-md border px-0 text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost disabled:opacity-50 ${
-                    isHint ? 'border-ghost ring-2 ring-ghost' : 'border-muted'
+                    isHint || isNext ? 'border-ghost ring-2 ring-ghost' : 'border-muted'
                   }`}
                 >
-                  <span aria-hidden="true" className="text-sm font-semibold">
+                  <span
+                    aria-hidden="true"
+                    className={`text-sm font-semibold ${isNext ? 'font-bold underline' : ''}`}
+                  >
                     {key}
                   </span>
                   {lettersOnly ? null : (

@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { expect, type Locator, type Page } from '@playwright/test';
 import type { CharacterRecord } from '../app/src/data/types';
 import { learningOrder } from '../app/src/engine/learningOrder';
+import { pickWalkthroughGhost } from '../app/src/engine/walkthrough';
 
 // Shared helpers of the E2E_Suite (Requirements 24.7 to 24.10 and 29).
 //
@@ -73,6 +74,33 @@ export async function seed(page: Page, state: SeedState): Promise<void> {
 
 export function seedState(overrides: Partial<SeedState> = {}): SeedState {
   return { schemaVersion: 2, introSeen: true, cangjieIntroSeen: true, history: {}, ...overrides };
+}
+
+/**
+ * The record of the Walkthrough_Ghost, read from the rule's own output on the
+ * generated dataset. Throws when the rule finds no character.
+ */
+export function walkthroughRecord(): CharacterRecord {
+  const dataset = datasetMap();
+  const char = pickWalkthroughGhost(learningOrder(dataset), dataset);
+  if (char === null) throw new Error('pickWalkthroughGhost found no character');
+  const record = dataset.get(char);
+  if (!record) throw new Error(`"${char}" is not in the dataset`);
+  return record;
+}
+
+/** A seed state whose history holds every listed character, due now (`nextDue` 0). */
+export function seedWithHistory(chars: readonly string[], outcome: string): SeedState {
+  const history: SeedState['history'] = {};
+  for (const char of chars) {
+    history[char] = { step: 0, lastOutcome: outcome, nextDue: 0 };
+  }
+  return seedState({ history });
+}
+
+/** Accessible name of a faint Code_Slot on a first meeting: "Slot {n}, type {letter}". */
+export function slotName(index: number, letter: string): string {
+  return `Slot ${index}, type ${letter}`;
 }
 
 /** Lines describing every overflow found on the current screen; empty when it fits. */

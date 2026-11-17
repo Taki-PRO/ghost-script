@@ -6,6 +6,13 @@ import type { CharacterRecord } from '../data/types';
 import type { CharacterDataset } from '../data/charDataLoader';
 import { DEFAULT_CONFIG } from '../engine/config';
 import type { Outcome } from '../engine/scheduler';
+import { learningOrder } from '../engine/learningOrder';
+import { WALKTHROUGH_LINE_PX } from '../engine/surfaceSize';
+import {
+  WALKTHROUGH_WRITE_LINE,
+  pickWalkthroughGhost,
+  walkthroughSummonLines,
+} from '../engine/walkthrough';
 import raw from '../../public/data/characters.json';
 
 const stub = vi.hoisted(() => ({
@@ -575,5 +582,81 @@ describe('SeanceSession two-step flow', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Finish the séance' }));
     expect(onComplete).toHaveBeenCalledTimes(1);
     expect(onComplete).toHaveBeenCalledWith({ total: 2, laidToRest: 2 });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// First meeting and the walkthrough (spec first-meeting)
+// ---------------------------------------------------------------------------
+describe('SeanceSession first meeting and walkthrough', () => {
+  type SummonProps = { firstMeeting?: boolean; walkthroughLines?: readonly string[] };
+  type WriteProps = { reservedPx?: number };
+  const summonProps = () => stub.summon as unknown as SummonProps;
+  const writeProps = () => lastProps() as unknown as WriteProps;
+  const walkChar = pickWalkthroughGhost(learningOrder(dataset), dataset);
+
+  function setupWith(
+    chars: string[],
+    extra: { firstMeeting?: ReadonlySet<string>; walkthroughChar?: string | null },
+  ) {
+    const onOutcome = vi.fn();
+    render(
+      <SeanceSession
+        ghosts={chars.map(rec)}
+        dataset={dataset}
+        config={DEFAULT_CONFIG}
+        onOutcome={onOutcome}
+        onComplete={vi.fn()}
+        onLeave={vi.fn()}
+        savingWorks
+        {...extra}
+      />,
+    );
+    return { onOutcome };
+  }
+
+  it('the dataset has a walkthrough ghost', () => {
+    expect(walkChar).not.toBeNull();
+  });
+
+  it('defaults: every ghost is a returning ghost with no walkthrough line', () => {
+    setup(['我', walkChar!]);
+    expect(summonProps().firstMeeting).toBe(false);
+    expect(summonProps().walkthroughLines).toBeUndefined();
+    finishSummon();
+    expect(screen.queryByTestId('walkthrough-write-line')).toBeNull();
+    expect(writeProps().reservedPx).toBe(0);
+  });
+
+  it('the first-meeting set decides each ghost, across ghosts', () => {
+    setupWith(['我', '口'], { firstMeeting: new Set(['我']) });
+    expect(summonProps().firstMeeting).toBe(true);
+    emit('clean');
+    fireEvent.click(screen.getByRole('button', { name: 'Next ghost' }));
+    expect(summonProps().firstMeeting).toBe(false);
+  });
+
+  it('the walkthrough ghost gets its Summon lines, then the Write line, which goes when the result appears', () => {
+    setupWith([walkChar!, '口'], { firstMeeting: new Set([walkChar!]), walkthroughChar: walkChar });
+    const lines = summonProps().walkthroughLines;
+    expect(lines).toEqual(walkthroughSummonLines(rec(walkChar!), dataset));
+    expect(lines).toHaveLength(2);
+    expect(screen.queryByTestId('walkthrough-write-line')).toBeNull();
+    finishSummon();
+    expect(screen.getByTestId('walkthrough-write-line').textContent).toBe(WALKTHROUGH_WRITE_LINE);
+    expect(writeProps().reservedPx).toBe(WALKTHROUGH_LINE_PX);
+    act(() => lastProps().onOutcome('clean'));
+    expect(screen.queryByTestId('walkthrough-write-line')).toBeNull();
+  });
+
+  it('other ghosts get no walkthrough lines and no Write line', () => {
+    setupWith([walkChar!, '口'], { firstMeeting: new Set([walkChar!, '口']), walkthroughChar: walkChar });
+    emit('clean');
+    fireEvent.click(screen.getByRole('button', { name: 'Next ghost' }));
+    expect(summonProps().firstMeeting).toBe(true);
+    expect(summonProps().walkthroughLines).toBeUndefined();
+    finishSummon();
+    expect(screen.queryByTestId('walkthrough-write-line')).toBeNull();
+    expect(writeProps().reservedPx).toBe(0);
   });
 });

@@ -2,6 +2,7 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { SessionSummary } from './SessionSummary';
+import type { ReturnRow } from '../engine/formatReturn';
 
 afterEach(cleanup);
 
@@ -82,5 +83,61 @@ describe('SessionSummary wrapper (Req 21.11)', () => {
   it('has no bg-background class on the wrapper', () => {
     setup(10, 7);
     expect(screen.getByRole('main')).not.toHaveClass('bg-background');
+  });
+});
+
+describe('SessionSummary return times (first-meeting 9.3-9.5)', () => {
+  const NOW = new Date(2026, 10, 20, 22, 0).getTime();
+  const rows: ReturnRow[] = [
+    { character: 'A1', pinyin: 'yī', meaning: 'one', nextDue: NOW }, // gave up
+    { character: 'B2', pinyin: 'èr', meaning: 'two', nextDue: NOW + 10 * 60_000 }, // struggled
+    { character: 'C3', pinyin: 'rén', meaning: 'person', nextDue: new Date(2026, 10, 23, 22, 0).getTime() }, // clean
+  ];
+
+  function renderRows(returns?: ReturnRow[], finishedAt?: number) {
+    render(
+      <SessionSummary
+        results={{ total: 3, laidToRest: 2, returns, finishedAt }}
+        onPlayAgain={() => {}}
+      />,
+    );
+  }
+
+  it('lists each ghost in order with glyph, pinyin, meaning and return text', () => {
+    renderRows(rows, NOW);
+    const list = screen.getByRole('list', { name: 'Ghosts that will return' });
+    const items = Array.from(list.querySelectorAll('li'));
+    expect(items).toHaveLength(3);
+    expect(items[0].textContent).toContain('A1');
+    expect(items[0].textContent).toContain('returns now');
+    expect(items[1].textContent).toContain('returns in 10 minutes');
+    expect(items[2].textContent).toContain('returns in 3 days');
+    expect(items[2].textContent).toContain('person');
+    expect(items[0].querySelector('[lang="zh"]')?.textContent).toBe('A1');
+    expect(items[2].querySelector('[lang="zh-Latn-pinyin"]')?.textContent).toBe('rén');
+    expect(screen.getByRole('heading', { level: 2, name: 'Ghosts that will return' })).toBeTruthy();
+  });
+
+  it('shows no list or heading when rows are empty or absent', () => {
+    renderRows([], NOW);
+    expect(screen.queryByRole('list')).toBeNull();
+    expect(screen.queryByRole('heading', { level: 2 })).toBeNull();
+    cleanup();
+    renderRows(undefined, NOW);
+    expect(screen.queryByRole('list')).toBeNull();
+  });
+
+  it('shows no list when finishedAt is missing or not finite', () => {
+    renderRows(rows, undefined);
+    expect(screen.queryByRole('list')).toBeNull();
+    cleanup();
+    renderRows(rows, NaN);
+    expect(screen.queryByRole('list')).toBeNull();
+  });
+
+  it('keeps the count line and button with rows present', () => {
+    renderRows(rows, NOW);
+    expect(statusText()).toBe('2 of 3 ghosts laid to rest');
+    expect(screen.getByRole('button', { name: 'Begin another Séance' })).toBeTruthy();
   });
 });

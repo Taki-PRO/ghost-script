@@ -1,3 +1,5 @@
+import { formatReturn, type ReturnRow } from '../engine/formatReturn';
+
 /**
  * Results of a finished Séance.
  *
@@ -7,6 +9,10 @@
 export interface SessionResults {
   readonly total: number;
   readonly laidToRest: number;
+  /** One row per ghost with a recorded entry; optional so callers without it keep working. */
+  readonly returns?: readonly ReturnRow[];
+  /** Time the Séance finished (ms); needed together with `returns`. */
+  readonly finishedAt?: number;
 }
 
 export interface SessionSummaryProps {
@@ -28,6 +34,9 @@ function normalise(results: SessionResults): { total: number; laidToRest: number
 
 export function SessionSummary({ results, onPlayAgain }: SessionSummaryProps) {
   const { total, laidToRest } = normalise(results);
+  const rows = results.returns ?? [];
+  const finishedAt = results.finishedAt;
+  const showReturns = rows.length > 0 && typeof finishedAt === 'number' && Number.isFinite(finishedAt);
   const countText =
     total === 0
       ? 'No ghosts appeared this time'
@@ -46,6 +55,31 @@ export function SessionSummary({ results, onPlayAgain }: SessionSummaryProps) {
         <p role="status" className="mt-6 rounded-lg bg-surface px-5 py-4 text-xl text-ink">
           {countText}
         </p>
+
+        {showReturns && (
+          <section className="mt-8 text-left">
+            <h2 className="text-lg font-semibold text-ink">Ghosts that will return</h2>
+            <ul aria-label="Ghosts that will return" className="mt-3 space-y-2">
+              {rows.map((row) => (
+                <li
+                  key={row.character}
+                  className="flex min-w-0 items-baseline gap-3 rounded-lg bg-surface px-4 py-3 text-ink"
+                >
+                  <span lang="zh" className="shrink-0 text-2xl">
+                    {row.character}
+                  </span>
+                  <span className="min-w-0 break-words">
+                    <span lang="zh-Latn-pinyin">{row.pinyin}</span>
+                    {', '}
+                    <span>{row.meaning}</span>
+                    {': '}
+                    <span>{formatReturn(row.nextDue, finishedAt)}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         <button
           type="button"
