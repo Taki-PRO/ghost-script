@@ -607,6 +607,23 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 
 ---
 
+## Nov 17, 2026: Intro fix: one screen again, and a night that covers the whole page
+
+- **What I did:** Gave Kiro the faults my last check found: the intro no longer fit one screen, the sky stopped after the first screen, the intro screenshot was taken too early, the moon was flat and the Graveyard hill couldn't be seen.
+- **Kiro features:** spec amendment with parallel sub-tasks; the `accuracy-reviewer` agent; steering updated so the decision is on record; an "Input required" question when an old test contradicted the approved design.
+- **Result:**
+  - **Intro:** the long citations and raw links are gone. One small "Sources" link under the button opens Sources & licences, where the full citations already are. `content-accuracy.md` records that this link meets the citation rule. The reviewer agent returned "No findings".
+  - **A test now covers what broke:** the one-screen test checks the intro at 1024 × 768, 375 × 812 and 320 × 640, and that the button is inside the screen. Space left under the button: 120, 150 and 53 px.
+  - **Night scene:** Kiro found the cause. The sky, grain and mist were fixed layers one screen tall. They now run the full page height, and a new test samples pixels down the whole page.
+  - **Moon and hill:** the moon has a soft shade on one side. The Graveyard has a hill behind its first rows.
+  - **One judgement call I made:** an older test required the hill picture to cover the whole grid, which the approved design no longer does. I chose to rewrite the check to measure the hill and its ground together, not to delete it.
+  - **3724 unit and 83 e2e tests pass**; `tsc` clean; bundle 209,020 bytes gzipped against 300,000.
+- **My own browser check (headless Chrome):** I ran all 83 browser tests myself and looked at the intro and Graveyard screenshots at both sizes. The intro fits with the button and the "Sources" link visible, the legend line is complete, and the hill shows behind the first rows.
+- **Limits Kiro reported:** only 53 px spare under the button at 320 × 640; the mist now scrolls with the page; never-met tablets stand out only faintly against the near hill.
+- **Next:** the design pass is done. The paper test with real people is next.
+
+---
+
 ## Template for new entries
 
 ## [Date]: [Short title]
