@@ -585,6 +585,28 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 
 ---
 
+## Nov 17, 2026: ink-and-candlelight follow-up from my screenshot review
+
+- **What I did:** Gave Kiro the six things my screenshot review found (moon, mist, Graveyard, ghost, intro legend, seal position). It amended the spec and built them.
+- **Kiro features:** spec amendment with parallel sub-tasks; the `accuracy-reviewer` agent; Playwright tests that measure the picture instead of trusting it.
+- **Result:**
+  - **Moon:** a full disc in the top-right corner. Below 992 px wide, screens keep empty space at the top for it. A test fails if the disc is cut off or lies under text, at three screen sizes.
+  - **Mist:** two bands in the lower third. Kiro reported the limit: any stronger and the green success text falls below 4.5:1 contrast.
+  - **Graveyard:** every grave is an arched stone tablet with a small fixed tilt. Never-met tablets are blank stone.
+  - **Ghost:** an ink wash with uneven tone and a soft lower edge.
+  - **Intro legend:** a paper slip with the line set large in WenKai.
+  - **Seal:** smaller and in the paper's corner margin. A test measures the gap to every stroke on four characters; the smallest is 26 px.
+  - **Kiro caught its own design error:** the design said error text on the moon reached 4.72:1. Measured with the glow and grain included it was 4.20:1, so the disc was dimmed from 0.70 to 0.65 (4.59:1).
+  - **The reviewer agent flagged two intro lines with no source shown.** Kiro added both citations to the intro, and the re-run returned "No findings".
+  - **3692 unit and 68 e2e tests pass**; `tsc` clean; bundle 208,364 bytes gzipped against 300,000.
+- **My own browser check (headless Chrome, 1024 × 768 and 375 × 812):** I ran the 68 browser tests myself and looked at the screenshots.
+  - **What works:** the tablets, the seal in the margin, the paper slip, the full moon disc.
+  - **What the fix broke:** the two citations made the intro too tall. The "Begin the Séance" button is now below the fold on both sizes (902 px of page on a 768 px screen; 1214 px on 812 px), and the night sky stops at the first screen's height. No test covers the intro's height, which is why nothing failed.
+  - **Smaller:** the intro screenshot is taken before the legend line finishes appearing, so the saved picture shows an empty slip. The hill behind the Graveyard can't be seen. The moon is a flat disc.
+- **Next:** shorten the intro's sources to one link to the Sources & licences screen, add the intro to the one-screen test, then the paper test with real people.
+
+---
+
 ## Template for new entries
 
 ## [Date]: [Short title]
