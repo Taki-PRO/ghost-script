@@ -5,7 +5,7 @@ description: Answer questions about Cangjie codes and character decompositions f
 
 # Cangjie Oracle
 
-The Oracle reads the three checked level datasets (`app/public/data/characters.json`, `characters-level2.json` and `characters-level3.json`, 1,200 characters in all). Cangjie codes come from Unicode Unihan (`kCangjie`, Unicode 18.0.0, marked provisional by Unihan). Decompositions come from Make Me a Hanzi.
+The Oracle reads its own derived copy of the same 1,200 checked records (`data/oracle-data.json` in the Power), built from the three level datasets of the Ghost Script app. Cangjie codes come from Unicode Unihan (`kCangjie`, Unicode 18.0.0, marked provisional by Unihan). Decompositions come from Make Me a Hanzi.
 
 ## Rule
 

@@ -3,7 +3,7 @@
     "cangjie-oracle": {
       "command": "npx",
       "args": ["--no-install", "tsx", "oracle/src/index.ts"],
-      "disabled": false,
+      "disabled": true,
       "autoApprove": ["lookup", "verify", "decompose"]
     }
   }

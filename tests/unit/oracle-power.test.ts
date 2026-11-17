@@ -25,6 +25,7 @@ interface McpServer {
   args?: unknown;
   env?: unknown;
   url?: unknown;
+  cwd?: unknown;
 }
 interface McpFile {
   $schema?: unknown;
@@ -33,9 +34,7 @@ interface McpFile {
 
 const plugin = JSON.parse(pluginText) as Plugin;
 const mcp = JSON.parse(mcpText) as McpFile;
-const workspaceMcp = JSON.parse(
-  readFileSync(resolve(repoRoot, '.kiro/settings/mcp.json'), 'utf8'),
-) as McpFile;
+const noticeText = readFileSync(resolve(powerDir, 'NOTICE.md'), 'utf8');
 
 function frontMatter(text: string): Record<string, string> {
   const match = /^---\r?\n([\s\S]*?)\r?\n---\r?\n/.exec(text);
@@ -82,10 +81,19 @@ describe('oracle/power/mcp.json', () => {
     expect(server).not.toHaveProperty('url');
   });
 
-  it('uses the same command and args as the workspace MCP config', () => {
-    const workspace = workspaceMcp.mcpServers['cangjie-oracle'] as McpServer;
-    expect(server.command).toBe(workspace.command);
-    expect(server.args).toEqual(workspace.args);
+  it('runs the bundled server with node from the plugin root', () => {
+    expect(mcp.$schema).toBe('https://agent-plugins.org/schemas/1.0.0/mcp.schema.json');
+    expect(server.type).toBe('stdio');
+    expect(server.command).toBe('node');
+    expect(server.args).toEqual(['${PLUGIN_ROOT}/server.mjs']);
+    expect(server.cwd).toBe('${PLUGIN_ROOT}');
+    expect(server).not.toHaveProperty('env');
+    expect(server).not.toHaveProperty('url');
+  });
+
+  it('mentions neither npx nor tsx', () => {
+    expect(mcpText).not.toMatch(/npx/i);
+    expect(mcpText).not.toMatch(/tsx/i);
   });
 });
 
@@ -108,8 +116,8 @@ describe('oracle/power/skills/cangjie-oracle/SKILL.md', () => {
 });
 
 describe('personal names', () => {
-  it('appear in none of the three Power files', () => {
-    for (const text of [pluginText, mcpText, skillText]) {
+  it('appear in none of the four Power files', () => {
+    for (const text of [pluginText, mcpText, skillText, noticeText]) {
       expect(text).not.toMatch(new RegExp(['Tak', 'shil'].join(''), 'i'));
     }
   });

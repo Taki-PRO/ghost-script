@@ -3,8 +3,9 @@
   "mcpServers": {
     "cangjie-oracle": {
       "type": "stdio",
-      "command": "npx",
-      "args": ["--no-install", "tsx", "oracle/src/index.ts"]
+      "command": "node",
+      "args": ["${PLUGIN_ROOT}/server.mjs"],
+      "cwd": "${PLUGIN_ROOT}"
     }
   }
 }

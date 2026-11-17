@@ -73,6 +73,7 @@ Of the 900 prompts of levels 2 and 3, 12 are reviewed by a human and 888 are not
 - **Legend source:** the intro's legend line, 天雨粟，鬼夜哭, comes from the Huainanzi, chapter 8. Source: D. C. Lau et al., *A Concordance to the Huainanzi* (Commercial Press, Hong Kong, 1992), 8/62/27–28, as quoted in Michael Puett, "Sages, Creation, and the End of History in the Huainanzi" (https://scholar.harvard.edu/sites/scholar.harvard.edu/files/puett/files/puett_sages_in_the_huainanzi_2.pdf). The English rendering is our own.
 - **Third-party notices:** `app/public/THIRD_PARTY_NOTICES.txt` lists the licences of the runtime dependencies. It also repeats the full licence of LXGW WenKai, which is not an npm package. Regenerate it with `npm run build:notices`. The file is committed, and a test fails if it is out of date.
 - **Prompt review field:** each level 2 and level 3 record carries `promptReview`, either `"reviewed"` or `"unreviewed"`. Level 1 records do not have the field.
+- **Oracle Power data:** `oracle/power/data/oracle-data.json` is a further derived file, copied from the three level datasets. It keeps the Unihan (Unicode License V3) and Make Me a Hanzi (LGPL-3.0-or-later) terms; see `oracle/power/NOTICE.md`.
 - **Derived field:** `summonInk` is derived from the decomposition (Make Me a Hanzi), the Cangjie code (Unihan) and the key table, and adds no dataset and no licence.
 
 ## Clue rule for levels 2 and 3
@@ -244,10 +245,12 @@ Kiro starts it for you: it is registered as `cangjie-oracle` in `.kiro/settings/
 | `verify` | `character`, `code` | whether the code matches the stored one. The code is converted to upper case, then must be 1 to 5 letters from A to Y; the result includes the normalised code |
 | `decompose` | `character` | the IDS decomposition, the component list, the radical and the `atomic` flag, from Make Me a Hanzi data as stored in our dataset |
 
-A character that is not in the dataset returns `found: false`; the Oracle does not guess. It reads only the three level datasets, `app/public/data/characters.json`, `characters-level2.json` and `characters-level3.json`, which together hold the 1,200 characters (the paths are resolved from the module, not from the working directory) and returns only values stored there, so it generates no character data. Those values keep the dataset's licences; see [Data and licences](#data-and-licences).
+A character that is not in the dataset returns `found: false`; the Oracle does not guess. The registered workspace server reads only the three level datasets, `app/public/data/characters.json`, `characters-level2.json` and `characters-level3.json`, which together hold the 1,200 characters (the paths are resolved from the module, not from the working directory) and returns only values stored there, so it generates no character data. Those values keep the dataset's licences; see [Data and licences](#data-and-licences). The Power (next section) reads its own derived copy instead.
 
 ### Oracle Power
 
-`oracle/power/` packages the Oracle as a Kiro Power: `plugin.json`, `mcp.json`, and a skill at `skills/cangjie-oracle/SKILL.md`. To import it, open the Powers panel, choose Add Custom Power, then Import power from a folder, and select `oracle/power/`.
+`oracle/power/` packages the Oracle as a Kiro Power: `plugin.json`, `mcp.json`, a skill at `skills/cangjie-oracle/SKILL.md`, a bundled server `server.mjs`, its own data copy `data/oracle-data.json`, `NOTICE.md` and a `licenses/` folder. To import it, open the Powers panel, choose Add Custom Power, then Import power from a folder, and select `oracle/power/`.
 
-Limitation (expected, not yet verified): the Power's `mcp.json` starts the server with the workspace-relative path `oracle/src/index.ts`. It will most likely work only when the Power is installed from a clone of this repository and the server runs with the repository root as its working directory. The Power folder on its own, or a copy of it elsewhere, will not find the server. Kiro also renames installed servers (for example `power-cangjie-oracle-cangjie-oracle`). In a clone, the workspace registration above is the supported way to use the Oracle.
+The Power is self-contained. Its `mcp.json` runs plain `node` on `${PLUGIN_ROOT}/server.mjs`, with `${PLUGIN_ROOT}` standing for the installed Power folder. The server needs no `npx`, no `tsx` and no `node_modules`, and reads only `oracle/power/data/oracle-data.json`, a derived copy of the 1,200 records, so it works from the Power folder alone. Whether Kiro's import now connects to it has not yet been re-tested by a human.
+
+Regenerate the bundle and the data copy with `npm run build:power`. The generated files are committed, and `npm test` fails if they are stale.

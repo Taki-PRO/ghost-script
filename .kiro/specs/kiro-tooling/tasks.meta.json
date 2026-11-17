@@ -399,6 +399,156 @@
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794758474006
       }
+    ],
+    "10.1 Add the Power entry point `oracle/src/power.ts`": [
+      {
+        "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794939084336
+      },
+      {
+        "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794939091385
+      },
+      {
+        "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794939138750
+      }
+    ],
+    "10.2 Add esbuild and the `scripts/build-power.ts` build script": [
+      {
+        "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794939084365
+      },
+      {
+        "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794939139909
+      },
+      {
+        "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794939257515
+      }
+    ],
+    "10.3 Generate the Power files and rewrite `oracle/power/mcp.json`": [
+      {
+        "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794939084400
+      },
+      {
+        "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794939258669
+      },
+      {
+        "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794939320770
+      }
+    ],
+    "10.4 Write unit test `tests/unit/oracle-power-build.test.ts` (Power_Staleness_Test)": [
+      {
+        "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794939084424
+      },
+      {
+        "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794939321982
+      },
+      {
+        "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794939422040
+      }
+    ],
+    "10.5 Write unit test `tests/unit/oracle-power-standalone.test.ts` (Power_Standalone_Test)": [
+      {
+        "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794939084445
+      },
+      {
+        "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794939323333
+      },
+      {
+        "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794939423407
+      }
+    ],
+    "10.6 Update the existing Power and workspace-config tests": [
+      {
+        "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794939084470
+      },
+      {
+        "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794939324528
+      },
+      {
+        "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794939424611
+      }
+    ],
+    "10.7 Update the README and the licence statements": [
+      {
+        "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794939084494
+      },
+      {
+        "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794939325368
+      },
+      {
+        "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794939425809
+      }
+    ],
+    "11.1 The human re-tests the import in the Kiro Powers panel (Kiro never does this step)": [
+      {
+        "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794939084517
+      }
+    ],
+    "12. Final checkpoint - Verify the self-contained Power": [
+      {
+        "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794939084548
+      },
+      {
+        "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794939426849
+      },
+      {
+        "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794939596329
+      }
+    ],
+    "10. Self-contained Power: entry point, build script and generated files": [
+      {
+        "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794939425832
+      }
     ]
   }
 }

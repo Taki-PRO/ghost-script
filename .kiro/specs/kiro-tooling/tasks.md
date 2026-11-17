@@ -2,7 +2,7 @@
 
 ## Overview
 
-Build the three Kiro-native tools in small steps: the data check (pipeline message, runner script, hook), the read-only accuracy-reviewer agent, and the Cangjie Oracle MCP server with its workspace registration. Then package the Oracle as a Power (last, skippable), document everything, log the Kiro usage, and run the final checks. All tests are Vitest unit tests; no property-based tests are added (decision of Nov 15 in `tech.md`). The design is TypeScript, so no language question applies. Do not touch `app/public/data/characters.json`.
+Build the three Kiro-native tools in small steps: the data check (pipeline message, runner script, hook), the read-only accuracy-reviewer agent, and the Cangjie Oracle MCP server with its workspace registration. Then package the Oracle as a Power (last, skippable), document everything, log the Kiro usage, and run the final checks. A follow-up (tasks 10 to 12) makes the Power self-contained: a bundled server, its own data copy, a build script, staleness and standalone tests, and a human re-test of the import. All tests are Vitest unit tests; no property-based tests are added (decision of Nov 15 in `tech.md`). The design is TypeScript, so no language question applies. Do not touch `app/public/data/characters.json`.
 
 ## Tasks
 
@@ -126,6 +126,70 @@ Build the three Kiro-native tools in small steps: the data check (pipeline messa
   - Ensure all tests pass, ask the user if questions arise.
   - _Requirements: 9.4, 9.5, 9.6_
 
+- [x] 10. Self-contained Power: entry point, build script and generated files
+  - [x] 10.1 Add the Power entry point `oracle/src/power.ts`
+    - Add the exported function `powerDatasetPath()` to `oracle/src/dataset.ts`: `fileURLToPath(new URL('./data/oracle-data.json', import.meta.url))`; do not change `loadDataset`, `defaultDatasetPaths`, `index.ts` or any tool code
+    - Create `oracle/src/power.ts` as a copy of the `index.ts` flow that calls `loadDataset(powerDatasetPath())`, with the same stderr message and exit code 1 on `OracleDataError`; no `process.cwd()`, no `process.env`, no `console.log`
+    - Add `oracle/tests/power.test.ts`: `powerDatasetPath()` ends in `data/oracle-data.json`, is the same after `process.chdir` to a temporary directory, and `loadDataset` on a missing path throws `OracleDataError` naming the path
+    - Keep `oracle/tests/no-network.test.ts` passing (it scans every file in `oracle/src`)
+    - _Requirements: 10.2, 5.7, 5.8_
+
+  - [x] 10.2 Add esbuild and the `scripts/build-power.ts` build script
+    - Add `esbuild` `0.25.12` (exact, the version already installed through `tsx`) to the root `devDependencies`; run `npm install` and confirm `package-lock.json` changes only by recording the direct dependency; add the root script `"build:power": "tsx scripts/build-power.ts"`
+    - Create `scripts/build-power.ts` as in the design: `deriveOracleData`, `buildPowerFiles` (esbuild JavaScript API with `write: false`, the option table of the design, `metafile` read in memory, warnings fail the build, `\n` line endings), `main` with the direct-execution guard; it writes only `oracle/power/server.mjs`, `oracle/power/data/oracle-data.json`, `oracle/power/NOTICE.md` and `oracle/power/licenses/*`
+    - `NOTICE.md` content from a template in the script: the two data sources (Unihan `kCangjie`, Unicode License V3; Make Me a Hanzi `dictionary.txt`, GNU LGPL v3.0 or later) with version or commit and URL as in the README table, the statement that `data/oracle-data.json` keeps those terms and the code is MIT, the sorted list of bundled npm packages with version and licence read from their `package.json`, and a line telling readers to run `npm run build:power`
+    - `licenses/`: byte copies of `data/raw/unihan/LICENSE`, `data/raw/make-me-a-hanzi/LICENSE` and `data/raw/make-me-a-hanzi/LGPL`, and the licence file of each bundled npm package
+    - Type the Power_Data record against `CharacterRecord` so a renamed source field fails `tsc`; add no personal name to any generated file
+    - _Requirements: 10.1, 10.3, 10.6, 10.7, 10.8_
+
+  - [x] 10.3 Generate the Power files and rewrite `oracle/power/mcp.json`
+    - Run `npm run build:power` once and commit its output; run it a second time and confirm `git status` shows no further change (determinism); record the sizes in the task notes
+    - Rewrite `oracle/power/mcp.json`: keep `$schema` (`https://agent-plugins.org/schemas/1.0.0/mcp.schema.json`) and `"type": "stdio"`; set `"command": "node"`, `"args": ["${PLUGIN_ROOT}/server.mjs"]` and `"cwd": "${PLUGIN_ROOT}"`; no `env`, no `url`
+    - Update the one paragraph of `skills/cangjie-oracle/SKILL.md` that names the three `app/public/data` files so it says the Power reads its own derived copy of the same 1,200 records; keep the front matter and the three tool sections; leave `plugin.json` unchanged (version stays `1.0.0` unless the human asks for a bump)
+    - Do not edit `.kiro/settings/mcp.json`
+    - _Requirements: 10.1, 10.2, 10.3, 10.5, 10.6, 10.8_
+
+  - [x] 10.4 Write unit test `tests/unit/oracle-power-build.test.ts` (Power_Staleness_Test)
+    - `buildPowerFiles()` output equals the committed `server.mjs`, `data/oracle-data.json`, `NOTICE.md` and `licenses/*` byte for byte; the failure message names the file and `npm run build:power`
+    - For all 1,200 characters and the three tools: `lookup`, `verify` (stored code and a wrong valid code) and `decompose` from the Power_Data equal those from the three Level_Datasets (`toEqual`); the key sets and the count of 1,200 are equal
+    - `deriveOracleData` keeps exactly the seven fields and drops all others; a character present in two inputs fails; the bundle and the data contain no `/Users/` and no drive-letter path; `NOTICE.md` names Unicode License V3 and LGPL-3.0-or-later and the README table names both; `licenses/` copies equal their originals under `data/raw/`
+    - Plain unit tests: no property-based test
+    - _Requirements: 10.3, 10.4, 10.6, 10.7, 10.8, 10.9, 10.10, 10.14, 9.1_
+
+  - [x] 10.5 Write unit test `tests/unit/oracle-power-standalone.test.ts` (Power_Standalone_Test)
+    - Copy `oracle/power/` into `fs.mkdtempSync` under `os.tmpdir()` (assert the path is outside the repository), assert no `node_modules` directory above the copy and `NODE_PATH` unset, read `oracle/power/mcp.json` and start `process.execPath` with the `args` of the file (`${PLUGIN_ROOT}` replaced by the copy) and `cwd` the copy, using the SDK `Client` with `StdioClientTransport`
+    - `listTools` returns exactly `lookup`, `verify`, `decompose`; for 明 (stored code `AB`) and for one character with a code from each of the three level datasets, call the three tools and compare with values read from the app datasets (and `isPlayableInCangjie`), not typed in the test
+    - `verify` with a valid wrong code for 明 gives `matches: false`; `verify` with `hqz` gives `isError: true`; a valid character outside the dataset gives `found: false`
+    - Close the client and remove the temporary directory in `finally`; timeout 30 seconds
+    - _Requirements: 10.1, 10.2, 10.5, 10.11, 10.12, 9.1_
+
+  - [x] 10.6 Update the existing Power and workspace-config tests
+    - `tests/unit/oracle-power.test.ts`: replace the case "uses the same command and args as the workspace MCP config" with checks of the new `mcp.json` (`$schema`, `type` `stdio`, `command` `node`, `args` equals `["${PLUGIN_ROOT}/server.mjs"]`, `cwd` equals `${PLUGIN_ROOT}`, no `env`, no `url`, no `npx` or `tsx` anywhere in the file); keep the plugin, SKILL and personal-name cases and extend the personal-name case to `NOTICE.md`
+    - `tests/unit/mcp-config.test.ts`: leave unchanged. The case "is enabled" keeps expecting `disabled: false` and fails while the human has the server disabled for the import test (known, expected failure); no test is weakened and no digest pin is added. No task edits `.kiro/settings/mcp.json`
+    - _Requirements: 10.5, 10.13, 10.17, 6.1, 6.2, 6.3_
+
+  - [x] 10.7 Update the README and the licence statements
+    - In the "Oracle Power" part of `README.md`: replace the "Limitation (expected, not yet verified)" paragraph with the self-contained description (folder import, `node` plus `${PLUGIN_ROOT}/server.mjs`, own data copy of 1,200 records), name `npm run build:power`, say the generated files are committed and that `npm test` fails if they are stale, and give the bundle and data sizes
+    - In "Data and licences": add one sentence that `oracle/power/data/oracle-data.json` is a further derived file that keeps the Unihan (Unicode License V3) and Make Me a Hanzi (LGPL-3.0-or-later) terms, and point to `oracle/power/NOTICE.md`; in "Cangjie Oracle": state that the registered workspace server reads the three Level_Datasets and the Power reads its own derived copy (Requirement 8.2 wording stays true for the workspace server)
+    - Leave `app/public/THIRD_PARTY_NOTICES.txt` unchanged (it covers app runtime dependencies only) and confirm `tests/unit/third-party-notices.test.ts` and `tests/unit/credits-readme.test.ts` still pass
+    - _Requirements: 10.6, 10.15, 8.2_
+
+- [ ] 11. Human-only: re-test the Power import in Kiro
+  - [~] 11.1 The human re-tests the import in the Kiro Powers panel (Kiro never does this step)
+    - With the workspace `cangjie-oracle` server still disabled: Powers panel, Add Custom Power, Import power from a folder, choose `oracle/power/`; confirm the server connects (no "Connection closed") and that `lookup`, `verify` and `decompose` answer for 明
+    - Record the result, and what the install location and server name look like, in `kiro-log.md` (written by the human); if it still fails, copy the Kiro error text into the task notes so the design can be revised
+    - After the import test, set `disabled: false` in `.kiro/settings/mcp.json` and run `npx vitest run tests/unit/mcp-config.test.ts`; the case "is enabled" then passes
+    - _Requirements: 10.16, 10.17_
+
+- [x] 12. Final checkpoint - Verify the self-contained Power
+  - Run the root `npm test` (includes the Power_Staleness_Test and the Power_Standalone_Test), `npx tsc -p tsconfig.json`, `npx tsc -p app/tsconfig.json` and `npx tsc -p oracle/tsconfig.json`
+  - Run `npm run build -w app`, `npm run check:bundle` (the app budget of 300,000 bytes must be unaffected, since `oracle/power/` is not part of the app bundle), `npm run test:e2e` and `npm run check:data`
+  - Run `npm run build:power` and confirm `git status` shows no change to `oracle/power/`; confirm with `git diff -- .kiro/settings/mcp.json` and `git status` that this work did not change `.kiro/settings/mcp.json` (the human's own change of the `disabled` key is the only difference allowed); confirm no change to `app/public/data/*.json`
+  - Report: the size of `oracle/power/server.mjs` and of `oracle/power/data/oracle-data.json`, each raw and gzip (level 9); the app `check:bundle` total; the time `npm test` takes; whether `no-personal-names` needed an exemption; and anything not achieved (for example, a failed step or the human's import test not yet done)
+  - Expected failure: while the human has not yet re-enabled the workspace server, the case "is enabled" in `tests/unit/mcp-config.test.ts` fails. Report it by name as known and expected; every other test must pass, and no test may be weakened
+  - Ensure all other tests pass, ask the user if questions arise.
+  - _Requirements: 9.4, 9.5, 9.6, 10.1, 10.13, 10.14, 10.17_
+
 ## Notes
 
 - No optional tasks: every task is required, including the unit tests. Task 6 is the "later" Power task and can be skipped without affecting the others; if it is skipped, skip 6.2 and the Power parts of 7.1 and 8.1 too.
@@ -137,6 +201,13 @@ Build the three Kiro-native tools in small steps: the data check (pipeline messa
 - Task 8.1 (`kiro-log.md`) stays in the plan. The human writes it this time rather than Kiro.
 - No tasks were added or removed, so the waves are unchanged.
 - Task 9 is a checkpoint and is not in the dependency graph; it runs after wave 6.
+- Tasks 10 to 12 are a follow-up, "Self-contained Power", approved by the human after the first Powers-panel import failed with `Connection closed` (the Power's `mcp.json` ran the repository-relative path `oracle/src/index.ts`). Tasks 1 to 9 are not renumbered or unchecked. Task 12 is the new final checkpoint and, like task 9, is not in the dependency graph; it runs after wave 11.
+- Task 11.1 is human-only: Kiro never imports the Power in the Powers panel. It sits in the last wave only so the graph lists every incomplete leaf task once; an agent run skips it.
+- Wave 7 to 9 run one task each because tasks 10.1 to 10.3 build on one another and 10.2 and 10.3 write the root `package.json` and `oracle/power/` files. The four tasks in wave 10 write different files.
+- The generated files `oracle/power/server.mjs`, `data/oracle-data.json`, `NOTICE.md` and `licenses/*` are written only by `npm run build:power` and are committed. When a Level_Dataset changes, run it again; the Power_Staleness_Test in `npm test` tells you when.
+- Decisions approved by the human for the follow-up: bundle with esbuild (ES module, `.mjs`, run with plain `node`), derived data file with only the fields the three tools read, `.kiro/settings/mcp.json` is edited by no task (the final checkpoint confirms with `git diff` and `git status`), no new property-based tests (Nov 15 decision).
+- The human disabled the workspace server only for the import test and re-enables it (`disabled: false`) afterwards (approved by the human). Until then the case "is enabled" in `tests/unit/mcp-config.test.ts` is a known, expected failure that task 12 reports by name; the test is not relaxed.
+- Also decided by the human: `plugin.json` version stays `1.0.0`; `server.mjs` is committed minified; the `kiro-log.md` entry for task 11.1 is the human's.
 
 ## Task Dependency Graph
 
@@ -149,7 +220,12 @@ Build the three Kiro-native tools in small steps: the data check (pipeline messa
     { "id": 3, "tasks": ["4.3", "4.4"] },
     { "id": 4, "tasks": ["4.5", "5.2", "6.1"] },
     { "id": 5, "tasks": ["6.2"] },
-    { "id": 6, "tasks": ["7.1", "8.1"] }
+    { "id": 6, "tasks": ["7.1", "8.1"] },
+    { "id": 7, "tasks": ["10.1"] },
+    { "id": 8, "tasks": ["10.2"] },
+    { "id": 9, "tasks": ["10.3"] },
+    { "id": 10, "tasks": ["10.4", "10.5", "10.6", "10.7"] },
+    { "id": 11, "tasks": ["11.1"] }
   ]
 }
 ```

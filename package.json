@@ -10,6 +10,7 @@
   ],
   "scripts": {
     "build:data": "tsx scripts/build-data.ts",
+    "build:power": "tsx scripts/build-power.ts",
     "test": "vitest run",
     "test:e2e": "playwright test -c e2e/playwright.config.ts",
     "test:e2e:install": "playwright install chromium",
@@ -25,6 +26,7 @@
   "devDependencies": {
     "@playwright/test": "1.65.1",
     "@types/node": "22.20.5",
+    "esbuild": "0.25.12",
     "fast-check": "3.23.2",
     "subset-font": "2.9.0",
     "tsx": "4.19.3",

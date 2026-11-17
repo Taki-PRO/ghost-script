@@ -14,6 +14,11 @@ export function defaultDatasetPath(): string {
   return fileURLToPath(new URL('../../app/public/data/characters.json', import.meta.url));
 }
 
+/** Power_Data path, resolved against this file (the bundle in the Power root), never the working directory. */
+export function powerDatasetPath(): string {
+  return fileURLToPath(new URL('./data/oracle-data.json', import.meta.url));
+}
+
 /** The three Level_Datasets, level 1 first. Level 1 stays in `characters.json`. */
 export function defaultDatasetPaths(): string[] {
   return ['characters.json', 'characters-level2.json', 'characters-level3.json'].map((name) =>

@@ -285,6 +285,138 @@ oracle/power/
 - `mcp.json`: `$schema` `https://agent-plugins.org/schemas/1.0.0/mcp.schema.json`; one stdio server with the same command and args as the workspace config; no `env`.
 - `SKILL.md`: front matter `name` and `description`, then short steps: call `lookup` for the code and playable flag, `verify` to check a code a person typed, `decompose` for IDS parts; report `found: false` as "not in the dataset", never fill the gap from memory.
 - Install path for the demo: Kiro → Powers panel → Add Custom Power → Import power from a folder.
+- **Superseded by section 8.** The `mcp.json` described here (same `npx --no-install tsx oracle/src/index.ts` as the workspace config) failed after a real import: Kiro reported `MCP server "power-power-cangjie-oracle" failed to connect: Connection closed`, because `oracle/src/index.ts` is a repository-relative path that does not exist where an installed Power runs. Section 8 replaces the command with a bundled server.
+
+### 8. Self-contained Power (follow-up, approved by the human)
+
+#### What the investigation found (read-only, checked in the repository)
+
+| Question | Finding |
+| --- | --- |
+| Current `oracle/power/mcp.json` | `$schema` `https://agent-plugins.org/schemas/1.0.0/mcp.schema.json`, one server `cangjie-oracle` with `"type": "stdio"`, `"command": "npx"`, `"args": ["--no-install", "tsx", "oracle/src/index.ts"]`. No `env`, no `cwd`. The `$schema` and `type` are already present and are kept. |
+| Current `.kiro/settings/mcp.json` | Same `npx --no-install tsx oracle/src/index.ts` command, `"disabled": true` (set by the human for the import test only, uncommitted; the human sets `disabled: false` again after the test) and `autoApprove` for the three tools. No task edits it. |
+| Server entry | `oracle/src/index.ts` calls `loadDataset()` with no argument; `oracle/src/dataset.ts` `defaultDatasetPaths()` resolves `../../app/public/data/{characters,characters-level2,characters-level3}.json` from `import.meta.url`. `loadDataset(paths)` accepts any list of paths and validates the shape of each record (`isRecordLike`). |
+| Fields the tools read | `lookup` and `verify` read `record.cangjie` and `record.sources.cangjie`; `lookup` also calls `isPlayableInCangjie(record.cangjie)`. `decompose` reads `record.decomposition.decomposition`, `.atomic`, `.radical` and `.components`. The input check uses only the key. `loadDataset` additionally requires `character` and an object `sources`. Nothing else (pinyin, meanings, strokes, `strokeData`, `prompt`, `summonInk`, the other `sources` keys, `decomposition.etymology` and `decomposition.matches`) is read. |
+| Data size | The three Level_Datasets hold 1,200 records and are 4,548,339 bytes raw, 1,397,753 bytes gzip (level 9), because `strokeData` dominates. The derived file with only the fields above, written with `JSON.stringify` and no spaces, measured 193,855 bytes raw and 26,890 bytes gzip for the same 1,200 records. |
+| esbuild | Installed. `node_modules/esbuild` is 0.25.12 (hoisted from `tsx` 4.19.3, listed in `package-lock.json`); `app` has its own `vite` copy 0.21.5 under `app/node_modules`. It is not a direct dependency of the repository, so the plan adds it to the root `devDependencies` pinned to `0.25.12`, which changes no installed version. |
+| Probe bundle | `esbuild` of `oracle/src/index.ts` (`bundle`, `platform: node`, `format: esm`, `target: node20`, `legalComments: eof`): 1,368,355 bytes unminified (230,191 gzip) and 735,246 bytes minified (170,105 gzip). The unminified probe contained no `/Users/` path. These are estimates; the checkpoint reports the real numbers. |
+| Existing oracle tests | `oracle/tests/oracle.test.ts`, `server.test.ts`, `no-network.test.ts` (in-process, read the Level_Datasets). Root: `tests/unit/oracle-power.test.ts` asserts that the Power `mcp.json` has the same `command` and `args` as the workspace config (this assertion must change) and `tests/unit/mcp-config.test.ts`. |
+| Test that already fails | `tests/unit/mcp-config.test.ts` case "is enabled" expects `disabled === false`, but the human set `disabled: true` for the import test, so it fails now (checked by running it: 1 failed, 7 passed). It is a known, expected failure until the human re-enables the server; the test is not changed and the config is not edited by this work. |
+| Root scripts | Workspaces `app` and `oracle`; scripts `build:data`, `test`, `test:e2e`, `check:data`, `check:bundle`, `oracle` and others, no `build:power`. `check:bundle` gzips only `app/dist`, so files in `oracle/power/` do not count against the app budget. |
+| Licences on disk | `data/raw/unihan/LICENSE` (Unicode License V3) and `data/raw/make-me-a-hanzi/LICENSE` and `LGPL` (GNU LGPL v3.0 or later), as listed in the README table. |
+
+#### Official reference for `mcp.json`
+
+Source: the Kiro Powers reference, `power-builder/skills/agent-plugins-reference/SKILL.md` in https://github.com/kirodotdev/powers (read by the human). Facts used: the variable is `${PLUGIN_ROOT}`, the absolute path of the plugin directory; expansion applies to `args` elements, `env` values and `cwd`, not to `command`; `command` is a single token and a bare name is found through the executable search path; `cwd` must start with `./`, `${PLUGIN_ROOT}` or `${PLUGIN_DATA}`; the file should carry `"$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json"` and `"type": "stdio"` per server.
+
+#### Layout
+
+```
+oracle/power/
+├── plugin.json            # unchanged
+├── mcp.json               # rewritten (below)
+├── server.mjs             # GENERATED: the Power_Bundle (committed)
+├── data/oracle-data.json  # GENERATED: the Power_Data (committed)
+├── NOTICE.md              # GENERATED licence note (below), committed
+├── licenses/              # GENERATED copies of the licence files named in NOTICE.md, committed
+└── skills/cangjie-oracle/SKILL.md   # one paragraph updated: the Power reads its own data copy
+```
+
+The generated files (`server.mjs`, `data/oracle-data.json`, `NOTICE.md` and `licenses/`) are written only by `npm run build:power`, never by hand, in the same way `characters.json` is written only by `scripts/`. They are committed because Kiro imports the Power from the folder.
+
+#### Power entry point and data location
+
+A new file `oracle/src/power.ts` is the only entry point of the bundle. It differs from `index.ts` in one place: it loads `new URL('./data/oracle-data.json', import.meta.url)` through `loadDataset`, so the path is resolved against the bundle file, which sits in the Power root next to `data/`. `dataset.ts` gains one exported function, `powerDatasetPath(): string`, that returns that path; `loadDataset`, `OracleDataError` and the record validation are reused unchanged, so a missing or corrupt data file still produces the stderr message and exit code 1 of Requirement 5.7. `index.ts`, `defaultDatasetPaths` and the workspace registration are not changed. The working directory is never read: `process.cwd()` is not used, and the `cwd` of `mcp.json` is set to the Power root only to keep the process in a known place.
+
+`server.ts`, `oracle.ts` and `dataset.ts` need no other change. The bundle contains `oracle.ts`, which imports `cangjieRules.ts` and `types.ts` from `app/src`, so the code that decides `playable` and code validity is the same code the app uses (Requirement 4.8 stays true).
+
+#### Data format: derived file with only the fields the tools read (chosen)
+
+| Option | Answers identical | Size | Cost |
+| --- | --- | --- | --- |
+| A. Copy the three Level_Datasets | Yes, trivially | 4.5 MB raw, 1.4 MB gzip in the repo | Large generated file; two more copies of `strokeData` |
+| B. Derived file with the fields the tools read (chosen) | Yes, proved by the Power_Staleness_Test over all 1,200 characters and all three tools | about 194 kB raw, about 27 kB gzip | One small pure function; the test guards it |
+
+Chosen: B. Shape (the same shape `isRecordLike` validates, so `loadDataset` reads it without change):
+
+```json
+{"明":{"character":"明","cangjie":"AB","sources":{"cangjie":"unihan"},"decomposition":{"decomposition":"⿰日月","atomic":false,"radical":"日","components":["日","月"]}}}
+```
+
+Rules for `deriveOracleData(levelDatasets)` in `scripts/build-power.ts`: take the three Level_Datasets in the order level 1, 2, 3 and keep each file's key order; copy exactly the fields listed in Requirement 10.3 and no others; `JSON.stringify(object)` with no indentation, followed by one `\n`. The value of `sources.cangjie` is copied as it is, so the `source` result of `lookup` and `verify` stays identical. A character that appears in two files fails the build, as `loadDataset` already does. All values are copied from the Level_Datasets and none is typed or generated, so Hard rule 1 of `content-accuracy.md` holds.
+
+The type of a Power_Data record is `Pick<CharacterRecord, 'character' | 'cangjie'>` plus `sources: Pick<CharacterRecord['sources'], 'cangjie'>` and a `decomposition` with the four fields. The type is declared in `scripts/build-power.ts` and checked against `CharacterRecord`, so a rename of a source field fails `tsc`.
+
+#### Licence record (Requirement 10.6)
+
+Power_Data copies Unihan `kCangjie` codes (Unicode License V3) and Make Me a Hanzi decomposition fields (LGPL-3.0-or-later), so it is data derived from those sources and keeps their terms, as `characters.json` does. The Power records this in three places:
+
+1. `oracle/power/NOTICE.md` (generated by `npm run build:power` from a template in `scripts/build-power.ts`, committed): says what `data/oracle-data.json` and `server.mjs` are and how to rebuild them; names the two sources with version or commit, field, licence and URL (held as constants in the script, and a test checks that each licence name and version also appears in the README table, which the README states come from `data/raw/SOURCES.md`); states that the data copy stays under those licences and the code under MIT; lists every npm package that ends up in the bundle (the SDK, `zod` and their runtime dependencies) with name, version and licence read from each package's own `package.json`; and lists no CC-CEDICT, Arphic or HSK data, because the Power_Data contains no field from them. The README states the same.
+2. `oracle/power/licenses/`: byte copies of `data/raw/unihan/LICENSE` as `unihan-LICENSE.txt`, and of `data/raw/make-me-a-hanzi/LICENSE` and `LGPL` as `make-me-a-hanzi-LICENSE.txt` and `make-me-a-hanzi-LGPL.txt`, plus the licence files of the bundled npm packages as `npm-<name>-LICENSE.txt`. The build script writes these copies so that they cannot drift, and the Power_Staleness_Test compares them with their originals.
+3. The bundle itself keeps the packages' own licence comments (`legalComments: 'eof'`), which the esbuild documentation describes as moving legal comments to the end of the output file.
+
+The existing `app/public/THIRD_PARTY_NOTICES.txt` covers the app's runtime dependencies only and is unchanged. Its test (`tests/unit/third-party-notices.test.ts`) is unaffected because the Power adds no app dependency. The README "Data and licences" section gains one sentence naming `oracle/power/data/oracle-data.json` as a further derived file with the same terms.
+
+#### `scripts/build-power.ts` and the deterministic build
+
+```ts
+export interface PowerFile { path: string; contents: string | Uint8Array }  // path relative to the repo root
+export function deriveOracleData(levels: readonly Record<string, CharacterRecord>[]): string
+export async function buildPowerFiles(): Promise<PowerFile[]>   // reads inputs, writes nothing
+export async function main(): Promise<void>                      // writes every PowerFile; direct-execution guard as in build-data.ts
+```
+
+`buildPowerFiles` is pure with respect to the repository: it reads inputs and returns the exact bytes of `oracle/power/server.mjs`, `oracle/power/data/oracle-data.json`, `oracle/power/NOTICE.md` and the files under `oracle/power/licenses/`. It writes nothing. `main()` is the only writer, so the command writes only those paths (Requirement 10.7).
+
+esbuild is called through its JavaScript API with `write: false`, so the output is held in memory:
+
+| Option | Value | Reason |
+| --- | --- | --- |
+| `entryPoints` | `['oracle/src/power.ts']` | The one entry. |
+| `absWorkingDir` | the repository root, resolved from the script's `import.meta.url` | Comment paths such as `// ../node_modules/zod/...` are relative to it, so no machine-specific path enters the file. |
+| `bundle`, `platform` | `true`, `'node'` | Dependencies included; Node built-ins stay external. |
+| `format`, `outExtension` | `'esm'`, `.mjs` | The bundle uses `import.meta.url` to find its data, which needs ESM; the `.mjs` extension makes plain `node` treat it as ESM with no `package.json` or `"type"` field in the Power folder. |
+| `target` | `'node20'` | Fixed. |
+| `banner.js` | `import{createRequire as __cr}from"node:module";const require=__cr(import.meta.url);` | Some bundled CommonJS dependencies call `require` for Node built-ins, which fails in an ES module bundle without it. The probe bundle used the same banner. |
+| `minify` | `true` | Smaller file (about 735 kB against 1.37 MB). The source stays readable in `oracle/src`; the bundle is a build artefact. |
+| `legalComments` | `'eof'` | Keeps the packages' licence notices (MIT requires them) in one place at the end. |
+| `metafile` | `true`, read in memory only | Lists the `node_modules` packages in the bundle, in sorted order, for NOTICE.md and `licenses/`; never written to disk. |
+| `sourcemap`, `splitting`, `define`, `plugins` | none or `false` | No second output, no environment value, no timestamp. |
+| `logLevel` | `'silent'` | Warnings are read from `result.warnings` and make the build fail. |
+| `tsconfig` | `oracle/tsconfig.json` | Same compiler settings as the type check. |
+
+Determinism: esbuild output depends only on the inputs and options, and no option above injects a time, a random value or an absolute path. The script normalises line endings to `\n` and the test also asserts that the output contains no `/Users/` or `C:\\` path and no ISO date. The same `esbuild` version (0.25.12) and the exact-pinned `@modelcontextprotocol/sdk` and `zod` versions are fixed in `package.json` and `package-lock.json`, so a different machine produces the same bytes. If the esbuild version is changed on purpose, the bundle changes and the Power_Staleness_Test asks for a rebuild, which is the intended behaviour.
+
+#### How the tests build and compare
+
+The Power_Staleness_Test calls `buildPowerFiles()` in the same process and compares each returned file with the committed file byte by byte. No temporary directory is needed, because `write: false` keeps the fresh build in memory and nothing under the repository is touched. Failure message: `oracle/power/server.mjs is out of date. Run npm run build:power and commit the result.` It then checks the answers: it loads the Power_Data through `loadDataset` and the Level_Datasets through `loadDataset`, and for each of the 1,200 characters compares `lookup`, `verify` (the stored code, and a wrong valid code taken from another record) and `decompose` results with `toEqual`; it asserts the key sets are equal and the count is 1,200. This second check explains a data difference in plain terms even if the byte comparison also fails.
+
+The Power_Standalone_Test (the only test that needs a temporary directory) does the following:
+
+1. `mkdtemp` under `os.tmpdir()`, assert the path does not start with the repository root, copy `oracle/power/` into it with `cpSync(..., { recursive: true })`.
+2. Assert that no ancestor directory of the copy holds a `node_modules` directory and that `NODE_PATH` is unset in the child environment.
+3. Start `process.execPath` with `[<copy>/server.mjs]` through the SDK `StdioClientTransport` with `cwd` set to the copy and an environment holding only the SDK's default variables (no repository path). This is the same launch Kiro performs from `mcp.json` (`command: node`, `args: [${PLUGIN_ROOT}/server.mjs]`, `cwd: ${PLUGIN_ROOT}`), with `${PLUGIN_ROOT}` replaced by the copy. The test reads `oracle/power/mcp.json` and asserts that `command`, `args` and `cwd` are exactly that form, and builds the launch from the file, so the test and the file cannot disagree.
+4. `listTools` returns exactly the three tools. For 明, and for one character of level 1, one of level 2 and one of level 3 (the first record with a non-null code in each file, chosen by the test), the expected values are computed from the record in the app dataset: `lookup` gives `cangjie`, `source` and `playable` (using `isPlayableInCangjie`); `verify` with the stored code gives `matches: true`; `decompose` gives the stored four fields. 明 also asserts that the stored code is `AB`, which is the value of its Unihan record.
+5. `verify` for 明 with a valid wrong code (`A`, which differs from `AB`) gives `matches: false`; `verify` with `hqz` and with a six-letter code gives `isError: true`; a valid character outside the dataset gives `found: false`.
+6. In `finally`, close the client and remove the temporary directory (`rmSync`, `force: true`).
+
+The test has a 30 second timeout. It spawns one Node process.
+
+#### Workspace config check (Requirement 10.13)
+
+`.kiro/settings/mcp.json` is not edited by this work, and no task edits it. There is no digest and no byte-comparison test, because such a pin would break as soon as the human re-enables the server. The final checkpoint runs `git diff -- .kiro/settings/mcp.json` and `git status` and confirms that this work did not change the file. The only difference allowed is the human's own change of the `disabled` key.
+
+The human disabled the server (`disabled: true`) only for the import test, and re-enables it (`disabled: false`) after that test. `tests/unit/mcp-config.test.ts` is not changed: its case "is enabled" keeps expecting `disabled === false`, so it fails while the server is disabled. That one failure is known and expected; the final checkpoint reports it by name and every other test must pass. After the import test the human sets `disabled: false` and runs `npx vitest run tests/unit/mcp-config.test.ts`, which then passes. No test is weakened.
+
+#### Keeping the generated files in sync
+
+The Power_Staleness_Test lives in `tests/unit/`, which the root `node` project includes, so it runs in `npm test`, in `npm run test:data`, and therefore in `npm run check:data` and in the Data_Check_Hook. A save of a Watched_Input rebuilds `characters.json`; the next test step then fails with "run `npm run build:power`" if the Power_Data now differs. The hook is not changed and does not run the build for the person, because a hook that rewrites committed files on every save would hide a data change from review. The same test also fails when a file under `oracle/src` that the bundle includes, `app/src/engine/cangjieRules.ts`, `app/src/data/types.ts` or a pinned dependency changes.
+
+#### Repository-wide checks with a large generated file
+
+- `tests/unit/no-personal-names.test.ts` reads every tracked text file with `readFileSync` and a regular expression. A 735 kB bundle and a 194 kB data file add well under 1 MB, so no exclusion is planned. The Power_Staleness_Test asserts the bundle has no absolute path, so it cannot contain a home directory name. If the scan is found to be slow or to match, the fallback is to exempt exactly `oracle/power/server.mjs` in `isExempt`, and the exemption is stated in the README.
+- `check:bundle` gzips `app/dist` only; the Power files are not copied into `app/dist` (`app/public` is the only folder Vite copies), so the app budget of 300,000 bytes is unaffected. The checkpoint runs the check and reports the number.
+- `tsc` for the root includes `scripts/**/*.ts`, so `scripts/build-power.ts` is type-checked. The generated `.mjs` file is not part of any `tsconfig` `include`.
 
 ## Data Models
 
@@ -325,6 +457,13 @@ Property-based testing does not apply, and none is added (decision of Nov 15 in 
 - `oracle/tests/no-network.test.ts`. Reads every file in `oracle/src` and asserts none imports `node:http`, `node:https`, `node:net`, `node:tls`, `node:dgram` or `node:dns`, none calls `fetch(`, none references `process.env`, and `console.log` is not used (stdout is reserved for the protocol). Requirements 5.5, 5.7.
 - `tests/unit/mcp-config.test.ts`. Parses `.kiro/settings/mcp.json`: server `cangjie-oracle`, `command` and `args` present, no `env`, `url`, `headers`; `autoApprove` equals the three tool names; and the file named in `args` exists. Requirements 6.1 to 6.3.
 - Power (later task): `tests/unit/oracle-power.test.ts` parses `plugin.json`, `mcp.json` and the `SKILL.md` front matter for the required fields, and checks no `env` or `url`. Requirements 7.1 to 7.3.
+- Self-contained Power (Requirement 10), unit tests only, no property-based tests (Nov 15 decision; the answer comparison is an exhaustive loop over the 1,200 real records, like `tests/unit/cangjie-dataset.test.ts`):
+  - `oracle/tests/power.test.ts`: `powerDatasetPath()` ends in `data/oracle-data.json` next to the module and does not depend on `process.cwd()` (the test changes the working directory and compares); `loadDataset` on a missing Power_Data path throws `OracleDataError` naming the path. Requirements 10.2.
+  - `tests/unit/oracle-power-build.test.ts` (Power_Staleness_Test): fresh `buildPowerFiles()` equals the committed files byte for byte; answers equal over 1,200 characters and three tools; `deriveOracleData` keeps exactly the seven fields (a record with extra fields loses them); a duplicated character fails; the bundle has no `/Users/` or drive-letter path; `NOTICE.md` names Unicode License V3 and LGPL-3.0-or-later and the README table lists both; `licenses/` copies equal `data/raw/` originals; the bundle runs no `tsx`, `npx` or `node_modules` path (string check). Requirements 10.1, 10.3, 10.4, 10.6, 10.7, 10.8, 10.9, 10.10, 10.14.
+  - `tests/unit/oracle-power-standalone.test.ts` (Power_Standalone_Test): as described in section 8. Requirements 10.1, 10.2, 10.5, 10.11, 10.12.
+  - `tests/unit/oracle-power.test.ts` (existing): the case "uses the same command and args as the workspace MCP config" is replaced by checks of the new `mcp.json` (`$schema`, `type`, `command` `node`, `args`, `cwd`, no `env`, no `url`, no `npx` and no `tsx`). The other cases stay. Requirements 10.5.
+  - `tests/unit/mcp-config.test.ts` (existing): not changed. The case "is enabled" keeps expecting `disabled: false` and fails until the human re-enables the server (known, expected failure, reported by name at the final checkpoint). Requirements 10.13, 10.17.
+  - Human check, not automated and never run by Kiro: import `oracle/power/` in the Powers panel with the workspace server disabled and confirm the three tools appear (Requirement 10.16).
 - Final gate (Requirement 9): root `npm test`, `tsc` for root (`npx tsc -p tsconfig.json`), for `app/` (`npx tsc -p app/tsconfig.json`) and for `oracle/` (`npx tsc -p oracle/tsconfig.json`), and `npm run build -w app`.
 
 ## Demo-video notes
@@ -347,3 +486,8 @@ All decisions below are approved by the human.
 4. **The Power task stays** (task 6, last and skippable).
 5. **`@modelcontextprotocol/sdk` stays on v1 (1.32.2).** The v2 SDK uses a different package name (`@modelcontextprotocol/server`) and is not used.
 6. **`kiro-log.md` task stays** (task 8.1). It is written by the human this time rather than executed by Kiro.
+7. **Self-contained Power (follow-up).** After the first import failed with `Connection closed`, the human approved bundling the server with esbuild into `oracle/power/server.mjs`, shipping a derived data file in `oracle/power/data/`, and launching with `node` through `${PLUGIN_ROOT}` (section 8). The Power_Bundle, Power_Data and Power_Notice are committed generated files. The workspace registration stays as it is. No new property-based tests are added (Nov 15 decision).
+8. **Workspace server disabled only for the import test.** The human disabled the workspace `cangjie-oracle` server only for the import test and re-enables it (`disabled: false`) afterwards. So `tests/unit/mcp-config.test.ts` is not relaxed, there is no digest pin of `.kiro/settings/mcp.json`, and no task edits that file. The final checkpoint confirms with `git diff` and `git status` that this work did not change it.
+9. **`plugin.json` version stays `1.0.0`.** The bundled Power keeps its version.
+10. **`server.mjs` is committed minified.** The Power_Bundle is committed as the minified output of the build.
+11. **The `kiro-log.md` entry for the import test (task 11.1) is the human's.** Kiro does not write it.
