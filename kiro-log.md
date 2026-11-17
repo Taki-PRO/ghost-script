@@ -654,7 +654,7 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   - **No level 2 or 3 clue on screen contains a Chinese character.** A test checks every record, and the build fails if one ever would.
   - Level 1 is byte-identical. A second build gives identical files.
   - **4114 unit and 95 e2e tests pass**; `tsc` clean.
-- **My own check:** I re-ran my comparison against the HSK example words. Readings that disagree dropped from 63 to 6 across the two levels, and the remaining ones are close calls.
+- **My own check:** I re-ran my comparison against the HSK example words. Readings that disagree dropped from 55 to 6 across the two levels, and the remaining ones are close calls.
 - **What a rule can't fix:** about a dozen clues follow the rule but are poor, such as 切 "definitely; absolutely (not)", 态 "(bound form)" and 码 "standard weight used with a balance scale". These need a human choice, as override rows.
 
 ---
