@@ -566,6 +566,23 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 - **To fix:** the intro says "characters … are ghosts. Type its shapes", which doesn't agree in number.
 - **Next:** the design pass: ink and paper by candlelight.
 
+## Nov 17, 2026: ink-and-candlelight: one art direction for every screen
+
+- **What I did:** Wrote and built the `ink-and-candlelight` spec, the design pass from the second review, which called the look tidy but generic. Direction: a séance at a writing desk, ink and paper by candlelight. I accepted Kiro's defaults on thirteen open choices except one: the seal carries the ghost's own character.
+- **Kiro features:** a new always-on steering file (`art-direction.md`) so later screens follow the same rules; spec with parallel waves; the `accuracy-reviewer` agent; Playwright screenshots as test artefacts.
+- **Result:**
+  - **Palette:** ink black, aged paper and one accent, seal red, used only for the primary action, success and the stamp. Candle amber appears only as light.
+  - **Seal:** a clean ghost gets a red seal stamped on the paper carrying its own character. A test checks no seal exists before the outcome.
+  - **Keys** look like worn keycaps, finished strokes have an ink-bleed edge, and buttons are paper slips.
+  - **Chinese font:** LXGW WenKai Regular v1.530 (SIL OFL 1.1), subset to the 321 glyphs the app shows: 66,532 bytes, built reproducibly with its checksum and both copyright lines recorded. Kiro rejected four brush fonts because they lack 難, which the X key needs.
+  - **Honest limits Kiro reported:** hanzi-writer can't vary stroke width, so "brush strokes" are a wider stroke plus a bleed filter. Only 天 and 雨 of the legend line are in the dataset, so that line is revealed with a CSS wipe, not drawn stroke by stroke.
+  - **The new screenshot test caught the moon overlapping two headings**, so the disc was made smaller and moved to the top edge, which breaks the spec's own size rule.
+  - **3667 unit and 47 e2e tests pass**; `tsc` clean; bundle 207,858 bytes gzipped against 300,000. The reviewer agent returned "No findings". No game rules, data or save format changed.
+- **My own browser check (headless Chrome, 1024 × 768 and 375 × 812):** played 明 to a clean result. The seal appeared with 明 in it, the font loaded, nothing scrolled, and there were no console errors.
+  - **What works:** the seal, the keycaps, the inked strokes, the red primary button.
+  - **What doesn't yet:** the moon is a dim half-disc cut off by the top edge and reads as a glitch. The mist isn't visible in a still. The Graveyard is still a grid of dashed squares, not a hillside. The ghost is a flat silhouette, not an ink wash.
+- **Next:** fix those four, then the paper test with real people.
+
 ---
 
 ## Template for new entries
