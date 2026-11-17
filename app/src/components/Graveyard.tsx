@@ -4,6 +4,7 @@ import { buildGraveyard } from '../engine/graveyard';
 import type { Grave, GraveState } from '../engine/graveyard';
 import { learningOrder } from '../engine/learningOrder';
 import type { ReviewHistory } from '../engine/scheduler';
+import { tabletTiltIndex } from '../engine/tabletTilt';
 
 export interface GraveyardProps {
   dataset: CharacterDataset;
@@ -21,14 +22,13 @@ const SHAPE: Record<GraveState, string> = {
   restless: 'tablet tablet-restless',
   'at-rest': 'tablet tablet-rest',
 };
-// Outline differs per state (arched solid, chipped dashed, plain dotted): shape is a signal.
+// Every tablet has an arched top (radii in index.css). Outline still differs per state:
+// at rest a solid edge, restless a dashed edge, never met no border at all (blank stone).
 const OUTLINE: Record<GraveState, string> = {
-  unmet: 'rounded-sm border-2 border-dotted border-muted',
-  restless: 'rounded-t-md border-2 border-dashed border-ghost',
-  'at-rest': 'rounded-t-3xl border-2 border-solid border-ink',
+  unmet: '',
+  restless: 'border-2 border-dashed border-ghost',
+  'at-rest': 'border-2 border-solid border-ink',
 };
-const HILLSIDE =
-  'linear-gradient(180deg, transparent 0%, rgba(24, 26, 33, 0.85) 45%, rgba(14, 15, 19, 0.95) 100%)';
 const LEGEND: readonly { state: GraveState; label: string }[] = [
   { state: 'unmet', label: 'Never met' },
   { state: 'restless', label: 'Restless' },
@@ -59,7 +59,7 @@ export function Graveyard({ dataset, history, now, onBack }: GraveyardProps) {
   return (
     <main className="min-h-screen px-4 pb-8 text-ink">
       <div className="mx-auto flex max-w-3xl flex-col gap-6">
-        <header className="sticky top-0 z-20 -mx-4 flex min-h-[64px] items-center justify-between gap-3 border-b border-muted/40 bg-night-top px-4 py-2">
+        <header className="sticky-below-moon sticky z-20 -mx-4 flex min-h-[64px] items-center justify-between gap-3 border-b border-muted/40 bg-night-top px-4 py-2">
           <h1 className="min-w-0 font-display text-2xl font-semibold sm:text-3xl">Graveyard</h1>
           <button
             type="button"
@@ -78,7 +78,7 @@ export function Graveyard({ dataset, history, now, onBack }: GraveyardProps) {
             <li key={state} className="flex items-center gap-2">
               <span
                 aria-hidden="true"
-                className={`${SHAPE[state]} ${OUTLINE[state]} relative inline-flex h-8 w-8 items-center justify-center bg-surface`}
+                className={`${SHAPE[state]} ${OUTLINE[state]} relative inline-flex h-8 w-8 items-center justify-center`}
               >
                 {MARKER[state]}
               </span>
@@ -91,34 +91,44 @@ export function Graveyard({ dataset, history, now, onBack }: GraveyardProps) {
             No ghost has been met yet. Begin a séance to wake the first one.
           </p>
         )}
-        <ul
-          aria-label="Graves"
-          className="grid gap-2 rounded-md p-3"
-          style={{
-            gridTemplateColumns: 'repeat(auto-fill, minmax(48px, 1fr))',
-            backgroundImage: HILLSIDE,
-          }}
-        >
-          {model.graves.map((grave) => (
-            <li
-              key={grave.position}
-              aria-label={graveLabel(grave, total)}
-              className={`${SHAPE[grave.state]} ${OUTLINE[grave.state]} relative flex min-h-[56px] flex-col items-center justify-center bg-surface text-ink`}
-            >
-              {grave.state !== 'unmet' && (
-                <span lang="zh" className="text-xl leading-none">
-                  {grave.char}
-                </span>
-              )}
-              <span
-                aria-hidden="true"
-                className={`text-xs leading-none ${grave.state === 'at-rest' ? 'text-seal-light' : ''}`}
+        <div className="relative isolate overflow-hidden rounded-md">
+          <svg
+            aria-hidden="true"
+            focusable="false"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+            className="absolute inset-0 h-full w-full"
+            data-testid="hillside"
+          >
+            <path d="M0 62 C20 48 38 58 56 46 C74 36 88 50 100 42 L100 100 L0 100 Z" fill="#161a24" />
+            <path d="M0 80 C18 70 34 78 52 70 C72 62 86 74 100 68 L100 100 L0 100 Z" fill="#0f1118" />
+          </svg>
+          <ul
+            aria-label="Graves"
+            className="relative grid gap-2 p-3"
+            style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(48px, 1fr))' }}
+          >
+            {model.graves.map((grave) => (
+              <li
+                key={grave.position}
+                aria-label={graveLabel(grave, total)}
+                className={`${SHAPE[grave.state]} ${OUTLINE[grave.state]} tablet-tilt-${tabletTiltIndex(grave.position)} relative flex min-h-[56px] flex-col items-center justify-center text-ink`}
               >
-                {MARKER[grave.state]}
-              </span>
-            </li>
-          ))}
-        </ul>
+                {grave.state !== 'unmet' && (
+                  <span lang="zh" className="text-xl leading-none">
+                    {grave.char}
+                  </span>
+                )}
+                <span
+                  aria-hidden="true"
+                  className={`text-xs leading-none ${grave.state === 'at-rest' ? 'text-seal-light' : ''}`}
+                >
+                  {MARKER[grave.state]}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </main>
   );

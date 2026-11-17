@@ -94,9 +94,10 @@ describe('Graveyard', () => {
     const header = h1.closest('header');
     expect(header).not.toBeNull();
     expect(header?.contains(buttons[0])).toBe(true);
-    for (const cls of ['sticky', 'top-0', 'bg-night-top']) {
+    for (const cls of ['sticky', 'sticky-below-moon', 'bg-night-top']) {
       expect(header?.classList.contains(cls)).toBe(true);
     }
+    expect(header?.classList.contains('top-0')).toBe(false);
   });
 
   it('gives each state its own tablet classes and no old grave classes', () => {
@@ -112,6 +113,42 @@ describe('Graveyard', () => {
     expect(items[2].classList.contains('tablet-unmet')).toBe(true);
     expect(items[2].classList.contains('tablet-rest')).toBe(false);
     expect(container.innerHTML).not.toMatch(/grave-(rest|restless|wisp)/);
+  });
+
+  it('draws an aria-hidden hillside svg with no text behind the grid', () => {
+    const { container } = show({});
+    const svg = screen.getByTestId('hillside');
+    expect(svg.tagName.toLowerCase()).toBe('svg');
+    expect(svg.getAttribute('aria-hidden')).toBe('true');
+    expect(svg.querySelector('text')).toBeNull();
+    expect(svg.textContent).toBe('');
+    expect(svg.querySelectorAll('path')).toHaveLength(2);
+    const list = screen.getByRole('list', { name: 'Graves' });
+    expect(svg.contains(list)).toBe(false);
+    expect(container.querySelectorAll('svg')).toHaveLength(1);
+  });
+
+  it('gives each tablet the tilt class of its position mod 5', () => {
+    show({});
+    const items = Array.from(screen.getByRole('list', { name: 'Graves' }).children);
+    items.forEach((li, i) => {
+      expect(li.classList.contains(`tablet-tilt-${(i + 1) % 5}`), `position ${i + 1}`).toBe(true);
+    });
+  });
+
+  it('draws never-met tablets as blank stone and the others with solid or dashed edges', () => {
+    const history: ReviewHistory = {
+      [order[0]]: applyReview(undefined, 'clean', NOW, DEFAULT_CONFIG),
+      [order[1]]: applyReview(undefined, 'struggled', NOW, DEFAULT_CONFIG),
+    };
+    show(history);
+    const items = Array.from(screen.getByRole('list', { name: 'Graves' }).children);
+    expect(items[0].classList.contains('border-solid')).toBe(true);
+    expect(items[1].classList.contains('border-dashed')).toBe(true);
+    for (const li of items.slice(2)) {
+      expect(li.className).not.toMatch(/border/);
+      expect(li.textContent).toBe('·');
+    }
   });
 
   it('draws Back to menu as a slip', () => {

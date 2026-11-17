@@ -21,6 +21,22 @@ describe('art-direction steering file', () => {
     },
   );
 
+  it('has the screenshot-review rules (approved by the human)', () => {
+    expect(text).toMatch(/Moon is a full disc of 4 rem in the top right/);
+    expect(text).toMatch(/never lies under text/);
+    expect(text).toMatch(/top room of 4\.75 rem/);
+    expect(text).toMatch(/992 px/);
+    expect(text).toMatch(/0\.18 at 88% and 0\.10 at 72%/);
+    expect(text).toMatch(/ghost is an ink wash/);
+    expect(text).toMatch(/same shape at every size/);
+    expect(text).toMatch(/seal sits in the paper margin and covers no stroke/);
+  });
+
+  it('keeps the Primary_Action table', () => {
+    expect(text).toContain('| Intro | Begin the Séance |');
+    expect(text).toContain('| Summary | Begin another Séance |');
+  });
+
   it('names the ambient and rite-timing exemptions', () => {
     expect(text).toMatch(/Ambient exemption/);
     expect(text).toMatch(/Rite-timing exemption/);

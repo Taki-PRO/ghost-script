@@ -100,7 +100,7 @@ type View =
   | { screen: 'summary'; dataset: CharacterDataset; results: SessionResults };
 
 function Shell({ children, compact = false }: { children: React.ReactNode; compact?: boolean }) {
-  const sizing = compact ? 'min-h-[100dvh] px-2 py-2' : 'min-h-screen px-4 py-6';
+  const sizing = compact ? 'no-moon-room min-h-[100dvh] px-2 py-2' : 'min-h-screen px-4 py-6';
   return (
     <main className={`${sizing} w-full flex items-center justify-center text-ink`}>
       <div className="w-full max-w-3xl flex flex-col items-center">{children}</div>

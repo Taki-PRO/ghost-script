@@ -526,12 +526,16 @@ describe('screen-change scroll reset and compact séance shell', () => {
     const user = await openApp();
     const button = await screen.findByRole('button', { name: /begin a nightly séance/i });
     expect(mainOf().className).toContain('px-4');
+    expect(mainOf().className).not.toContain('no-moon-room');
     const before = scroll.mock.calls.length;
     await user.click(button);
     expect(scroll.mock.calls.length).toBeGreaterThan(before);
     expect(scroll).toHaveBeenCalledWith(0, 0);
     expect(mainOf().className).toContain('px-2');
     expect(mainOf().className).not.toContain('px-4');
+    // The séance shell takes no Moon_Room (design fallback); its first row pads 4.5 rem on the right.
+    expect(mainOf().className).toContain('no-moon-room');
+    expect(screen.getByRole('button', { name: /leave séance/i }).parentElement!.className).toContain('pr-[4.5rem]');
   });
 
   it('scrolls on séance -> menu via Leave', async () => {

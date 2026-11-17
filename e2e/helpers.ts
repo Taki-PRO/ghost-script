@@ -204,3 +204,184 @@ export async function visibleInkPaths(page: Page): Promise<number> {
     return count;
   });
 }
+
+// ---------------------------------------------------------------------------
+// Moon (follow-up 1, Requirement 8.12): geometry read from the computed custom
+// properties of `:root`, the one source shared with the CSS.
+// ---------------------------------------------------------------------------
+
+export interface Box {
+  readonly left: number;
+  readonly top: number;
+  readonly right: number;
+  readonly bottom: number;
+}
+
+export interface MoonDisc extends Box {
+  /** Centre and radius in CSS pixels. */
+  readonly cx: number;
+  readonly cy: number;
+  readonly radius: number;
+  readonly viewport: { readonly width: number; readonly height: number };
+}
+
+/**
+ * The Moon's disc box in viewport pixels. Reads `--moon-size`, `--moon-inset-x`
+ * and `--moon-inset-y` (rem or px) from the root, resolves rem against the root
+ * font size, and measures the viewport without scrollbars. The centre lies
+ * `--moon-inset-x` from the right edge and `--moon-inset-y` from the top.
+ */
+export async function moonDisc(page: Page): Promise<MoonDisc> {
+  await page.evaluate(() => document.fonts.ready);
+  return page.evaluate(() => {
+    const root = document.documentElement;
+    const rem = Number.parseFloat(getComputedStyle(root).fontSize);
+    const read = (name: string): number => {
+      const raw = getComputedStyle(root).getPropertyValue(name).trim();
+      const m = raw.match(/^(-?[\d.]+)(rem|px)$/);
+      if (!m) throw new Error(`${name} is "${raw}"; expected a rem or px length`);
+      return Number.parseFloat(m[1]!) * (m[2] === 'rem' ? rem : 1);
+    };
+    const size = read('--moon-size');
+    const width = root.clientWidth;
+    const height = root.clientHeight;
+    const radius = size / 2;
+    const cx = width - read('--moon-inset-x');
+    const cy = read('--moon-inset-y');
+    return {
+      cx,
+      cy,
+      radius,
+      left: cx - radius,
+      top: cy - radius,
+      right: cx + radius,
+      bottom: cy + radius,
+      viewport: { width, height },
+    };
+  });
+}
+
+/** Lines naming every control or text element whose box meets the moon disc. */
+export async function moonIntruders(page: Page): Promise<string[]> {
+  const disc = await moonDisc(page);
+  return page.evaluate(({ cx, cy, radius }) => {
+    const out: string[] = [];
+    const hasOwnText = (el: Element): boolean =>
+      Array.from(el.childNodes).some((n) => n.nodeType === 3 && (n.textContent ?? '').trim() !== '');
+    const isControl = (el: Element): boolean =>
+      el.matches('button, a, input, select, textarea, [role="button"], [data-testid="ink-surface"]');
+    for (const el of Array.from(document.body.querySelectorAll('*'))) {
+      if (!isControl(el) && !hasOwnText(el)) continue;
+      const cs = getComputedStyle(el);
+      if (cs.display === 'none' || cs.visibility === 'hidden') continue;
+      const r = el.getBoundingClientRect();
+      if (r.width === 0 || r.height === 0) continue;
+      const nx = Math.max(r.left, Math.min(cx, r.right));
+      const ny = Math.max(r.top, Math.min(cy, r.bottom));
+      if ((nx - cx) ** 2 + (ny - cy) ** 2 < radius ** 2) {
+        const text = (el.textContent ?? '').trim().slice(0, 30);
+        out.push(
+          `${el.tagName.toLowerCase()} "${text}" box ${Math.round(r.left)},${Math.round(r.top)} to ` +
+            `${Math.round(r.right)},${Math.round(r.bottom)}; moon ${Math.round(cx)},${Math.round(cy)} r ${Math.round(radius)}`,
+        );
+      }
+    }
+    return out;
+  }, disc);
+}
+
+/** Fails if the disc is cut off by a viewport edge, or if any control or text meets it. */
+export async function expectMoonInside(page: Page, view = 'page'): Promise<void> {
+  const d = await moonDisc(page);
+  const detail = `${view}: moon box ${Math.round(d.left)},${Math.round(d.top)} to ${Math.round(d.right)},${Math.round(d.bottom)}, viewport ${d.viewport.width} x ${d.viewport.height}`;
+  expect(d.left, `${detail}: cut off on the left`).toBeGreaterThanOrEqual(0);
+  expect(d.top, `${detail}: cut off at the top`).toBeGreaterThanOrEqual(0);
+  expect(d.right, `${detail}: cut off on the right`).toBeLessThanOrEqual(d.viewport.width);
+  expect(d.bottom, `${detail}: cut off at the bottom`).toBeLessThanOrEqual(d.viewport.height);
+  expect(await moonIntruders(page), `${view}: something lies inside the moon disc`).toEqual([]);
+}
+
+// ---------------------------------------------------------------------------
+// Seal and strokes (follow-up 5, Requirements 13.13 and 13.14).
+// ---------------------------------------------------------------------------
+
+const SEAL = '[data-testid="seal-stamp"]';
+const WRITER_SVG = '[data-testid="ink-container"] svg';
+
+/** Bounding box of the Seal_Stamp in viewport pixels; throws when there is no seal. */
+export async function sealBox(page: Page): Promise<Box> {
+  return page.locator(SEAL).evaluate((el) => {
+    const r = el.getBoundingClientRect();
+    return { left: r.left, top: r.top, right: r.right, bottom: r.bottom };
+  });
+}
+
+/** Bounding box of the paper (`[data-testid="ink-surface"]`) in viewport pixels. */
+export async function paperBox(page: Page): Promise<Box> {
+  return page.getByTestId('ink-surface').evaluate((el) => {
+    const r = el.getBoundingClientRect();
+    return { left: r.left, top: r.top, right: r.right, bottom: r.bottom };
+  });
+}
+
+/** Bounding box of every `path` in the writer SVG (empty boxes skipped). */
+export async function strokeBoxes(page: Page): Promise<Box[]> {
+  return page.evaluate((selector) => {
+    const out: { left: number; top: number; right: number; bottom: number }[] = [];
+    for (const path of Array.from(document.querySelectorAll(`${selector} path`))) {
+      const r = path.getBoundingClientRect();
+      if (r.width === 0 && r.height === 0) continue;
+      out.push({ left: r.left, top: r.top, right: r.right, bottom: r.bottom });
+    }
+    return out;
+  }, WRITER_SVG);
+}
+
+/** Gap in px between two boxes; negative when they overlap. */
+export function boxGap(a: Box, b: Box): number {
+  const dx = Math.max(a.left - b.right, b.left - a.right);
+  const dy = Math.max(a.top - b.bottom, b.top - a.bottom);
+  return Math.max(dx, dy);
+}
+
+/**
+ * From the Summon step of the ghost `character`: types its Cangjie code (read
+ * from characters.json), waits for the Write step, then draws every stroke
+ * along the dataset medians (the data the app hands to hanzi-writer), mapped
+ * to the screen with `getScreenCTM()` of the writer's positioned group, so the
+ * mapping is the library's own. Waits for the Seal_Stamp, which only a clean
+ * outcome produces. Uses real mouse input; no App hook is involved.
+ */
+export async function layToRestClean(page: Page, character: string): Promise<void> {
+  const record = datasetRecord(character);
+  if (record.cangjie === null) throw new Error(`${character} has no Cangjie code`);
+  const summon = page.getByRole('region', { name: 'Summon step' });
+  await expect(summon).toBeVisible({ timeout: 10_000 });
+  for (const letter of record.cangjie.toUpperCase()) {
+    await summon.getByRole('button', { name: new RegExp(`^Key ${letter}(,|$)`) }).click();
+  }
+  await expect(page.getByRole('region', { name: 'Write mode' })).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByTestId('ink-surface')).toBeVisible();
+  await page.waitForTimeout(500); // let the writer mount and settle
+
+  const group = page.locator(`${WRITER_SVG} > g`).first();
+  await expect(group).toBeAttached();
+  for (const median of record.strokeData.medians) {
+    const points = await group.evaluate((g, pts) => {
+      const ctm = (g as SVGGraphicsElement).getScreenCTM();
+      if (!ctm) throw new Error('the positioned group has no screen matrix');
+      return pts.map(([x, y]) => {
+        const p = new DOMPoint(x, y).matrixTransform(ctm);
+        return { x: p.x, y: p.y };
+      });
+    }, median);
+    const [first, ...rest] = points;
+    if (!first) throw new Error(`${character} has an empty median`);
+    await page.mouse.move(first.x, first.y);
+    await page.mouse.down();
+    for (const p of rest) await page.mouse.move(p.x, p.y, { steps: 4 });
+    await page.mouse.up();
+    await page.waitForTimeout(150);
+  }
+  await expect(page.getByRole('img', { name: `Seal: ${character}` })).toBeVisible({ timeout: 15_000 });
+}

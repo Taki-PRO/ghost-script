@@ -48,7 +48,12 @@ At most one per screen at a time.
 | Summon, writing, Graveyard, Sources & licences | none |
 
 ## The ghost
-One original ink-wash ghost: a brushed silhouette with bleeding edges, one inline SVG path with a turbulence and displacement filter, drawn only by `GhostFigure`. The same shape at every size and in the favicon (unfiltered copy). Two small eye marks as paths. No text inside it, nothing derived from a character, hidden from assistive technology.
+One original ink-wash ghost: a brushed silhouette with bleeding edges, one inline SVG path with a turbulence and displacement filter, drawn only by `GhostFigure`. The ghost is an ink wash (tone that darkens toward the hem, a second darker wash, a wet lower edge) with the same shape at every size and in the favicon (unfiltered copy, no gradient). Two small eye marks as paths. No text inside it, nothing derived from a character, hidden from assistive technology.
+
+## Moon, mist and seal placement (approved by the human, screenshot review)
+- The Moon is a full disc of 4 rem in the top right. It never lies under text. Below 992 px every screen keeps a top room of 4.75 rem for it.
+- The Mist has two bands in the lower third: 0.18 at 88% and 0.10 at 72%. Text keeps 4.5:1 on each band.
+- The seal sits in the paper margin and covers no stroke.
 
 ## Motion
 - Motion that follows a player action or game event runs 200 to 600 ms and shows cause and effect.

@@ -198,7 +198,7 @@ export function SeanceSession({
 
   return (
     <div className="mx-auto flex w-full max-w-xl flex-col items-center gap-2 p-2">
-      <div className="flex w-full items-center justify-between gap-3">
+      <div className="flex w-full items-center justify-between gap-3 pr-[4.5rem]">
         <button
           ref={leaveBtnRef}
           type="button"

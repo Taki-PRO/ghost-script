@@ -1,4 +1,8 @@
 import { GhostFigure } from './GhostFigure';
+import { CANGJIE_CITATIONS, LEGEND_SOURCE } from '../data/citations';
+
+/** Lets long unbreakable text (URLs) wrap at 375 px, as in Credits.tsx. */
+const WRAP = '[overflow-wrap:anywhere]';
 
 export interface IntroScreenProps {
   onBegin: () => void;
@@ -29,20 +33,32 @@ export function IntroScreen({ onBegin }: IntroScreenProps) {
           In Chinese legend, Cangjie invented writing. The legend says that when he did, ghosts
           wept in the night.
         </p>
+        <p className={`mt-2 text-sm text-ghost ${WRAP}`} data-testid="intro-citations">
+          Source: English Wikipedia,{' '}
+          {CANGJIE_CITATIONS.map((c, i) => (
+            <span key={c.url}>
+              {i > 0 ? '; ' : ''}&ldquo;{c.title}&rdquo; ({c.url})
+            </span>
+          ))}
+          .
+        </p>
         <p className="mt-4 text-lg leading-relaxed text-ink">
           In this game, characters you have forgotten how to write are ghosts. Type a ghost's shapes to
           summon it, then write it from memory.
         </p>
 
-        <figure className="ink-reveal mt-8 rounded-lg bg-surface px-5 py-4">
-          <blockquote>
-            <p lang="zh" className="text-2xl text-ghost">
+        <figure className="card-slip mt-8 px-5 py-5">
+          <blockquote className="ink-reveal">
+            <p lang="zh" className="text-3xl sm:text-4xl">
               天雨粟，鬼夜哭
             </p>
-            <p className="mt-2 text-muted">&ldquo;Heaven rained grain and ghosts wept at night.&rdquo;</p>
+            <p className="mt-2 text-base">&ldquo;Heaven rained grain and ghosts wept at night.&rdquo;</p>
           </blockquote>
-          <figcaption className="mt-2 text-sm text-muted">
-            The Huainanzi records this line about the time Cangjie created writing.
+          <figcaption className="mt-2 text-sm">
+            The Huainanzi records this line about the time Cangjie created writing.{' '}
+            <span className={`block mt-1 text-xs ${WRAP}`} data-testid="legend-citation">
+              {LEGEND_SOURCE.citation}
+            </span>
           </figcaption>
         </figure>
 

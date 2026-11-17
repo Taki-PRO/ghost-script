@@ -12,7 +12,8 @@ Rules for the implementer:
 - Never edit `app/src/engine/scheduler.ts`, `config.ts`, `outcome.ts`, `learningOrder.ts`, `cangjie.ts`, `app/src/storage/storage.ts` or `app/public/data/characters.json`.
 - Never write a personal name in any file. Write "approved by the human".
 - Never add Chinese text for decoration. Every glyph comes from the dataset, `CANGJIE_KEYS` or the Legend_Line.
-- Tasks that edit `app/src/styles/index.css` are in different waves: 2.2, 3.3, 6.1, 7.3.
+- Tasks that edit `app/src/styles/index.css` are in different waves: 2.2, 3.3, 6.1, 7.3, 12.2 and 12.6. Tasks that edit `e2e/helpers.ts` (12.8) and `app/src/modes/WriteMode.tsx` (7.2, 12.7) are also in different waves.
+- Tasks 12.1 to 12.12 implement the follow-up from the human's screenshot review (design, "Follow-up: screenshot review"), approved by the human. They add unit and component tests only, no property test and no mutation test, and they write no `kiro-log.md` entry.
 
 ## Tasks
 
@@ -137,8 +138,67 @@ Rules for the implementer:
   - Run `npm test`, `npx tsc -p tsconfig.json`, `npx tsc -p app/tsconfig.json`, `npx tsc -p oracle/tsconfig.json`, `npm run build -w app`, `npm run check:bundle` (budget 300,000 bytes; projected 201,501) and `npm run test:e2e`. Ask the human if any question arises.
   - _Requirements: 16.12, 19.4, 21.3_
 
+- [x] 12. Follow-up from the screenshot review (approved by the human)
+  - [x] 12.1 Update the Steering_File and its test
+    - In `.kiro/steering/art-direction.md` add: the Moon is a full disc of 4 rem in the top right that never lies under text, with a top room of 4.75 rem below 992 px; the Mist has two bands (0.18 at 88%, 0.10 at 72%); the ghost is an ink wash with the same shape everywhere; the seal sits in the paper margin and covers no stroke. Keep `inclusion: always`, the Primary_Action table and the named ambient exemptions.
+    - Extend `tests/unit/steering-art-direction.test.ts`: the new rules are present and no personal name appears.
+    - _Requirements: 1.2, 1.4, 8.3, 8.4, 13.1_
+  - [x] 12.2 Moon, Moon_Room and mist in `index.css`, with `moonRoom.ts`
+    - In `app/src/styles/index.css`: add `--moon-size`, `--moon-inset-x`, `--moon-inset-y`, `--moon-room` (a `clamp()` step at 992px, no `@media`), `--mist-a-alpha` 0.18, `--mist-b-alpha` 0.10; remove `--mist-peak-alpha`; set `--moon-disc-alpha` to 0.65 (amended from 0.70, approved by the human); replace the two moon gradients of `body::before` by the full disc and the 7 rem halo; set the two mist layers to the ellipses of the design (band A at 88%, band B at 72%); add `#root { padding-top: var(--moon-room) }`, `#root > main { min-height: calc(100vh - var(--moon-room)) }` (with a `100dvh` rule for the compact shell) and `.sticky-below-moon { top: var(--moon-room) }`.
+    - Create `app/src/engine/moonRoom.ts` with `MOON_ROOM_PX` (76), `MOON_ROOM_BREAKPOINT_PX` (992) and `moonRoomPx(width)`; add `moonRoom.test.ts`.
+    - Update `app/src/styles/index.css.test.ts`: replace the tests for `circle 1.6rem at 82% 0%`, `circle 9rem`, the four-ellipse extents and `--mist-peak-alpha` of 0.09 with the tests of the design (Moon custom properties and inset rule, halo at most 0.10, disc alpha above halo alpha, `--moon-room` has `clamp(` and `992px`, only the one no-preference `@media` block, `#root` padding, `.sticky-below-moon`; two mist bands with disjoint extents in the lower third and alpha A at least 1.5 times B; each text token at 4.5:1 on band A at 88%, band B at 72% and the halo composite; `ink` and `error` at 4.5:1 on the disc composite). Keep the threshold at 4.5.
+    - _Requirements: 8.2, 8.3, 8.4, 8.5, 8.10, 8.11, 8.13_
+  - [x] 12.3 Ink wash in `GhostFigure.tsx`
+    - Add the tone `linearGradient`, the darker wash `radialGradient` path, the blurred hem path and the `feGaussianBlur` filter, all with ids built from the one `useId` value; keep `GHOST_PATH`, `GHOST_EYE_PATHS`, `aria-hidden`, `focusable="false"` and no `text`.
+    - Update `GhostFigure.test.tsx` as in the design (gradients, three silhouette paths, two filters, disjoint and resolvable ids for two instances, no text) and add to the favicon test: no `linearGradient` or `radialGradient`, no `filter`, path equals `GHOST_PATH`. Leave `app/public/favicon.svg` unchanged.
+    - _Requirements: 6.1, 6.4, 6.5, 6.6, 6.9, 6.10, 6.11, 7.5, 7.6_
+  - [x] 12.4 Paper-slip legend in `IntroScreen.tsx`
+    - Make the figure a `card-slip`; move `ink-reveal` to the `blockquote`; set the Chinese line at `text-3xl sm:text-4xl` in ink on paper and the English line and the caption in ink on paper; remove `bg-surface`, `text-ghost` and `text-muted` from the figure. Keep the text, "wept" and the citation unchanged.
+    - Update `IntroScreen.test.tsx` as in the design; keep every existing assertion that still applies.
+    - _Requirements: 9.2, 9.4, 9.9, 9.10_
+  - [x] 12.5 Sticky header of Sources & licences below the Moon_Room
+    - In `app/src/components/Credits.tsx` replace `top-0` of the sticky header by the class `sticky-below-moon`.
+    - Update `Credits.test.tsx`: the header has `sticky-below-moon` and no `top-0`.
+    - _Requirements: 8.11_
+  - [x] 12.6 Hillside, stone tablets and tilt in `Graveyard.tsx`
+    - Create `app/src/engine/tabletTilt.ts` (`TABLET_TILTS_DEG` and `tabletTilt(position)`) and `tabletTilt.test.ts`.
+    - In `Graveyard.tsx` add the `aria-hidden` SVG hillside behind the grid, the arched outlines (no dotted or dashed border on `unmet`), the `tablet-tilt-N` class and `.sticky-below-moon` on the header; keep the markers, counts, accessible names, never-reveal types and the empty-state line.
+    - In `index.css` add the stone backgrounds, the arched radii, the `.tablet-tilt-0` to `.tablet-tilt-4` rules and the unmet rule; keep the glow, the wisp and the single no-preference block. Extend `index.css.test.ts` (tilt rules equal the pattern, `unmet` has no border) and `Graveyard.test.tsx` as in the design.
+    - _Requirements: 15.1, 15.2, 15.3, 15.4, 15.6, 15.10, 15.11, 15.12, 15.13, 15.14, 8.11_
+  - [x] 12.7 Seal in the paper margin and hanzi-writer padding
+    - Create `app/src/engine/sealLayout.ts` exporting `WRITE_PADDING_PX` (40), `SEAL_SIZE_PX` (32), `SEAL_INSET_PX` (4) and `SEAL_CLEARANCE_PX`; add `sealLayout.test.ts` (clearance at least 4).
+    - In `SealStamp.tsx` use the three constants for width, height, bottom and right and set the glyph to 24 px; in `WriteMode.tsx` pass `padding: WRITE_PADDING_PX` and subtract `moonRoomPx(window.innerWidth)` through `reservedPx` when it computes the surface size.
+    - Update `SealStamp.test.tsx` (24 px glyph, size and offsets from the constants; role, label, `aria-hidden` and pointer-events tests stay) and `WriteMode.test.tsx` (`padding` equals `WRITE_PADDING_PX`; the other options unchanged). Fix any other test that asserts `padding: 12`, 28 px or `h-12 w-12`.
+    - _Requirements: 12.8, 13.1, 13.4, 13.9, 13.13, 13.15_
+  - [x] 12.8 Add the e2e helpers for the Moon and the seal
+    - In `e2e/helpers.ts` add `moonDisc(page)` (reads `--moon-size`, `--moon-inset-x`, `--moon-inset-y`, resolves rem to pixels and returns the disc box), `moonIntruders(page)` and `expectMoonInside(page)` (moved from `screenshots.spec.ts`), and `layToRestClean(page, character)` (types the code read from `characters.json`, then draws every stroke from the `hanzi-writer-data` medians through the `getScreenCTM()` of the writer's positioned group).
+    - _Requirements: 8.12, 13.14_
+  - [x] 12.9 Retake the eight screenshots and extend the moon check
+    - In `e2e/screenshots.spec.ts` use the helpers of 12.8 instead of the regular expression over `background-image`; run the moon check in every view at both viewports and fail if the disc is cut off by a viewport edge; add a 320 × 640 moon check on the intro, the Summon step and the Graveyard; make the Write-step view lay a real character to rest `clean` with `layToRestClean` so the PNG shows the seal; write the same eight PNG names as before.
+    - Run `npm run test:e2e -- screenshots` and confirm that all eight PNGs exist and are not empty.
+    - _Requirements: 8.12, 20.1, 20.2, 20.3, 20.7, 20.8_
+  - [x] 12.10 Add `e2e/seal-margin.spec.ts`
+    - At 1024 × 768 and 375 × 812, lay a real character to rest `clean`, then compare the Seal_Stamp box with the box of every `path` in the writer SVG (at least 2 px apart, no overlap) and check that the stamp lies inside the paper box.
+    - _Requirements: 13.13, 13.14_
+  - [x] 12.11 Add `e2e/graveyard-fit.spec.ts`
+    - Seed at-rest, restless and unmet tablets and call `findOverflow` at 320, 375 and 1440 CSS pixels; fail on any overflow. Also check at scroll 0 at 375 × 812 and 320 × 640 that the sticky header row starts at or below the Moon_Room.
+    - _Requirements: 8.11, 15.7, 15.14_
+  - [x] 12.12 Record the amendments in `visual-identity`
+    - In `.kiro/specs/visual-identity/requirements.md` add an "Amended (approved by the human, screenshot review)" note to 21.3, 21.4 and 21.6 (mist, moon and composite), pointing to Requirements 8.3 to 8.5 of this spec.
+    - _Requirements: 22.3, 22.4_
+
+- [x] 13. Review again
+  - [x] 13.1 Re-run the accuracy review
+    - Run the Accuracy_Reviewer over the changed copy and rules: the Steering_File additions, the IntroScreen legend slip (the line, "wept", the attribution and the Huainanzi citation), the Seal_Stamp label and glyph source (24 px, still the dataset character only and only after a `clean` Outcome), the Graveyard (no decorative Chinese text on the hillside or on `unmet` tablets) and the README screenshot note. Fix every finding within this spec.
+    - _Requirements: 13.3, 13.6, 15.5, 18.3, 18.4, 18.7, 21.2_
+
+- [x] 14. Final checkpoint after the screenshot review
+  - Run `npm test`, `npx tsc -p tsconfig.json`, `npx tsc -p app/tsconfig.json`, `npx tsc -p oracle/tsconfig.json`, `npm run build -w app`, `npm run check:bundle` (budget 300,000 bytes) and `npm run test:e2e`. All must pass, with `fits-one-screen.spec.ts` and `no-horizontal-overflow.spec.ts` at their old thresholds. Ask the human if any question arises.
+  - _Requirements: 19.4, 21.3_
+
 ## Notes
 
+- Tasks 12.1 to 14 are the follow-up from the human's screenshot review. 12.2 and 12.6 both edit `index.css` and `index.css.test.ts`, so they are in waves 9 and 10; 12.2 creates `moonRoom.ts`, which 12.7 imports in wave 10.
 - Tests are part of each task and are not optional, because the repo rule requires tests for new code. They are unit and component tests only.
 - The waves keep each file in one task per wave. `index.css` is edited by 2.2, 3.3, 6.1 and 7.3 in four different waves; `README.md` by 3.4 and 9.1 in two different waves; `tailwind.config.ts` by 2.1 and 3.3 in two different waves.
 - Task 10.2 is human-only and is not a coding task.
@@ -158,7 +218,12 @@ Rules for the implementer:
     { "id": 5, "tasks": ["7.3"] },
     { "id": 6, "tasks": ["9.1"] },
     { "id": 7, "tasks": ["10.1"] },
-    { "id": 8, "tasks": ["10.2", "10.3"] }
+    { "id": 8, "tasks": ["10.2", "10.3"] },
+    { "id": 9, "tasks": ["12.1", "12.2", "12.3", "12.4"] },
+    { "id": 10, "tasks": ["12.5", "12.6", "12.7"] },
+    { "id": 11, "tasks": ["12.8", "12.12"] },
+    { "id": 12, "tasks": ["12.9", "12.10", "12.11"] },
+    { "id": 13, "tasks": ["13.1"] }
   ]
 }
 ```

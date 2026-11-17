@@ -19,11 +19,13 @@ describe('GhostFigure', () => {
     expect(container.textContent).toBe('');
   });
 
-  it('draws one body path with the shared GHOST_PATH', () => {
+  it('draws three silhouette paths with the shared GHOST_PATH (hem, body, wash)', () => {
     const { container } = render(<GhostFigure />);
-    const body = container.querySelectorAll('path[fill="currentColor"]');
-    expect(body).toHaveLength(1);
-    expect(body[0].getAttribute('d')).toBe(GHOST_PATH);
+    const paths = Array.from(container.querySelectorAll('path')).filter((p) => p.getAttribute('d') === GHOST_PATH);
+    expect(paths).toHaveLength(3);
+    expect(paths[0].getAttribute('filter')).toMatch(/-blur\)$/);
+    expect(paths[1].getAttribute('fill')).toMatch(/-tone\)$/);
+    expect(paths[2].getAttribute('fill')).toMatch(/-wash\)$/);
   });
 
   it('draws two eye paths in the theme background, and no circles', () => {
@@ -34,27 +36,45 @@ describe('GhostFigure', () => {
     expect(Array.from(eyes).map((e) => e.getAttribute('d'))).toEqual([...GHOST_EYE_PATHS]);
   });
 
-  it('has one filter with feTurbulence and feDisplacementMap, applied to the body', () => {
+  it('has a tone gradient with decreasing stop opacity and a darker wash gradient', () => {
     const { container } = render(<GhostFigure />);
-    const filters = container.querySelectorAll('filter');
-    expect(filters).toHaveLength(1);
-    expect(filters[0].querySelector('feTurbulence')).not.toBeNull();
-    expect(filters[0].querySelector('feDisplacementMap')).not.toBeNull();
-    const body = container.querySelector('path[fill="currentColor"]');
-    expect(body?.getAttribute('filter')).toBe(`url(#${filters[0].id})`);
+    expect(container.querySelectorAll('linearGradient')).toHaveLength(1);
+    expect(container.querySelectorAll('radialGradient')).toHaveLength(1);
+    const ops = Array.from(container.querySelectorAll('linearGradient stop')).map((s) =>
+      Number(s.getAttribute('stop-opacity')),
+    );
+    expect(ops).toHaveLength(3);
+    expect(ops[0]).toBeGreaterThan(ops[1]);
+    expect(ops[1]).toBeGreaterThan(ops[2]);
   });
 
-  it('gives each instance a unique filter id', () => {
+  it('has two filters: displacement for the edge, gaussian blur for the hem', () => {
+    const { container } = render(<GhostFigure />);
+    const filters = container.querySelectorAll('filter');
+    expect(filters).toHaveLength(2);
+    expect(container.querySelector('feTurbulence')).not.toBeNull();
+    expect(container.querySelector('feDisplacementMap')).not.toBeNull();
+    expect(container.querySelector('filter feGaussianBlur')).not.toBeNull();
+  });
+
+  it('gives two instances disjoint ids and every url reference resolves', () => {
     const { container } = render(
       <>
         <GhostFigure />
         <GhostFigure />
       </>,
     );
-    const ids = Array.from(container.querySelectorAll('filter')).map((f) => f.id);
-    expect(ids).toHaveLength(2);
-    expect(ids[0]).not.toBe('');
-    expect(ids[0]).not.toBe(ids[1]);
+    const ids = Array.from(container.querySelectorAll('[id]')).map((e) => e.id);
+    expect(ids).toHaveLength(8);
+    expect(new Set(ids).size).toBe(8);
+    for (const svg of Array.from(container.querySelectorAll('svg'))) {
+      const own = new Set(Array.from(svg.querySelectorAll('[id]')).map((e) => e.id));
+      const refs = Array.from(svg.querySelectorAll('[fill], [filter]')).flatMap((e) =>
+        [e.getAttribute('fill'), e.getAttribute('filter')].flatMap((v) => v?.match(/url\(#([^)]+)\)/)?.[1] ?? []),
+      );
+      expect(refs.length).toBeGreaterThan(0);
+      for (const r of refs) expect(own.has(r)).toBe(true);
+    }
   });
 
   it('applies className', () => {
@@ -67,8 +87,8 @@ describe('favicon', () => {
   const file = resolve(__dirname, '../../public/favicon.svg');
   const svg = readFileSync(file, 'utf8');
 
-  it('has no filter and stays under 4,096 bytes', () => {
-    expect(svg).not.toMatch(/<filter|filter=|feTurbulence|feDisplacementMap/);
+  it('has no filter or gradient and stays under 4,096 bytes', () => {
+    expect(svg).not.toMatch(/<filter|filter=|feTurbulence|feDisplacementMap|feGaussianBlur|linearGradient|radialGradient/);
     expect(statSize(file)).toBeLessThanOrEqual(4096);
   });
 

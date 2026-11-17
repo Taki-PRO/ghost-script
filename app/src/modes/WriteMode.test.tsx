@@ -6,6 +6,7 @@ import type { CharacterDataset } from '../data/charDataLoader';
 import type { CharacterRecord } from '../data/types';
 import { DEFAULT_CONFIG, type EngineConfig } from '../engine/config';
 import { WALKTHROUGH_LINE_PX, writeSurfaceSize } from '../engine/surfaceSize';
+import { WRITE_PADDING_PX } from '../engine/sealLayout';
 import { theme } from '../styles/theme';
 import { isHintTriggered, resolveCompletion, WriteMode } from './WriteMode';
 
@@ -150,6 +151,7 @@ describe('WriteMode setup (Req 5.1, 5.2)', () => {
     expect(o.drawingColor).toBe(theme.drawing);
     expect(o.drawingWidth).toBe(6);
     expect(o.showOutline).toBe(false);
+    expect(o.padding).toBe(WRITE_PADDING_PX);
   });
 
   it.each([

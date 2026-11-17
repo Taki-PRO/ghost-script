@@ -94,7 +94,8 @@ describe('Credits', () => {
     expect(header).toContainElement(buttons[0]);
     const classes = header.className.split(/\s+/);
     expect(classes).toContain('sticky');
-    expect(classes).toContain('top-0');
+    expect(classes).toContain('sticky-below-moon');
+    expect(classes).not.toContain('top-0');
     expect(classes).toContain('bg-night-top');
   });
 

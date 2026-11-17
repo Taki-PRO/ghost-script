@@ -23,18 +23,46 @@ export const GHOST_EYE_PATHS: readonly string[] = [
   'M38.6 31.2 C39.2 29.2 41.8 28.8 43.4 30.2 C44.8 31.6 44.4 34.4 42.2 35.4 C40.2 36.2 38.2 33.8 38.6 31.2 Z',
 ];
 
-/** The ghost shared by the ghost card, the start menu and the intro. No text element. */
+/**
+ * The ghost shared by the ghost card, the start menu and the intro. No text element.
+ * An ink wash: a blurred wet hem, a body with a tone gradient, and a darker second wash
+ * on the belly. Every id starts with the one per-instance `useId` value.
+ */
 export function GhostFigure({ className = '' }: GhostFigureProps) {
-  const filterId = `ghost-bleed-${useId().replace(/:/g, '')}`;
+  const base = `ghost-${useId().replace(/:/g, '')}`;
+  const bleedId = `${base}-bleed`;
+  const toneId = `${base}-tone`;
+  const washId = `${base}-wash`;
+  const blurId = `${base}-blur`;
   return (
     <svg aria-hidden="true" focusable="false" viewBox="0 0 64 80" className={className}>
       <defs>
-        <filter id={filterId} x="-20%" y="-20%" width="140%" height="140%">
+        <filter id={bleedId} x="-20%" y="-20%" width="140%" height="140%">
           <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="7" result="noise" />
           <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G" />
         </filter>
+        <filter id={blurId} x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="1.2" />
+        </filter>
+        <linearGradient id={toneId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="currentColor" stopOpacity="1" />
+          <stop offset="55%" stopColor="currentColor" stopOpacity="0.82" />
+          <stop offset="100%" stopColor="currentColor" stopOpacity="0.55" />
+        </linearGradient>
+        <radialGradient id={washId} cx="0.38" cy="0.62" r="0.55">
+          <stop offset="0%" stopColor={theme.background} stopOpacity="0.35" />
+          <stop offset="100%" stopColor={theme.background} stopOpacity="0" />
+        </radialGradient>
       </defs>
-      <path d={GHOST_PATH} fill="currentColor" filter={`url(#${filterId})`} />
+      <path
+        d={GHOST_PATH}
+        fill="currentColor"
+        opacity="0.45"
+        transform="translate(0 1.5)"
+        filter={`url(#${blurId})`}
+      />
+      <path d={GHOST_PATH} fill={`url(#${toneId})`} filter={`url(#${bleedId})`} />
+      <path d={GHOST_PATH} fill={`url(#${washId})`} filter={`url(#${bleedId})`} />
       {GHOST_EYE_PATHS.map((d) => (
         <path key={d} d={d} fill={theme.background} />
       ))}

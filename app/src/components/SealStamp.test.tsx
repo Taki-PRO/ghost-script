@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, render, screen } from '@testing-library/react';
 import { SealStamp } from './SealStamp';
+import { SEAL_GLYPH_PX, SEAL_INSET_PX, SEAL_SIZE_PX } from '../engine/sealLayout';
 import { theme } from '../styles/theme';
 import realDataJson from '../../public/data/characters.json';
 
@@ -17,14 +18,22 @@ describe('SealStamp', () => {
     expect(glyph.getAttribute('aria-hidden')).toBe('true');
     expect(glyph.getAttribute('lang')).toBe('zh');
   });
-  it('shows only the prop character, at 28 px in paperLabel, with no other Chinese text', () => {
+  it('shows only the prop character, at the glyph size in paperLabel, with no other Chinese text', () => {
     render(<SealStamp character={CHAR} />);
     const seal = screen.getByTestId('seal-stamp');
     expect(seal.textContent).toBe(CHAR);
     const glyph = seal.querySelector('span')!;
-    expect(glyph.style.fontSize).toBe('28px');
+    expect(glyph.style.fontSize).toBe(`${SEAL_GLYPH_PX}px`);
     expect(glyph).toHaveStyle({ color: theme.paperLabel });
     expect(seal.querySelector('rect')!.getAttribute('fill')).toBe(theme.seal);
+  });
+  it('is sized and placed from the layout constants', () => {
+    render(<SealStamp character={CHAR} />);
+    const seal = screen.getByTestId('seal-stamp');
+    expect(seal.style.width).toBe(`${SEAL_SIZE_PX}px`);
+    expect(seal.style.height).toBe(`${SEAL_SIZE_PX}px`);
+    expect(seal.style.bottom).toBe(`${SEAL_INSET_PX}px`);
+    expect(seal.style.right).toBe(`${SEAL_INSET_PX}px`);
   });
   it('ignores pointer events and takes no layout space', () => {
     render(<SealStamp character={CHAR} />);

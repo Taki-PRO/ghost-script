@@ -23,7 +23,7 @@ export function Credits({ onBack }: CreditsProps) {
       className="min-h-screen text-ink px-4 pb-10 pt-0 flex justify-center"
     >
       <div className="w-full max-w-3xl">
-        <header className="sticky top-0 z-20 -mx-4 flex min-h-[64px] items-center justify-between gap-3 border-b border-muted/40 bg-night-top px-4 py-2">
+        <header className="sticky sticky-below-moon z-20 -mx-4 flex min-h-[64px] items-center justify-between gap-3 border-b border-muted/40 bg-night-top px-4 py-2">
           <h1
             id="credits-title"
             className="min-w-0 font-display text-2xl font-semibold tracking-wide text-ink sm:text-3xl"

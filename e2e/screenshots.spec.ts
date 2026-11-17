@@ -7,7 +7,9 @@ import {
   START,
   datasetMap,
   datasetRecord,
+  expectMoonInside,
   expectNoVerticalScroll,
+  layToRestClean,
   seed,
   seedBefore,
   seedState,
@@ -17,8 +19,8 @@ import {
 
 // Screenshots (Requirement 20): four views at the two Rite_Viewports, written to the
 // gitignored `e2e/screenshots/`. Every key letter is read from characters.json at test
-// time. Each view also checks by bounding boxes that no control or text lies inside the
-// moon disc (design, "Night scene").
+// time. Each view also checks that the moon disc is wholly inside the viewport and that
+// no control or text lies inside it (Requirement 8.12, helpers `expectMoonInside`).
 
 const SHOTS_DIR = fileURLToPath(new URL('./screenshots/', import.meta.url));
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -28,8 +30,6 @@ const VIEWPORTS = [
   { width: 375, height: 812 },
 ] as const;
 
-
-
 async function save(page: Page, view: string): Promise<void> {
   mkdirSync(SHOTS_DIR, { recursive: true });
   const size = page.viewportSize();
@@ -38,48 +38,6 @@ async function save(page: Page, view: string): Promise<void> {
   await page.screenshot({ path });
   const bytes = statSync(path).size; // throws when the file is missing
   expect(bytes, `${path} is empty`).toBeGreaterThan(0);
-}
-
-/** Lines naming every control or text element whose box meets the moon disc. */
-async function moonIntruders(page: Page): Promise<string[]> {
-  await page.evaluate(() => document.fonts.ready);
-  return page.evaluate(() => {
-    // The disc is the first `circle <r> at <x>% <y>%` gradient of the fixed body::before
-    // (index.css); its position is read from the computed style, never hard-coded.
-    const bg = getComputedStyle(document.body, '::before').backgroundImage;
-    const m = bg.match(/radial-gradient\((?:circle )?([\d.]+)(rem|px)(?: circle)? at ([\d.]+)% ([\d.]+)%/);
-    if (!m) return [`moon disc not found in body::before: ${bg.slice(0, 200)}`];
-    const rem = Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
-    const radius = Number.parseFloat(m[1]!) * (m[2] === 'rem' ? rem : 1);
-    const cx = (Number.parseFloat(m[3]!) / 100) * window.innerWidth;
-    const cy = (Number.parseFloat(m[4]!) / 100) * window.innerHeight;
-    const out: string[] = [];
-    const hasOwnText = (el: Element): boolean =>
-      Array.from(el.childNodes).some((n) => n.nodeType === 3 && (n.textContent ?? '').trim() !== '');
-    const isControl = (el: Element): boolean =>
-      el.matches('button, a, input, select, textarea, [role="button"], [data-testid="ink-surface"]');
-    for (const el of Array.from(document.body.querySelectorAll('*'))) {
-      if (!isControl(el) && !hasOwnText(el)) continue;
-      const cs = getComputedStyle(el);
-      if (cs.display === 'none' || cs.visibility === 'hidden') continue;
-      const r = el.getBoundingClientRect();
-      if (r.width === 0 || r.height === 0) continue;
-      const nx = Math.max(r.left, Math.min(cx, r.right));
-      const ny = Math.max(r.top, Math.min(cy, r.bottom));
-      if ((nx - cx) ** 2 + (ny - cy) ** 2 < radius ** 2) {
-        const text = (el.textContent ?? '').trim().slice(0, 30);
-        out.push(
-          `${el.tagName.toLowerCase()} "${text}" box ${Math.round(r.left)},${Math.round(r.top)} to ` +
-            `${Math.round(r.right)},${Math.round(r.bottom)}; moon ${Math.round(cx)},${Math.round(cy)} r ${Math.round(radius)}`,
-        );
-      }
-    }
-    return out;
-  });
-}
-
-async function expectMoonClear(page: Page, view: string): Promise<void> {
-  expect(await moonIntruders(page), `${view}: something lies inside the moon disc`).toEqual([]);
 }
 
 function code(record: CharacterRecord): string {
@@ -105,6 +63,20 @@ function graveyardSeed(now: number = Date.now()): SeedState {
   return seedState({ history });
 }
 
+async function openSummon(page: Page, character: string): Promise<void> {
+  await seed(page, seedBefore(character));
+  await page.goto(START);
+  await page.getByRole('button', { name: 'Begin a Nightly Séance' }).click();
+  await expect(page.getByRole('region', { name: 'Summon step' })).toBeVisible({ timeout: 10_000 });
+}
+
+async function openGraveyard(page: Page): Promise<void> {
+  await seed(page, graveyardSeed());
+  await page.goto(START);
+  await page.getByRole('button', { name: 'Graveyard' }).click();
+  await expect(page.getByRole('heading', { name: 'Graveyard' })).toBeVisible();
+}
+
 for (const vp of VIEWPORTS) {
   test.describe(`screenshots at ${vp.width} x ${vp.height}`, () => {
     test.use({ viewport: vp });
@@ -113,7 +85,7 @@ for (const vp of VIEWPORTS) {
       await seed(page, seedState({ introSeen: false }));
       await page.goto(START);
       await expect(page.getByRole('button', { name: 'Begin the Séance' })).toBeVisible();
-      await expectMoonClear(page, 'intro');
+      await expectMoonInside(page, 'intro');
       await save(page, 'intro');
     });
 
@@ -121,47 +93,56 @@ for (const vp of VIEWPORTS) {
       const record = datasetRecord('明');
       const expected = firstKeyStrokes(record);
       expect(expected, 'the first key of 明 must ink at least one stroke').toBeGreaterThan(0);
-      await seed(page, seedBefore(record.character));
-      await page.goto(START);
-      await page.getByRole('button', { name: 'Begin a Nightly Séance' }).click();
+      await openSummon(page, record.character);
       const summon = page.getByRole('region', { name: 'Summon step' });
-      await expect(summon).toBeVisible({ timeout: 10_000 });
       await expect(page.getByRole('region', { name: "Ghost's clue" })).toContainText(record.prompt.pinyin);
       await summon.getByRole('button', { name: new RegExp(`^Key ${code(record)[0]}(,|$)`) }).click();
       await expect.poll(() => visibleInkPaths(page), { timeout: 10_000 }).toBe(expected);
       await page.waitForTimeout(1500); // let the stroke finish drawing
-      await expectMoonClear(page, 'summon');
+      await expectMoonInside(page, 'summon');
       await save(page, 'summon');
     });
 
     test('write step', async ({ page }) => {
       const record = datasetRecord('明');
-      await seed(page, seedBefore(record.character));
-      await page.goto(START);
-      await page.getByRole('button', { name: 'Begin a Nightly Séance' }).click();
-      const summon = page.getByRole('region', { name: 'Summon step' });
-      await expect(summon).toBeVisible({ timeout: 10_000 });
-      await summon.getByRole('button', { name: 'Give up' }).click();
-      const write = page.getByRole('region', { name: 'Write mode' });
-      await expect(write).toBeVisible({ timeout: 10_000 });
-      await expect(page.getByTestId('ink-surface')).toBeVisible();
-      await page.waitForTimeout(1000);
+      await openSummon(page, record.character);
+      await layToRestClean(page, record.character); // waits for the Seal_Stamp
+      await page.waitForTimeout(1000); // let the stamp finish
       await expectNoVerticalScroll(page);
-      await expectMoonClear(page, 'write');
+      await expectMoonInside(page, 'write');
       await save(page, 'write');
     });
 
     test('graveyard with a seeded history', async ({ page }) => {
-      await seed(page, graveyardSeed());
-      await page.goto(START);
-      await page.getByRole('button', { name: 'Graveyard' }).click();
-      await expect(page.getByRole('heading', { name: 'Graveyard' })).toBeVisible();
+      await openGraveyard(page);
       const graves = page.getByRole('list', { name: 'Graves' });
       await expect(graves.getByRole('listitem', { name: /at rest/ })).toHaveCount(8);
       await expect(graves.getByRole('listitem', { name: /restless/ })).toHaveCount(4);
       await expect(graves.getByRole('listitem', { name: /never met/ }).first()).toBeVisible();
-      await expectMoonClear(page, 'graveyard');
+      await expectMoonInside(page, 'graveyard');
       await save(page, 'graveyard');
     });
   });
 }
+
+// Moon check at 320 x 640 (Requirement 8.12): intro, Summon step and Graveyard. No PNG is written.
+test.describe('moon at 320 x 640', () => {
+  test.use({ viewport: { width: 320, height: 640 } });
+
+  test('intro', async ({ page }) => {
+    await seed(page, seedState({ introSeen: false }));
+    await page.goto(START);
+    await expect(page.getByRole('button', { name: 'Begin the Séance' })).toBeVisible();
+    await expectMoonInside(page, 'intro 320');
+  });
+
+  test('summon', async ({ page }) => {
+    await openSummon(page, '明');
+    await expectMoonInside(page, 'summon 320');
+  });
+
+  test('graveyard', async ({ page }) => {
+    await openGraveyard(page);
+    await expectMoonInside(page, 'graveyard 320');
+  });
+});

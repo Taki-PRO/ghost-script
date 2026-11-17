@@ -34,20 +34,24 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 - **Outcome**: `clean`, `struggled` or `gave-up`, as defined in `ghost-game-core`.
 - **Flinch**: A short flicker of the Ink_Ghost caused by a wrong key in the Summon step. It is not an Outcome and not a Ghost_State.
 - **Night_Scene**: The page background: the Sky_Gradient, the Moon, two Mist_Bands, Paper_Grain and the Vignette.
-- **Moon**: A pale disc with a halo, drawn with CSS gradients, placed where no text sits.
-- **Mist_Band**: One of two translucent horizontal bands of mist that drift in opposite directions.
+- **Moon**: A full pale disc, 4 rem across, with a soft halo, drawn with CSS gradients on `body::before`, in the top right of the viewport, never cut off by a viewport edge and never under text. *(Amended, approved by the human, screenshot review.)*
+- **Moon_Room**: The empty band at the top of every screen below 992 CSS pixels wide, 4.75 rem (76 CSS pixels) high, in which only the Moon is drawn. It is 0 at 992 CSS pixels and wider, where the Moon lies to the right of the content column. The CSS custom property `--moon-room` holds it.
+- **Mist_Band**: One of two translucent horizontal bands of mist that drift in opposite directions. Band A (strong) is centred at 88% of the viewport height with a peak alpha of 0.18; band B (soft) is centred at 72% with a peak alpha of 0.10. Each band is made of two ellipses at the same height. *(Amended, approved by the human, screenshot review.)*
 - **Paper_Grain**: A fine noise texture drawn by an inline SVG `feTurbulence` filter in a `data:` URI.
 - **Vignette**: A soft darkening towards the edges of the viewport.
 - **Legend_Line**: The approved line 天雨粟，鬼夜哭 of the intro, with its English rendering.
 - **Ink_Reveal**: The effect that makes the Legend_Line appear as if written, left to right, by a CSS mask wipe.
 - **Keycap**: One key of the Summon_Keyboard, drawn as a worn keycap.
 - **Summon_Keyboard**: The 25 on-screen keys of the Summon step, in the rows `QWERTYUIOP`, `ASDFGHJKL` and `XCVBNM`.
-- **Seal_Stamp**: A red seal that stamps the paper when a ghost is laid to rest. It carries the ghost's own character (the Seal_Glyph).
+- **Seal_Stamp**: A red seal that stamps the paper when a ghost is laid to rest. It carries the ghost's own character (the Seal_Glyph) and sits in the Seal_Margin, 32 CSS pixels square, 4 CSS pixels from the right and bottom edges of the paper.
 - **Seal_Glyph**: The Dataset_Character of the ghost that was laid to rest, taken from the dataset record of the target character, set in the Chinese_Font in `paperLabel` on `seal`.
 - **Laid_To_Rest**: The Outcome `clean` of a ghost.
 - **Outcome_Motion**: The motion of the Ink_Ghost for an Outcome: dissolve upward like ink smoke for `clean`, linger at the paper's edge for `struggled`, slip away for `gave-up`.
 - **Graveyard_Screen**: The screen that shows one tablet per dataset character.
-- **Tablet**: One cell of the Graveyard_Screen, drawn as a stone tablet.
+- **Tablet**: One cell of the Graveyard_Screen, drawn as a stone tablet with an arched top.
+- **Hillside**: The inline SVG silhouette of a night hill, drawn behind the grid of Tablets, `aria-hidden`.
+- **Tablet_Tilt**: The fixed rotation of a Tablet, taken from the five-value pattern `[-3, 1.5, 0, -1.5, 3]` degrees by the Tablet's position modulo 5. It is never random.
+- **Seal_Margin**: The paper margin in the lower right corner of the Writing_Surface, between the hanzi-writer drawing area and the paper edge, in which the Seal_Stamp sits. Its width is `WRITE_PADDING_PX` (40 CSS pixels).
 - **Grave_State**: One of `unmet`, `restless`, `at-rest`, as defined in `visual-identity`.
 - **Dataset_Character**: A character of `app/public/data/characters.json` (300 characters).
 - **Key_Shape**: The shape shown on a Keycap, from `CANGJIE_KEYS` in `app/src/engine/cangjieRules.ts`, including 難.
@@ -142,7 +146,7 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 
 #### Acceptance Criteria
 
-1. THE GhostFigure SHALL draw the Ink_Ghost as one inline SVG: a brushed silhouette path with bleeding edges, made by an `feTurbulence` filter that feeds an `feDisplacementMap` filter.
+1. THE GhostFigure SHALL draw the Ink_Ghost as one inline SVG: a brushed silhouette path with bleeding edges, made by an `feTurbulence` filter that feeds an `feDisplacementMap` filter, filled as an ink wash (criteria 9 and 10) and not as a flat colour. *(Amended, approved by the human, screenshot review.)*
 2. THE GhostFigure SHALL be the only component that draws a ghost, and SHALL replace the previous blob silhouette in the Ghost_Card, the Start_Menu, the IntroScreen and every other place that shows a ghost.
 3. THE GhostFigure SHALL keep one path and one filter definition for every size, and SHALL scale the displacement in proportion to the rendered size so that the edge looks the same at 36 px and at 160 px.
 4. THE GhostFigure SHALL give each instance a unique filter identifier, so that two instances on one screen never share or collide on an identifier.
@@ -150,6 +154,9 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 6. THE GhostFigure SHALL contain no value derived from a Dataset_Character.
 7. THE Ink_Ghost SHALL show two small eye marks inside the silhouette, drawn as paths, not as text.
 8. THE GhostFigure tests SHALL check the properties of criteria 1, 4, 5 and 6 and SHALL no longer assert the two `circle` eyes of the previous shape.
+9. THE GhostFigure SHALL fill the silhouette with an uneven ink tone: a `linearGradient` that runs from full opacity at the head to 0.55 opacity at the hem, and a second, darker wash layer (a `radialGradient` of the `background` token, peak opacity 0.35, centred off-axis) clipped to the same silhouette, so that the tone differs between at least two regions of the body. *(Added, approved by the human, screenshot review.)*
+10. THE GhostFigure SHALL bleed its lower edge: a copy of the silhouette, shifted down by 1.5 viewBox units, blurred by an `feGaussianBlur` with a standard deviation of 1.2 viewBox units and drawn at 0.45 opacity beneath the body, so that the hem looks like wet ink. *(Added, approved by the human, screenshot review.)*
+11. THE GhostFigure SHALL give every gradient, filter and clip it defines an identifier made from one `useId` value plus a fixed suffix, so that two instances on one screen never share an identifier. *(Added, approved by the human, screenshot review.)*
 
 ### Requirement 7: Favicon
 
@@ -162,6 +169,7 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 3. THE favicon SHALL be one file of at most 4,096 bytes and SHALL reference no external resource.
 4. THE App SHALL ship only the SVG favicon `app/public/favicon.svg`, declared in `app/index.html` with `rel="icon"` and `type="image/svg+xml"`, and SHALL add no raster icon, no `apple-touch-icon` and no `mask-icon`. *(Approved by the human, Q7.)*
 5. THE Test_Suite SHALL fail IF the favicon contains a `filter` element or a filter attribute, or IF the favicon path differs from the GhostFigure silhouette path.
+6. THE favicon SHALL stay a flat, unfiltered copy of the silhouette with no gradient, because the wash is invisible at 16 CSS pixels. *(Added, approved by the human, screenshot review.)*
 
 ### Requirement 8: Night scene
 
@@ -170,14 +178,18 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 #### Acceptance Criteria
 
 1. THE App SHALL paint the Night_Scene behind every screen with CSS and inline SVG `data:` URIs only, with no image file.
-2. THE Night_Scene SHALL contain, from back to front, the Sky_Gradient, the Moon, two Mist_Bands, the Paper_Grain and the Vignette.
-3. THE Moon SHALL be a pale disc with a halo, placed in the upper right of the viewport, at least 4 rem across, and SHALL sit where no text or control is drawn at the Rite_Viewports.
-4. THE two Mist_Bands SHALL drift in opposite horizontal directions, each with a drift period of at least 90 seconds, and SHALL be visible in a screenshot at their resting position. *(Amends `visual-identity` Requirement 21.3 and 21.4 only in strength: the halo peak opacity limit of 0.10 stays for the halo; the disc is exempt; the blue-black night stays and the Moon disc is a separate object; approved by the human, Q8.)*
-5. THE App SHALL give every text colour token a contrast ratio of at least 4.5:1 against the worst-case composite of the Sky_Gradient, both Mist_Bands at their peak opacity, the Moon halo and the Paper_Grain.
+2. THE Night_Scene SHALL contain, from back to front, the Sky_Gradient, the Moon, two Mist_Bands, the Paper_Grain and the Vignette. *(Amended, approved by the human, screenshot review: the order is unchanged; the Moon stays a gradient of `body::before`, not a positioned element.)*
+3. THE Moon SHALL be a full pale disc with a soft halo, 4 rem across, with its centre 2.5 rem from the right edge and 2.5 rem from the top edge of the viewport, so that the whole disc is inside the viewport on every screen, and SHALL sit where no text or control is drawn at the Rite_Viewports. THE disc SHALL have a peak alpha of 0.65 and the halo a peak alpha of 0.10. *(Amended, approved by the human, screenshot review: replaces the half-visible disc of 3.2 rem at `82% 0%` with alpha 0.55.)* *(Amended again, approved by the human, task 12.2: the disc alpha is 0.65, not 0.70, because with the halo under the disc and the grain at 0.03, 0.70 gives `error` 4.20:1 and 0.65 is the highest value at 4.5:1.)*
+4. THE two Mist_Bands SHALL drift in opposite horizontal directions, each with a drift period of at least 90 seconds, SHALL be visible in a still screenshot at their resting position, SHALL differ in peak alpha (0.18 and 0.10) and in height (88% and 72% of the viewport height), and SHALL lie in the lower third of the viewport. *(Amended, approved by the human, screenshot review: replaces the single peak alpha of 0.09 and the disjoint ellipses at 27% to 90%. Amends `visual-identity` Requirement 21.3 and 21.4 only in strength: the halo peak opacity limit of 0.10 stays for the halo; the disc is exempt; the blue-black night stays and the Moon disc is a separate object; approved by the human, Q8.)*
+5. THE App SHALL give every text colour token a contrast ratio of at least 4.5:1 against the worst-case composite of the Sky_Gradient, the Mist_Band that lies at that height at its own peak alpha, the Moon halo and the Paper_Grain, each composite taken at the height where that layer is strongest. *(Amended, approved by the human, screenshot review: the 4.5:1 threshold is unchanged. The composites are the band A composite at 88%, the band B composite at 72% and the halo composite near the Moon.)*
 6. WHILE Reduced_Motion is active, THE Mist_Bands SHALL be static at their resting positions.
 7. THE Night_Scene SHALL let mouse, touch and pen events reach the controls above it, and SHALL add no element to the accessibility tree.
 8. THE Night_Scene SHALL add no new DOM element; it SHALL use the existing pseudo-elements `body::before`, `body::after` and `#root::before`, or a new pseudo-element of `#root`.
 9. THE Test_Suite SHALL fail IF a `url()` in `app/src/styles/index.css` is neither a `data:` URI nor the single Font_Subset asset of Requirement 16.
+10. THE App SHALL leave the Moon_Room empty above the first heading of every screen below 992 CSS pixels wide by adding `padding-top: var(--moon-room)` to `#root` and by setting the height of the screen's `main` element to the viewport height minus `--moon-room`, so that no screen gains a vertical scrollbar from the Moon_Room. THE value of `--moon-room` SHALL step from 0 to 4.75 rem at 992 CSS pixels with a `clamp()` expression and no `@media` rule. *(Added, approved by the human, screenshot review.)*
+11. WHILE the Graveyard_Screen or the Sources & licences screen is scrolled, THE sticky header of that screen SHALL stay below the Moon_Room (`top: var(--moon-room)`), so that no header text or control meets the Moon. *(Added, approved by the human, screenshot review.)*
+12. THE E2E_Suite SHALL fail, at 1024 × 768, 375 × 812 and 320 × 640, IF any control or text element meets the Moon disc, or IF the Moon disc, read from the custom properties `--moon-size`, `--moon-inset-x` and `--moon-inset-y`, is not wholly inside the viewport. *(Added, approved by the human, screenshot review: extends the overlap test of Requirement 20.)*
+13. THE `index.css.test.ts` SHALL check that `--moon-size` is at least 4 rem, that both insets are at least half of `--moon-size`, that the disc alpha is greater than the halo alpha, that the halo alpha is at most 0.10, and that `ink` and `error` keep 4.5:1 against the disc composite. *(Added, approved by the human, screenshot review. The other text tokens do not reach 4.5:1 on the disc, and criterion 12 keeps all text out of it.)*
 
 ### Requirement 9: First screen
 
@@ -186,13 +198,15 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 #### Acceptance Criteria
 
 1. THE IntroScreen SHALL show, above the legend text, the GhostFigure and the `h1` "Ghost Script" in the display serif (Cormorant Garamond) at a size of at least 3rem.
-2. THE IntroScreen SHALL show the Legend_Line 天雨粟，鬼夜哭 with its English rendering and its Huainanzi attribution, with the exact text approved in `content-accuracy.md`.
+2. THE IntroScreen SHALL show the Legend_Line 天雨粟，鬼夜哭 with its English rendering and its Huainanzi attribution, with the exact text approved in `content-accuracy.md`, on a Paper_Slip (`card-slip`) instead of the grey box. *(Amended, approved by the human, screenshot review.)*
 3. WHEN the IntroScreen appears, THE Legend_Line SHALL appear with the Ink_Reveal: a CSS mask that wipes from left to right over 600 ms.
 4. THE Legend_Line SHALL be present in the DOM and the accessibility tree from the first render, and SHALL be fully visible when Reduced_Motion is active.
 5. THE Ink_Reveal SHALL use no hanzi-writer instance, because the dataset holds only 天 and 雨 of the six legend glyphs, and `charDataLoader` serves only dataset characters.
 6. THE IntroScreen SHALL read "Type a ghost's shapes to summon it, then write it from memory." in its second paragraph, replacing "Type its shapes to summon it, then write it from memory.".
 7. THE IntroScreen SHALL show "Begin the Séance" as its Primary_Action.
 8. THE `IntroScreen.test.tsx` SHALL assert the new sentence and SHALL fail IF the old sentence remains.
+9. THE IntroScreen SHALL set the Legend_Line in the Chinese_Font at `text-3xl` (30 CSS pixels) below 640 CSS pixels and `text-4xl` (36 CSS pixels) from 640 CSS pixels, in `inkOnPaper` on `paper`, and SHALL set the English rendering and the attribution in `inkOnPaper` on `paper` as well. THE theme test SHALL check at least 4.5:1 between `inkOnPaper` and `paper` (12.84:1 computed). *(Added, approved by the human, screenshot review.)*
+10. THE Ink_Reveal SHALL be applied to the `blockquote` inside the Paper_Slip and not to the slip, so that the slip and its shadow are static and the ink is written onto the paper. THE reveal SHALL keep its place inside the no-preference block, and the text SHALL be fully visible under Reduced_Motion. *(Added, approved by the human, screenshot review.)*
 
 ### Requirement 10: Paper slips, cards and the Primary_Action
 
@@ -237,6 +251,7 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 5. WHILE Reduced_Motion is active, THE InkSurface filter SHALL stay applied, because it is a static texture and not an animation.
 6. THE Write_Mode SHALL leave the quiz options, the hint rule, the Outcome rules and the never-reveal rule unchanged.
 7. THE design SHALL record which hanzi-writer 3.7.3 options can change the look without new data and which cannot (a per-stroke brush width, a pressure taper and a stroke texture need new data or a custom renderer, and are out of scope).
+8. THE Write_Mode SHALL pass the hanzi-writer option `padding` of `WRITE_PADDING_PX` (40 CSS pixels), exported from `app/src/engine/sealLayout.ts`, so that the Seal_Margin is free of strokes. THE design SHALL state the trade-off: the character is drawn 2 x (40 - 12) = 56 CSS pixels smaller on each side of the square (220 instead of 276 CSS pixels at 375 wide), the paper that receives the pointer stays the same size, and the e2e fit specs and the quiz tests confirm that the smaller character is still written and checked. *(Added, approved by the human, screenshot review: replaces `padding: 12`.)*
 
 ### Requirement 13: Seal stamp
 
@@ -244,18 +259,21 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 
 #### Acceptance Criteria
 
-1. WHEN the combined Outcome of a ghost is `clean`, THE Seance_Session SHALL show one Seal_Stamp over the lower right corner of the Writing_Surface, after the Write step has ended.
+1. WHEN the combined Outcome of a ghost is `clean`, THE Seance_Session SHALL show one Seal_Stamp in the Seal_Margin at the lower right corner of the Writing_Surface, after the Write step has ended, and THE Seal_Stamp SHALL cover no stroke (criteria 13 to 15). *(Amended, approved by the human, screenshot review: the stamp no longer lies over the drawing area.)*
 2. THE Seal_Stamp SHALL be a `seal` square with a lighter inner border and rough edges, drawn as an inline SVG, that carries the Seal_Glyph. *(Approved by the human, Q10 as changed.)*
 3. THE Seal_Stamp SHALL take the Seal_Glyph from the dataset record of the ghost's target character, and SHALL contain no other Chinese text and no invented character shape.
-4. THE Seal_Stamp SHALL draw the Seal_Glyph in the Chinese_Font, in the `paperLabel` colour on `seal`, at a font size of 28 CSS pixels, as an HTML text element with `lang="zh"` placed over the SVG.
-5. THE theme tests SHALL check a contrast ratio of at least 4.5:1 between `paperLabel` and `seal`. THE design SHALL state that the Seal_Glyph counts as large text (28 CSS pixels in a regular weight is above the 24 CSS pixel threshold of WCAG 2.2, where 3:1 suffices) and that the stricter 4.5:1 is met anyway.
+4. THE Seal_Stamp SHALL draw the Seal_Glyph in the Chinese_Font, in the `paperLabel` colour on `seal`, at a font size of 24 CSS pixels (18 pt), as an HTML text element with `lang="zh"` placed over the SVG. *(Amended, approved by the human, screenshot review: replaces 28 CSS pixels.)*
+5. THE theme tests SHALL check a contrast ratio of at least 4.5:1 between `paperLabel` and `seal`. THE design SHALL state that the Seal_Glyph counts as large text (24 CSS pixels in a regular weight is 18 pt, the threshold of WCAG 2.2, where 3:1 suffices) and that the stricter 4.5:1 is met anyway (5.05:1).
 6. THE Seal_Stamp SHALL have the role `img` and the accessible name "Seal: " followed by the Seal_Glyph, and SHALL mark its visible glyph and its SVG `aria-hidden`, so that the Seal_Glyph is announced once, in the accessible name of the Seal_Stamp.
 7. THE Seal_Stamp SHALL stamp in 300 ms: it SHALL scale from 1.3 to 1 while its opacity rises from 0 to 1.
 8. WHILE Reduced_Motion is active, THE Seal_Stamp SHALL appear at once in its final state.
-9. THE Seal_Stamp SHALL ignore pointer events and SHALL take no layout space, so that the one-screen fit of the Write step is unchanged.
+9. THE Seal_Stamp SHALL ignore pointer events and SHALL take no layout space, so that the one-screen fit of the Write step is unchanged. THE Seal_Stamp SHALL be 32 CSS pixels square, with `bottom` and `right` of 4 CSS pixels, taken from `SEAL_SIZE_PX` and `SEAL_INSET_PX` of `app/src/engine/sealLayout.ts`. *(Amended, approved by the human, screenshot review: replaces 48 CSS pixels at 8 CSS pixels.)*
 10. IF the combined Outcome is `struggled` or `gave-up`, THEN THE Seance_Session SHALL show no Seal_Stamp. *(Approved by the human, Q11.)*
 11. THE Seal_Stamp SHALL not exist in the DOM before the combined Outcome is `clean`: not during the Summon step, not during the Write step, and not after a `struggled` or `gave-up` Outcome, so that the never-reveal rule is unchanged.
 12. THE `SealStamp.test.tsx` and `SeanceSession.test.tsx` SHALL check criteria 3, 6, 10 and 11, including that no element with the role `img` and a name that starts with "Seal:" exists during the Summon step, during writing, and after a `struggled` or a `gave-up` Outcome.
+13. THE Seal_Stamp SHALL lie wholly outside the hanzi-writer drawing area: the clearance `WRITE_PADDING_PX - (SEAL_SIZE_PX + SEAL_INSET_PX)` SHALL be at least 4 CSS pixels (as built: 40 - 36 = 4). THE Test_Suite SHALL fail IF the clearance is below 4, IF `WriteMode` passes a `padding` other than `WRITE_PADDING_PX`, or IF `SealStamp` uses a size or inset other than the two constants. *(Added, approved by the human, screenshot review.)*
+14. THE E2E_Suite SHALL, at the Write step after a `clean` Outcome on a real Dataset_Character, at 1024 × 768 and 375 × 812, compare the bounding box of the Seal_Stamp with the bounding box of every `path` inside the hanzi-writer SVG and SHALL fail IF any of them lies within 2 CSS pixels of the Seal_Stamp box or overlaps it. *(Added, approved by the human, screenshot review. The 2 CSS pixels allow for the displacement of the ink-bleed filter.)*
+15. THE Seal_Stamp SHALL keep the stamp motion, the `role="img"` label and the clean-only rule of criteria 6, 7, 8, 10 and 11 unchanged. *(Added, approved by the human, screenshot review.)*
 
 ### Requirement 14: Outcome motions
 
@@ -278,7 +296,7 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 
 #### Acceptance Criteria
 
-1. THE Graveyard_Screen SHALL draw each Tablet as a stone tablet with an arched top, on a night hillside drawn with CSS gradients.
+1. THE Graveyard_Screen SHALL draw each Tablet as a stone tablet with an arched top (a border radius of `50% 50% 3px 3px / 36% 36% 3px 3px`), on the Hillside. *(Amended, approved by the human, screenshot review: replaces the hillside drawn with a CSS gradient only.)*
 2. WHILE a Tablet is in the Grave_State `at-rest`, THE Graveyard_Screen SHALL draw a small Candle_Light glow at the foot of the Tablet.
 3. WHILE a Tablet is in the Grave_State `restless`, THE Graveyard_Screen SHALL draw a wisp rising from the Tablet.
 4. WHILE a Tablet is in the Grave_State `unmet`, THE Graveyard_Screen SHALL draw the Tablet blank, with no glyph and no marker of a character.
@@ -288,6 +306,10 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 8. THE Graveyard_Screen SHALL give glyphs and text a contrast ratio of at least 4.5:1 against the background of their Tablet.
 9. WHILE Reduced_Motion is not active, THE wisp of a `restless` Tablet SHALL move slowly as Ambient_Motion; WHILE Reduced_Motion is active, THE wisp SHALL be static.
 10. THE `Graveyard.test.tsx` SHALL keep its assertions of the never-reveal rule for unmet Tablets and SHALL add assertions of criteria 2 to 4 and 6.
+11. THE Graveyard_Screen SHALL draw the Hillside as one inline SVG with two overlapping ridge paths behind the grid, `aria-hidden="true"`, `focusable="false"`, `preserveAspectRatio="none"`, with no `text` element and no Chinese text, in tones darker than `surface`. *(Added, approved by the human, screenshot review.)*
+12. THE Graveyard_Screen SHALL tilt each Tablet by `Tablet_Tilt`, chosen by the pure function `tabletTilt(position)` of `app/src/engine/tabletTilt.ts` as `[-3, 1.5, 0, -1.5, 3][position % 5]` degrees, and SHALL apply it by CSS classes `tablet-tilt-0` to `tablet-tilt-4`. *(Added, approved by the human, screenshot review.)*
+13. THE Graveyard_Screen SHALL draw an `unmet` Tablet as blank dark stone with the arched outline and no border style of dots or dashes, with no glyph, keeping the marker `·` and the accessible name "Ghost N of M, never met". THE `at-rest` Tablet SHALL keep a solid border, the Candle_Light glow at its base and the marker `✓`; THE `restless` Tablet SHALL keep a dashed border, a chipped upper corner, the wisp above and the marker `!`. *(Added, approved by the human, screenshot review: colour is never the only signal.)*
+14. THE Graveyard_Screen SHALL keep the grid free of horizontal overflow at 320, 375 and 1440 CSS pixels with the Tablet_Tilt applied; the largest tilt of 3 degrees adds at most 56 x sin(3°) = 3 CSS pixels to a Tablet's width, which the 12 CSS pixel padding of the grid absorbs. *(Added, approved by the human, screenshot review.)*
 
 ### Requirement 16: Chinese font
 
@@ -361,6 +383,8 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 4. THE Screenshot_Folder SHALL be listed in `.gitignore`, without removing the rule that keeps `.kiro/`. *(Approved by the human, Q13.)*
 5. THE screenshot spec SHALL type no Cangjie code by hand: it SHALL read the code from `characters.json` at test time, as the existing specs do.
 6. THE README SHALL tell the reader where the screenshots are written.
+7. WHEN the follow-up of the screenshot review is built, THE E2E_Suite SHALL write all eight PNGs again (four views at 1024 × 768 and 375 × 812), and THE screenshot spec SHALL run the moon check of Requirement 8.12 in each view. *(Added, approved by the human, screenshot review.)*
+8. THE Write-step screenshot SHALL show the Seal_Stamp, so the seal's place in the Seal_Margin is visible, by laying a real Dataset_Character to rest `clean` before the capture. *(Added, approved by the human, screenshot review.)*
 
 ### Requirement 21: Verification
 
@@ -382,3 +406,4 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 1. THE design SHALL list, for each existing requirement that this feature amends, the old text, the new text and the decision (Q1 to Q13) that the human approved.
 2. THE amended requirements SHALL be: `visual-identity` 3.5, 4.1 to 4.3, 12.1 to 12.3, 21.3 to 21.5, 21.12 and 22.5; `summon-ink` `SUMMON_INK_SPEED`; and `cangjie-seance` `SUMMON_HOLD_MS` and `SUMMON_FADE_MS` (listed as Rite_Timings; unchanged by default).
 3. WHEN the human approves an amendment, THE maintainer SHALL add an "Amended (approved by the human)" note to the old requirement in its spec, as the earlier amendments do.
+4. THE amended requirements of the screenshot review SHALL be the criteria of this spec that carry the note "Amended, approved by the human, screenshot review": 6.1, 8.2 to 8.5, 9.2, 13.1, 13.4, 13.9 and 15.1. THE `visual-identity` requirements 21.3, 21.4 and 21.6 (mist, moon, composite) are amended again by them. *(Added, approved by the human, screenshot review.)*

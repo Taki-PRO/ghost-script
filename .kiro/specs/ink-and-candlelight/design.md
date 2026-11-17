@@ -12,7 +12,7 @@ The design makes these decisions, all approved by the human (see "Decisions"):
 - The legend line is written by a CSS mask wipe, not by hanzi-writer, because four of its six glyphs are not in the dataset.
 - LXGW WenKai is subset to 316 characters and bundled. The measured cost is 64,746 bytes of gzip. *(As built: 321 glyphs, 66,532 bytes WOFF2, 66,575 bytes gzip; see "Final pipeline run".)*
 - Causal motion stays within 200 to 600 ms. Ambient motion and the rite timings are named exemptions, approved by the human.
-- A clean outcome stamps a seal that carries the ghost's own character, in the bundled font.
+- A clean outcome stamps a seal that carries the ghost's own character, in the bundled font. *(Amended, approved by the human, screenshot review: the seal sits in the paper margin and covers no stroke; see "Follow-up: screenshot review".)*
 
 ## Research findings
 
@@ -275,6 +275,173 @@ interface FontSourceRecord {
 }
 ```
 
+## Follow-up: screenshot review (approved by the human)
+
+The human reviewed the screenshots and asked for six changes. Each is below with the code it starts from, the decision, the values and the tests. Requirements 6.9 to 6.11, 7.6, 8.2 to 8.5 and 8.10 to 8.13, 9.2, 9.9, 9.10, 12.8, 13.1, 13.4, 13.9, 13.13 to 13.15, 15.1, 15.11 to 15.14, 20.7, 20.8 and 22.4 carry them. This work changes no engine rule, no dataset and no storage. It adds three small pure modules under `app/src/engine/` (`moonRoom.ts`, `sealLayout.ts`, `tabletTilt.ts`); none of them is on the "never edit" list.
+
+### 1. Moon
+
+**Today.** `body::before` paints, among other layers, a disc `circle 1.6rem at 82% 0%` (3.2 rem across, half over the top edge, alpha 0.55) and a halo `circle 9rem at 82% 0%` (alpha 0.10). The e2e test finds the disc by a regular expression over the computed `background-image`.
+
+**Decision: keep the Moon a `body::before` gradient, and move the screens, not the Moon.** A fixed pseudo-element cannot know where headings are, and a positioned `div` would break Requirement 8.8 (no new DOM) and would still not know where headings are. So the Moon sits at one fixed place in the top right, and every screen leaves room for it where the content column could reach it.
+
+CSS custom properties on `:root` hold the geometry, so the CSS, the unit test and the e2e test read one source:
+
+```css
+:root {
+  --moon-size: 4rem;            /* 64 px, the Requirement 8.3 minimum */
+  --moon-inset-x: 2.5rem;       /* centre, from the right edge */
+  --moon-inset-y: 2.5rem;       /* centre, from the top edge */
+  --moon-disc-alpha: 0.65;      /* was 0.55; 0.70 amended to 0.65, approved by the human, task 12.2 */
+  --moon-halo-alpha: 0.10;      /* unchanged limit */
+  --moon-room: clamp(0px, calc((992px - 100vw) * 1000), 4.75rem);
+}
+```
+
+`body::before` replaces the two moon layers with:
+
+```css
+radial-gradient(circle calc(var(--moon-size) / 2) at calc(100% - var(--moon-inset-x)) var(--moon-inset-y),
+  rgb(114 131 171 / var(--moon-disc-alpha)) 0,
+  rgb(114 131 171 / var(--moon-disc-alpha)) calc(var(--moon-size) / 2 - 0.2rem),
+  transparent calc(var(--moon-size) / 2)),
+radial-gradient(circle 7rem at calc(100% - var(--moon-inset-x)) var(--moon-inset-y),
+  rgb(114 131 171 / var(--moon-halo-alpha)) 0, transparent 100%)
+```
+
+The disc is 4 rem across with a 0.2 rem soft edge, centred 2.5 rem from the top and the right, so it spans 0.5 rem to 4.5 rem from each edge and is never cut off. The disc alpha rises from 0.55 to 0.65 (a brighter moon; amended from 0.70, approved by the human, task 12.2); the halo keeps its 0.10 peak and grows from 9 rem to 7 rem radius around a full disc, which is a softer, tighter glow.
+
+**Where it never meets text.**
+
+- At 992 CSS pixels and wider the widest column is `max-w-3xl` (768 px) plus the 16 px of the sticky headers' `-mx-4` on each side, so it ends 400 px from the centre. The disc's left edge is `W - 72` px from the left, so at 992 px the column ends at 896 px and the disc starts at 920 px: 24 px apart. That is why `--moon-room` steps to 0 at 992.
+- Below 992 px the disc can lie over the first row of any screen. Every screen then gets the Moon_Room: `--moon-room` is 4.75 rem (76 px), the disc ends at 4.5 rem, so there are 4 px between disc and content. The `clamp()` expression has no `@media` rule, so the existing test of "exactly one no-preference block and no other media block" still holds, and the step is exact: at 991 px the expression is 1000 px, clamped to 4.75 rem; at 992 px it is 0.
+- Mechanism in `index.css`:
+
+```css
+#root { padding-top: var(--moon-room); }
+#root > main { min-height: calc(100vh - var(--moon-room)); }   /* beats .min-h-screen by specificity */
+.sticky-below-moon { top: var(--moon-room); }
+```
+
+  The `min-height` rule keeps `min-h-screen` screens at one viewport tall in total, so the room adds no vertical scrollbar (the compact `Shell` uses `min-h-[100dvh]`; the same selector wins, with `100dvh` in a second declaration after the `vh` one).
+- **Sticky headers** of the Graveyard_Screen and the Sources & licences screen use `.sticky-below-moon` instead of `top-0`, so the stuck header row stays below the Moon (Requirement 8.11).
+- **The Write step.** The surface size is `min(0.8 W, 420, H - reserved - 400)`; the Moon_Room takes 76 px of `H` below 992 px. `WriteMode` passes `reservedPx + moonRoomPx(window.innerWidth)`, with `moonRoomPx(width) = width < 992 ? 76 : 0` in `app/src/engine/moonRoom.ts`. A unit test checks that `MOON_ROOM_PX / 16` equals the 4.75 rem of the CSS variable and that the breakpoint equals the `992px` in the `clamp()`.
+
+**Limit that cannot be removed.** The Moon is behind the page, and a stuck header cannot be transparent in the Moon_Room without showing scrolled content there. While the Graveyard_Screen or the Sources & licences screen is scrolled below 992 px, text can pass behind the Moon. The e2e check covers the resting state at scroll 0, which is the state in screenshots. The halo composite (every text token at 4.5:1 or more) still holds under that passing text; the disc composite holds for `ink` and `error` only. This is recorded in Requirement 8.13.
+
+**Contrast.** *(Amended, approved by the human, task 12.2: the figures below for disc 0.70 were taken over bare sky. In paint order (sky at 2%, halo 0.10 under the disc, disc, grain 0.03), disc 0.70 gives `error` 4.20:1, so the disc alpha is 0.65, the highest value at 4.5:1.)* The disc composite (sky at 2% height, halo, disc 0.70) gives `ink` 5.17:1 and `error` 4.72:1 (computed with the WCAG formula of `theme.ts`). `muted` (2.67), `ghost` (3.22) and `success` (2.31) do not reach 4.5:1 on the disc, so no text may sit on it: Requirement 8.12 checks that. The halo composite (sky at 10%, halo 0.10, grain 0.03) gives `ink` 13.62, `muted` 7.04, `ghost` 8.47, `success` 6.09 and `error` 12.43, all at or above 4.5:1.
+
+**Tests.**
+
+- `index.css.test.ts`: `--moon-size` is at least 4 rem; each inset is at least `--moon-size / 2` (so the disc is inside the viewport); disc alpha greater than halo alpha; halo alpha at most 0.10; `--moon-room` contains `clamp(` and `992px` and no `@media` rule other than the no-preference block; `#root` has `padding-top: var(--moon-room)`; `.sticky-below-moon` exists; the halo composite and the `ink` and `error` disc composites at 4.5:1. The old tests "circle 1.6rem at 82% 0%" and "circle 9rem" are replaced.
+- `moonRoom.test.ts`: `moonRoomPx(991)` is 76, `moonRoomPx(992)` is 0, the constants equal the CSS.
+- `e2e/screenshots.spec.ts` (extended, see below): reads the three custom properties, resolves rem to pixels, and fails if any control or text element meets the disc or the disc leaves the viewport. It runs at 1024 × 768 and 375 × 812 for every screenshot and at 320 × 640 in a new check of the same file. The test keeps its name, "moon overlap".
+
+### 2. Mist
+
+**Today.** Four ellipses at a peak alpha of 0.09: `body::after` at `15% 70%` and `60% 40%`, `#root::before` at `35% 90%` and `80% 27%`; the vertical extents are disjoint so one mist is the worst case. The 0.09 was chosen for contrast.
+
+**Decision.** Two bands, each made of two ellipses at one height, so that the bands differ in position and strength, both lie in the lower third, and each has its own contrast composite:
+
+| Band | Layer | Ellipses (`rx ry at x y`, % of the 200% wide layer) | Peak alpha | Vertical extent (centre ± 70% of `ry`) |
+|---|---|---|---|---|
+| A, strong | `body::after`, drift 120 s | `30% 9% at 18% 88%`, `24% 8% at 66% 88%` | 0.18 (`--mist-a-alpha`) | 81.7% to 94.3% |
+| B, soft | `#root::before`, drift 180 s | `32% 7% at 40% 72%`, `26% 7% at 88% 72%` | 0.10 (`--mist-b-alpha`) | 67.1% to 76.9% |
+
+Band A is twice the old peak and the strongest; band B is about the old peak. Both lie in the lower third (from 66.7%), 4.8 points apart vertically, so they read as two layers in a still screenshot. `--mist-peak-alpha` is removed; the colour `#5b6f9a` is unchanged.
+
+**How body text stays clear.** The bands do pass behind text in the lower third (the keyboard, buttons and the tablets of the Graveyard), so the design does not keep text away; it keeps the contrast. The text tokens sit on dark backgrounds only and were computed against the composite of the sky at the band's centre, the band's own peak alpha and the grain (0.03):
+
+| Composite | `ink` | `muted` | `ghost` | `success` | `error` |
+|---|---|---|---|---|---|
+| Band A, sky at 88%, alpha 0.18 | 10.43 | 5.39 | 6.49 | 4.66 | 9.53 |
+| Band B, sky at 72%, alpha 0.10 | 12.23 | 6.32 | 7.61 | 5.47 | 11.16 |
+
+The weakest is `success` at 4.66:1 on band A, so 0.18 is the highest round value that passes (0.20 gives 4.56, 0.24 gives 4.31, which fails). Paper slips (`.slip`, `.card-slip`, keycaps) have their own opaque background and ink label, so the mist never lies under their text. The 4.5:1 threshold is unchanged.
+
+**Test change.** The composite test in `index.css.test.ts` reads `--mist-a-alpha`, `--mist-b-alpha` and the ellipse centres and radii of each layer. It checks: the vertical extents of the two bands are disjoint and each starts at or below 66.6%; `--mist-a-alpha` is at least 1.5 times `--mist-b-alpha`; the colour channels equal `theme.mist`; the sky is computed at each band's centre height (88 and 72) and each text token keeps 4.5:1 on its own band's composite and on the halo composite. The test "mist ellipses never overlap vertically" becomes "the two mist bands never overlap vertically". `mistExtents` groups the ellipses by layer.
+
+### 3. Graveyard
+
+**Today.** `Graveyard.tsx` draws the grid with `HILLSIDE`, a `linear-gradient` only, and `OUTLINE` classes: `unmet` is `rounded-sm border-dotted` (a dashed or dotted square), `restless` `rounded-t-md border-dashed`, `at-rest` `rounded-t-3xl border-solid`. `index.css` has `.tablet`, `.tablet-rest::before` (glow), `.tablet-restless::after` (wisp).
+
+**Decision.**
+
+- **Hillside.** Inside the `ul` wrapper (a new `div` with `relative isolate`), one `svg` with `aria-hidden="true"`, `focusable="false"`, `viewBox="0 0 100 100"` and `preserveAspectRatio="none"`, `absolute inset-0 h-full w-full`, holding two ridge paths: far `M0 62 C20 48 38 58 56 46 C74 36 88 50 100 42 L100 100 L0 100 Z` in `#161a24`, near `M0 80 C18 70 34 78 52 70 C72 62 86 74 100 68 L100 100 L0 100 Z` in `#0f1118`. The paths carry no text and no Chinese text. The `ul` keeps its `aria-label="Graves"`, and the tablets sit above the svg.
+- **Tablet shape.** All three states have an arched top: `border-radius: 50% 50% 3px 3px / 36% 36% 3px 3px`. `restless` has an asymmetric arch (`50% 30% 3px 3px / 36% 22% 3px 3px`) that reads as chipped, a dashed `ghost` border and the wisp. `at-rest` has the full arch, a solid `ink` border and the Candle_Light glow at the base (the existing `::before` radial gradient, kept at the base). `unmet` is blank dark stone `#14161c` with an inset shadow, **no border** (so no dotted or dashed square), and the marker `·`. The stone for the other two is `linear-gradient(180deg, #2a2d36, #1d2028)`; the glyph (`ink`) is at least 4.5:1 on its darkest stop.
+- **Tilt.** `tabletTilt(position: number): number` returns `[-3, 1.5, 0, -1.5, 3][position % 5]` degrees (`position` is the 1-based position the component already has; a unit test covers positions 1 to 300 and a negative or fractional input does not occur). The `li` gets a class `tablet-tilt-N` where `N = position % 5`; `index.css` defines `.tablet-tilt-0` to `.tablet-tilt-4` as `transform: rotate(...); transform-origin: 50% 100%`. The rotations are static (not animations), so they sit outside the no-preference block and the single-block rule is unaffected.
+- **No overflow at 320 px.** A tile is about 48 px wide and 56 px high; a 3° rotation about the bottom centre moves the top corners by `56 × sin 3° ≈ 2.9` px. The grid has `p-3` (12 px) padding and sits inside the page padding, so the tilt stays inside the padding. `e2e/graveyard-fit.spec.ts` calls `findOverflow` at 320, 375 and 1440 CSS pixels with a seeded history of at-rest, restless and unmet tablets.
+- **Markers, counts, names.** Unchanged: `·`, `!`, `✓`; legend counts; the accessible names of `graveLabel`; the empty-state line. The legend swatches use the same shape classes.
+- **Sticky header.** The header gets `.sticky-below-moon` instead of `top-0`.
+
+**Tests.** `Graveyard.test.tsx` keeps the never-reveal tests and adds: the svg hillside exists, is `aria-hidden` and has no `text`; each `li` carries `tablet-tilt-{position % 5}`; `unmet` has no `border-dotted` and no `border-dashed` class and no glyph; `restless` has a dashed border class; `at-rest` has a solid one; accessible names and markers per state unchanged. `tabletTilt.test.ts`: the pattern, the determinism (same input, same output), the bound of 3 degrees and a check that the CSS `.tablet-tilt-N` rules equal the pattern. `index.css.test.ts` adds the tilt rules and the `unmet` rule (no border).
+
+### 4. Ghost
+
+**Today.** `GhostFigure` draws one path with `fill="currentColor"` through an `feTurbulence` and `feDisplacementMap` filter, and two eye paths in `theme.background`. The fill is flat.
+
+**Decision.** The body gets an ink wash, drawn with five ids made from one `useId` value `base`: `${base}-bleed` (the existing filter), `${base}-tone`, `${base}-wash`, `${base}-blur` and `${base}-hem`.
+
+1. **Tone.** A `linearGradient` (`-tone`, vertical) with stops `currentColor` at opacity 1 at 0%, 0.82 at 55% and 0.55 at 100%. The body path uses `fill="url(#-tone)"`.
+2. **Second, darker wash.** A `radialGradient` (`-wash`, centre 38% 62%, radius 55%) with `theme.background` at stop-opacity 0.35 and then 0, and a second `path` with `GHOST_PATH` filled with it, drawn after the body with the same displacement filter so the edges agree. The tone now differs between at least two regions (light head, darker belly).
+3. **Bleeding lower edge.** Before the body, a third `path` with `GHOST_PATH`, `transform="translate(0 1.5)"`, `opacity="0.45"`, filtered by `-blur` (`feGaussianBlur stdDeviation="1.2"`, filter region `-20% -20% 140% 140%`), so the hem has a wet halo that the body does not.
+4. **Eyes.** Unchanged: two small paths in `theme.background`, drawn last. They sit on the head, where the tone is full, so their contrast is unchanged (they are graphics at 3:1; checked by the existing GhostFigure test if it checks one, otherwise by a new one against `ghost` at opacity 1).
+
+The component stays the only one that draws a ghost; the displacement scale stays 5 viewBox units, so the edge still scales with the rendered size. The ids stay unique per instance because every id starts with the same per-instance `useId` value. The filter count rises from one to two per instance (the blur), which a test counts.
+
+**Favicon decision: no gradient.** The favicon stays a flat, unfiltered copy of `GHOST_PATH` (Requirement 7.6). At 16 to 32 CSS pixels the wash is invisible, a gradient adds bytes and one more thing for the favicon test to police, and gradients inside favicons are not guaranteed any better than filters. The existing favicon test (no `filter`, path equals `GHOST_PATH`, at most 4,096 bytes) stays and a line is added: no `linearGradient` or `radialGradient`.
+
+**Tests.** `GhostFigure.test.tsx`: one `linearGradient` and one `radialGradient` per instance; the `-tone` gradient has at least three stops with decreasing opacity; there are two filters (displacement and blur) and the blur holds an `feGaussianBlur`; there are three `GHOST_PATH` paths (hem, body, wash); all ids of two instances in one render are disjoint (a `Set` of every `id` has the size of the sum); every `url(#...)` reference resolves to an id in the same instance; no `text`; `aria-hidden`; no value derived from a character.
+
+### 5. Intro legend
+
+**Today.** `<figure className="ink-reveal mt-8 rounded-lg bg-surface px-5 py-4">` holds the Chinese line at `text-2xl text-ghost`, the English line in `text-muted` and the caption in `text-muted`.
+
+**Decision.** `<figure className="card-slip mt-8 px-5 py-5">` holds `<blockquote className="ink-reveal">`. The mask moves to the `blockquote`, because a mask clips the figure's `box-shadow` and would make the slip itself appear to wipe; the paper is static and the ink is written onto it. Inside: `<p lang="zh" className="text-3xl sm:text-4xl">` (30 px, 36 px from 640 px up; the six glyphs and one comma take 7 × 30 = 210 px below 640 px, which fits the 232 px of a 320 px phone minus the page and slip padding; 7 × 36 = 252 px from 640 px up, where the card is wider than 480 px), then the English line `mt-2 text-base`, and the caption `figcaption` `mt-2 text-sm`. All three inherit `color: var(--ink-on-paper)` from `.card-slip`, so the `text-ghost` and `text-muted` classes are removed. Contrast: `inkOnPaper` `#1c1914` on `paper` `#e6dcc3` is 12.84:1 (computed); `theme.test.ts` already checks 4.5:1 for it (Requirement 5.3). The text of the line, the English rendering ("wept") and the citation sentence are unchanged and still match `content-accuracy.md`.
+
+The Chinese line uses the existing `[lang='zh']` stack, so it is set in LXGW WenKai Subset; the glyphs 天 雨 粟 鬼 夜 哭 and "，" are already in the Glyph_Set (no pipeline change).
+
+**Tests.** `IntroScreen.test.tsx`: the figure has the class `card-slip` and no `bg-surface`; the `blockquote` has `ink-reveal` and the figure does not; the Chinese paragraph has `text-3xl` and `sm:text-4xl` and `lang="zh"`; no element inside the figure has `text-ghost` or `text-muted`; the line, "wept", the attribution text and the Primary_Action tests stay. `index.css.test.ts` keeps its checks that `ink-reveal` is inside the no-preference block and that the line has no mask style outside it.
+
+### 6. Seal
+
+**Today.** `SealStamp` is `absolute bottom-2 right-2 h-12 w-12` (48 px at 8 px) with a 28 px glyph over the `InkSurface` overlay, which covers the whole paper. `WriteMode` passes hanzi-writer `padding: 12`, so strokes can reach 12 px from the paper edge and the stamp (8 to 56 px from the edges) covers the lower right of the character.
+
+**Decision: place the seal in the paper margin and widen the margin.**
+
+| Value | Today | New | Where |
+|---|---|---|---|
+| hanzi-writer `padding` | 12 px | `WRITE_PADDING_PX` = 40 px | `app/src/engine/sealLayout.ts`, used by `WriteMode` |
+| Seal box | 48 px square | `SEAL_SIZE_PX` = 32 px | `sealLayout.ts`, used by `SealStamp` |
+| Seal offset from right and bottom | 8 px | `SEAL_INSET_PX` = 4 px | `sealLayout.ts`, used by `SealStamp` |
+| Seal glyph | 28 px | 24 px (18 pt) | `SealStamp` |
+| Clearance `padding - (size + inset)` | not applicable | 40 - 36 = 4 px | derived, tested |
+
+The seal occupies 4 px to 36 px from the right and bottom edges; the drawing area starts 40 px from every edge, so there are 4 px between them. The 2 px allowance of the ink-bleed filter (its displacement `scale` of 12 in 1024-unit space is about 4 px peak-to-peak at 0.3 px per unit, so about 2 px each way) fits inside that clearance. The rotated seal square (−6°) stays inside the 32 px box: half of its 28 px side times `cos 6° + sin 6°` is 15.4 px, under 16 px.
+
+**Glyph size and contrast.** The glyph shrinks from 28 px to 24 px so that the margin stays small. 24 CSS pixels in a regular weight is 18 pt, the WCAG 2.2 threshold of large text, which needs 3:1. `paperLabel` on `seal` is 5.05:1 (computed), which also meets the 4.5:1 for normal text, so the glyph passes under either reading. LXGW WenKai has fine strokes, so the human checks the legibility of the 24 px glyph in the retaken Write-step screenshot (task 12.9); if it is not legible, the fallback below keeps the 28 px glyph in a larger box only by raising the padding.
+
+**Trade-off of the wider padding.** The drawn character shrinks. At 375 × 812 the surface is 300 px; the em box falls from 276 px (padding 12) to 220 px (padding 40), 20% smaller; at 1024 × 768 (surface up to 420 px) it falls from 396 to 340 px, 14% smaller. The paper that receives the pointer stays the full size, so a stroke can still be drawn anywhere on it. The surface size, the reserved space and the one-screen fit do not change, because `padding` changes only the area hanzi-writer uses inside the same square. A smaller character is harder to write with a finger. Fallback if a device test fails the fit or the writing: keep the seal at 4 px but reduce `SEAL_SIZE_PX` to 28 and `WRITE_PADDING_PX` to 36 (clearance 4 px), the least that keeps the seal off the strokes.
+
+Because hanzi-writer's em box has built-in whitespace around the strokes, real strokes usually stay several pixels inside the em box; the 4 px clearance is the guaranteed minimum and the e2e test is the measure.
+
+**How "covers no stroke" is verified.**
+
+- **Unit (`sealLayout.test.ts`, `SealStamp.test.tsx`, `WriteMode.test.tsx`).** `WRITE_PADDING_PX - (SEAL_SIZE_PX + SEAL_INSET_PX)` is at least 4; `WriteMode` passes `padding: WRITE_PADDING_PX` to `HanziWriter.create` (the mock records the options); `SealStamp` renders the wrapper with `width`, `height`, `bottom` and `right` equal to the three constants in px; the glyph font size is 24 px; the Seal_Glyph is `paperLabel` on `seal`; `theme.test.ts` keeps the 4.5:1 check. The old assertions of 28 px, `h-12 w-12` and `bottom-2 right-2` are replaced; the role, the label, `aria-hidden` and `pointer-events: none` tests stay.
+- **E2E (`e2e/seal-margin.spec.ts`, 1024 × 768 and 375 × 812).** The test seeds `seedBefore('明')` (or the first character with a playable code), types the code read from `characters.json`, then writes every stroke (the helper reads each stroke's median points from the `hanzi-writer-data` file and maps them to the screen with the `getScreenCTM()` of the writer's positioned `g`, so the mapping is the library's own), waits for `Seal:` to appear, reads the stamp's bounding box and the bounding box of every `path` in `[data-testid="ink-container"] svg`, and fails if any path box is within 2 px of the stamp box or overlaps it. It also asserts that the stamp box lies inside the paper box.
+
+**Seal and the moon room.** `WriteMode` also subtracts `moonRoomPx` from the surface size (see Moon), which can shrink the paper below 992 px; the seal and the padding are in the paper's own coordinates and move with it.
+
+### Screenshots and checks
+
+The eight PNGs of Requirement 20 are retaken after the work above (task 12.9). The Write-step view first lays a real character to rest `clean` with the helper above so the PNG shows the seal in its margin (Requirement 20.8). The e2e suite keeps `fits-one-screen.spec.ts` and `no-horizontal-overflow.spec.ts` thresholds unchanged (Requirement 19.4).
+
+### Risks
+
+- **One-screen fit at 320 × 640.** The Moon_Room takes 76 px below 992 px. The Write step may already be near its 200 px minimum surface at 640 px (the size formula subtracts 400 px from the height), so the room may push the Summon or Write step past the viewport. If `fits-one-screen.spec.ts` fails there, the fallback is to drop the Moon_Room on the two session screens only and give their first row a right padding of 4.5 rem instead (`pr-[4.5rem]`), which costs no height; the moon check of Requirement 8.12 then decides. The thresholds of the fit specs stay.
+- **Mist is subtle in a screenshot.** A band with a peak alpha of 0.18 of `#5b6f9a` over a dark navy sky is visible but quiet; stronger values fail `success` at 4.5:1. If the human wants it stronger, the cost is a lighter-weight `success` mark in the lower third, not a lower threshold.
+- **Content passing behind the Moon while scrolled** (see Moon).
+
 ## Conflicts with existing requirements
 
 Each row names the existing requirement, how the direction conflicts, the resolution, and the decision that settles it. The human approved the resolution of every row that names a decision (Q1 to Q13, see "Decisions"), where "default" in a row now means the approved choice and "Option" names the alternative that was not chosen.
@@ -313,6 +480,13 @@ Each row names the existing requirement, how the direction conflicts, the resolu
 | C30 | `content-accuracy.md`: legend line shown as 天雨粟，鬼夜哭 | The font needs the comma and four glyphs outside the dataset. | They are in the Glyph_Set. No change to the legend rules. | none |
 | C31 | `tech.md`: "Handwriting: hanzi-writer ... Fonts: open-licensed only" and "Record each font's licence in the README" | The new font must be recorded. | Done by Requirement 16.8. | none |
 | C32 | `.gitignore` rule for `test-results/` | Screenshots need a place. | `e2e/screenshots/` is added to `.gitignore` by default. | Q13 |
+| C33 | `visual-identity` 21.3 and 21.4 and `index.css` (mist peak 0.09, moon disc half over the top edge at `82% 0%`) | The human's screenshot review asks for a visible mist and a full moon. | Mist A 0.18 at 88% and B 0.10 at 72%; full disc 4 rem at 2.5 rem from the top right; the 0.10 halo limit and 4.5:1 stay. | Q14 |
+| C34 | Requirement 8.8 (no new DOM) and the "no other media block" test | A fixed moon cannot know where headings are. | Top room from a `clamp()` custom property and `#root` padding; no new element, no media rule. | Q14 |
+| C35 | Requirement 13.4 and 13.9 (28 px glyph, 48 px seal at 8 px) | The seal covers strokes. | 32 px seal at 4 px, 24 px glyph (18 pt, large text, 5.05:1), hanzi-writer `padding` 40. | Q15 |
+| C36 | `WriteMode` `padding: 12` and its tests | The seal needs a margin. | `WRITE_PADDING_PX` = 40 from `sealLayout.ts`; tests updated. | Q15 |
+| C37 | Requirement 15.1 (hillside from CSS gradients) and the dashed `unmet` square | The human wants a hillside silhouette and blank stone. | Inline SVG hillside, arched tablets with a fixed tilt, `unmet` without a dotted border. | Q16 |
+| C38 | Requirement 6.1 (flat fill) | The human wants an ink wash. | Tone gradient, darker wash layer and blurred hem; the favicon stays flat. | Q17 |
+| C39 | `IntroScreen` grey box (`bg-surface`) and `text-ghost`, `text-muted` | The human wants a paper slip. | `card-slip` with an ink-on-paper line at 30 and 36 px; the mask moves to the blockquote. | Q18 |
 
 ## Error Handling
 
@@ -358,3 +532,8 @@ All decisions below are approved by the human. Q1 to Q13 were open questions; ea
 11. **Q11. Stamp only on clean.** Approved.
 12. **Q12. Rite timings and outcome durations.** Approved. Outcome motions run 600 ms (amends `visual-identity` 4.1 to 4.3). `SUMMON_HOLD_MS`, `SUMMON_FADE_MS` and `SUMMON_INK_SPEED` stay unchanged and are exempt as Rite_Timings.
 13. **Q13. Screenshots.** Approved. They go to a gitignored `e2e/screenshots/`.
+14. **Q14. Moon and mist (screenshot review).** Approved by the human. A full 4 rem moon in the top right (alpha 0.65, amended from 0.70 in task 12.2 and approved by the human; halo 0.10), kept as a `body::before` gradient; screens get a Moon_Room of 4.75 rem below 992 px through `--moon-room`, `#root` padding and a `clamp()` step; sticky headers stay below it. Mist A 0.18 at 88%, mist B 0.10 at 72%, with the 4.5:1 threshold unchanged.
+15. **Q15. Seal and padding (screenshot review).** Approved by the human. The seal is 32 px at 4 px from the corner with a 24 px glyph; hanzi-writer `padding` is 40 px; the clearance is 4 px, verified by unit tests and by an e2e comparison of boxes.
+16. **Q16. Graveyard (screenshot review).** Approved by the human. Inline SVG hillside, arched stone tablets, a fixed five-value tilt by position modulo 5, `unmet` as blank dark stone.
+17. **Q17. Ghost (screenshot review).** Approved by the human. Ink wash with a tone gradient, a darker wash layer and a blurred hem; the favicon stays flat and unfiltered.
+18. **Q18. Intro legend (screenshot review).** Approved by the human. Paper slip, ink-on-paper line at 30 px and 36 px, the wipe on the blockquote.

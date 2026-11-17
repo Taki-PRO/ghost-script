@@ -36,10 +36,15 @@
   --mist: #5b6f9a;
   --moon: #7283ab;
   --candle: #f0b866;
-  --mist-peak-alpha: 0.09;
+  --mist-a-alpha: 0.18;
+  --mist-b-alpha: 0.1;
   --moon-peak-alpha: 0.06;
   --moon-halo-alpha: 0.1;
-  --moon-disc-alpha: 0.55;
+  --moon-disc-alpha: 0.65;
+  --moon-size: 4rem;
+  --moon-inset-x: 2.5rem;
+  --moon-inset-y: 2.5rem;
+  --moon-room: clamp(0px, calc((992px - 100vw) * 1000), 4.75rem);
   --vignette-alpha: 0.55;
 }
 
@@ -49,12 +54,15 @@ html {
 
 /* Night scene: three fixed pseudo-elements, no extra DOM. Decorative only.
    body::before holds, top to bottom: paper grain (inline SVG noise, alpha 0.03),
-   vignette, moon disc (hard edge, 3.2 rem across), moon halo (peak alpha 0.10,
-   to 9 rem), then the sky. The moon sits at the top right, half over the top edge, clear of text.
-   body::after and #root::before are the two mist bands, four ellipses in all.
-   Their vertical extents (centre plus or minus 70% of the radius, where the
-   gradient ends) never overlap, so at most one mist ellipse covers a point;
-   index.css.test.ts checks this before it uses one mist in the contrast sum. */
+   vignette, moon disc (full disc, --moon-size across, 0.2 rem soft edge), moon
+   halo (peak alpha 0.10, 7 rem), then the sky. The moon is centred
+   --moon-inset-x from the right and --moon-inset-y from the top. Below 992 px
+   #root leaves a top room (--moon-room) so content stays clear of it.
+   body::after (band A, 88% height) and #root::before (band B, 72% height) are
+   the two mist bands, two ellipses each. The vertical extents of the bands
+   (centre plus or minus 70% of the radius, where the gradient ends) never
+   overlap, so at most one band covers a point; index.css.test.ts checks this
+   before it uses one band in each contrast sum. */
 body::before {
   content: '';
   position: fixed;
@@ -64,8 +72,8 @@ body::before {
   background:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.93 0 0 0 0 0.9 0 0 0 0 0.84 0 0 0 0.03 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"),
     radial-gradient(ellipse at center, transparent 55%, rgb(0 0 0 / var(--vignette-alpha)) 100%),
-    radial-gradient(circle 1.6rem at 82% 0%, rgb(114 131 171 / var(--moon-disc-alpha)) 0, rgb(114 131 171 / var(--moon-disc-alpha)) 1.5rem, transparent 1.6rem),
-    radial-gradient(circle 9rem at 82% 0%, rgb(114 131 171 / var(--moon-halo-alpha)) 0, transparent 100%),
+    radial-gradient(circle calc(var(--moon-size) / 2) at calc(100% - var(--moon-inset-x)) var(--moon-inset-y), rgb(114 131 171 / var(--moon-disc-alpha)) 0, rgb(114 131 171 / var(--moon-disc-alpha)) calc(var(--moon-size) / 2 - 0.2rem), transparent calc(var(--moon-size) / 2)),
+    radial-gradient(circle 7rem at calc(100% - var(--moon-inset-x)) var(--moon-inset-y), rgb(114 131 171 / var(--moon-halo-alpha)) 0, transparent 100%),
     linear-gradient(180deg, var(--night-top) 0%, var(--night-mid) 55%, var(--night-low) 100%);
 }
 body::after {
@@ -78,12 +86,13 @@ body::after {
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 30% 12% at 15% 70%, rgb(91 111 154 / var(--mist-peak-alpha)), transparent 70%),
-    radial-gradient(ellipse 26% 10% at 60% 40%, rgb(91 111 154 / var(--mist-peak-alpha)), transparent 70%);
+    radial-gradient(ellipse 30% 9% at 18% 88%, rgb(91 111 154 / var(--mist-a-alpha)), transparent 70%),
+    radial-gradient(ellipse 24% 8% at 66% 88%, rgb(91 111 154 / var(--mist-a-alpha)), transparent 70%);
 }
 #root {
   position: relative;
   z-index: 1;
+  padding-top: var(--moon-room);
 }
 #root::before {
   content: '';
@@ -95,8 +104,27 @@ body::after {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 34% 10% at 35% 90%, rgb(91 111 154 / var(--mist-peak-alpha)), transparent 70%),
-    radial-gradient(ellipse 28% 7% at 80% 27%, rgb(91 111 154 / var(--mist-peak-alpha)), transparent 70%);
+    radial-gradient(ellipse 32% 7% at 40% 72%, rgb(91 111 154 / var(--mist-b-alpha)), transparent 70%),
+    radial-gradient(ellipse 26% 7% at 88% 72%, rgb(91 111 154 / var(--mist-b-alpha)), transparent 70%);
+}
+/* Moon_Room: below 992 px every screen leaves room under the moon. The height
+   rules keep a min-h-screen screen one viewport tall in total. */
+#root > main {
+  min-height: calc(100vh - var(--moon-room));
+  min-height: calc(100dvh - var(--moon-room));
+}
+.sticky-below-moon {
+  top: var(--moon-room);
+}
+/* Fallback of the design (Risks): the séance shell (Summon and Write steps)
+   must fit one screen at 375 x 812 and 320 x 640, so it takes no Moon_Room;
+   its first row has a 4.5 rem right pad instead (SeanceSession). */
+#root:has(> main.no-moon-room) {
+  padding-top: 0;
+}
+#root > main.no-moon-room {
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 /* Moon glow behind the menu title. */
@@ -239,11 +267,26 @@ body::after {
    state, the glow and wisp are extra. Pseudo-elements ignore pointer events. */
 .tablet {
   position: relative;
+  border-radius: 50% 50% 3px 3px / 36% 36% 3px 3px;
+  background: linear-gradient(180deg, #2a2d36, #1d2028);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(236, 230, 214, 0.12);
 }
+/* Never met: blank dark stone, no border, no glyph. */
 .tablet-unmet {
+  background: #14161c;
+  border: 0;
   box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.6);
 }
+/* Restless: an asymmetric arch that reads as chipped. */
+.tablet-restless {
+  border-radius: 50% 30% 3px 3px / 36% 22% 3px 3px;
+}
+/* Fixed tilt pattern (engine/tabletTilt.ts), static, about the foot of the tablet. */
+.tablet-tilt-0 { transform: rotate(-3deg); transform-origin: 50% 100%; }
+.tablet-tilt-1 { transform: rotate(1.5deg); transform-origin: 50% 100%; }
+.tablet-tilt-2 { transform: rotate(0deg); transform-origin: 50% 100%; }
+.tablet-tilt-3 { transform: rotate(-1.5deg); transform-origin: 50% 100%; }
+.tablet-tilt-4 { transform: rotate(3deg); transform-origin: 50% 100%; }
 .tablet-rest {
   box-shadow:
     0 2px 4px rgba(0, 0, 0, 0.5),

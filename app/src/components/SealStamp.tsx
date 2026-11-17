@@ -1,5 +1,6 @@
 import { useId } from 'react';
 import { theme } from '../styles/theme';
+import { SEAL_GLYPH_PX, SEAL_INSET_PX, SEAL_SIZE_PX } from '../engine/sealLayout';
 
 export interface SealStampProps {
   /** The target character of the dataset record. The glyph comes only from here. */
@@ -19,8 +20,14 @@ export function SealStamp({ character, className }: SealStampProps) {
       role="img"
       aria-label={`Seal: ${character}`}
       data-testid="seal-stamp"
-      className={`seal-stamp pointer-events-none absolute bottom-2 right-2 flex h-12 w-12 items-center justify-center ${className ?? ''}`.trim()}
-      style={{ pointerEvents: 'none' }}
+      className={`seal-stamp pointer-events-none absolute flex items-center justify-center ${className ?? ''}`.trim()}
+      style={{
+        pointerEvents: 'none',
+        width: `${SEAL_SIZE_PX}px`,
+        height: `${SEAL_SIZE_PX}px`,
+        bottom: `${SEAL_INSET_PX}px`,
+        right: `${SEAL_INSET_PX}px`,
+      }}
     >
       <svg
         aria-hidden="true"
@@ -54,7 +61,7 @@ export function SealStamp({ character, className }: SealStampProps) {
         lang="zh"
         aria-hidden="true"
         className="relative"
-        style={{ fontSize: '28px', lineHeight: 1, color: theme.paperLabel }}
+        style={{ fontSize: `${SEAL_GLYPH_PX}px`, lineHeight: 1, color: theme.paperLabel }}
       >
         {character}
       </span>

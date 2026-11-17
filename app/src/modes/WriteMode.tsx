@@ -6,6 +6,8 @@ import type { EngineConfig } from '../engine/config';
 import type { Outcome } from '../engine/scheduler';
 import { resolveCompletion } from '../engine/outcome';
 import { writeSurfaceSize } from '../engine/surfaceSize';
+import { moonRoomPx } from '../engine/moonRoom';
+import { WRITE_PADDING_PX } from '../engine/sealLayout';
 import { theme } from '../styles/theme';
 import { InkSurface } from '../components/InkSurface';
 import { SealStamp } from '../components/SealStamp';
@@ -57,7 +59,7 @@ export function WriteMode({ record, dataset, config, onOutcome, reservedPx = 0, 
   configRef.current = config;
 
   // Computed once per mount so the surface and hanzi-writer always agree.
-  const [side] = useState(() => writeSurfaceSize(window.innerWidth, window.innerHeight, reservedPx));
+  const [side] = useState(() => writeSurfaceSize(window.innerWidth, window.innerHeight, reservedPx + moonRoomPx(window.innerWidth)));
   const [status, setStatus] = useState<Status>('writing');
   const [loading, setLoading] = useState(true);
   const [mistakes, setMistakes] = useState(0);
@@ -92,7 +94,7 @@ export function WriteMode({ record, dataset, config, onOutcome, reservedPx = 0, 
       const writer = HanziWriter.create(container, record.character, {
         width: side,
         height: side,
-        padding: 12,
+        padding: WRITE_PADDING_PX,
         showCharacter: false,
         showOutline: false,
         strokeColor: theme.inkOnPaper,

@@ -342,6 +342,188 @@
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794888263551
       }
+    ],
+    "12.1 Update the Steering_File and its test": [
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794889299972
+      },
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794889831253
+      }
+    ],
+    "12.2 Moon, Moon_Room and mist in `index.css`, with `moonRoom.ts`": [
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794889300545
+      },
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794889831425
+      }
+    ],
+    "12.3 Ink wash in `GhostFigure.tsx`": [
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794889301700
+      },
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794889832731
+      }
+    ],
+    "12.4 Paper-slip legend in `IntroScreen.tsx`": [
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794889302576
+      },
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794889833932
+      }
+    ],
+    "12.5 Sticky header of Sources & licences below the Moon_Room": [
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794889835373
+      },
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794890003240
+      }
+    ],
+    "12.6 Hillside, stone tablets and tilt in `Graveyard.tsx`": [
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794889836563
+      },
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794890004666
+      }
+    ],
+    "12.7 Seal in the paper margin and hanzi-writer padding": [
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794889837745
+      },
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794890005872
+      }
+    ],
+    "12.8 Add the e2e helpers for the Moon and the seal": [
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794890007073
+      },
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794890211855
+      }
+    ],
+    "12.12 Record the amendments in `visual-identity`": [
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794890007970
+      },
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794890212978
+      }
+    ],
+    "12.10 Add `e2e/seal-margin.spec.ts`": [
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794890211139
+      },
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794890626531
+      }
+    ],
+    "12.11 Add `e2e/graveyard-fit.spec.ts`": [
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794890211342
+      },
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794890627622
+      }
+    ],
+    "12.9 Retake the eight screenshots and extend the moon check": [
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794890214192
+      },
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794890625827
+      }
+    ],
+    "12. Follow-up from the screenshot review (approved by the human)": [
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794890627648
+      }
+    ],
+    "13.1 Re-run the accuracy review": [
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794890629166
+      },
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794890882523
+      }
+    ],
+    "13. Review again": [
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794890882583
+      }
+    ],
+    "14. Final checkpoint after the screenshot review": [
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794890888863
+      },
+      {
+        "executionId": "3d5734cc-8ba0-45dc-bc40-04850236c831",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794891080447
+      }
     ]
   }
 }

@@ -144,6 +144,23 @@ describe('index.css', () => {
     expect(media.body).toMatch(/\.tablet-restless::after\s*\{[^}]*wisp-rise/);
   });
 
+  it('tilts tablets by a static pattern and leaves never-met stone without a border', () => {
+    const pattern = [-3, 1.5, 0, -1.5, 3];
+    pattern.forEach((deg, n) => {
+      const body = blockAt(outside, outside.indexOf(`.tablet-tilt-${n} {`)).body;
+      expect(body).toMatch(new RegExp(`transform:\\s*rotate\\(${deg}deg\\)`));
+      expect(body).toMatch(/transform-origin:\s*50% 100%/);
+    });
+    expect(media.body).not.toContain('tablet-tilt');
+    const unmet = blockAt(outside, outside.indexOf('.tablet-unmet {')).body;
+    expect(unmet).toMatch(/border:\s*0/);
+    expect(unmet).toContain('#14161c');
+    expect(unmet).not.toMatch(/dotted|dashed/);
+    const tablet = blockAt(outside, outside.indexOf('.tablet {')).body;
+    expect(tablet).toContain('border-radius: 50% 50% 3px 3px / 36% 36% 3px 3px');
+    expect(tablet).toContain('linear-gradient(180deg, #2a2d36, #1d2028)');
+  });
+
   it('keeps the legend wipe and the seal stamp animation inside the motion block only', () => {
     expect(media.body).toMatch(/\.ink-reveal\s*\{[^}]*ink-reveal 600ms/);
     expect(media.body).toMatch(/\.seal-stamp\s*\{[^}]*seal-stamp 300ms/);
@@ -231,7 +248,9 @@ describe('index.css', () => {
 
     it('mist and moon channel triples equal their hex', () => {
       const [mr, mg, mb] = rgb(theme.mist);
-      expect(outside).toContain(`rgb(${mr} ${mg} ${mb} / var(--mist-peak-alpha))`);
+      expect(outside).toContain(`rgb(${mr} ${mg} ${mb} / var(--mist-a-alpha))`);
+      expect(outside).toContain(`rgb(${mr} ${mg} ${mb} / var(--mist-b-alpha))`);
+      expect(outside).not.toContain('--mist-peak-alpha');
       const [or, og, ob] = rgb(theme.moon);
       expect(outside).toContain(`rgb(${or} ${og} ${ob} / var(--moon-peak-alpha))`);
       expect(outside).not.toMatch(/rgb\((?!91 111 154|114 131 171)\d+ \d+ \d+ \/ var\(--(mist|moon)/);
@@ -301,77 +320,137 @@ describe('index.css', () => {
       expect(media.body).toMatch(/\.menu-figure\s*\{[^}]*ghost-float/);
     });
 
-    /** Vertical extents (percent of height) of every mist ellipse, from both layers. */
-    const mistExtents = (): Array<[number, number]> => {
-      const out: Array<[number, number]> = [];
-      for (const sel of ['body::after', '#root::before']) {
-        for (const m of ruleBody(sel).matchAll(/ellipse (\d+)% (\d+)% at \d+% (\d+)%/g)) {
-          const ry = parseFloat(m[2]);
-          const cy = parseFloat(m[3]);
-          out.push([cy - 0.7 * ry, cy + 0.7 * ry]);
-        }
-      }
-      return out.sort((x, y) => x[0] - y[0]);
+    /** Vertical extents (percent of height) of the ellipses of each mist band, by layer. */
+    const bandExtents = (sel: string): Array<[number, number]> =>
+      [...ruleBody(sel).matchAll(/ellipse (\d+)% (\d+)% at \d+% (\d+)%/g)].map((m) => {
+        const ry = parseFloat(m[2]);
+        const cy = parseFloat(m[3]);
+        return [cy - 0.7 * ry, cy + 0.7 * ry];
+      });
+    const bandCentre = (sel: string): number => {
+      const c = [...ruleBody(sel).matchAll(/ellipse \d+% \d+% at \d+% (\d+)%/g)].map((m) => parseFloat(m[1]));
+      expect(new Set(c).size, sel).toBe(1);
+      return c[0];
     };
-
-    const worstCase = (): { ratios: Record<string, number> } => {
-      const mistA = parseFloat(varValue('--mist-peak-alpha'));
-      const haloA = parseFloat(varValue('--moon-halo-alpha'));
-      // The grain tint and alpha come from the feColorMatrix in body::before. Its alpha is
-      // scaled by the noise (at most 1), so the matrix alpha is the worst case.
+    // Sky colour at a height: top to mid over 0 to 55%, mid to low over 55 to 100%.
+    const sky = (y: number): number[] =>
+      y <= 55
+        ? blend(rgb(theme.nightTop), rgb(theme.nightMid), y / 55)
+        : blend(rgb(theme.nightMid), rgb(theme.nightLow), (y - 55) / 45);
+    // The grain tint and alpha come from the feColorMatrix in body::before. Its alpha is
+    // scaled by the noise (at most 1), so the matrix alpha is the worst case.
+    const grainLayer = (bg: number[]): number[] => {
       const grain = ruleBody('body::before').match(/values='0 0 0 0 ([\d.]+) 0 0 0 0 ([\d.]+) 0 0 0 0 ([\d.]+) 0 0 0 (0\.\d+) 0'/);
       expect(grain).not.toBeNull();
-      const grainA = parseFloat(grain![4]);
-      const grainRgb = [1, 2, 3].map((i) => Math.round(parseFloat(grain![i]) * 255));
-      const moonAt = ruleBody('body::before').match(/circle 9rem at \d+% (\d+)%/);
-      expect(moonAt).not.toBeNull();
-      // Sky colour at a height: top to mid over 0 to 55%, mid to low over 55 to 100%.
-      const sky = (y: number): number[] =>
-        y <= 55
-          ? blend(rgb(theme.nightTop), rgb(theme.nightMid), y / 55)
-          : blend(rgb(theme.nightMid), rgb(theme.nightLow), (y - 55) / 45);
-      // Scenario A: lightest sky (bottom) with one mist ellipse and the lightest grain.
-      // Scenario B: sky at the moon's height with the halo, one mist ellipse and grain.
-      // The vignette only darkens, so it cannot lower contrast for light text; it is left out.
-      const a = blend(blend(rgb(theme.nightLow), rgb(theme.mist), mistA), grainRgb, grainA);
-      let b = blend(sky(parseFloat(moonAt![1])), rgb(theme.mist), mistA);
-      b = blend(blend(b, rgb(theme.moon), haloA), grainRgb, grainA);
-      const ratios: Record<string, number> = {};
-      for (const t of ['ink', 'muted', 'ghost', 'success', 'error'] as const) {
-        const fl = lum(rgb(theme[t]));
-        const worst = Math.min(
-          ...[a, b].map((bg) => (Math.max(fl, lum(bg)) + 0.05) / (Math.min(fl, lum(bg)) + 0.05)),
-        );
-        ratios[t] = worst;
-      }
-      return { ratios };
+      return blend(bg, [1, 2, 3].map((n) => Math.round(parseFloat(grain![n]) * 255)), parseFloat(grain![4]));
     };
+    const ratioOn = (token: string, bg: number[]): number => {
+      const fl = lum(rgb(theme[token as 'ink']));
+      return (Math.max(fl, lum(bg)) + 0.05) / (Math.min(fl, lum(bg)) + 0.05);
+    };
+    const TEXT = ['ink', 'muted', 'ghost', 'success', 'error'];
+    // The vignette only darkens, so it cannot lower contrast for light text; it is left out.
+    const bandBg = (sel: string, alphaVar: string): number[] =>
+      grainLayer(blend(sky(bandCentre(sel)), rgb(theme.mist), parseFloat(varValue(alphaVar))));
+    const haloBg = (): number[] =>
+      grainLayer(blend(sky(10), rgb(theme.moon), parseFloat(varValue('--moon-halo-alpha'))));
+    // Disc composite in paint order: sky at 2%, the halo under the disc, the disc, then the grain.
+    const discBg = (): number[] =>
+      grainLayer(
+        blend(
+          blend(sky(2), rgb(theme.moon), parseFloat(varValue('--moon-halo-alpha'))),
+          rgb(theme.moon),
+          parseFloat(varValue('--moon-disc-alpha')),
+        ),
+      );
 
-    it('mist ellipses never overlap vertically, so one mist is the worst case', () => {
-      const e = mistExtents();
-      expect(e).toHaveLength(4);
-      for (let i = 1; i < e.length; i++) expect(e[i][0], `band ${i}`).toBeGreaterThan(e[i - 1][1]);
+    it('the two mist bands never overlap vertically and lie in the lower third', () => {
+      const a = bandExtents('body::after');
+      const b = bandExtents('#root::before');
+      expect(a).toHaveLength(2);
+      expect(b).toHaveLength(2);
+      const [aLo, aHi] = [Math.min(...a.map((e) => e[0])), Math.max(...a.map((e) => e[1]))];
+      const [bLo, bHi] = [Math.min(...b.map((e) => e[0])), Math.max(...b.map((e) => e[1]))];
+      expect(bLo).toBeGreaterThanOrEqual(66.6);
+      expect(aLo).toBeGreaterThanOrEqual(66.6);
+      expect(aLo).toBeGreaterThan(bHi);
+      expect(bLo).toBeLessThan(bHi);
+      expect(aHi).toBeLessThanOrEqual(100);
+      expect(bandCentre('body::after')).toBe(88);
+      expect(bandCentre('#root::before')).toBe(72);
     });
 
-    it('text tokens keep 4.5:1 on the worst-case composite background', () => {
-      const { ratios } = worstCase();
-      for (const [t, ratio] of Object.entries(ratios)) expect(ratio, t).toBeGreaterThanOrEqual(4.5);
+    it('has band A at 0.18, band B at 0.10 and A at least 1.5 times B', () => {
+      expect(parseFloat(varValue('--mist-a-alpha'))).toBe(0.18);
+      expect(parseFloat(varValue('--mist-b-alpha'))).toBe(0.1);
+      expect(parseFloat(varValue('--mist-a-alpha'))).toBeGreaterThanOrEqual(1.5 * parseFloat(varValue('--mist-b-alpha')));
+      expect(ruleBody('body::after')).toContain('var(--mist-a-alpha)');
+      expect(ruleBody('#root::before')).toContain('var(--mist-b-alpha)');
+    });
+
+    it('text tokens keep 4.5:1 on band A at 88%, band B at 72% and the halo composite', () => {
+      const cases: Array<[string, number[]]> = [
+        ['band A', bandBg('body::after', '--mist-a-alpha')],
+        ['band B', bandBg('#root::before', '--mist-b-alpha')],
+        ['halo', haloBg()],
+      ];
+      for (const [name, bg] of cases) {
+        for (const t of TEXT) expect(ratioOn(t, bg), `${t} on ${name}`).toBeGreaterThanOrEqual(4.5);
+      }
+    });
+
+    it('keeps ink and error at 4.5:1 on the disc composite', () => {
+      for (const t of ['ink', 'error']) expect(ratioOn(t, discBg()), t).toBeGreaterThanOrEqual(4.5);
+    });
+
+    it('sizes the moon from custom properties, a full disc inside the viewport', () => {
+      const rem = (name: string): number => {
+        const v = varValue(name);
+        expect(v, name).toMatch(/^[\d.]+rem$/);
+        return parseFloat(v);
+      };
+      expect(rem('--moon-size')).toBeGreaterThanOrEqual(4);
+      expect(rem('--moon-inset-x')).toBeGreaterThanOrEqual(rem('--moon-size') / 2);
+      expect(rem('--moon-inset-y')).toBeGreaterThanOrEqual(rem('--moon-size') / 2);
+      const body = ruleBody('body::before');
+      expect(body).toContain('circle calc(var(--moon-size) / 2) at calc(100% - var(--moon-inset-x)) var(--moon-inset-y)');
+      expect(body).toContain('circle 7rem at calc(100% - var(--moon-inset-x)) var(--moon-inset-y)');
+      expect(body).not.toMatch(/at 82% 0%/);
+    });
+
+    it('leaves a Moon_Room below 992 px with a clamp() and no media rule', () => {
+      const room = varValue('--moon-room');
+      expect(room).toContain('clamp(');
+      expect(room).toContain('992px');
+      expect(room).toContain('4.75rem');
+      expect(ruleBody('#root')).toMatch(/padding-top:\s*var\(--moon-room\)/);
+      expect(ruleBody('#root > main')).toMatch(/min-height:\s*calc\(100vh - var\(--moon-room\)\)/);
+      expect(ruleBody('#root > main')).toMatch(/min-height:\s*calc\(100dvh - var\(--moon-room\)\)/);
+      expect(ruleBody('.sticky-below-moon')).toMatch(/top:\s*var\(--moon-room\)/);
+      expect(css.match(/@media/g)).toHaveLength(1);
+    });
+
+    it('drops the Moon_Room for the compact séance shell only (design fallback)', () => {
+      expect(ruleBody('#root:has(> main.no-moon-room)')).toMatch(/padding-top:\s*0;/);
+      const main = ruleBody('#root > main.no-moon-room');
+      expect(main).toMatch(/min-height:\s*100vh;/);
+      expect(main).toMatch(/min-height:\s*100dvh;/);
     });
 
     it('layers the night scene: sky, moon disc and halo, vignette, grain on body::before', () => {
       const body = ruleBody('body::before');
       expect(body).toContain('var(--night-top)');
-      expect(body).toMatch(/radial-gradient\(circle 1\.6rem at 82% 0%/);
-      expect(body).toMatch(/radial-gradient\(circle 9rem at 82% 0%/);
+      expect(body).toContain('var(--moon-disc-alpha)');
+      expect(body).toContain('var(--moon-halo-alpha)');
       expect(body).toContain('var(--vignette-alpha)');
       expect(body).toContain('feTurbulence');
       expect(body).toMatch(/position:\s*fixed/);
     });
 
-    it('keeps the moon halo peak at or below 0.10 and the mist peak at 0.09', () => {
+    it('keeps the moon halo peak at or below 0.10 and the disc brighter than the halo', () => {
       expect(parseFloat(varValue('--moon-halo-alpha'))).toBeLessThanOrEqual(0.1);
       expect(parseFloat(varValue('--moon-peak-alpha'))).toBeLessThanOrEqual(0.1);
-      expect(parseFloat(varValue('--mist-peak-alpha'))).toBe(0.09);
+      expect(parseFloat(varValue('--moon-disc-alpha'))).toBe(0.65);
       expect(parseFloat(varValue('--moon-disc-alpha'))).toBeGreaterThan(parseFloat(varValue('--moon-halo-alpha')));
     });
 
