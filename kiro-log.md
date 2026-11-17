@@ -668,6 +668,15 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 
 ---
 
+## Nov 18, 2026: Power import test: installed, but its server failed to start
+
+- **What I did:** Switched off the project's own `cangjie-oracle` MCP server, then installed `oracle/power` from the Powers panel (Add Custom Power → Import power from a folder), so the Power had to work on its own.
+- **Result:** the Power installed and appears under Installed as "cangjie-oracle by Ghost Script". Its server did not start: Kiro reported `MCP server "power-power-cangjie-oracle" failed to connect: Connection closed`.
+- **Why:** the Power's `mcp.json` starts `npx --no-install tsx oracle/src/index.ts`, a path relative to the repo. An installed Power doesn't run from the repo, so the path and `tsx` aren't there. The earlier claim that the Power worked was untested, which is exactly why the outside review asked for this test.
+- **Next:** make the Power self-contained: a bundled server and its own copy of the data inside the Power folder, started from the Power's own root.
+
+---
+
 ## Template for new entries
 
 ## [Date]: [Short title]
