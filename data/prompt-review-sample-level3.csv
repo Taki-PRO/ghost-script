@@ -4,7 +4,7 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 采,to pick,cǎi,default,,entry0 (cǎi): to pick | to pluck | to collect | to select | to choose | to gather ;; entry1 (cǎi): color | complexion | looks | variant of 彩[cai3] | variant of 採|采[cai3] ;; entry2 (cài): used in 采邑[cai4 yi4] and 采地[cai4 di4]
 衬,(of garments) against the skin,chèn,default,,entry0 (chèn): (of garments) against the skin | to line | lining | to contrast with | to assist financially
 传,to pass on,chuán,default,,entry0 (chuán): to pass on | to spread | to transmit | to infect | to transfer | to circulate | to conduct (electricity) ;; entry1 (zhuàn): biography | historical narrative | commentaries | relay station
-创,a wound; to wound,chuāng,default,,entry0 (chuàng): variant of 創|创[chuang4] ;; entry1 (chuàng): variant of 創|创[chuang4] ;; entry2 (chuāng): (bound form) a wound; to wound ;; entry3 (chuàng): to initiate; to create; to achieve (sth for the first time)
+创,to initiate; to create; to achieve (sth for the first time),chuàng,default,,entry0 (chuàng): variant of 創|创[chuang4] ;; entry1 (chuàng): variant of 創|创[chuang4] ;; entry2 (chuāng): (bound form) a wound; to wound ;; entry3 (chuàng): to initiate; to create; to achieve (sth for the first time)
 代,to be a substitute for; to act on behalf of; to replace; to substitute,dài,default,,entry0 (dài): to be a substitute for; to act on behalf of; to replace; to substitute | generation; dynasty; age; period; (historical) era; (geological) eon
 顿,to stop,dùn,default,,"entry0 (dùn): to stop | to pause | to arrange | to lay out | to kowtow | to stamp (one's foot) | at once | classifier for meals, beatings, scoldings etc: time, bout, spell, meal"
 防,to protect,fáng,default,,entry0 (fáng): to protect | to defend | to guard against | to prevent
@@ -27,8 +27,8 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 值,value,zhí,default,,entry0 (zhí): value | (to be) worth | to happen to | to be on duty
 抽,to draw out; to pull out from in between,chōu,default,,"entry0 (chōu): to draw out; to pull out from in between | to remove part of the whole | to inhale (esp. smoke) | (of fabric etc) to shrink | (of certain plants) to sprout; to bud | to whip; to thrash | classifier for sheets (of tissues, wet wipes etc)"
 锻,to forge,duàn,default,,entry0 (duàn): to forge | to discipline | wrought
-伙,meals (as in 伙食[huo3 shi2]),huǒ,default,,entry0 (huǒ): (bound form) meals (as in 伙食[huo3 shi2]) | variant of 夥|伙[huo3] ;; entry1 (huǒ): companion | partner | group | classifier for groups of people | to combine | together
-禁,to endure,jīn,default,,entry0 (jīn): to endure ;; entry1 (jìn): to prohibit | to forbid
+伙,companion,huǒ,default,,entry0 (huǒ): (bound form) meals (as in 伙食[huo3 shi2]) | variant of 夥|伙[huo3] ;; entry1 (huǒ): companion | partner | group | classifier for groups of people | to combine | together
+禁,to prohibit,jìn,default,,entry0 (jīn): to endure ;; entry1 (jìn): to prohibit | to forbid
 均,equal; uniform; even,jūn,default,,entry0 (jūn): (bound form) equal; uniform; even | (literary) without exception; all
 泪,tears; teardrops,lèi,default,,entry0 (lèi): (bound form) tears; teardrops
 疗,to treat,liáo,default,,entry0 (liáo): to treat | to cure | therapy
@@ -37,7 +37,7 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 醒,to wake up,xǐng,default,,entry0 (xǐng): to wake up | to be awake | to become aware | to sober up | to come to
 寻,to search,xún,default,,entry0 (xún): to search | to look for | to seek
 盐,salt,yán,default,,entry0 (yán): salt | CL:粒[li4]
-折,to snap,shé,default,,"entry0 (shé): to snap | to break (a stick, a bone etc) | (bound form) to sustain a loss (in business) ;; entry1 (zhē): to turn sth over | to turn upside down | to tip sth out (of a container) ;; entry2 (zhé): to break | to fracture | to snap | to suffer loss | to bend | to twist | to turn | to change direction | convinced | to convert into (currency) | discount | rebate | tenth (in price) | classifier for theatrical scenes | to fold | accounts book ;; entry3 (zhé): variant of 折[zhe2] | to fold"
+折,to break,zhé,default,,"entry0 (shé): to snap | to break (a stick, a bone etc) | (bound form) to sustain a loss (in business) ;; entry1 (zhē): to turn sth over | to turn upside down | to tip sth out (of a container) ;; entry2 (zhé): to break | to fracture | to snap | to suffer loss | to bend | to twist | to turn | to change direction | convinced | to convert into (currency) | discount | rebate | tenth (in price) | classifier for theatrical scenes | to fold | accounts book ;; entry3 (zhé): variant of 折[zhe2] | to fold"
 智,(literary) wise; wisdom,zhì,default,,entry0 (zhì): (literary) wise; wisdom
 闯,to rush,chuǎng,default,,entry0 (chuǎng): to rush | to charge | to dash | to break through | to temper oneself (through battling hardships)
 德,virtue,dé,default,,entry0 (Dé): Germany | German | abbr. for 德國|德国[De2 guo2] ;; entry1 (dé): virtue | goodness | morality | ethics | kindness | favor | character | kind ;; entry2 (dé): variant of 德[de2] ;; entry3 (dé): variant of 德[de2]

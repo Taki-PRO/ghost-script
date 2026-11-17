@@ -46,10 +46,24 @@ describe('data check hook matcher', () => {
   const accepted = [
     'data/character-list.txt',
     'data/prompt-overrides.csv',
+    'data/character-list-level2.txt',
+    'data/character-list-level3.txt',
+    'data/prompt-overrides-level2.csv',
+    'data/prompt-overrides-level3.csv',
+    'data/prompt-approvals.csv',
     'data/raw/SOURCES.md',
     'data/raw/unihan/Unihan_DictionaryLikeData.txt',
   ];
-  const rejected = ['app/public/data/characters.json', 'data/prompt-review.csv', 'app/src/App.tsx'];
+  const rejected = [
+    'app/public/data/characters.json',
+    'data/prompt-review.csv',
+    'app/src/App.tsx',
+    'data/prompt-rule-changes.csv',
+    'data/prompt-review-level2.csv',
+    'app/public/data/characters-level2.json',
+    'data/character-list-level4.txt',
+    'data/prompt-overrides-level1.csv',
+  ];
 
   for (const path of accepted) {
     it(`accepts ${path} (relative)`, () => {

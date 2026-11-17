@@ -68,7 +68,7 @@ const BOUND_FORM_PREFIX = '(bound form) ';
  * Strip a SINGLE leading `(bound form) ` prefix from a gloss, then trim. Used
  * for both comparison against the skip list and for the emitted meaning.
  */
-function stripBoundForm(gloss: string): string {
+export function stripBoundForm(gloss: string): string {
   if (gloss.startsWith(BOUND_FORM_PREFIX)) {
     return gloss.slice(BOUND_FORM_PREFIX.length).trim();
   }
@@ -76,7 +76,7 @@ function stripBoundForm(gloss: string): string {
 }
 
 /** True when the stripped gloss begins (case-insensitively) with a skip prefix. */
-function hasSkippedPrefix(strippedGloss: string): boolean {
+export function hasSkippedPrefix(strippedGloss: string): boolean {
   const lower = strippedGloss.toLowerCase();
   return SKIPPED_PREFIXES.some((prefix) => lower.startsWith(prefix));
 }
@@ -86,7 +86,7 @@ function hasSkippedPrefix(strippedGloss: string): boolean {
  * capitalises proper-noun readings (e.g. `San`, `Wang`, `Zhong`), so such a
  * reading marks the whole entry as a proper noun to be skipped by default.
  */
-function isProperNounReading(reading: string): boolean {
+export function isProperNounReading(reading: string): boolean {
   for (const ch of reading) {
     if (/[A-Za-z]/.test(ch)) {
       return ch === ch.toUpperCase() && ch !== ch.toLowerCase();

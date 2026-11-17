@@ -160,6 +160,64 @@ Pipeline stdout, per level: the existing Cangjie lines, the summon-ink line, and
 
 `scripts/build-font.ts`: `computeRepoGlyphSet(root)` keeps returning the level 1 set (level 1 keys, key shapes, legend), so `glyph-set.txt` and `lxgw-wenkai-subset.woff2` stay byte-identical. A new `computeLevelGlyphSets(root)` returns, for levels 2 and 3, the keys of that level's file minus the glyphs of earlier sets. `renderFontsCss` emits one rule per subset (files `lxgw-wenkai-subset-level2.woff2`, `…-level3.woff2`). The existing coverage check runs on all sets.
 
+### Clue quality (follow-up, approved by the human; Requirement 18)
+
+**Investigation (read-only).**
+
+- The Current_Rule is `selectDefault` in `scripts/lib/prompt.ts` (there is no `select-prompt*` file): first entry whose reading is not capitalised, first gloss that is non-empty after one `(bound form) ` strip and has no skipped prefix. It is why 鸟 shows "penis" (`diao3` is the first entry), 胖 "healthy" (`pan2`), 读 "comma" (`dou4`), 柜 "Salix multinervis" (`ju3`), 叶 "to be in harmony" (`xie2`), 圣 (`ku1`) and 综 "heddle" (`zeng4`).
+- `cleanupMeaning` (`app/src/engine/promptCleanup.ts`) only deletes: `(CL:...)`, bare `CL:`, `(e.g. ...)`, `Taiwan pr.`/`also pr.` notes and `[pinyin]` references. It keeps any other Chinese text, such as 的 in "(equivalent to 的 as possessive particle)". `maskTarget` (`app/src/engine/mask.ts`) replaces the target character with `～` (U+FF5E). `GhostPrompt` shows `maskTarget(cleanupMeaning(meaning), character)`; `formatReturn` and `walkthrough` show `cleanupMeaning(meaning)` unmasked.
+- Of the stored level 2 and 3 meanings, 29 contain a Chinese character (17 at level 2, 12 at level 3). After cleanup and masking, 13 still show one; after cleanup alone, 16.
+- `hsk30-chars.csv` header: `Hanzi,Level,WritingLevel,Traditional,Freq,Examples`. All 3,000 data lines have exactly six comma-separated fields and the file has no double quote. The 1,200 rows with a `WritingLevel` have an `Examples` cell of space-separated simplified words, for example 鸟 → `鸟 鸟巢`, 胖 → `胖 胖子 肥胖`, 读 → `读 读书 读音 读者 阅读`, 叶 → `茶叶 树叶 叶子`, 柜 → `柜子 书柜 柜台 专柜`, 圣 → `圣诞节 神圣 圣贤`, 综 → `综合 错综复杂 综上所述`. Words can be the character alone and can be idioms of four characters.
+- `parseCcCedict` (`scripts/lib/parse-cc-cedict.ts`) keys a `Map` by the simplified headword and keeps `entries[]` (reading plus glosses) in file order, one per source line. Readings are numbered pinyin such as `niao3`, with `u:` for ü and capitalised proper-noun readings.
+- `buildDataset` calls `selectPrompt(char, cc, override)` in the character loop, and `buildPromptReviewCsv` calls it a second time; both must switch to one shared helper, or the Review_File would disagree with the dataset. `buildAllLevels` passes `level` and the approvals path for levels 2 and 3 only. `defaultPaths` and `filesToWrite` own the generated paths.
+- The hook is `.kiro/hooks/data-check-on-save.json`, matcher `(^|/)data/(character-list\\.txt|prompt-overrides\\.csv|raw/.+)$`, tested by `tests/unit/kiro-hook.test.ts` (accepted and rejected path lists). It does not yet watch the level lists, the two level override files or the approvals file. None of the three human files exists today.
+- Read-only trial of the rule (a scratch script outside the repository, with the rule as written in Requirement 18): about 63 prompts change, 30 at level 2 and 33 at level 3. For 2 characters no example gave a usable reading and for 9 the top two readings tied; those keep the Current_Rule's reading. One character, 漂, falls back to the Current_Rule because its most frequent reading (`piao4`, from 漂亮) only has the gloss "used in 漂亮[piao4 liang5]". No character was left with a Chinese character in a cleaned meaning, masked or not, so the build would not fail today. The 29 raw Chinese-character prompts are all replaced. These numbers are estimates; the build prints the real ones.
+
+**Where the rule lives.**
+
+- `scripts/lib/prompt.ts` exports three helpers it already has (`stripBoundForm`, `isProperNounReading`, `hasSkippedPrefix`) with no change of behaviour. `selectPrompt` is not edited, so level 1 cannot change.
+- New `scripts/lib/parse-hsk-examples.ts` (pure): `parseHskExamples(csvText): Map<string, string[]>`. It splits each line on the first five commas, reads the sixth field as the Examples cell, splits it on whitespace and keeps only rows with a non-empty `WritingLevel`.
+- New `scripts/lib/select-prompt-by-examples.ts` (pure, no I/O):
+
+```ts
+export function normaliseSyllable(s: string): string;            // lower-case; u: and v -> ü
+export function readingCounts(
+  char: string,
+  exampleWords: readonly string[],
+  cc: ReadonlyMap<string, CcCedictEntry>,
+): Map<string, number>;                                          // tone 1-4 only
+export function topReading(counts: ReadonlyMap<string, number>): string | undefined; // undefined on tie or empty
+export function isCrossReferenceGloss(stripped: string): boolean;
+export function containsHan(text: string): boolean;              // /\p{Script=Han}/u
+export function selectPromptByExamples(
+  char: string,
+  entry: CcCedictEntry,
+  exampleWords: readonly string[],
+  cc: ReadonlyMap<string, CcCedictEntry>,
+): PromptSelectionResult;
+```
+
+  `selectPromptByExamples` calls `selectPrompt(char, entry, undefined)` first; a failure is returned unchanged. The Clue_Rule reading is `topReading(...)` or, when that is undefined, the normalised reading of the Current_Rule's entry. It walks `entry.entries` in order, skips proper-noun readings, keeps entries whose normalised reading equals the Clue_Rule reading, and returns the first gloss that passes `stripBoundForm`, non-empty, `!isCrossReferenceGloss`, `!containsHan(cleanupMeaning(gloss))`. The result has the same `PromptChoice` shape (`entryIndex`, `meaningIndex`, tone-mark `pinyin`, `fromOverride: false`). If nothing passes it returns the Current_Rule result. The reading key compares with `normaliseSyllable` on each syllable of `entry.reading` joined by a space. `isCrossReferenceGloss` lower-cases once: prefix tests for `variant of`, `old variant of`, `see `, `used in`, `surname `, `abbr.`, `cl:`, `also pr.`, `taiwan pr.`; contains tests for `(tw)` and `(archaic)`. `readingCounts` uses the first occurrence of `char` in each word, skips a word that does not contain it, and counts once per matching CC-CEDICT entry of that word.
+- Tie rule: `topReading` returns the key with the highest count only when exactly one key has that count.
+
+**How it plugs in (levels 2 and 3 only).**
+
+- `BuildOptions` gains `hskCharsPath?: string`. `buildDataset` reads and parses it only when `level` is 2 or 3 and the path is given. `AllLevelsOptions` gains `hskCharsPath?: string`, passed to levels 2 and 3 only; `main()` passes `data/raw/hsk30/hsk30-chars.csv`. Without the path, the Current_Rule runs, so existing fixtures and level 1 behave as before.
+- A private helper `choosePrompt(char, cc, override, ctx)` in `build-data.ts` returns `{ result, current }`: with an override, `selectPrompt` with the override; with an approval and no override, `selectPrompt` default (the human approved that prompt); with `ctx.examples` set, `selectPromptByExamples`; otherwise `selectPrompt`. The character loop and `buildPromptReviewCsv` both call it, so the dataset, the Review_File and the samples agree. `current` is `selectPrompt(char, cc, undefined)`, used for the changes list.
+- The Chinese-character gate runs in the same loop for levels 2 and 3 (also for an override): if `containsHan(cleanupMeaning(prompt.meaning))` the character becomes a `MissingFieldError` with `promptFailure: 'chinese-in-meaning'`. `formatError` prints the character, the level and "add an override row in data/prompt-overrides-levelN.csv". The union type of `promptFailure` gains this value; nothing is written on failure (existing fail-slow behaviour).
+- `BuildResult` success gains `ruleChanges: RuleChange[]` (`character, level, oldPinyin, oldMeaning, newPinyin, newMeaning`), listed in Level_List order for characters without an override or approval row whose result differs from `current`. `LevelBuild` carries it; `AllLevelsOutput` gains `ruleChangesCsv`; `AllLevelsPaths` gains `ruleChanges: data/prompt-rule-changes.csv`; `filesToWrite` adds it to the atomic write. `renderRuleChangesCsv(changes)` is a pure function in `scripts/lib/rule-changes.ts` with the header `character,level,oldPinyin,oldMeaning,newPinyin,newMeaning`, RFC 4180 quoting as the Review_Files, `\n` line ends and one trailing newline. `formatAllLevelsReport` prints `Prompt rule changes: level 2: N, level 3: M, total: T`.
+
+**Displayed Chinese characters.**
+
+- A Han_Character is `\p{Script=Han}` (this includes 〇). Test and gate use the cleaned text. The gate is unmasked, which is stricter than the ghost prompt (masked) and covers the return line and the walkthrough too.
+- The Level_Manifest `exampleMeanings` already pass a letters, spaces and hyphens filter (Requirement 5.2), so they are Chinese-free by construction; the test asserts it anyway.
+- New test `tests/unit/prompt-displayed-chinese.test.ts` reads the two level files and `levels.json` and asserts Requirement 18.12 for every record (a plain unit test, not a property test; the one-property-test exception stays for summon-ink only).
+- Not-a-fallback case: the trial found no character that the Clue_Rule, an override and the Current_Rule all leave with a Chinese character. If one appears later, the build fails naming it, and the human adds an override row.
+
+**Hook.** The matcher becomes `(^|/)data/(character-list(-level[23])?\\.txt|prompt-overrides(-level[23])?\\.csv|prompt-approvals\\.csv|raw/.+)$`. `tests/unit/kiro-hook.test.ts` accepts the five new paths (relative and absolute) and still rejects the generated files, including `data/prompt-rule-changes.csv`, `data/prompt-review-level2.csv` and `app/public/data/characters-level2.json`, so a build never triggers itself.
+
+**Regeneration.** `npm run build:data` rewrites the two level files, `levels.json`, the two Review_Files, both Review_Samples (same seed strings and the same row positions; the row text can differ), the Sample_Provenance (unchanged unless counts change), the generated counts module, the README block and the new changes CSV. Level 1 files do not change. The glyph sets come from record keys, which do not change, so the font subsets stay; `build:font` is run only to confirm that. Tests that pin a level 2 or level 3 prompt value are updated to the new value and nothing else.
+
 ### Engine (`app/src/engine/levels.ts`, new, pure)
 
 ```ts
@@ -400,6 +458,7 @@ These are the steering edits (Requirement 15), approved by the human as worded h
 | History key in no level | Ignored by the Graveyard and the pool (as today for unknown keys); never deleted. |
 | Storage unavailable or write fails | Existing sticky "not saving" notice; the level stays in memory for the page session. |
 | Save has a bad `level` | Reset to defaults (existing rule for any failed validation). |
+| A level 2 or 3 meaning would show a Chinese character after the Clue_Rule, an override and the fallback | The build fails with no file written, naming the character, its level and the override file where a human adds a row (Requirement 18.11). |
 | A Review_File has fewer than 50 rows, or the README markers are missing | The build fails with a message naming the level or the file; nothing is written. |
 | Source_Check differs from the Expected_Result | Exit non-zero, print what differs, the plan stops for the human. |
 | Font file for a level fails to load | The Chinese font stack falls back to system CJK fonts; nothing breaks. |
@@ -420,6 +479,7 @@ These are the steering edits (Requirement 15), approved by the human as worded h
 - Prompt counts: counts equal a fresh count over the three data files; the README block equals the rendered block; the Sources & licences sentence shows the same numbers; the missing-marker failure.
 - Reviewer values: `checkReviewedBy` fails on any value other than `human` (or empty on unreviewed rows) in the new files, accepts exactly the existing level 1 values and rows, and fails on a new level 1 override row whose reviewer is not `human`.
 - Minified files: `JSON.parse` equals the pretty-printed form, no newline, key order equal; `characters.json` bytes unchanged.
+- Clue quality: `parse-hsk-examples` (six fields, empty `WritingLevel`, extra whitespace); `select-prompt-by-examples` on small fixtures (majority, tie, no example, tone 5 ignored, `u:` and `ü`, proper-noun entry skipped, two entries of one word each counted, wrong syllable count ignored, each cross-reference phrase, a Chinese-character gloss skipped, a removable `(CL:...)` note kept eligible, next entry with the same reading, fallback); `renderRuleChangesCsv` (header, quoting, order, determinism); `buildAllLevels` with a fixture CSV (level 2 changes and level 1 does not, override and approval precedence, the Chinese-character failure, `promptReview` unchanged by the rule, Review_File equals dataset); the displayed-meaning test over every level 2 and 3 record and `levels.json`; the changes file agrees with the datasets; the level 1 hash test stays; the hook matcher test with the new paths.
 - Source_Check: the pure comparison reports every difference from the Expected_Result and nothing when equal.
 - Loader: `promptReview` accepted and rejected values, manifest validation, `levelUrl`.
 - Bundle check: lazy paths listed but not counted; budget unchanged.

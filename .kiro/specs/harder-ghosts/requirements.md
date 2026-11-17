@@ -63,6 +63,14 @@ Out of scope: traditional characters, Cantonese, the Exam Crypt mode, any change
 - **Test_Suite**: The Vitest tests run by `npm test`.
 - **E2E_Suite**: The Playwright tests under `e2e/`, run by `npm run test:e2e`.
 - **Viewport_Set**: 1024 × 768, 375 × 812 and 320 × 640 CSS pixels.
+- **Current_Rule**: The existing default prompt rule of `selectPrompt` in `scripts/lib/prompt.ts` (first usable gloss of the first non-proper-noun CC-CEDICT entry). Level 1 uses it unchanged.
+- **Clue_Rule**: The default prompt rule of level 2 and level 3 (Requirement 18): reading by frequency in the HSK example words, then the first clean gloss of an entry with that reading.
+- **Example_Words**: The space-separated words in the `Examples` column of `data/raw/hsk30/hsk30-chars.csv` for a character (the sixth of six comma-separated columns; the file has no quoted field).
+- **Reading_Count**: For one character, the number of times each tone-numbered reading occurs across the CC-CEDICT entries of its Example_Words (Requirement 18.3 and 18.4).
+- **Han_Character**: A character with Unicode script Han (`\p{Script=Han}`).
+- **Cross_Reference_Gloss**: A gloss that is not a standalone clue: after a single leading `(bound form) ` is removed, it starts (case-insensitively) with `variant of`, `old variant of`, `see `, `used in`, `surname `, `abbr.`, `cl:`, `also pr.` or `taiwan pr.`, or contains (case-insensitively) `(Tw)` or `(archaic)`.
+- **Displayed_Meaning**: The text a player can see for a level 2 or level 3 meaning: `maskTarget(cleanupMeaning(prompt.meaning), character)` on the ghost prompt, `cleanupMeaning(prompt.meaning)` on the return line and the walkthrough, and each Example_Meaning of the Level_Manifest.
+- **Rule_Changes_File**: The generated file `data/prompt-rule-changes.csv` (Requirement 18.9).
 - Terms not defined here (Ghost, Séance, Rite, Summon step, Lay-to-rest step, summon-ink class, Review entry) have the meanings given in ghost-game-core, cangjie-seance, first-meeting and summon-ink.
 
 ---
@@ -131,6 +139,7 @@ Out of scope: traditional characters, Cantonese, the Exam Crypt mode, any change
 #### Acceptance Criteria
 
 1. THE Pipeline SHALL choose each new prompt with the existing `selectPrompt` rule (default walk over CC-CEDICT entries in source order, with the skipped prefixes and proper-noun rule), or with a human override by index, and SHALL NOT use an AI model for any prompt.
+   - Amended (approved by the human): for level 2 and level 3 the default prompt follows the Clue_Rule of Requirement 18; the walk above is the Current_Rule that the Clue_Rule falls back to, and level 1 keeps it unchanged.
 2. THE Pipeline SHALL read overrides for level 2 from `data/prompt-overrides-level2.csv` and for level 3 from `data/prompt-overrides-level3.csv`, with the columns, validation and index-only semantics of `data/prompt-overrides.csv`, and SHALL treat an absent file as no overrides.
 3. THE Pipeline SHALL read approvals from `data/prompt-approvals.csv` when it exists, and SHALL reject a row whose `character` is not in a Level_List of level 2 or 3, or whose `reviewedBy` is not exactly `human`; AND THE Pipeline SHALL apply the same `reviewedBy` rule to the rows of `data/prompt-overrides-level2.csv` and `data/prompt-overrides-level3.csv`.
 4. WHEN a level 2 or level 3 character has an override row or an approval row, THE Pipeline SHALL set `promptReview` to `"reviewed"` on its record; OTHERWISE THE Pipeline SHALL set `promptReview` to `"unreviewed"`.
@@ -363,6 +372,32 @@ Out of scope: traditional characters, Cantonese, the Exam Crypt mode, any change
 7. THE feature SHALL write no personal name in any repository file, data files included; approvals SHALL read "approved by the human", and every new `reviewedBy` value SHALL follow Requirement 4.16.
 8. THE last task SHALL also report the first ten ghosts in Learning_Order at level 2 and at level 3, each with character, meaning, pinyin and summon-ink class, read from the generated Level_Datasets by a script and not typed by hand.
 
+### Requirement 18: Clue Quality for Levels 2 and 3 (follow-up, approved by the human)
+
+**User Story:** As a player, I want each level 2 and level 3 ghost to show its everyday meaning and reading, so that I am not asked for "penis" when I should see "bird", and never see Chinese characters in a clue.
+
+#### Acceptance Criteria
+
+1. THE Pipeline SHALL choose the default prompt of every level 2 and level 3 character with the Clue_Rule, and SHALL keep choosing the prompt of every level 1 character with the Current_Rule, so that `app/public/data/characters.json` and `data/prompt-review.csv` stay byte-identical.
+2. WHERE a human override row exists for a level 2 or level 3 character, THE Pipeline SHALL use the override and not the Clue_Rule; WHERE an approval row exists and no override row, THE Pipeline SHALL use the Current_Rule's prompt for that character, because the human approved that prompt.
+3. THE Pipeline SHALL count readings for a character as follows: for every word of its Example_Words that contains the character, and for every CC-CEDICT entry whose simplified headword equals the word exactly and whose reading has exactly one syllable per character of the word, count once the syllable at the position of the character's first occurrence in the word; a word with no such entry adds nothing.
+4. THE Pipeline SHALL compare syllables as tone-numbered CC-CEDICT syllables, lower-cased, with `u:` and `v` read as `ü`, and SHALL NOT count a syllable whose tone digit is 5 or that has no tone digit 1 to 4.
+5. THE Pipeline SHALL take as the Clue_Rule reading the reading with the highest Reading_Count; IF two or more readings share the highest count, or no reading was counted, THEN THE Pipeline SHALL use the reading of the Current_Rule's entry.
+6. THE Pipeline SHALL scan the character's CC-CEDICT entries in source order, skipping each entry whose reading is a proper-noun reading (the Current_Rule's test), and for each entry whose normalised reading equals the Clue_Rule reading SHALL take the first gloss that, after one leading `(bound form) ` is removed, is not empty, is not a Cross_Reference_Gloss and whose `cleanupMeaning` form contains no Han_Character; the chosen entry's reading, in tone marks, is the prompt's pinyin.
+7. IF no entry with the Clue_Rule reading has such a gloss, THEN THE Pipeline SHALL use the Current_Rule's prompt for that character.
+8. THE selected meaning SHALL be one of the record's own CC-CEDICT meanings (after the permitted `(bound form) ` strip) and the selected pinyin SHALL be the tone-mark form of the reading of the same entry, so the tests of Requirement 4.9 keep passing.
+9. WHEN the Pipeline succeeds, THE Pipeline SHALL write `data/prompt-rule-changes.csv` atomically with the other generated files, with the fixed header `character,level,oldPinyin,oldMeaning,newPinyin,newMeaning`, one row for each level 2 character and then each level 3 character, in Level_List order, whose Clue_Rule pinyin or meaning differs from the Current_Rule's (the stored values, with the quoting of the Review_Files), and no row for a character with an override or approval row; the file SHALL be identical on two runs.
+10. THE Pipeline SHALL leave `promptReview` of a changed prompt as the existing rule gives it (`unreviewed` unless an override or approval row exists), and SHALL print the number of changed prompts for level 2, for level 3 and in total.
+11. IF a Displayed_Meaning of a level 2 or level 3 record would contain a Han_Character after the Clue_Rule, an override and the fallback (checked on `cleanupMeaning(prompt.meaning)` with the target character not masked), THEN THE Pipeline SHALL fail the build with no file written, naming each such character, its level and the file in which a human adds an override row (`data/prompt-overrides-level2.csv` or `-level3.csv`).
+12. THE Test_Suite SHALL assert, for every record of `characters-level2.json` and `characters-level3.json`, that no Han_Character occurs in `cleanupMeaning(prompt.meaning)`, in `maskTarget(cleanupMeaning(prompt.meaning), character)`, and in each Example_Meaning of `levels.json`.
+13. THE Test_Suite SHALL assert that the Rule_Changes_File has the fixed header, that each row's new pinyin and meaning equal the record's prompt, that each row's old pair equals the Current_Rule's choice over the same CC-CEDICT data, and that the number of rows equals the number of records whose prompt differs from the Current_Rule's choice.
+14. THE pure functions of the Clue_Rule SHALL live in `scripts/lib/` and SHALL have unit tests on small fixtures: a clear majority, a tie, no usable example, tone 5 ignored, `u:` and `ü`, a proper-noun entry skipped, two entries of one word each counted, a word whose entry has the wrong syllable count, each Cross_Reference_Gloss phrase, a gloss with a Han_Character skipped, a `(CL:…)` note that `cleanupMeaning` removes, the next entry with the same reading, the fallback, and the override and approval precedence.
+15. WHEN the Pipeline has run, THE regenerated files SHALL be the three Level_Datasets (level 1 unchanged), the Review_Files, both Review_Samples with the same seed strings and the same row positions, the Sample_Provenance, the Prompt_Counts outputs, the README block, `levels.json` and, only if a glyph set changes, the font subsets; and every existing check SHALL stay green, where a test that pins a level 2 or level 3 prompt value changes that value only.
+16. THE data-check hook SHALL also watch `data/character-list-level2.txt`, `data/character-list-level3.txt`, `data/prompt-overrides-level2.csv`, `data/prompt-overrides-level3.csv` and `data/prompt-approvals.csv`, and `tests/unit/kiro-hook.test.ts` SHALL cover each new path and still reject the generated files.
+17. THE README SHALL describe the Clue_Rule for levels 2 and 3 in the prompt section, name the `Examples` column of the Pinned_CSV as its source, and name the Rule_Changes_File.
+18. THE final checkpoint (task 16) SHALL run every check of Requirement 17.6, SHALL report the number of changed prompts per level and print the Rule_Changes_File, and SHALL run `npm run report:ghosts` again and print its output.
+19. THE follow-up SHALL add no property-based test and no mutation test (decision of Nov 15), SHALL NOT edit `kiro-log.md`, `tasks.meta.json` or any steering file, SHALL NOT create `data/prompt-overrides-level2.csv`, `data/prompt-overrides-level3.csv` or `data/prompt-approvals.csv`, and SHALL write no personal name in any file.
+
 ---
 
 ## Decisions approved by the human
@@ -389,3 +424,26 @@ There are no open questions. The human approved the following decisions; the req
 18. All steering amendments are approved as worded in the design.
 19. No personal names appear in any file, data files included. Every new `reviewedBy` value is exactly `human`; the level 1 files keep their existing values (Requirement 4.16).
 20. The Source_Check is automatic: the plan continues when the result equals the Expected_Result and stops for the human only when anything differs (Requirement 1).
+21. Clue quality (Requirement 18): levels 2 and 3 get a new default prompt rule; level 1 and its protected hashes stay as they are.
+22. The reading is the most frequent non-neutral reading across the CC-CEDICT entries of the character's HSK example words; a tie or no usable example keeps the Current_Rule's reading (Requirements 18.3 to 18.5).
+23. The meaning is the first gloss of the entry with that reading that has no Chinese character and is not a cross-reference; otherwise the next entry with the same reading; otherwise the Current_Rule (Requirements 18.6 and 18.7).
+24. No Displayed_Meaning of level 2 or 3 contains a Chinese character, proven by a test over every record; a character that cannot meet this fails the build and gets a human override row (Requirements 18.11 and 18.12).
+25. `data/prompt-rule-changes.csv` lists every changed prompt; changed prompts stay unreviewed; override and approval rows win (Requirements 18.2, 18.9 and 18.10).
+26. The data-check hook also watches the level 2 and 3 lists, the two level overrides files and the approvals file (Requirement 18.16).
+
+## Assumptions for the human (Clue quality)
+
+These follow from the brief only by interpretation. They are not recorded as decisions until the human confirms them.
+
+1. **Proper-noun entries stay skipped.** The Clue_Rule keeps the Current_Rule's test: an entry whose reading starts with a capital letter is never chosen. Without it a read-only trial picked "France" for 法 and "Yuan dynasty" for 元. Capitalised readings of example words (法国, "Fa3 guo2") still count as a reading, compared case-insensitively.
+2. **First occurrence only.** A word that holds the character twice counts one syllable, the first position.
+3. **Each matching entry counts once.** A word with two CC-CEDICT entries of the right length (for example a word with two readings) adds one count per entry. A single-character example word (the character itself) counts all its entries; this is intended, because a rare reading then gets one vote against the common reading's votes from longer words.
+4. **Neutral tone and no tone digit.** Tone 5, and any syllable without a digit 1 to 4, is not counted.
+5. **Chinese-character test on the cleaned gloss.** Requirement 18.6 tests `cleanupMeaning(gloss)`, not the raw gloss, so a gloss whose only Chinese text is a `(CL:…)` note or a `[pin1 yin1]` reference, which the display removes, stays eligible. The stored `prompt.meaning` is still the raw gloss and may contain such a note, as today.
+6. **The strict test also rejects the target character itself** (for example "(variant of 豆[dou4])" is rejected although `maskTarget` would hide the 豆), so the return line, which does not mask, is clean too.
+7. **Cross-reference list is the Current_Rule's list plus the brief's.** The Clue_Rule never picks a gloss the Current_Rule would skip (`abbr.`, `cl:`, `also pr.`, `taiwan pr.`), and adds `(Tw)` and `(archaic)` as "contains" tests and `surname ` as a prefix, as the Current_Rule already has.
+8. **Approval rows keep the Current_Rule's prompt**, since a human approved that prompt, not the new one. No approvals file exists yet.
+9. **An override that shows a Chinese character also fails the build** (Requirement 18.11); the human fixes the override row.
+10. **The `source` column of the Review_Files stays `default`** for a Clue_Rule choice; the Rule_Changes_File is where changes are listed.
+11. **"List order"** of the Rule_Changes_File means level 2 in `character-list-level2.txt` order, then level 3 in `character-list-level3.txt` order.
+12. **The Clue_Rule is applied only when the build is given the Pinned_CSV path** (the repository build always is); a build without it (some test fixtures) keeps the Current_Rule.

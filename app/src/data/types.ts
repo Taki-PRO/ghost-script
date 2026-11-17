@@ -157,7 +157,9 @@ export interface MissingFieldError {
   character: string;
   missingFields: RequiredField[];
   /** Set when prompt selection found no usable sense for the character. */
-  promptFailure?: 'no-usable-sense';
+  promptFailure?: 'no-usable-sense' | 'chinese-in-meaning';
+  /** Set with `chinese-in-meaning`: the level whose displayed meaning has a Han character. */
+  level?: Level;
   /** Set when a human override for this character was out of range / unknown. */
   overrideError?: PromptOverrideFailure;
 }
@@ -180,6 +182,11 @@ export interface BuildOptions {
   level?: Level;
   /** Path to prompt-approvals.csv (optional; absent file means no approvals). */
   promptApprovalsPath?: string;
+  /**
+   * Path to hsk30-chars.csv (optional). Levels 2 and 3 use the Clue_Rule only
+   * when it is given; otherwise, and always at level 1, the Current_Rule runs.
+   */
+  hskCharsPath?: string;
   /** Path to the Unihan_DictionaryLikeData.txt file. */
   unihanPath: string;
   /** Expected SHA-256 (hex) of the Unihan file. */
@@ -194,11 +201,23 @@ export interface CangjieError {
 }
 
 /** Return type of buildDataset(). */
+/** One level 2 or 3 prompt that the Clue_Rule changed from the Current_Rule's. */
+export interface RuleChange {
+  character: string;
+  level: 2 | 3;
+  oldPinyin: string;
+  oldMeaning: string;
+  newPinyin: string;
+  newMeaning: string;
+}
+
 export type BuildResult =
   | {
       ok: true;
       output: string; // serialised JSON
       promptReviewCsv: string;
+      /** Level 2 and 3 prompt changes in list order; empty for level 1. */
+      ruleChanges: RuleChange[];
       /** Characters whose cangjie is null. */
       cangjieMissing: string[];
       /** Characters for which isPlayableInCangjie is false. */

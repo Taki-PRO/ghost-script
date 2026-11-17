@@ -593,6 +593,21 @@
         "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794925927858
+      },
+      {
+        "executionId": "1dbfe684-c7e8-4bfc-9502-80808d7addbf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794935698704
+      },
+      {
+        "executionId": "1dbfe684-c7e8-4bfc-9502-80808d7addbf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794935698776
+      },
+      {
+        "executionId": "1dbfe684-c7e8-4bfc-9502-80808d7addbf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794935706697
       }
     ],
     "1. Verify the data sources (runs first)": [
@@ -663,6 +678,149 @@
         "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794925911269
+      }
+    ],
+    "15.1 Implement the pure Clue_Rule with unit tests": [
+      {
+        "executionId": "1dbfe684-c7e8-4bfc-9502-80808d7addbf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794935698852
+      },
+      {
+        "executionId": "1dbfe684-c7e8-4bfc-9502-80808d7addbf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794935713913
+      },
+      {
+        "executionId": "1dbfe684-c7e8-4bfc-9502-80808d7addbf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794935821358
+      }
+    ],
+    "15.2 Wire the Clue_Rule into the build for levels 2 and 3 only": [
+      {
+        "executionId": "1dbfe684-c7e8-4bfc-9502-80808d7addbf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794935698895
+      },
+      {
+        "executionId": "1dbfe684-c7e8-4bfc-9502-80808d7addbf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794935823322
+      },
+      {
+        "executionId": "1dbfe684-c7e8-4bfc-9502-80808d7addbf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794935962768
+      }
+    ],
+    "15.3 Write the Rule_Changes_File": [
+      {
+        "executionId": "1dbfe684-c7e8-4bfc-9502-80808d7addbf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794935698923
+      },
+      {
+        "executionId": "1dbfe684-c7e8-4bfc-9502-80808d7addbf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794935963771
+      },
+      {
+        "executionId": "1dbfe684-c7e8-4bfc-9502-80808d7addbf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794936200110
+      }
+    ],
+    "15.4 Extend the data-check hook": [
+      {
+        "executionId": "1dbfe684-c7e8-4bfc-9502-80808d7addbf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794935698951
+      },
+      {
+        "executionId": "1dbfe684-c7e8-4bfc-9502-80808d7addbf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794935713988
+      },
+      {
+        "executionId": "1dbfe684-c7e8-4bfc-9502-80808d7addbf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794935822395
+      }
+    ],
+    "15.5 Rebuild and regenerate everything": [
+      {
+        "executionId": "1dbfe684-c7e8-4bfc-9502-80808d7addbf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794935698975
+      },
+      {
+        "executionId": "1dbfe684-c7e8-4bfc-9502-80808d7addbf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794936200323
+      },
+      {
+        "executionId": "1dbfe684-c7e8-4bfc-9502-80808d7addbf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794936311413
+      }
+    ],
+    "15.6 Add the Chinese-character-free displayed-meaning test": [
+      {
+        "executionId": "1dbfe684-c7e8-4bfc-9502-80808d7addbf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794935699005
+      },
+      {
+        "executionId": "1dbfe684-c7e8-4bfc-9502-80808d7addbf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794936311629
+      },
+      {
+        "executionId": "1dbfe684-c7e8-4bfc-9502-80808d7addbf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794936494270
+      }
+    ],
+    "15.7 Verify level 1 is unchanged and update the README": [
+      {
+        "executionId": "1dbfe684-c7e8-4bfc-9502-80808d7addbf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794935699037
+      },
+      {
+        "executionId": "1dbfe684-c7e8-4bfc-9502-80808d7addbf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794936311695
+      },
+      {
+        "executionId": "1dbfe684-c7e8-4bfc-9502-80808d7addbf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794936495456
+      }
+    ],
+    "16. Final checkpoint for clue quality": [
+      {
+        "executionId": "1dbfe684-c7e8-4bfc-9502-80808d7addbf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794935699058
+      },
+      {
+        "executionId": "1dbfe684-c7e8-4bfc-9502-80808d7addbf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794936496433
+      },
+      {
+        "executionId": "1dbfe684-c7e8-4bfc-9502-80808d7addbf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794936692384
+      }
+    ],
+    "15. Clue quality for levels 2 and 3 (follow-up, approved by the human)": [
+      {
+        "executionId": "1dbfe684-c7e8-4bfc-9502-80808d7addbf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794936495482
       }
     ]
   }

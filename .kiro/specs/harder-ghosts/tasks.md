@@ -202,7 +202,7 @@ Rules for every task:
     - Review the Level_Screen and the Graveyard switcher at 1024 × 768, 375 × 812 and 320 × 640 for art direction and wording
     - _Requirements: 12.4, 17.5_
 
-- [-] 14. Final checkpoint
+- [x] 14. Final checkpoint
   - Run `npm test`, then `npx tsc --noEmit` at the repository root, `npx tsc --noEmit -p app` and `npx tsc --noEmit -p oracle` (no errors), `npm run build -w app`, `npm run check:bundle` (passes, counted total under 300,000) and `npm run test:e2e` (all pass, including `harder-ghosts.spec.ts`)
   - Report the real raw and gzip bytes of `characters.json`, `characters-level2.json`, `characters-level3.json`, `levels.json` and every font subset (`lxgw-wenkai-subset.woff2` and the two level subsets), and the counted bundle total
   - Run `npm run report:ghosts` and report its output: the first ten ghosts in learning order at level 2 and at level 3, each with character, meaning, pinyin and summon-ink class, read from the generated data and not typed by hand
@@ -210,6 +210,45 @@ Rules for every task:
   - Ensure all tests pass, ask the user if questions arise.
   - _Requirements: 17.1, 17.2, 17.3, 17.4, 17.6, 17.7, 17.8_
 
+- [x] 15. Clue quality for levels 2 and 3 (follow-up, approved by the human)
+  - Rules for this task group: edit no steering file, `kiro-log.md` or `tasks.meta.json`; create no `data/prompt-overrides-level2.csv`, `-level3.csv` or `data/prompt-approvals.csv`; add no property-based or mutation test; keep `selectPrompt` behaviour, `app/public/data/characters.json` and `data/prompt-review.csv` byte-identical
+  - [x] 15.1 Implement the pure Clue_Rule with unit tests
+    - In `scripts/lib/prompt.ts` only add `export` to `stripBoundForm`, `isProperNounReading` and `hasSkippedPrefix`; do not change any behaviour
+    - Write `scripts/lib/parse-hsk-examples.ts` (`parseHskExamples`) and `scripts/lib/select-prompt-by-examples.ts` (`normaliseSyllable`, `readingCounts`, `topReading`, `isCrossReferenceGloss`, `containsHan`, `selectPromptByExamples`) as in the design section "Clue quality"; no I/O, no `any`
+    - Write `tests/unit/parse-hsk-examples.test.ts` and `tests/unit/select-prompt-by-examples.test.ts` with the cases of Requirement 18.14 on small hand-built `CcCedictEntry` fixtures; `tests/unit/prompt.test.ts` stays unchanged and passing
+    - _Requirements: 18.3, 18.4, 18.5, 18.6, 18.7, 18.8, 18.14, 18.19_
+  - [x] 15.2 Wire the Clue_Rule into the build for levels 2 and 3 only
+    - Add `hskCharsPath` to `BuildOptions` and `AllLevelsOptions`; `buildAllLevels` passes it to levels 2 and 3 only and `main()` passes `data/raw/hsk30/hsk30-chars.csv`; without the path the Current_Rule runs
+    - Add the private `choosePrompt` helper used by both the character loop and `buildPromptReviewCsv` (override wins; approval without override keeps the Current_Rule's prompt; otherwise the Clue_Rule); keep the `source` column value `default`
+    - Add the Chinese-character gate (`promptFailure: 'chinese-in-meaning'`) and its `formatError` text naming the character, the level and the override file; extend `tests/unit/build-all-levels.test.ts` and `tests/unit/build-override-errors.test.ts` with a fixture CSV: level 2 changes and level 1 does not, override and approval precedence, `promptReview` as before, Review_File equals dataset, the failure names the character and writes nothing
+    - _Requirements: 18.1, 18.2, 18.7, 18.8, 18.10, 18.11, 18.19_
+  - [x] 15.3 Write the Rule_Changes_File
+    - Write `scripts/lib/rule-changes.ts` (`renderRuleChangesCsv`); add `ruleChanges` to `BuildResult` and `LevelBuild`, `ruleChangesCsv` to `AllLevelsOutput`, `ruleChanges` (`data/prompt-rule-changes.csv`) to `AllLevelsPaths` and `filesToWrite`; print `Prompt rule changes: level 2: N, level 3: M, total: T` in `formatAllLevelsReport`
+    - Add `tests/unit/rule-changes.test.ts`: fixed header, quoting, order (level 2 then level 3, list order), no row for an override or approval character, identical bytes on two runs
+    - _Requirements: 18.9, 18.10, 18.13, 18.19_
+  - [x] 15.4 Extend the data-check hook
+    - Change the matcher in `.kiro/hooks/data-check-on-save.json` to `(^|/)data/(character-list(-level[23])?\\.txt|prompt-overrides(-level[23])?\\.csv|prompt-approvals\\.csv|raw/.+)$` (JSON-escaped as in the file today); extend `tests/unit/kiro-hook.test.ts` so each of the five new paths is accepted (relative and absolute) and `data/prompt-rule-changes.csv`, `data/prompt-review-level2.csv` and `app/public/data/characters-level2.json` are rejected; keep every existing assertion
+    - _Requirements: 18.16, 18.19_
+  - [x] 15.5 Rebuild and regenerate everything
+    - Run `npm run build:data`; report the per-level changed counts it prints and the real raw and gzip bytes of the data files
+    - Print the changes list with `cat data/prompt-rule-changes.csv` and report how many rows each level has; if the build fails with a Chinese-character failure, stop and report the characters to the human (do not write an override row)
+    - Confirm that `characters-level2.json`, `characters-level3.json`, `levels.json`, both Review_Files, both Review_Samples (same seed strings, same row positions), the generated counts module and the README block were regenerated and that the font subsets did not change (`git diff --stat`; run `npm run build:font` only if a glyph set changed)
+    - Update only the prompt values in existing tests that pin a level 2 or level 3 prompt (list each changed assertion in the report); change nothing else
+    - _Requirements: 18.9, 18.10, 18.15, 18.19_
+  - [x] 15.6 Add the Chinese-character-free displayed-meaning test
+    - Write `tests/unit/prompt-displayed-chinese.test.ts`: for every record of `characters-level2.json` and `characters-level3.json` assert no Han_Character (`/\p{Script=Han}/u`) in `cleanupMeaning(prompt.meaning)` and in `maskTarget(cleanupMeaning(prompt.meaning), character)`, and in each `exampleMeanings` entry of `levels.json`; add a test that the Rule_Changes_File agrees with the datasets (Requirement 18.13)
+    - _Requirements: 18.12, 18.13, 18.19_
+  - [x] 15.7 Verify level 1 is unchanged and update the README
+    - Run `git diff --stat` and confirm `app/public/data/characters.json`, `data/prompt-review.csv`, `data/prompt-overrides.csv`, `data/character-list.txt` and `scripts/lib/prompt.ts` (apart from the three added `export` words) are untouched; `tests/unit/level1-protected.test.ts` passes without edits
+    - In the README prompt section describe the Clue_Rule for levels 2 and 3 (source: the `Examples` column of `hsk30-chars.csv`; reading by frequency, then the first clean gloss; fallback; the changes file) and keep the generated count block as the build writes it; run the `accuracy-reviewer` agent over the new README text and fix findings in that text only
+    - _Requirements: 18.1, 18.15, 18.17, 18.19_
+- [x] 16. Final checkpoint for clue quality
+  - Run `npm test`, then `npx tsc --noEmit` at the repository root, `npx tsc --noEmit -p app` and `npx tsc --noEmit -p oracle` (no errors), `npm run build -w app`, `npm run check:bundle`, `npm run test:e2e`, `npm run check:data` and `npm run check:levels`; all must pass
+  - Report the number of changed prompts per level (from the build output) and print `data/prompt-rule-changes.csv`
+  - Run `npm run report:ghosts` again and print its output
+  - Confirm with `git diff --stat` that `app/public/data/characters.json`, `data/prompt-review.csv`, `data/prompt-overrides.csv`, `data/character-list.txt`, `scheduler.ts`, `outcome.ts`, `config.ts` and the level 1 font subset are untouched, and search the added and changed files for `any` and for personal names
+  - Ensure all tests pass, ask the user if questions arise.
+  - _Requirements: 18.18, 18.19_
 ## Notes
 
 - There are no optional tasks. Every test task is required. No property-based test is added (tech.md, decision of Nov 15); the existing property tests stay as they are.
@@ -217,6 +256,7 @@ Rules for every task:
 - Tasks 13.1 to 13.3 are human tasks. Kiro does not execute them, does not review prompts, does not write override or approval rows, and does not edit `kiro-log.md`.
 - Task 4.2 must finish before tasks 5.3 and 5.4 so the level 1 hashes are recorded from the unchanged files.
 - The decisions in `requirements.md` ("Decisions approved by the human") are final; there are no open questions.
+- Tasks 15 and 16 are the clue-quality follow-up (Requirement 18, approved by the human). Task 15.5 rebuilds the data and must run after 15.1 to 15.4; task 15.6 runs after 15.5 because it reads the regenerated files. Task 14 is unchanged and keeps its own checkpoint.
 - Steering edits (tasks 3.1 to 3.3) are approved by the human as worded in the design. Do not edit steering files anywhere else.
 
 ## Task Dependency Graph
@@ -236,7 +276,12 @@ Rules for every task:
     { "id": 9, "tasks": ["11.2", "11.3"] },
     { "id": 10, "tasks": ["12.1", "12.3"] },
     { "id": 11, "tasks": ["12.2"] },
-    { "id": 12, "tasks": ["13.1", "13.2", "13.3"] }
+    { "id": 12, "tasks": ["13.1", "13.2", "13.3"] },
+    { "id": 13, "tasks": ["15.1", "15.4"] },
+    { "id": 14, "tasks": ["15.2"] },
+    { "id": 15, "tasks": ["15.3"] },
+    { "id": 16, "tasks": ["15.5"] },
+    { "id": 17, "tasks": ["15.6", "15.7"] }
   ]
 }
 ```

@@ -32,13 +32,13 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 初,at first; initially,chū,default,,"entry0 (chū): (bound form) at first; initially | (bound form) first; early | (bound form) (in lunar calendar dates, before numerals 1–10) days 1 to 10 of a month, as in 初三[chu1 san1] ""the third"""
 础,foundation,chǔ,default,,entry0 (chǔ): foundation | base
 传,to pass on,chuán,default,,entry0 (chuán): to pass on | to spread | to transmit | to infect | to transfer | to circulate | to conduct (electricity) ;; entry1 (zhuàn): biography | historical narrative | commentaries | relay station
-创,a wound; to wound,chuāng,default,,entry0 (chuàng): variant of 創|创[chuang4] ;; entry1 (chuàng): variant of 創|创[chuang4] ;; entry2 (chuāng): (bound form) a wound; to wound ;; entry3 (chuàng): to initiate; to create; to achieve (sth for the first time)
+创,to initiate; to create; to achieve (sth for the first time),chuàng,default,,entry0 (chuàng): variant of 創|创[chuang4] ;; entry1 (chuàng): variant of 創|创[chuang4] ;; entry2 (chuāng): (bound form) a wound; to wound ;; entry3 (chuàng): to initiate; to create; to achieve (sth for the first time)
 此,this; these,cǐ,default,,entry0 (cǐ): this; these
 存,to exist,cún,default,,entry0 (cún): to exist | to deposit | to store | to keep | to survive
 代,to be a substitute for; to act on behalf of; to replace; to substitute,dài,default,,entry0 (dài): to be a substitute for; to act on behalf of; to replace; to substitute | generation; dynasty; age; period; (historical) era; (geological) eon
-待,to stay; to remain,dāi,default,,entry0 (dāi): to stay; to remain ;; entry1 (dài): to wait | to treat | to deal with | to need | going to (do sth) | about to | intending to
+待,to wait,dài,default,,entry0 (dāi): to stay; to remain ;; entry1 (dài): to wait | to treat | to deal with | to need | going to (do sth) | about to | intending to
 导,to transmit,dǎo,default,,entry0 (dǎo): to transmit | to lead | to guide | to conduct | to direct
-底,(equivalent to 的 as possessive particle),de,default,,entry0 (de): (equivalent to 的 as possessive particle) ;; entry1 (dǐ): bottom; base | background; foundation | copy (of a manuscript or receipt etc) kept as a record | (suffix) end of a year or month | (math.) radix; base (abbr. for 底數|底数[di3 shu4])
+底,bottom; base,dǐ,default,,entry0 (de): (equivalent to 的 as possessive particle) ;; entry1 (dǐ): bottom; base | background; foundation | copy (of a manuscript or receipt etc) kept as a record | (suffix) end of a year or month | (math.) radix; base (abbr. for 底數|底数[di3 shu4])
 订,to agree,dìng,default,,entry0 (dìng): to agree | to conclude | to draw up | to subscribe to (a newspaper etc) | to order
 顿,to stop,dùn,default,,"entry0 (dùn): to stop | to pause | to arrange | to lay out | to kowtow | to stamp (one's foot) | at once | classifier for meals, beatings, scoldings etc: time, bout, spell, meal"
 范,pattern,fàn,default,,entry0 (fàn): pattern | model | example ;; entry1 (Fàn): surname Fan
@@ -72,7 +72,7 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 技,skill,jì,default,,entry0 (jì): skill
 济,to cross a river,jì,default,,entry0 (Jǐ): used in place names associated with the Ji River 濟水|济水[Ji3 Shui3] | surname Ji ;; entry1 (jǐ): used in 濟濟|济济[ji3 ji3] ;; entry2 (jì): to cross a river | to aid or relieve | to be of help
 继,to continue,jì,default,,entry0 (jì): to continue | to follow after | to go on with | to succeed | to inherit | then | afterwards
-价,(literary) messenger; servant,jiè,default,,entry0 (jiè): (literary) messenger; servant ;; entry1 (jià): price | value | (chemistry) valence ;; entry2 (jie): particle used between an adverb and a verb or adjective | (dialect) particle used after a negative adverb such as 不[bu4] or 別|别[bie2] without any other following element
+价,price,jià,default,,entry0 (jiè): (literary) messenger; servant ;; entry1 (jià): price | value | (chemistry) valence ;; entry2 (jie): particle used between an adverb and a verb or adjective | (dialect) particle used after a negative adverb such as 不[bu4] or 別|别[bie2] without any other following element
 架,to support,jià,default,,"entry0 (jià): to support | frame | rack | framework | classifier for planes, large vehicles, radios etc"
 坚,strong,jiān,default,,entry0 (jiān): strong | solid | firm | unyielding | resolute
 简,simple,jiǎn,default,,entry0 (jiǎn): simple | uncomplicated | letter | to choose | to select | bamboo strips used for writing (old)
@@ -108,7 +108,7 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 领,neck,lǐng,default,,"entry0 (lǐng): neck | collar | to lead | to receive | classifier for clothes, mats, screens etc"
 录,to carve wood,lù,default,,entry0 (lù): to carve wood ;; entry1 (Lù): surname Lu ;; entry2 (lù): diary | record | to hit | to copy
 乱,in confusion or disorder,luàn,default,,entry0 (luàn): in confusion or disorder | in a confused state of mind | disorder | upheaval | riot | illicit sexual relations | to throw into disorder | to mix up | indiscriminate | random | arbitrary
-落,to leave out,là,default,,entry0 (là): to leave out | to be missing | to leave behind or forget to bring | to lag or fall behind ;; entry1 (lào): colloquial reading for 落[luo4] in certain compounds ;; entry2 (luò): to fall or drop | (of the sun) to set | (of a tide) to go out | to lower | to decline or sink | to lag or fall behind | to fall onto | to rest with | to get or receive | to write down | whereabouts | settlement
+落,to fall or drop,luò,default,,entry0 (là): to leave out | to be missing | to leave behind or forget to bring | to lag or fall behind ;; entry1 (lào): colloquial reading for 落[luo4] in certain compounds ;; entry2 (luò): to fall or drop | (of the sun) to set | (of a tide) to go out | to lower | to decline or sink | to lag or fall behind | to fall onto | to rest with | to get or receive | to write down | whereabouts | settlement
 冒,"to emit; to give off; to send out (or up, forth)",mào,default,,"entry0 (mào): old variant of 冒[mao4] ;; entry1 (Mào): surname Mao ;; entry2 (mào): to emit; to give off; to send out (or up, forth) | to brave; to face | (bound form) reckless | to falsely adopt (sb's identity etc); to feign | (literary) to cover"
 媒,medium,méi,default,,"entry0 (méi): medium | intermediary | matchmaker | go-between | abbr. for 媒體|媒体[mei2 ti3], media, esp. news media"
 迷,to bewilder,mí,default,,entry0 (mí): to bewilder | crazy about | fan | enthusiast | lost | confused
@@ -129,12 +129,12 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 评,to discuss,píng,default,,entry0 (píng): to discuss | to comment | to criticize | to judge | to choose (by public appraisal)
 破,broken,pò,default,,"entry0 (pò): broken | damaged | worn out | lousy | rotten | to break, split or cleave | to get rid of | to destroy | to break with | to defeat | to capture (a city etc) | to expose the truth of"
 齐,neat,qí,default,,entry0 (Qí): (name of states and dynasties at several different periods) | surname Qi ;; entry1 (qí): neat | even | level with | identical | simultaneous | all together | to even sth out
-奇,odd (number),jī,default,,entry0 (jī): odd (number) ;; entry1 (qí): strange | odd | weird | wonderful | surprisingly | unusually
+奇,strange,qí,default,,entry0 (jī): odd (number) ;; entry1 (qí): strange | odd | weird | wonderful | surprisingly | unusually
 器,device,qì,default,,entry0 (qì): device | tool | utensil | CL:臺|台[tai2]
-强,stubborn,jiàng,default,,"entry0 (Qiáng): surname Qiang ;; entry1 (jiàng): stubborn | unyielding ;; entry2 (qiáng): strong | powerful | better | slightly more than | vigorous | violent | best in their category, e.g. see 百強|百强[bai3 qiang2] ;; entry3 (qiǎng): to force | to compel | to strive | to make an effort ;; entry4 (jiàng): variant of 強|强[jiang4] ;; entry5 (qiáng): variant of 強|强[qiang2] ;; entry6 (qiǎng): variant of 強|强[qiang3]"
+强,strong,qiáng,default,,"entry0 (Qiáng): surname Qiang ;; entry1 (jiàng): stubborn | unyielding ;; entry2 (qiáng): strong | powerful | better | slightly more than | vigorous | violent | best in their category, e.g. see 百強|百强[bai3 qiang2] ;; entry3 (qiǎng): to force | to compel | to strive | to make an effort ;; entry4 (jiàng): variant of 強|强[jiang4] ;; entry5 (qiáng): variant of 強|强[qiang2] ;; entry6 (qiǎng): variant of 強|强[qiang3]"
 桥,bridge,qiáo,default,,entry0 (qiáo): bridge | CL:座[zuo4]
 巧,opportunely,qiǎo,default,,entry0 (qiǎo): opportunely | coincidentally | as it happens | skillful | timely
-切,to cut; to slice; to carve,qiē,default,,"entry0 (qiē): to cut; to slice; to carve | (math.) tangential ;; entry1 (qiè): definitely; absolutely (not) | (scoffing or dismissive interjection) Yeah, right.; Tut! | to grind | (bound form) close to | (bound form) eager | to correspond to | (used to indicate that the fanqie 反切[fan3 qie4] system should be applied to the previous two characters)"
+切,definitely; absolutely (not),qiè,default,,"entry0 (qiē): to cut; to slice; to carve | (math.) tangential ;; entry1 (qiè): definitely; absolutely (not) | (scoffing or dismissive interjection) Yeah, right.; Tut! | to grind | (bound form) close to | (bound form) eager | to correspond to | (used to indicate that the fanqie 反切[fan3 qie4] system should be applied to the previous two characters)"
 亲,parent,qīn,default,,entry0 (qīn): parent | one's own (flesh and blood) | relative | related | marriage | bride | close | intimate | in person | first-hand | in favor of | pro- | to kiss | (Internet slang) dear ;; entry1 (qìng): parents-in-law of one's offspring
 庆,to celebrate,qìng,default,,entry0 (qìng): to celebrate
 缺,deficiency,quē,default,,entry0 (quē): deficiency | lack | scarce | vacant post | to run short of
@@ -143,7 +143,7 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 仍,still; yet,réng,default,,entry0 (réng): still; yet | to remain | (literary) frequently; often
 容,to hold,róng,default,,entry0 (Róng): surname Rong ;; entry1 (róng): to hold | to contain | to allow | to tolerate | appearance | look | countenance
 赛,to compete,sài,default,,entry0 (sài): to compete | competition | match | to surpass | better than | superior to | to excel
-散,scattered,sǎn,default,,entry0 (sàn): variant of 散[san4] ;; entry1 (sǎn): scattered | loose | to come loose | to fall apart | leisurely | powdered medicine ;; entry2 (sàn): to scatter | to break up (a meeting etc) | to disperse | to disseminate | to dispel | (coll.) to sack
+散,to scatter,sàn,default,,entry0 (sàn): variant of 散[san4] ;; entry1 (sǎn): scattered | loose | to come loose | to fall apart | leisurely | powdered medicine ;; entry2 (sàn): to scatter | to break up (a meeting etc) | to disperse | to disseminate | to dispel | (coll.) to sack
 沙,granule,shā,default,,entry0 (Shā): surname Sha ;; entry1 (shā): granule | hoarse | raspy | sand | powder | CL:粒[li4] | abbr. for Tsar or Tsarist Russia ;; entry2 (shà): (dialect) to sift; to sieve
 善,good (virtuous),shàn,default,,entry0 (shàn): good (virtuous) | benevolent | well-disposed | good at sth | to improve or perfect
 伤,to injure,shāng,default,,entry0 (shāng): to injure | injury | wound
@@ -152,7 +152,7 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 升,to ascend; to rise,shēng,default,,entry0 (shēng): to ascend; to rise | to promote; to elevate | liter | unit of dry measure for grain (= one liter or one-tenth dou 斗[dou3]) ;; entry1 (shēng): to ascend; to rise (variant of 升[sheng1]) | to promote; to elevate (variant of 升[sheng1]) ;; entry2 (shēng): to ascend; to rise (variant of 升[sheng1]) | to promote; to elevate (variant of 升[sheng1])
 胜,victory,shèng,default,,entry0 (shèng): victory | success | to beat | to defeat | to surpass | victorious | superior to | to get the better of | better than | surpassing | superb (of vista) | beautiful (scenery) | wonderful (view) | (Taiwan pr. [sheng1]) able to bear | equal to (a task)
 失,to lose,shī,default,,entry0 (shī): to lose | to miss | to fail
-石,dry measure for grain equal to ten dou 斗[dou3]; one hundred liters,dàn,default,,"entry0 (Shí): surname Shi | abbr. for Shijiazhuang 石家莊|石家庄[Shi2 jia1 zhuang1], the capital of Hebei ;; entry1 (dàn): dry measure for grain equal to ten dou 斗[dou3]; one hundred liters | ancient pr. [shi2] ;; entry2 (shí): rock | stone | stone inscription | one of the eight categories of ancient musical instruments 八音[ba1 yin1]"
+石,rock,shí,default,,"entry0 (Shí): surname Shi | abbr. for Shijiazhuang 石家莊|石家庄[Shi2 jia1 zhuang1], the capital of Hebei ;; entry1 (dàn): dry measure for grain equal to ten dou 斗[dou3]; one hundred liters | ancient pr. [shi2] ;; entry2 (shí): rock | stone | stone inscription | one of the eight categories of ancient musical instruments 八音[ba1 yin1]"
 始,to begin,shǐ,default,,entry0 (shǐ): to begin | to start | then | only then
 世,life,shì,default,,entry0 (Shì): surname Shi ;; entry1 (shì): life | age | generation | era | world | lifetime | epoch | descendant | noble
 式,type,shì,default,,entry0 (shì): type | form | pattern | style
@@ -160,7 +160,7 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 势,power,shì,default,,entry0 (shì): power | influence | potential | momentum | tendency | trend | situation | conditions | outward appearance | sign | gesture | male genitals
 首,head,shǒu,default,,"entry0 (shǒu): head | chief | first (occasion, thing etc) | classifier for poems, songs etc"
 属,category,shǔ,default,,entry0 (shǔ): category | genus (taxonomy) | family members | dependents | to belong to | subordinate to | affiliated with | be born in the year of (one of the 12 animals) | to be | to prove to be | to constitute ;; entry1 (zhǔ): to join together | to fix one's attention on | to concentrate on
-术,"Atractylodes (genus of perennial herbs in the daisy family, used in TCM)",zhú,default,,"entry0 (zhú): (bound form) Atractylodes (genus of perennial herbs in the daisy family, used in TCM) ;; entry1 (zhú): variant of 朮|术[zhu2] ;; entry2 (shù): (bound form) art; skill; discipline | (bound form) method; technique; strategy"
+术,art; skill; discipline,shù,default,,"entry0 (zhú): (bound form) Atractylodes (genus of perennial herbs in the daisy family, used in TCM) ;; entry1 (zhú): variant of 朮|术[zhu2] ;; entry2 (shù): (bound form) art; skill; discipline | (bound form) method; technique; strategy"
 束,to bind,shù,default,,"entry0 (Shù): surname Shu ;; entry1 (shù): to bind | bunch | bundle | classifier for bunches, bundles, beams of light etc | to control"
 双,two,shuāng,default,,entry0 (shuāng): variant of 雙|双[shuang1] ;; entry1 (Shuāng): surname Shuang ;; entry2 (shuāng): two | double | pair | both | even (number)
 死,to die,sǐ,default,,entry0 (sǐ): to die | impassable | uncrossable | inflexible | rigid | extremely | damned
@@ -187,7 +187,7 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 线,thread,xiàn,default,,"entry0 (xiàn): variant of 線|线[xian4] ;; entry1 (xiàn): thread | string | wire | line | CL:條|条[tiao2],股[gu3],根[gen1] | (after a number) tier (unofficial ranking of a Chinese city)"
 乡,country or countryside,xiāng,default,,entry0 (xiāng): country or countryside | native place | home village or town | township (PRC administrative unit)
 消,to diminish; to subside,xiāo,default,,entry0 (xiāo): to diminish; to subside | to consume; to reduce | to idle away (the time) | (after 不[bu4] or 只[zhi3] or 何[he2] etc) to need; to require; to take
-效,to imitate (variant of 效[xiao4]),xiào,default,,entry0 (xiào): variant of 傚|效[xiao4] ;; entry1 (xiào): to imitate (variant of 效[xiao4]) ;; entry2 (xiào): variant of 效[xiao4] ;; entry3 (xiào): effect | efficacy | to imitate
+效,effect,xiào,default,,entry0 (xiào): variant of 傚|效[xiao4] ;; entry1 (xiào): to imitate (variant of 效[xiao4]) ;; entry2 (xiào): variant of 效[xiao4] ;; entry3 (xiào): effect | efficacy | to imitate
 形,to appear,xíng,default,,entry0 (xíng): to appear | to look | form | shape
 幸,trusted,xìng,default,,entry0 (xìng): trusted | intimate | (of the emperor) to visit | variant of 幸[xing4] ;; entry1 (Xìng): surname Xing ;; entry2 (xìng): fortunate | lucky
 性,nature,xìng,default,,"entry0 (xìng): nature | character | property | quality | attribute | sexuality | sex | gender | suffix forming adjective from verb | suffix forming noun from adjective, corresponding to -ness or -ity | essence | CL:個|个[ge4]"
@@ -228,7 +228,7 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 祝,to pray for,zhù,default,,"entry0 (Zhù): surname Zhu ;; entry1 (zhù): to pray for | to wish (sb bon voyage, happy birthday etc) | person who invokes the spirits during sacrificial ceremonies"
 专,"for a particular person, occasion, purpose",zhuān,default,,"entry0 (zhuān): for a particular person, occasion, purpose | focused on one thing | special | expert | particular (to sth) | concentrated | specialized ;; entry1 (zhuān): variant of 專|专[zhuan1]"
 状,form; appearance; shape,zhuàng,default,,entry0 (zhuàng): (bound form) form; appearance; shape | (bound form) state; condition | (bound form) to describe | (bound form) written complaint; lawsuit | (bound form) certificate
-追,to sculpt,duī,default,,entry0 (duī): to sculpt | to carve | musical instrument (old) ;; entry1 (zhuī): to chase | to pursue | to look into | to investigate | to reminisce | to recall | to court (one's beloved) | to binge-watch (a TV drama) | retroactively | posthumously
+追,to chase,zhuī,default,,entry0 (duī): to sculpt | to carve | musical instrument (old) ;; entry1 (zhuī): to chase | to pursue | to look into | to investigate | to reminisce | to recall | to court (one's beloved) | to binge-watch (a TV drama) | retroactively | posthumously
 资,resources,zī,default,,entry0 (zī): resources | capital | to provide | to supply | to support | money | expense
 族,race,zú,default,,"entry0 (zú): race | nationality | ethnicity | clan | by extension, social group (e.g. office workers 上班族)"
 矮,(of a person) short,ǎi,default,,entry0 (ǎi): (of a person) short | (of a wall etc) low | (of rank) inferior (to); lower (than)
@@ -248,7 +248,7 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 诚,sincere; authentic,chéng,default,,entry0 (chéng): (bound form) sincere; authentic | (literary) really; truly
 承,to bear,chéng,default,,"entry0 (Chéng): surname Cheng | Cheng (c. 2000 BC), third of the legendary Flame Emperors 炎帝[Yan2 di4] descended from Shennong 神農|神农[Shen2 nong2] Farmer God ;; entry1 (chéng): to bear | to carry | to hold | to continue | to undertake | to take charge | owing to | due to | to receive"
 迟,late,chí,default,,entry0 (Chí): surname Chi ;; entry1 (chí): late | delayed | slow
-尺,"one of the characters used to represent a musical note in gongche notation, 工尺譜|工尺谱[gong1 che3 pu3]",chě,default,,"entry0 (chě): one of the characters used to represent a musical note in gongche notation, 工尺譜|工尺谱[gong1 che3 pu3] ;; entry1 (chǐ): a Chinese foot | one-third of a meter | a ruler | a tape-measure | one of the three acupoints for measuring pulse in Chinese medicine | CL:支[zhi1],把[ba3]"
+尺,a Chinese foot,chǐ,default,,"entry0 (chě): one of the characters used to represent a musical note in gongche notation, 工尺譜|工尺谱[gong1 che3 pu3] ;; entry1 (chǐ): a Chinese foot | one-third of a meter | a ruler | a tape-measure | one of the three acupoints for measuring pulse in Chinese medicine | CL:支[zhi1],把[ba3]"
 冲,(of water) to dash against,chōng,default,,entry0 (chōng): (of water) to dash against | to mix with water | to infuse | to rinse | to flush | to develop (a film) | to rise in the air | to clash | to collide with ;; entry1 (chōng): thoroughfare | to go straight ahead | to rush | to clash ;; entry2 (chòng): powerful | vigorous | pungent | towards | in view of
 抽,to draw out; to pull out from in between,chōu,default,,"entry0 (chōu): to draw out; to pull out from in between | to remove part of the whole | to inhale (esp. smoke) | (of fabric etc) to shrink | (of certain plants) to sprout; to bud | to whip; to thrash | classifier for sheets (of tissues, wet wipes etc)"
 窗,window,chuāng,default,,entry0 (chuāng): old variant of 窗[chuang1] ;; entry1 (chuāng): variant of 窗[chuang1] ;; entry2 (chuāng): variant of 窗[chuang1] ;; entry3 (chuāng): window | CL:扇[shan4] ;; entry4 (chuāng): variant of 窗[chuang1]
@@ -260,11 +260,11 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 敌,enemy,dí,default,,entry0 (dí): (bound form) enemy | (bound form) to be a match for; to rival | (bound form) to resist; to withstand
 递,to hand over; to pass on; to deliver,dì,default,,entry0 (dì): to hand over; to pass on; to deliver | (bound form) progressively; in the proper order
 顶,apex,dǐng,default,,"entry0 (dǐng): apex | crown of the head | top | roof | most | to carry on the head | to push to the top | to go against | to replace | to substitute | to be subjected to (an aerial bombing, hailstorm etc) | (slang) to ""bump"" a forum thread to raise its profile | classifier for headwear, hats, veils etc"
-斗,dry measure for grain equal to ten 升[sheng1] or one-tenth of a 石[dan4],dǒu,default,,entry0 (Dǒu): abbr. for the Big Dipper constellation 北斗星[Bei3 dou3 xing1] ;; entry1 (dǒu): dry measure for grain equal to ten 升[sheng1] or one-tenth of a 石[dan4] | decaliter | peck | cup or dipper shaped object | old variant of 陡[dou3] ;; entry2 (dòu): to fight | to struggle | to condemn | to censure | to contend | to put together | coming together ;; entry3 (dòu): variant of 鬭|斗[dou4] ;; entry4 (dòu): variant of 鬥|斗[dou4] ;; entry5 (dòu): variant of 鬥|斗[dou4]
-豆,"legume; pulse; bean; pea (CL:顆|颗[ke1],粒[li4]) (variant of 豆[dou4])",dòu,default,,"entry0 (dòu): legume; pulse; bean; pea (CL:顆|颗[ke1],粒[li4]) (variant of 豆[dou4]) ;; entry1 (dòu): legume; pulse; bean; pea (CL:顆|颗[ke1],粒[li4]) | (old) stemmed cup or bowl"
+斗,to fight,dòu,default,,entry0 (Dǒu): abbr. for the Big Dipper constellation 北斗星[Bei3 dou3 xing1] ;; entry1 (dǒu): dry measure for grain equal to ten 升[sheng1] or one-tenth of a 石[dan4] | decaliter | peck | cup or dipper shaped object | old variant of 陡[dou3] ;; entry2 (dòu): to fight | to struggle | to condemn | to censure | to contend | to put together | coming together ;; entry3 (dòu): variant of 鬭|斗[dou4] ;; entry4 (dòu): variant of 鬥|斗[dou4] ;; entry5 (dòu): variant of 鬥|斗[dou4]
+豆,"legume; pulse; bean; pea (CL:顆|颗[ke1],粒[li4])",dòu,default,,"entry0 (dòu): legume; pulse; bean; pea (CL:顆|颗[ke1],粒[li4]) (variant of 豆[dou4]) ;; entry1 (dòu): legume; pulse; bean; pea (CL:顆|颗[ke1],粒[li4]) | (old) stemmed cup or bowl"
 独,alone,dú,default,,entry0 (dú): alone | independent | single | sole | only
 堵,"to block up (a road, pipe etc)",dǔ,default,,"entry0 (dǔ): to block up (a road, pipe etc) | to stop up (a hole) | (fig.) (of a person) choked up with anxiety or stress | wall (literary) | (classifier for walls)"
-肚,tripe,dǔ,default,,entry0 (dǔ): tripe ;; entry1 (dù): belly
+肚,belly,dù,default,,entry0 (dǔ): tripe ;; entry1 (dù): belly
 锻,to forge,duàn,default,,entry0 (duàn): to forge | to discipline | wrought
 恶,evil,è,default,,entry0 (ě): used in 惡心|恶心[e3 xin1] ;; entry1 (è): evil | fierce | vicious | ugly | coarse | to harm ;; entry2 (wù): to hate | to loathe | ashamed | to fear | to slander
 翻,to turn over,fān,default,,entry0 (fān): to turn over | to flip over | to overturn | to rummage through | to translate | to decode | to double | to climb over or into | to cross ;; entry1 (fān): variant of 翻[fan1]
@@ -275,7 +275,7 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 腐,decay,fǔ,default,,entry0 (fǔ): decay | rotten
 附,to add; to attach,fù,default,,entry0 (fù): variant of 附[fu4] ;; entry1 (fù): to add; to attach | to be close to; to be attached
 盖,lid,gài,default,,entry0 (Gě): surname Ge ;; entry1 (gài): lid | top | cover | canopy | to cover | to conceal | to build
-构,(Tw) (coll.) variant of 夠|够[gou4],gòu,default,,entry0 (gòu): variant of 構|构[gou4] | (Tw) (coll.) variant of 夠|够[gou4] | to reach by stretching ;; entry1 (gòu): to construct | to form | to make up | to compose | literary composition | paper mulberry (Broussonetia papyrifera)
+构,to reach by stretching,gòu,default,,entry0 (gòu): variant of 構|构[gou4] | (Tw) (coll.) variant of 夠|够[gou4] | to reach by stretching ;; entry1 (gòu): to construct | to form | to make up | to compose | literary composition | paper mulberry (Broussonetia papyrifera)
 购,to buy,gòu,default,,entry0 (gòu): to buy | to purchase
 骨,bone,gǔ,default,,entry0 (gū): used in 骨碌碌[gu1 lu4 lu4] | used in 骨碌[gu1 lu5] | used in 骨朵[gu1 duo5] ;; entry1 (gǔ): bone
 官,government official,guān,default,,entry0 (Guān): surname Guan ;; entry1 (guān): government official | governmental | official | public | organ of the body | CL:個|个[ge4]
@@ -288,7 +288,7 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 户,a household,hù,default,,entry0 (hù): a household | door | family
 怀,bosom,huái,default,,entry0 (Huái): surname Huai ;; entry1 (huái): bosom | heart | mind | to think of | to harbor in one's mind | to conceive (a child)
 挥,to wave,huī,default,,entry0 (huī): to wave | to brandish | to command | to conduct | to scatter | to disperse
-伙,meals (as in 伙食[huo3 shi2]),huǒ,default,,entry0 (huǒ): (bound form) meals (as in 伙食[huo3 shi2]) | variant of 夥|伙[huo3] ;; entry1 (huǒ): companion | partner | group | classifier for groups of people | to combine | together
+伙,companion,huǒ,default,,entry0 (huǒ): (bound form) meals (as in 伙食[huo3 shi2]) | variant of 夥|伙[huo3] ;; entry1 (huǒ): companion | partner | group | classifier for groups of people | to combine | together
 货,goods,huò,default,,entry0 (huò): goods | money | commodity | CL:個|个[ge4]
 获,(literary) to catch; to capture,huò,default,,entry0 (huò): (literary) to catch; to capture | (literary) to get; to obtain; to win ;; entry1 (huò): (bound form) to reap; to harvest
 即,namely,jí,default,,entry0 (jí): namely | that is | i.e. | prompt | at once | at present | even if | prompted (by the occasion) | to approach | to come into contact | to assume (office) | to draw near
@@ -297,11 +297,11 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 减,to lower,jiǎn,default,,entry0 (jiǎn): to lower | to decrease | to reduce | to subtract | to diminish
 奖,prize; award; bonus; reward,jiǎng,default,,entry0 (jiǎng): prize; award; bonus; reward | (bound form) to encourage; to commend; to praise | to award; to give as a reward
 巾,towel,jīn,default,,entry0 (jīn): towel | general purpose cloth | women's headcovering (old) | Kangxi radical 50
-禁,to endure,jīn,default,,entry0 (jīn): to endure ;; entry1 (jìn): to prohibit | to forbid
+禁,to prohibit,jìn,default,,entry0 (jīn): to endure ;; entry1 (jìn): to prohibit | to forbid
 惊,to startle,jīng,default,,entry0 (jīng): to startle | to be frightened | to be scared | alarm
 竟,unexpectedly,jìng,default,,entry0 (jìng): unexpectedly | actually | to go so far as to | indeed
 镜,mirror,jìng,default,,entry0 (jìng): mirror | lens
-居,(archaic) sentence-final particle expressing a doubting attitude,jī,default,,entry0 (Jū): surname Ju ;; entry1 (jī): (archaic) sentence-final particle expressing a doubting attitude ;; entry2 (jū): (literary) to reside; to live | (bound form) to occupy (a position) | (literary) to store up | (literary) to remain; to stay | (bound form) residence; dwelling | (bound form) used in names of restaurants
+居,(literary) to reside; to live,jū,default,,entry0 (Jū): surname Ju ;; entry1 (jī): (archaic) sentence-final particle expressing a doubting attitude ;; entry2 (jū): (literary) to reside; to live | (bound form) to occupy (a position) | (literary) to store up | (literary) to remain; to stay | (bound form) residence; dwelling | (bound form) used in names of restaurants
 局,narrow,jú,default,,"entry0 (jú): narrow ;; entry1 (jú): office | situation | classifier for games: match, set, round etc ;; entry2 (jú): cramped; narrow"
 巨,very large; huge; tremendous; gigantic,jù,default,,entry0 (jù): very large; huge; tremendous; gigantic | (coll.) very; extremely ;; entry1 (jù): variant of 巨[ju4]
 距,to be at a distance of ... from; to be apart from,jù,default,,"entry0 (jù): to be at a distance of ... from; to be apart from | (bound form) distance | spur (on the leg of certain birds: gamecock, pheasant etc)"
@@ -317,9 +317,9 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 疗,to treat,liáo,default,,entry0 (liáo): to treat | to cure | therapy
 料,material,liào,default,,entry0 (liào): material | stuff | grain | feed | to expect | to anticipate | to guess
 林,woods; forest,lín,default,,entry0 (Lín): surname Lin | Japanese surname Hayashi ;; entry1 (lín): (bound form) woods; forest | (bound form) circle(s) (i.e. specific group of people) | (bound form) a collection (of similar things)
-陆,six (banker's anti-fraud numeral),liù,default,,entry0 (Lù): surname Lu ;; entry1 (liù): six (banker's anti-fraud numeral) ;; entry2 (lù): (bound form) land (as opposed to the sea)
+陆,land (as opposed to the sea),lù,default,,entry0 (Lù): surname Lu ;; entry1 (liù): six (banker's anti-fraud numeral) ;; entry2 (lù): (bound form) land (as opposed to the sea)
 虑,to think over,lǜ,default,,entry0 (lǜ): to think over | to consider | anxiety
-码,(archaic) agate,mǎ,default,,"entry0 (mǎ): (archaic) agate | (bound form) standard weight used with a balance scale | number | (computing) code | (clothing) size | yard (unit of length) | (coll.) kilometers per hour (informal misuse of ""yard"" to mean kph in speed references) | (coll.) to pile up; to stack | classifier for matters, items, situations etc (esp. when indicating whether they are the same or different, as in 不是一碼事|不是一码事[bu4 shi4 yi1 ma3 shi4] ""not the same thing"") | (Tw, HK) (finance) unit of 25 basis points (i.e. a 0.25% change in interest rate)"
+码,standard weight used with a balance scale,mǎ,default,,"entry0 (mǎ): (archaic) agate | (bound form) standard weight used with a balance scale | number | (computing) code | (clothing) size | yard (unit of length) | (coll.) kilometers per hour (informal misuse of ""yard"" to mean kph in speed references) | (coll.) to pile up; to stack | classifier for matters, items, situations etc (esp. when indicating whether they are the same or different, as in 不是一碼事|不是一码事[bu4 shi4 yi1 ma3 shi4] ""not the same thing"") | (Tw, HK) (finance) unit of 25 basis points (i.e. a 0.25% change in interest rate)"
 梦,dream (CL:場|场[chang2]),mèng,default,,entry0 (mèng): dream (CL:場|场[chang2]) | (bound form) to dream
 秘,secret,mì,default,,entry0 (mì): variant of 秘[mi4] ;; entry1 (bì): see 秘魯|秘鲁[Bi4 lu3] ;; entry2 (mì): secret | secretary
 密,dense; close; thick,mì,default,,entry0 (Mì): surname Mi | name of an ancient state ;; entry1 (mì): dense; close; thick | intimate; close | (bound form) secret; confidential | (Internet slang) to send a private message to (sb); to DM
@@ -330,7 +330,7 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 闹,noisy; boisterous,nào,default,,"entry0 (nào): variant of 鬧|闹[nao4] ;; entry1 (nào): noisy; boisterous | bustling; lively | to make noise | to cause a disturbance | to express; to vent (feelings) | to experience (an illness, disaster, famine etc) | to fool around | to engage in (an activity, often vigorously or disruptively)"
 宁,peaceful,níng,default,,entry0 (nìng): old variant of 寧|宁[ning4] ;; entry1 (Níng): abbr. for Ningxia Hui Autonomous Region 寧夏回族自治區|宁夏回族自治区[Ning2 xia4 Hui2 zu2 Zi4 zhi4 qu1] | abbr. for Nanjing 南京[Nan2 jing1] | surname Ning ;; entry2 (níng): peaceful | to pacify | to visit (one's parents etc) ;; entry3 (nìng): would rather | to prefer | how (emphatic) | Taiwan pr. [ning2] ;; entry4 (níng): variant of 寧|宁[ning2]
 趣,interesting,qù,default,,entry0 (qù): interesting | to interest
-圈,to confine,juān,default,,"entry0 (juān): to confine | to lock up | to pen in ;; entry1 (juàn): livestock enclosure; pen; fold; sty ;; entry2 (quān): circle; ring; loop | (fig.) social circle; niche group; community; fandom | classifier for loops, orbits, laps | to surround; to encircle | to circle (sth); to mark with a circle"
+圈,circle; ring; loop,quān,default,,"entry0 (juān): to confine | to lock up | to pen in ;; entry1 (juàn): livestock enclosure; pen; fold; sty ;; entry2 (quān): circle; ring; loop | (fig.) social circle; niche group; community; fandom | classifier for loops, orbits, laps | to surround; to encircle | to circle (sth); to mark with a circle"
 权,authority,quán,default,,entry0 (Quán): surname Quan ;; entry1 (quán): authority | power | right | (literary) to weigh | expedient | temporary
 扫,to sweep (with a brush or broom),sǎo,default,,entry0 (sǎo): to sweep (with a brush or broom) | to sweep away; to wipe out; to get rid of | to sweep (one's eyes etc) over; to scan ;; entry1 (sào): (bound form) a (large) broom
 森,densely wooded,sēn,default,,entry0 (Sēn): Mori (Japanese surname) ;; entry1 (sēn): (bound form) densely wooded | (fig.) (bound form) multitudinous; gloomy; forbidding
@@ -367,7 +367,7 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 严,tight (closely sealed),yán,default,,entry0 (Yán): surname Yan ;; entry1 (yán): tight (closely sealed) | stern | strict | rigorous | severe | father
 盐,salt,yán,default,,entry0 (yán): salt | CL:粒[li4]
 腰,the waist and lower back,yāo,default,,"entry0 (yāo): the waist and lower back | (bound form) kidney of an animal (as food) | the waist of trousers or a skirt | (metonym) money pouch; pocket | (bound form) the middle section of an upright object (mountain, bottle etc)"
-叶,to be in harmony,xié,default,,entry0 (xié): to be in harmony ;; entry1 (Yè): surname Ye ;; entry2 (yè): leaf | page | lobe | (historical) period | classifier for small boats
+叶,leaf,yè,default,,entry0 (xié): to be in harmony ;; entry1 (Yè): surname Ye ;; entry2 (yè): leaf | page | lobe | (historical) period | classifier for small boats
 依,to depend on,yī,default,,entry0 (yī): to depend on | to comply with or listen to sb | according to | in the light of
 移,to move,yí,default,,entry0 (yí): to move | to shift | to change | to alter | to remove
 遗,to leave behind,yí,default,,entry0 (yí): (bound form) to leave behind
@@ -381,18 +381,18 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 源,root,yuán,default,,entry0 (yuán): root | source | origin
 阅,to inspect,yuè,default,,entry0 (yuè): to inspect | to review | to read | to peruse | to go through | to experience
 载,to record in writing,zǎi,default,,entry0 (zǎi): to record in writing | to carry (i.e. publish in a newspaper etc) | Taiwan pr. [zai4] | year ;; entry1 (zài): to carry | to convey | to load | to hold | to fill up | and | also | as well as | simultaneously
-赞,to praise; to laud (variant of 贊|赞[zan4]),zàn,default,,entry0 (zàn): variant of 讚|赞[zan4] ;; entry1 (zàn): (bound form) to praise; to laud (variant of 贊|赞[zan4]) ;; entry2 (zàn): variant of 贊|赞[zan4] ;; entry3 (zàn): (bound form) to patronize; to support; to aid | (bound form) to praise; to laud
+赞,to patronize; to support; to aid,zàn,default,,entry0 (zàn): variant of 讚|赞[zan4] ;; entry1 (zàn): (bound form) to praise; to laud (variant of 贊|赞[zan4]) ;; entry2 (zàn): variant of 贊|赞[zan4] ;; entry3 (zàn): (bound form) to patronize; to support; to aid | (bound form) to praise; to laud
 丈,"measure of length, ten Chinese feet (3.3 m)",zhàng,default,,"entry0 (zhàng): measure of length, ten Chinese feet (3.3 m) | to measure | husband | polite appellation for an older male"
 招,to recruit,zhāo,default,,entry0 (zhāo): to recruit | to provoke | to beckon | to incur | to infect | contagious | a move (chess) | a maneuver | device | trick | to confess
 召,to call together,zhào,default,,entry0 (Shào): surname Shao | name of an ancient state that existed in what is now Shaanxi Province ;; entry1 (zhào): to call together | to summon | to convene | temple or monastery (used in place names in Inner Mongolia)
-折,to snap,shé,default,,"entry0 (shé): to snap | to break (a stick, a bone etc) | (bound form) to sustain a loss (in business) ;; entry1 (zhē): to turn sth over | to turn upside down | to tip sth out (of a container) ;; entry2 (zhé): to break | to fracture | to snap | to suffer loss | to bend | to twist | to turn | to change direction | convinced | to convert into (currency) | discount | rebate | tenth (in price) | classifier for theatrical scenes | to fold | accounts book ;; entry3 (zhé): variant of 折[zhe2] | to fold"
+折,to break,zhé,default,,"entry0 (shé): to snap | to break (a stick, a bone etc) | (bound form) to sustain a loss (in business) ;; entry1 (zhē): to turn sth over | to turn upside down | to tip sth out (of a container) ;; entry2 (zhé): to break | to fracture | to snap | to suffer loss | to bend | to twist | to turn | to change direction | convinced | to convert into (currency) | discount | rebate | tenth (in price) | classifier for theatrical scenes | to fold | accounts book ;; entry3 (zhé): variant of 折[zhe2] | to fold"
 政,political,zhèng,default,,entry0 (zhèng): political | politics | government
 址,site; location,zhǐ,default,,entry0 (zhǐ): (bound form) site; location ;; entry1 (zhǐ): variant of 址[zhi3] | variant of 沚[zhi3]
 治,to rule,zhì,default,,entry0 (zhì): to rule | to govern | to manage | to control | to harness (a river) | to treat (a disease) | to wipe out (a pest) | to punish | to research
 致,fine; delicate; exquisite,zhì,default,,entry0 (zhì): (bound form) fine; delicate; exquisite ;; entry1 (zhì): (literary) to send; to transmit; to convey | (bound form) to cause; to lead to; consequently
 智,(literary) wise; wisdom,zhì,default,,entry0 (zhì): (literary) wise; wisdom
 著,to make known,zhù,default,,entry0 (zhù): to make known | to show | to prove | to write | book | outstanding ;; entry1 (zhuó): used in 執著|执著[zhi2 zhuo2]
-综,heddle,zèng,default,,entry0 (zèng): heddle | Taiwan pr. [zong4] ;; entry1 (zōng): (bound form) to synthesize; to combine | Taiwan pr. [zong4]
+综,to synthesize; to combine,zōng,default,,entry0 (zèng): heddle | Taiwan pr. [zong4] ;; entry1 (zōng): (bound form) to synthesize; to combine | Taiwan pr. [zong4]
 版,a register,bǎn,default,,entry0 (bǎn): a register | block of printing | edition | version | page
 扮,to disguise oneself as,bàn,default,,entry0 (bàn): to disguise oneself as | to dress up | to play (a role) | to put on (an expression)
 棒,stick,bàng,default,,entry0 (bàng): stick | club | cudgel | smart | capable | strong | wonderful | classifier for legs of a relay race
@@ -424,7 +424,7 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 钢,steel,gāng,default,,entry0 (gāng): steel
 估,to estimate,gū,default,,entry0 (gū): to estimate ;; entry1 (gù): used in 估衣[gu4 yi5]
 鬼,disembodied spirit; ghost; devil,guǐ,default,,entry0 (guǐ): disembodied spirit; ghost; devil | (suffix) person with a certain vice or addiction etc | sly; crafty; resourceful (variant of 詭|诡[gui3]) | one of the 28 constellations of ancient Chinese astronomy
-柜,Salix multinervis,jǔ,default,,entry0 (guì): variant of 櫃|柜[gui4] ;; entry1 (jǔ): Salix multinervis ;; entry2 (guì): cupboard | cabinet | wardrobe
+柜,cupboard,guì,default,,entry0 (guì): variant of 櫃|柜[gui4] ;; entry1 (jǔ): Salix multinervis ;; entry2 (guì): cupboard | cabinet | wardrobe
 滚,to boil,gǔn,default,,entry0 (gǔn): to boil | to roll | to take a hike | Get lost!
 汗,perspiration,hàn,default,,"entry0 (hán): see 可汗[ke4 han2], 汗國|汗国[han2 guo2] ;; entry1 (hàn): perspiration | sweat | CL:滴[di1],頭|头[tou2],身[shen1] | to be speechless (out of helplessness, embarrassment etc) (Internet slang used as an interjection)"
 盒,small box,hé,default,,entry0 (hé): small box | case
@@ -432,7 +432,7 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 恨,to hate,hèn,default,,entry0 (hèn): to hate | to regret
 胡,"non-Han people, esp. from central Asia",hú,default,,"entry0 (Hú): surname Hu ;; entry1 (hú): non-Han people, esp. from central Asia | reckless | outrageous | what? | why? | to complete a winning hand at mahjong (also written 和[hu2]) ;; entry2 (hú): used in 衚衕|胡同[hu2 tong4] ;; entry3 (hú): beard | mustache | whiskers"
 挤,to crowd in,jǐ,default,,entry0 (jǐ): to crowd in | to cram in | to force others aside | to press | to squeeze | to find (time in one's busy schedule)
-夹,to press from either side,jiā,default,,entry0 (gā): used in 夾肢窩|夹肢窝[ga1 zhi5 wo1] ;; entry1 (jiā): to press from either side | to place in between | to sandwich | to carry sth under armpit | wedged between | between | to intersperse | to mix | to mingle | clip | folder | Taiwan pr. [jia2] ;; entry2 (jiá): double-layered (quilt); lined (garment) ;; entry3 (jiá): variant of 夾|夹[jia2]
+夹,double-layered (quilt); lined (garment),jiá,default,,entry0 (gā): used in 夾肢窩|夹肢窝[ga1 zhi5 wo1] ;; entry1 (jiā): to press from either side | to place in between | to sandwich | to carry sth under armpit | wedged between | between | to intersperse | to mix | to mingle | clip | folder | Taiwan pr. [jia2] ;; entry2 (jiá): double-layered (quilt); lined (garment) ;; entry3 (jiá): variant of 夾|夹[jia2]
 艰,difficult,jiān,default,,entry0 (jiān): difficult | hard | hardship
 敬,respectful; to respect,jìng,default,,entry0 (jìng): (bound form) respectful; to respect | to offer politely
 军,army,jūn,default,,entry0 (jūn): (bound form) army | military
@@ -448,7 +448,7 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 拼,to piece together; to put together,pīn,default,,entry0 (pīn): to piece together; to put together | to pool (resources etc); to share | to risk all; to go all out | to spell (words)
 弃,to abandon,qì,default,,entry0 (qì): to abandon | to relinquish | to discard | to throw away
 瞧,to look at,qiáo,default,,entry0 (qiáo): to look at | to see | to see (a doctor) | to visit
-曲,bent,qū,default,,"entry0 (Qū): surname Qu ;; entry1 (qū): bent | crooked | wrong ;; entry2 (qǔ): tune | song | CL:支[zhi1] ;; entry3 (qū): variant of 麴|曲[qu1] ;; entry4 (qū): fermentation starter; leaven (molds, yeasts or bacteria used in fermenting soy products or brewing etc) | Taiwan pr. [qu2]"
+曲,tune,qǔ,default,,"entry0 (Qū): surname Qu ;; entry1 (qū): bent | crooked | wrong ;; entry2 (qǔ): tune | song | CL:支[zhi1] ;; entry3 (qū): variant of 麴|曲[qu1] ;; entry4 (qū): fermentation starter; leaven (molds, yeasts or bacteria used in fermenting soy products or brewing etc) | Taiwan pr. [qu2]"
 劝,to advise,quàn,default,,entry0 (quàn): to advise | to urge | to try to persuade | to exhort | to console | to soothe
 扰,to disturb,rǎo,default,,entry0 (rǎo): to disturb
 忍,to bear,rěn,default,,entry0 (rěn): to bear | to endure | to tolerate | to restrain oneself
@@ -465,7 +465,7 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 析,to separate,xī,default,,entry0 (xī): to separate | to divide | to analyze
 悉,in all cases,xī,default,,entry0 (xī): in all cases | know
 惜,to cherish,xī,default,,entry0 (xī): to cherish | to begrudge | to pity | Taiwan pr. [xi2]
-吓,to scare,hè,default,,entry0 (hè): to scare | to intimidate | to threaten | (interjection showing disapproval) tut-tut | (interjection showing astonishment) ;; entry1 (xià): to frighten | to scare
+吓,to frighten,xià,default,,entry0 (hè): to scare | to intimidate | to threaten | (interjection showing disapproval) tut-tut | (interjection showing astonishment) ;; entry1 (xià): to frighten | to scare
 闲,enclosure,xián,default,,entry0 (xián): enclosure | (variant of 閒|闲[xian2]) idle | unoccupied | leisure ;; entry1 (xián): idle | unoccupied | leisure
 辛,(of taste) hot or pungent,xīn,default,,"entry0 (Xīn): surname Xin ;; entry1 (xīn): (of taste) hot or pungent | hard | laborious | suffering | eighth in order | eighth of the ten Heavenly Stems 十天干[shi2 tian1 gan1] | letter ""H"" or Roman ""VIII"" in list ""A, B, C"", or ""I, II, III"" etc | ancient Chinese compass point: 285° | octa"
 雄,male,xióng,default,,entry0 (xióng): male | staminate | grand | imposing | powerful | mighty | person or state having great power and influence
@@ -489,7 +489,7 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 吉,lucky,jí,default,,entry0 (Jí): short name for Jilin 吉林[Ji2 lin2] | surname Ji ;; entry1 (jí): lucky | giga- (meaning billion or 10^9)
 麦,wheat; barley; oats,mài,default,,entry0 (Mài): surname Mai ;; entry1 (mài): wheat; barley; oats | mic (abbr. for 麥克風|麦克风[mai4 ke4 feng1])
 盼,to hope for,pàn,default,,entry0 (pàn): to hope for | to long for | to expect
-圣,(literary) to dig with persistent effort (e.g. to gather wild vegetables),kū,default,,"entry0 (kū): (literary) to dig with persistent effort (e.g. to gather wild vegetables) ;; entry1 (shèng): variant of 聖|圣[sheng4] ;; entry2 (shèng): (bound form) peerless (in wisdom, moral virtue, skill etc) | (bound form) peerless individual; paragon (sage, saint, emperor, master of a skill etc) | (bound form) holy; sacred"
+圣,"peerless (in wisdom, moral virtue, skill etc)",shèng,default,,"entry0 (kū): (literary) to dig with persistent effort (e.g. to gather wild vegetables) ;; entry1 (shèng): variant of 聖|圣[sheng4] ;; entry2 (shèng): (bound form) peerless (in wisdom, moral virtue, skill etc) | (bound form) peerless individual; paragon (sage, saint, emperor, master of a skill etc) | (bound form) holy; sacred"
 爽,bright,shuǎng,default,,entry0 (shuǎng): bright | clear | crisp | open | frank | straightforward | to feel well | fine | pleasurable | invigorating | to deviate
 寺,Buddhist temple,sì,default,,entry0 (sì): Buddhist temple | mosque | government office (old)
 素,raw silk,sù,default,,"entry0 (sù): raw silk | white | plain, unadorned | vegetarian (food) | essence | nature | element | constituent | usually | always | ever"

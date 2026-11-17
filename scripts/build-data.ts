@@ -31,6 +31,7 @@ import type {
   LevelManifest,
   MissingFieldError,
   Prompt,
+  RuleChange,
   PromptOverrideFailure,
   SummonInkClass,
 } from '../app/src/data/types';
@@ -49,6 +50,7 @@ import { parseCcCedict } from './lib/parse-cc-cedict';
 import type { CcCedictEntry } from './lib/parse-cc-cedict';
 import { mergeCharacter } from './lib/merge';
 import { serialiseDataset } from './lib/serialise';
+import { renderRuleChangesCsv } from './lib/rule-changes';
 import { parsePromptOverrides } from './lib/parse-prompt-overrides';
 import { parsePromptApprovals } from './lib/parse-prompt-approvals';
 import {
@@ -70,8 +72,11 @@ import {
   replaceReadmeBlock,
 } from './lib/prompt-counts';
 import type { PromptCounts } from './lib/prompt-counts';
-import type { PromptOverride } from './lib/prompt';
+import type { PromptOverride, PromptSelectionResult } from './lib/prompt';
 import { numberedToToneMarks, selectPrompt } from './lib/prompt';
+import { parseHskExamples } from './lib/parse-hsk-examples';
+import { containsHan, selectPromptByExamples } from './lib/select-prompt-by-examples';
+import { cleanupMeaning } from '../app/src/engine/promptCleanup';
 
 /**
  * Builds the character dataset from the input paths.
@@ -164,6 +169,13 @@ export async function buildDataset(opts: BuildOptions): Promise<BuildResult> {
     ? await loadApprovals(opts.promptApprovalsPath)
     : new Set<string>();
 
+  // The Clue_Rule needs the HSK example words; only levels 2 and 3 read them.
+  const examples =
+    isLaterLevel && opts.hskCharsPath !== undefined
+      ? parseHskExamples(await readFile(opts.hskCharsPath, 'utf8'))
+      : undefined;
+  const promptContext: PromptContext = { examples, ccCedict, approvals };
+
   // An override naming a character NOT in character-list.txt is an
   // unknown-character error. Collect those first (they have no per-character
   // slot in the main loop otherwise).
@@ -185,6 +197,7 @@ export async function buildDataset(opts: BuildOptions): Promise<BuildResult> {
   const cangjieErrors: CangjieError[] = [];
   const cangjieMissing: string[] = [];
   const notPlayable: string[] = [];
+  const ruleChanges: RuleChange[] = [];
 
   for (const char of characters) {
     // Cangjie: verbatim Unihan value, validated, never derived (fail-slow).
@@ -240,12 +253,39 @@ export async function buildDataset(opts: BuildOptions): Promise<BuildResult> {
     let prompt: Prompt | undefined;
     let promptFailure: MissingFieldError['promptFailure'];
     if (cc !== undefined && overrideError === undefined) {
-      const selection = selectPrompt(char, cc, override);
+      const selection = choosePrompt(char, cc, override, promptContext);
       if (selection.ok) {
         prompt = {
           meaning: selection.choice.meaning,
           pinyin: selection.choice.pinyin,
         };
+        // Gate (levels 2 and 3, also for an override): the cleaned meaning,
+        // not masked, must have no Han character.
+        if (isLaterLevel && containsHan(cleanupMeaning(prompt.meaning))) {
+          prompt = undefined;
+          promptFailure = 'chinese-in-meaning';
+        } else if (
+          isLaterLevel &&
+          override === undefined &&
+          !approvals.has(char)
+        ) {
+          // Rule change: the Clue_Rule's prompt against the Current_Rule's.
+          const current = selectPrompt(char, cc, undefined);
+          if (
+            current.ok &&
+            (current.choice.pinyin !== prompt.pinyin ||
+              current.choice.meaning !== prompt.meaning)
+          ) {
+            ruleChanges.push({
+              character: char,
+              level: opts.level as 2 | 3,
+              oldPinyin: current.choice.pinyin,
+              oldMeaning: current.choice.meaning,
+              newPinyin: prompt.pinyin,
+              newMeaning: prompt.meaning,
+            });
+          }
+        }
       } else {
         promptFailure = selection.reason;
       }
@@ -259,6 +299,9 @@ export async function buildDataset(opts: BuildOptions): Promise<BuildResult> {
       const err: MissingFieldError = { character: char, missingFields };
       if (promptFailure !== undefined) {
         err.promptFailure = promptFailure;
+        if (promptFailure === 'chinese-in-meaning' && opts.level !== undefined) {
+          err.level = opts.level;
+        }
       }
       if (overrideError !== undefined) {
         err.overrideError = overrideError;
@@ -316,9 +359,8 @@ export async function buildDataset(opts: BuildOptions): Promise<BuildResult> {
   // Compute the prompt-review CSV in character-list order.
   const promptReviewCsv = buildPromptReviewCsv(
     characters,
-    ccCedict,
     overrides,
-    approvals,
+    promptContext,
   );
 
   const summonInkCounts: Record<SummonInkClass, number> = {
@@ -334,6 +376,7 @@ export async function buildDataset(opts: BuildOptions): Promise<BuildResult> {
     ok: true,
     output,
     promptReviewCsv,
+    ruleChanges,
     cangjieMissing,
     notPlayable,
     summonInkCounts,
@@ -451,6 +494,39 @@ function validateOverrideRange(
   return undefined;
 }
 
+// --- prompt choice ---------------------------------------------------------
+
+/** What choosePrompt needs besides the character. */
+interface PromptContext {
+  /** HSK example words per character; set only for levels 2 and 3 with a CSV path. */
+  examples: ReadonlyMap<string, string[]> | undefined;
+  ccCedict: ReadonlyMap<string, CcCedictEntry>;
+  /** Characters with an approval row (level 2 and 3). */
+  approvals: ReadonlySet<string>;
+}
+
+/**
+ * The one place that picks a prompt, used by the character loop and by the
+ * Review_File writer so they cannot disagree. An override wins; an approval
+ * without an override keeps the Current_Rule's prompt (the human approved
+ * that one); otherwise the Clue_Rule runs when example words are available;
+ * otherwise the Current_Rule.
+ */
+function choosePrompt(
+  char: string,
+  cc: CcCedictEntry,
+  override: PromptOverride | undefined,
+  ctx: PromptContext,
+): PromptSelectionResult {
+  if (override !== undefined) {
+    return selectPrompt(char, cc, override);
+  }
+  if (ctx.approvals.has(char) || ctx.examples === undefined) {
+    return selectPrompt(char, cc, undefined);
+  }
+  return selectPromptByExamples(char, cc, ctx.examples.get(char) ?? [], ctx.ccCedict);
+}
+
 // --- prompt-review.csv -----------------------------------------------------
 
 const REVIEW_HEADER =
@@ -469,17 +545,17 @@ const REVIEW_HEADER =
  */
 function buildPromptReviewCsv(
   characters: string[],
-  ccCedict: Map<string, CcCedictEntry>,
   overrides: Map<string, PromptOverride>,
-  approvals: ReadonlySet<string> = new Set<string>(),
+  ctx: PromptContext,
 ): string {
+  const { ccCedict, approvals } = ctx;
   const rows: string[] = [REVIEW_HEADER];
 
   for (const char of characters) {
     // Guaranteed present on success; assert for TypeScript.
     const cc = ccCedict.get(char) as CcCedictEntry;
     const override = overrides.get(char);
-    const selection = selectPrompt(char, cc, override);
+    const selection = choosePrompt(char, cc, override, ctx);
     // Guaranteed ok on a successful build.
     if (!selection.ok) {
       // Defensive: should never occur; emit an explicit marker rather than
@@ -570,6 +646,8 @@ export interface AllLevelsOptions {
   unihanSha256: string;
   /** Shared by level 2 and 3. Absent path or absent file means no approvals. */
   promptApprovalsPath?: string;
+  /** hsk30-chars.csv; passed to levels 2 and 3 only. Absent means the Current_Rule. */
+  hskCharsPath?: string;
   levels: Readonly<Record<Level, LevelInputPaths>>;
 }
 
@@ -582,6 +660,8 @@ export interface LevelBuild {
   output: string;
   /** The level's Review_File content. */
   promptReviewCsv: string;
+  /** Prompt changes of the Clue_Rule over the Current_Rule (levels 2 and 3). */
+  ruleChanges: RuleChange[];
   cangjieMissing: string[];
   notPlayable: string[];
   summonInkCounts: Record<SummonInkClass, number>;
@@ -609,6 +689,8 @@ export interface AllLevelsOutput {
   countsModule: string;
   /** Sentence placed between the README markers. */
   readmeBlock: string;
+  /** Content of data/prompt-rule-changes.csv. */
+  ruleChangesCsv: string;
 }
 
 export type AllLevelsResult =
@@ -666,7 +748,11 @@ export async function buildAllLevels(
       unihanSha256: opts.unihanSha256,
       ...(level === 1
         ? {}
-        : { level, promptApprovalsPath: opts.promptApprovalsPath }),
+        : {
+            level,
+            promptApprovalsPath: opts.promptApprovalsPath,
+            hskCharsPath: opts.hskCharsPath,
+          }),
     });
     if (!result.ok) {
       failures.push({
@@ -681,6 +767,7 @@ export async function buildAllLevels(
       count: Object.keys(JSON.parse(result.output) as object).length,
       output: result.output,
       promptReviewCsv: result.promptReviewCsv,
+      ruleChanges: result.ruleChanges,
       cangjieMissing: result.cangjieMissing,
       notPlayable: result.notPlayable,
       summonInkCounts: result.summonInkCounts,
@@ -732,6 +819,9 @@ export async function buildAllLevels(
     promptCounts,
     countsModule: renderCountsModule(promptCounts),
     readmeBlock: renderReadmeBlock(promptCounts),
+    ruleChangesCsv: renderRuleChangesCsv(
+      builds.flatMap((b) => (b.level === 1 ? [] : b.ruleChanges)),
+    ),
   };
 }
 
@@ -744,6 +834,7 @@ export interface AllLevelsPaths {
   provenance: string;
   countsModule: string;
   readme: string;
+  ruleChanges: string;
 }
 
 /** The generated-file paths inside a repository root. */
@@ -767,6 +858,7 @@ export function defaultPaths(root: string): AllLevelsPaths {
     provenance: join(root, 'data/prompt-review-sample-provenance.json'),
     countsModule: join(root, 'app/src/data/promptCounts.generated.ts'),
     readme: join(root, 'README.md'),
+    ruleChanges: join(root, 'data/prompt-rule-changes.csv'),
   };
 }
 
@@ -789,6 +881,7 @@ function filesToWrite(
     { path: paths.samples[3], content: output.samples[3] },
     { path: paths.provenance, content: output.provenanceJson },
     { path: paths.countsModule, content: output.countsModule },
+    { path: paths.ruleChanges, content: output.ruleChangesCsv },
     {
       path: paths.readme,
       content: replaceReadmeBlock(readmeText, output.readmeBlock),
@@ -873,6 +966,9 @@ export function formatAllLevelsReport(
     text += line(paths.datasets[b.level], b.count, b.output);
   }
   text += line(paths.manifest, output.manifest.levels.length, output.manifestJson);
+  const changed = (n: Level): number =>
+    output.levels.find((b) => b.level === n)?.ruleChanges.length ?? 0;
+  text += `Prompt rule changes: level 2: ${changed(2)}, level 3: ${changed(3)}, total: ${changed(2) + changed(3)}\n`;
   return text;
 }
 
@@ -912,6 +1008,7 @@ async function main(): Promise<void> {
     unihanPath: join(root, 'data/raw/unihan', unihanFile),
     unihanSha256,
     promptApprovalsPath: join(root, 'data/prompt-approvals.csv'),
+    hskCharsPath: join(root, 'data/raw/hsk30/hsk30-chars.csv'),
     levels: {
       1: {
         characterListPath: join(root, 'data/character-list.txt'),
@@ -1022,7 +1119,15 @@ export function formatError(e: MissingFieldError): string {
   if (e.overrideError !== undefined) {
     parts.push(`override ${e.overrideError}: ${OVERRIDE_ERROR_HELP[e.overrideError]}`);
   }
-  if (e.promptFailure !== undefined) {
+  if (e.promptFailure === 'chinese-in-meaning') {
+    const file =
+      e.level === 2 || e.level === 3
+        ? `data/prompt-overrides-level${e.level}.csv`
+        : 'the level override file';
+    parts.push(
+      `prompt: chinese-in-meaning (the meaning would show a Chinese character at level ${e.level ?? '?'}; add an override row in ${file})`,
+    );
+  } else if (e.promptFailure !== undefined) {
     parts.push(`prompt: ${e.promptFailure}`);
   }
   return `${e.character}: ${parts.join('; ')}`;
