@@ -550,6 +550,22 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 - **Still weak:** four of the first ten ghosts (一 人 女 手) have one-key codes, so the first press is still a guess.
 - **Next:** show the code on first meeting, hide it on return, and open with a guided 明.
 
+## Nov 17, 2026: first-meeting: taught the first time, tested on return
+
+- **What I did:** Wrote and built the `first-meeting` spec in one pass, the next step from the second review: a new player still had to guess codes, and a wall of 25 keys came before anything happened.
+- **Kiro features:** spec in one pass; the `accuracy-reviewer` agent as a spec task; Playwright e2e.
+- **Result:**
+  - **First meeting:** a ghost with no saved history shows its code as faint letters in the slots, with the next key highlighted (ring, bold and underline, so colour isn't the only signal). Copying it can still end clean. A returning ghost hides the code, so the spaced repetition now tests something real.
+  - **Guided first ghost:** a brand-new player starts on 明 with one line per step, built from the dataset's own meanings: "Press A: the sun 日", "Press B: the moon 月", "Now write it from memory".
+    - It is picked by rule, not by name. **Kiro caught that my rule was too loose:** it picked 从 (人 beside 人). I chose "two different keys", and a test confirms the rule picks 明.
+  - **The guide no longer blocks the first Séance.** It stays on the menu.
+  - **The summary shows the haunting:** each ghost with when it returns ("returns in 10 minutes", "returns tomorrow").
+  - **The reviewer agent asked where the key-to-shape table comes from.** Kiro checked all 25 pairs against the Wikipedia article and recorded it as the source. The second run returned "No findings".
+  - **Tests:** every playable character is now swept for leaks both as a first meeting and as a returning ghost. **3578 unit and 39 e2e tests pass**; `tsc` clean; bundle 136,755 bytes gzipped. The dataset, scheduler and save format are unchanged.
+- **My own browser check (headless Chrome, production build):** as a new player I got 明 first with the faint "A B" and "Press A: the sun 日". After A the line changed to "Press B: the moon 月". The write step said "Now write it from memory" with no 明 on the page. Writing it gave a clean result, and the summary listed 明 as "returns tomorrow" and the ghosts I gave up on as "returns in 10 minutes". No console errors.
+- **To fix:** the intro says "characters … are ghosts. Type its shapes", which doesn't agree in number.
+- **Next:** the design pass: ink and paper by candlelight.
+
 ---
 
 ## Template for new entries
