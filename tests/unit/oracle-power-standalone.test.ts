@@ -54,6 +54,8 @@ let tempRoot = '';
 let copyDir = '';
 let client: Client | undefined;
 let transport: StdioClientTransport | undefined;
+// The exact env object handed to the child process.
+let childEnv: Record<string, string> = {};
 
 async function call(name: string, args: Record<string, string>): Promise<ToolReply> {
   return (await (client as Client).callTool({ name, arguments: args })) as ToolReply;
@@ -69,9 +71,15 @@ beforeAll(async () => {
   const args = (server.args ?? []).map((a) => a.replace('${PLUGIN_ROOT}', copyDir));
   const cwd = (server.cwd ?? '').replace('${PLUGIN_ROOT}', copyDir);
 
-  const env = getDefaultEnvironment();
-  delete env.NODE_PATH;
-  transport = new StdioClientTransport({ command: process.execPath, args, cwd, env, stderr: 'pipe' });
+  childEnv = getDefaultEnvironment();
+  delete childEnv.NODE_PATH;
+  transport = new StdioClientTransport({
+    command: process.execPath,
+    args,
+    cwd,
+    env: childEnv,
+    stderr: 'pipe',
+  });
   client = new Client({ name: 'power-standalone-test', version: '0.0.0' });
   await client.connect(transport);
 }, 30_000);
@@ -93,7 +101,7 @@ afterAll(async () => {
 describe('Power_Standalone_Test', () => {
   it('runs from a copy outside the repository with no node_modules above it', () => {
     expect(copyDir.startsWith(repoRoot + sep)).toBe(false);
-    expect(process.env.NODE_PATH ?? '').toBe('');
+    expect(Object.keys(childEnv)).not.toContain('NODE_PATH');
     for (let dir = dirname(copyDir); ; dir = dirname(dir)) {
       expect(existsSync(join(dir, 'node_modules'))).toBe(false);
       if (dirname(dir) === dir) break;

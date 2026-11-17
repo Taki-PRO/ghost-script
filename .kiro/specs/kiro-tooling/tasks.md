@@ -174,10 +174,11 @@ Build the three Kiro-native tools in small steps: the data check (pipeline messa
     - Leave `app/public/THIRD_PARTY_NOTICES.txt` unchanged (it covers app runtime dependencies only) and confirm `tests/unit/third-party-notices.test.ts` and `tests/unit/credits-readme.test.ts` still pass
     - _Requirements: 10.6, 10.15, 8.2_
 
-- [ ] 11. Human-only: re-test the Power import in Kiro
-  - [~] 11.1 The human re-tests the import in the Kiro Powers panel (Kiro never does this step)
+- [x] 11. Human-only: re-test the Power import in Kiro
+  - [x] 11.1 The human re-tests the import in the Kiro Powers panel (Kiro never does this step)
     - With the workspace `cangjie-oracle` server still disabled: Powers panel, Add Custom Power, Import power from a folder, choose `oracle/power/`; confirm the server connects (no "Connection closed") and that `lookup`, `verify` and `decompose` answer for 明
     - Record the result, and what the install location and server name look like, in `kiro-log.md` (written by the human); if it still fails, copy the Kiro error text into the task notes so the design can be revised
+    - Result (recorded by Kiro from the human's report): on Nov 18, 2026, with the workspace `cangjie-oracle` server disabled, the human re-imported `oracle/power` in the Kiro Powers panel and, in a new chat, asked "Use the Cangjie oracle to look up 明". Kiro made two tool calls and answered: Cangjie code AB, source Unihan 18.0.0 field kCangjie (provisional), playable yes. The human re-enabled the workspace server afterwards (`disabled: false`).
     - After the import test, set `disabled: false` in `.kiro/settings/mcp.json` and run `npx vitest run tests/unit/mcp-config.test.ts`; the case "is enabled" then passes
     - _Requirements: 10.16, 10.17_
 

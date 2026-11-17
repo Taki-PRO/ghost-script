@@ -483,6 +483,16 @@
         "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794939423407
+      },
+      {
+        "executionId": "892b65db-ed43-491e-8f9e-8312bbc0f945",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794940204852
+      },
+      {
+        "executionId": "892b65db-ed43-491e-8f9e-8312bbc0f945",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794940256332
       }
     ],
     "10.6 Update the existing Power and workspace-config tests": [
@@ -517,6 +527,16 @@
         "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794939425809
+      },
+      {
+        "executionId": "892b65db-ed43-491e-8f9e-8312bbc0f945",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794940205081
+      },
+      {
+        "executionId": "892b65db-ed43-491e-8f9e-8312bbc0f945",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794940257697
       }
     ],
     "11.1 The human re-tests the import in the Kiro Powers panel (Kiro never does this step)": [
@@ -524,6 +544,11 @@
         "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794939084517
+      },
+      {
+        "executionId": "892b65db-ed43-491e-8f9e-8312bbc0f945",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794940205362
       }
     ],
     "12. Final checkpoint - Verify the self-contained Power": [
@@ -541,6 +566,16 @@
         "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794939596329
+      },
+      {
+        "executionId": "892b65db-ed43-491e-8f9e-8312bbc0f945",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794940258712
+      },
+      {
+        "executionId": "892b65db-ed43-491e-8f9e-8312bbc0f945",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794940303544
       }
     ],
     "10. Self-contained Power: entry point, build script and generated files": [
@@ -548,6 +583,13 @@
         "executionId": "d04c2d55-24e4-4756-ad7a-5188011eb725",
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794939425832
+      }
+    ],
+    "11. Human-only: re-test the Power import in Kiro": [
+      {
+        "executionId": "892b65db-ed43-491e-8f9e-8312bbc0f945",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794940205387
       }
     ]
   }
