@@ -645,6 +645,20 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 
 ---
 
+## Nov 18, 2026: harder-ghosts follow-up: a sourced rule for the clues
+
+- **What I did:** Gave Kiro a deterministic rule to replace the "first dictionary entry" clue rule for levels 2 and 3. The rule takes the reading that the HSK list's own example words use (looked up in CC-CEDICT), then the first meaning with no Chinese character and no cross-reference.
+- **Kiro features:** spec amendment with parallel sub-tasks; the data-check hook widened to the new level files; the `accuracy-reviewer` agent on the new README text.
+- **Result:**
+  - **63 clues changed** (30 at level 2, 33 at level 3), listed old against new in `data/prompt-rule-changes.csv`, which the build writes. 鸟 now reads "bird", 胖 "fat", 读 "to read out", 叶 "leaf", 柜 "cupboard".
+  - **No level 2 or 3 clue on screen contains a Chinese character.** A test checks every record, and the build fails if one ever would.
+  - Level 1 is byte-identical. A second build gives identical files.
+  - **4114 unit and 95 e2e tests pass**; `tsc` clean.
+- **My own check:** I re-ran my comparison against the HSK example words. Readings that disagree dropped from 63 to 6 across the two levels, and the remaining ones are close calls.
+- **What a rule can't fix:** about a dozen clues follow the rule but are poor, such as 切 "definitely; absolutely (not)", 态 "(bound form)" and 码 "standard weight used with a balance scale". These need a human choice, as override rows.
+
+---
+
 ## Template for new entries
 
 ## [Date]: [Short title]
