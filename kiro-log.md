@@ -659,6 +659,15 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 
 ---
 
+## Nov 18, 2026: My first review of the new clues: 12 overrides
+
+- **What I did:** Read the clues the rule still got wrong and chose a better meaning for 12 of them, from each character's own CC-CEDICT alternatives (for example 切 "to cut; to slice; to carve" instead of "definitely; absolutely (not)", and 态 "attitude" instead of the empty "(bound form)"). Kiro wrote them as override rows with `reviewedBy` "human".
+- **Kiro features:** a sub-agent that refused to guess: two of my texts didn't match the dictionary byte for byte (it carries a "(bound form)" tag), so it stopped and asked before writing anything.
+- **Result:** all 12 clues show exactly the chosen text. The Sources & licences screen now says a human has reviewed 12 of the 900 new clues and not 888, computed from the data. 4116 unit tests pass; `tsc` clean; deployed.
+- **Next:** my review of the two 50-row samples, then the paper test.
+
+---
+
 ## Template for new entries
 
 ## [Date]: [Short title]
