@@ -430,6 +430,7 @@ There are no open questions. The human approved the following decisions; the req
 24. No Displayed_Meaning of level 2 or 3 contains a Chinese character, proven by a test over every record; a character that cannot meet this fails the build and gets a human override row (Requirements 18.11 and 18.12).
 25. `data/prompt-rule-changes.csv` lists every changed prompt; changed prompts stay unreviewed; override and approval rows win (Requirements 18.2, 18.9 and 18.10).
 26. The data-check hook also watches the level 2 and 3 lists, the two level overrides files and the approvals file (Requirement 18.16).
+27. The human reviewed 12 clues and asked Kiro to write their override rows on the human's behalf (task 17). This supersedes Requirement 4.8 for these 12 rows only.
 
 ## Assumptions for the human (Clue quality)
 

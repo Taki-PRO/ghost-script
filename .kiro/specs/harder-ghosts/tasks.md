@@ -249,6 +249,26 @@ Rules for every task:
   - Confirm with `git diff --stat` that `app/public/data/characters.json`, `data/prompt-review.csv`, `data/prompt-overrides.csv`, `data/character-list.txt`, `scheduler.ts`, `outcome.ts`, `config.ts` and the level 1 font subset are untouched, and search the added and changed files for `any` and for personal names
   - Ensure all tests pass, ask the user if questions arise.
   - _Requirements: 18.18, 18.19_
+
+- [x] 17. Apply the human-approved clue overrides
+  - Exception (approved by the human): the human reviewed these 12 clues and asked Kiro to write their override rows on the human's behalf. This supersedes, for these 12 rows only, the rule that Kiro does not write override rows (Requirement 4.8, the Overview rules and the rules of task 15). No other row is written and no prompt outside these 12 is reviewed
+  - [x] 17.1 Write the approved override rows, rebuild and run all checks
+    - Approved texts (character: exact meaning text): 切 "to cut; to slice; to carve" | 夹 "to press from either side" | 角 "angle" | 构 "to construct" | 码 "number" | 态 "attitude" | 甲 "first (in a list, as a party to a contract etc)" | 赞 "to praise; to laud" | 余 "extra" | 派 "clique; school; group; faction" | 聪 "clever; intelligent; sharp" | 士 "scholar (old)"
+    - For each character, find its level from `data/character-list-level2.txt` and `data/character-list-level3.txt`. If a character is in level 1 or in no level list, stop and report; level 1 stays byte-identical
+    - Using the same CC-CEDICT parsing and entry indexing that the override parser and the build use, find the `entryIndex` and `meaningIndex` whose meaning text equals the approved text exactly (byte for byte, before cleanup). If no meaning matches exactly, or more than one (entry, meaning) pair matches, stop and report the candidates; write no row
+    - Write the rows (columns `character,entryIndex,meaningIndex,reviewedBy`; `reviewedBy` exactly `human`) to `data/prompt-overrides-level2.csv` or `data/prompt-overrides-level3.csv` by level, with a header identical to `data/prompt-overrides.csv` and rows in that level's list order
+    - Run `npm run build:data`. If the Chinese-character gate or any check fails, stop and report
+    - Verify that each of the 12 dataset prompts now shows exactly the approved meaning and has `promptReview` equal to `reviewed`; that the level 1 hashes are unchanged (`tests/unit/level1-protected.test.ts`); and that the prompt counts, the README block, the Review_Files, the Review_Samples and `data/prompt-rule-changes.csv` are regenerated, with the override characters no longer in the changes file
+    - Run the `reviewed-by` test and the Chinese-character-free displayed-meaning test; both must pass
+    - _Requirements: 4.3, 4.4, 4.16, 18.2, 18.10, 18.11_
+
+- [x] 18. Final checkpoint after the approved overrides
+  - Run `npm test`, then `npx tsc --noEmit` at the repository root, `npx tsc --noEmit -p app` and `npx tsc --noEmit -p oracle` (no errors), `npm run build -w app`, `npm run check:bundle`, `npm run test:e2e`, `npm run check:data` and `npm run check:levels`; all must pass
+  - Report the reviewed and unreviewed prompt counts per level, the number of rows left in `data/prompt-rule-changes.csv` per level, and the output of `npm run report:ghosts`
+  - Confirm with `git diff --stat` that `app/public/data/characters.json`, `data/prompt-review.csv`, `data/prompt-overrides.csv` and `data/character-list.txt` are untouched, and search the added and changed files for personal names
+  - Ensure all tests pass, ask the user if questions arise.
+  - _Requirements: 4.14, 18.18, 18.19_
+
 ## Notes
 
 - There are no optional tasks. Every test task is required. No property-based test is added (tech.md, decision of Nov 15); the existing property tests stay as they are.
@@ -257,6 +277,7 @@ Rules for every task:
 - Task 4.2 must finish before tasks 5.3 and 5.4 so the level 1 hashes are recorded from the unchanged files.
 - The decisions in `requirements.md` ("Decisions approved by the human") are final; there are no open questions.
 - Tasks 15 and 16 are the clue-quality follow-up (Requirement 18, approved by the human). Task 15.5 rebuilds the data and must run after 15.1 to 15.4; task 15.6 runs after 15.5 because it reads the regenerated files. Task 14 is unchanged and keeps its own checkpoint.
+- Task 17 is the one exception to "Kiro writes no override rows": the human approved 12 clue texts and asked Kiro to write their rows. Task 17.1 stops and reports instead of writing when a character is in level 1 or in no level list, or when its approved text matches no meaning or more than one (entry, meaning) pair. Task 18 is the checkpoint after it.
 - Steering edits (tasks 3.1 to 3.3) are approved by the human as worded in the design. Do not edit steering files anywhere else.
 
 ## Task Dependency Graph
@@ -281,7 +302,8 @@ Rules for every task:
     { "id": 14, "tasks": ["15.2"] },
     { "id": 15, "tasks": ["15.3"] },
     { "id": 16, "tasks": ["15.5"] },
-    { "id": 17, "tasks": ["15.6", "15.7"] }
+    { "id": 17, "tasks": ["15.6", "15.7"] },
+    { "id": 18, "tasks": ["17.1"] }
   ]
 }
 ```

@@ -822,6 +822,37 @@
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794936495482
       }
+    ],
+    "17.1 Write the approved override rows, rebuild and run all checks": [
+      {
+        "executionId": "706ab845-57ed-4173-a8b4-6c7c8a693baf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794937235129
+      },
+      {
+        "executionId": "706ab845-57ed-4173-a8b4-6c7c8a693baf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794937425203
+      }
+    ],
+    "17. Apply the human-approved clue overrides": [
+      {
+        "executionId": "706ab845-57ed-4173-a8b4-6c7c8a693baf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794937425234
+      }
+    ],
+    "18. Final checkpoint after the approved overrides": [
+      {
+        "executionId": "706ab845-57ed-4173-a8b4-6c7c8a693baf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794937425596
+      },
+      {
+        "executionId": "706ab845-57ed-4173-a8b4-6c7c8a693baf",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794937583933
+      }
     ]
   }
 }
