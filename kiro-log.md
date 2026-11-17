@@ -677,6 +677,16 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 
 ---
 
+## Nov 18, 2026: Power fixed and re-tested: the Oracle now works as an installed Power
+
+- **What I did:** Gave Kiro the failure from my import test. It rebuilt the Power to be self-contained: one bundled `server.mjs` that runs with plain `node`, its own derived copy of the data (7 fields of the 1,200 records), licence notices for the data and the bundled packages, and `mcp.json` started through `${PLUGIN_ROOT}`, which Kiro's Power docs confirm.
+- **Kiro features:** spec amendment; a staleness test (the committed Power must equal a fresh build, and its answers must equal the app data's for all 1,200 characters); a standalone test that copies the Power outside the repo and talks to it over MCP; an "Input required" question when the test that expects the workspace server switched on collided with my temporary switch-off. I chose to switch it back on afterwards rather than weaken the test.
+- **The real test:** with the project's own server still disabled, I removed and re-imported `oracle/power` from the Powers panel and asked in a new chat: "Use the Cangjie oracle to look up 明". Kiro made two tool calls and answered: code AB, source Unihan 18.0.0 `kCangjie` (provisional), playable. Then I switched the workspace server back on.
+- **Side effects I caught:** the commit that carried my temporary switch-off failed the deploy check, so that version was never published; the next push fixed it. The standalone test also checked the wrong process's `NODE_PATH`, which failed on my checking machine; Kiro fixed it to check the server's own environment.
+- **Result:** 4155 unit tests pass, the deploy succeeded, and the README now records the human-tested import and its result.
+
+---
+
 ## Template for new entries
 
 ## [Date]: [Short title]
