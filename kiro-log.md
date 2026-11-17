@@ -624,6 +624,27 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 
 ---
 
+## Nov 17–18, 2026: harder-ghosts: 900 more ghosts in two new levels
+
+- **What I did:** Wrote and built the `harder-ghosts` spec. The game had only the 300 HSK 3.0 level 1 characters, which most people with character amnesia can already write. It now has levels 2 and 3 as well (400 and 500 characters, 1,200 in all), and a first-run screen asks where to start.
+- **Kiro features:** spec with a hard source gate before any build task; parallel sub-agent waves; steering amendments to `content-accuracy.md`, `art-direction.md` and `product.md`; the `accuracy-reviewer` agent; the Cangjie Oracle extended to all 1,200 characters; "Input required" questions.
+- **Decisions I made:**
+  - Minify the two new data files (level 3 went from about 3.3 MB to 1.6 MB raw). Level 1 stays byte-identical, and a hash test enforces it.
+  - Unreviewed prompts may ship, but the README and the Sources & licences screen state the reviewed and unreviewed counts, computed from the data.
+  - A random sample of 50 prompts per level for me to review, with a fixed, recorded seed.
+  - Kiro's sandbox refused to download the pinned HSK list, so I downloaded it myself. Kiro then checked its size and SHA-256 before using it.
+  - The new review files must not hold personal names: `reviewedBy` is `human` or empty. Level 1's existing `human-approved` values stay as they are.
+- **Result:**
+  - **Source gate passed exactly as predicted:** every new character is in every source, with one Cangjie code each. 13 characters skip the Summon step under the existing rule.
+  - **Loading:** new levels and their font subsets download only when a player picks them. The counted first load is 214,206 bytes gzipped against 300,000.
+  - **Save:** schema 3 with a tested migration; an old save keeps its history and starts at level 1.
+  - **Kiro's e2e test found a real bug:** the new level screen didn't fit one screen at any size, because it stacked a second full-screen height inside the page shell. Kiro fixed it.
+  - **4024 unit tests and 95 e2e tests pass**; `tsc` clean.
+- **What my own check found:** I compared each new prompt's reading with the readings in the HSK list's own example words, using CC-CEDICT. About 55 of the 900 new prompts use a rare or wrong reading. Examples: 鸟 is glossed "penis", 胖 "healthy", 读 "comma", 叶 "to be in harmony", 柜 "Salix multinervis". The default prompt rule takes the first CC-CEDICT entry, which is fine for level 1 (a human reviewed all 300) but not for 900 unreviewed ones. 29 new prompts also show other Chinese characters, some the ghost's own traditional form ("variant of 贊|～").
+- **Next:** a sourced rule that picks the reading the HSK examples use and skips meanings containing Chinese characters, then my review of the changed prompts and the samples.
+
+---
+
 ## Template for new entries
 
 ## [Date]: [Short title]
