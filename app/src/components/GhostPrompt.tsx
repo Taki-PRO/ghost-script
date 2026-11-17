@@ -12,6 +12,8 @@ export interface GhostPromptProps {
   outcome?: Outcome | null;
   /** One-row card for the one-screen rite; the labels stay for screen readers. */
   compact?: boolean;
+  /** Count of wrong keys for this ghost; each change replays the Flinch. Default 0. */
+  flinch?: number;
 }
 
 export { maskTarget };
@@ -21,7 +23,7 @@ export { maskTarget };
  * The target glyph (record.character) is never rendered, including in
  * attributes (Req 5.1). Pinyin is never passed through cleanup.
  */
-export function GhostPrompt({ record, outcome = null, compact = false }: GhostPromptProps) {
+export function GhostPrompt({ record, outcome = null, compact = false, flinch = 0 }: GhostPromptProps) {
   const rawMeaning = record.prompt.meaning;
   const target = record.character;
   const meaning = useMemo(
@@ -34,9 +36,10 @@ export function GhostPrompt({ record, outcome = null, compact = false }: GhostPr
       <section
         aria-label="Ghost's clue"
         data-ghost-state={ghostStateFor(outcome)}
+        data-ghost-flinch={flinch}
         className="ghost-card flex items-center gap-3 rounded-lg bg-surface p-2 text-left"
       >
-        <GhostFigure className="ghost-figure h-10 w-9 shrink-0 text-ghost" />
+        <GhostFigure key={flinch} className="ghost-figure h-10 w-9 shrink-0 text-ghost" />
         <div className="min-w-0">
           <p className="sr-only">Meaning</p>
           <p className="text-xl text-ink">{meaning}</p>
@@ -53,9 +56,10 @@ export function GhostPrompt({ record, outcome = null, compact = false }: GhostPr
     <section
       aria-label="Ghost's clue"
       data-ghost-state={ghostStateFor(outcome)}
+      data-ghost-flinch={flinch}
       className="ghost-card rounded-lg bg-surface p-4 text-center"
     >
-      <GhostFigure className="ghost-figure mx-auto mb-2 h-16 w-14 text-ghost" />
+      <GhostFigure key={flinch} className="ghost-figure mx-auto mb-2 h-16 w-14 text-ghost" />
       <div>
         <p className="text-xs uppercase tracking-wide text-muted">Meaning</p>
         <p className="text-2xl text-ink">{meaning}</p>

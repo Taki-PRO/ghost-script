@@ -217,6 +217,25 @@ describe('CangjieGuide Continue', () => {
   });
 });
 
+describe('CangjieGuide paper slips (Req 10.2, 10.3, 10.4)', () => {
+  it('makes Continue the one seal-red primary, with no old-look classes', () => {
+    renderGuide();
+    const button = screen.getByRole('button', { name: 'Continue' });
+    expect(button).toHaveClass('slip-primary');
+    expect(button).not.toHaveClass('bg-surface');
+    expect(screen.getAllByRole('button')).toHaveLength(1);
+  });
+
+  it('draws each of the 25 keys as a paper card with an ink label', () => {
+    renderGuide();
+    const items = screen.getByRole('list', { name: 'The 25 keys in this game' }).querySelectorAll('li');
+    items.forEach((li) => {
+      expect(li).toHaveClass('card-slip');
+      expect(li).not.toHaveClass('bg-surface');
+    });
+  });
+});
+
 describe('CangjieGuide wrapper (Req 21.11)', () => {
   it('has no bg-background class on the wrapper', () => {
     renderGuide();

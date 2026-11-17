@@ -69,10 +69,10 @@ export function CangjieGuide({ dataset, onContinue }: CangjieGuideProps) {
           {CANGJIE_KEYS.map(({ key, shape }) => (
             <li
               key={key}
-              className="flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-surface px-2 py-2"
+              className="card-slip flex min-h-[44px] items-center justify-center gap-2 px-2 py-2"
             >
-              <span className="font-mono text-base text-muted">{key}</span>
-              <span lang="zh" className="text-xl text-ghost">
+              <span className="font-mono text-base text-ink-on-paper">{key}</span>
+              <span lang="zh" className="text-xl text-ink-on-paper">
                 {shape}
               </span>
             </li>
@@ -123,7 +123,7 @@ export function CangjieGuide({ dataset, onContinue }: CangjieGuideProps) {
           type="button"
           onClick={onContinue}
           aria-label="Continue"
-          className="mt-10 min-h-[44px] rounded-lg border border-ghost bg-surface px-8 py-3 text-lg font-medium text-ink hover:bg-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          className="slip-primary mt-10 px-8 py-3 text-lg font-medium"
         >
           Continue
         </button>

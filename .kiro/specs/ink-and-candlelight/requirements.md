@@ -4,7 +4,7 @@
 
 The ink-and-candlelight feature gives every screen of Ghost Script one art direction: a séance at a writing desk, ink and paper by candlelight. It is spooky but calm. It uses no pumpkins, bats or cobwebs. The direction was approved by the human; this spec turns it into requirements, a design and tasks for review before anything is built.
 
-The feature changes colours, shapes, motion, one font and some copy. It changes no game rule, no dataset, no storage schema and no scheduling. It amends several existing requirements of the `visual-identity`, `cangjie-seance`, `summon-ink` and `first-meeting` specs. Every amendment is listed in Requirement 22 and in the design under "Conflicts with existing requirements". Where a choice is still open, the spec states a default and lists it in the design under "Open questions". No amendment of an approved requirement takes effect until the human approves its default.
+The feature changes colours, shapes, motion, one font and some copy. It changes no game rule, no dataset, no storage schema and no scheduling. It amends several existing requirements of the `visual-identity`, `cangjie-seance`, `summon-ink` and `first-meeting` specs. Every amendment is listed in Requirement 22 and in the design under "Conflicts with existing requirements". The human approved the decisions Q1 to Q13, with Q10 changed; they are recorded in the design under "Decisions" and marked "approved by the human" in the requirements below.
 
 The first task of this spec writes `.kiro/steering/art-direction.md` (front matter `inclusion: always`). That file holds the palette, the ghost, the motion rules and the cultural-care rules, so that every later screen follows them. This spec does not create that file now.
 
@@ -42,7 +42,8 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 - **Ink_Reveal**: The effect that makes the Legend_Line appear as if written, left to right, by a CSS mask wipe.
 - **Keycap**: One key of the Summon_Keyboard, drawn as a worn keycap.
 - **Summon_Keyboard**: The 25 on-screen keys of the Summon step, in the rows `QWERTYUIOP`, `ASDFGHJKL` and `XCVBNM`.
-- **Seal_Stamp**: A red seal that stamps the paper when a ghost is laid to rest.
+- **Seal_Stamp**: A red seal that stamps the paper when a ghost is laid to rest. It carries the ghost's own character (the Seal_Glyph).
+- **Seal_Glyph**: The Dataset_Character of the ghost that was laid to rest, taken from the dataset record of the target character, set in the Chinese_Font in `paperLabel` on `seal`.
 - **Laid_To_Rest**: The Outcome `clean` of a ghost.
 - **Outcome_Motion**: The motion of the Ink_Ghost for an Outcome: dissolve upward like ink smoke for `clean`, linger at the paper's edge for `struggled`, slip away for `gave-up`.
 - **Graveyard_Screen**: The screen that shows one tablet per dataset character.
@@ -82,7 +83,7 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 3. THE Steering_File SHALL state the one-line direction: a séance at a writing desk, ink and paper by candlelight, spooky but calm.
 4. THE Steering_File SHALL hold the palette rules of Requirement 2, the ghost rule of Requirement 6, the motion rules of Requirement 17 and the Cultural_Care_Rules of Requirement 18.
 5. THE Steering_File SHALL list the Primary_Action of each screen, as in Requirement 10.
-6. THE Steering_File SHALL name the exemptions that the human approved for Ambient_Motion and Rite_Timing, once Requirement 17 is approved.
+6. THE Steering_File SHALL name the exemptions that the human approved for Ambient_Motion and Rite_Timing, as approved by the human in Requirement 17.
 7. THE Test_Suite SHALL fail IF the Steering_File lacks the front matter value `inclusion: always`.
 8. THE Steering_File SHALL contain no personal name.
 
@@ -110,7 +111,7 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 1. THE App SHALL replace the flat candle-gold fill of the main button of the Start_Menu with the Primary_Action style of Requirement 10.
 2. THE Test_Suite SHALL fail IF any file of `app/src` other than `theme.ts` and `tailwind.config.ts` uses the class `bg-candle` or the token `candle` as a `background-color`, `border-color`, `color` or `fill`.
 3. THE App SHALL use the token `candle` only inside `box-shadow`, `radial-gradient` and `linear-gradient` values.
-4. THE focus ring of every control SHALL be drawn in Aged_Paper with a surrounding soft Candle_Light glow, at least 2 CSS pixels wide, and SHALL keep a contrast ratio of at least 3:1 against the ring-offset colour. *(Default of open question Q3; replaces the candle-coloured ring of `visual-identity` Requirement 21.5.)*
+4. THE focus ring of every control SHALL be drawn in Aged_Paper with a surrounding soft Candle_Light glow, at least 2 CSS pixels wide, and SHALL keep a contrast ratio of at least 3:1 against the ring-offset colour. *(Approved by the human, Q3; replaces the candle-coloured ring of `visual-identity` Requirement 21.5.)*
 5. THE `index.css.test.ts` SHALL replace the test "colours every focus ring with the candle" with a test of criterion 4.
 
 ### Requirement 4: Success, error and neutral colours
@@ -121,7 +122,7 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 
 1. THE App SHALL draw every Success_Mark, including the "Laid to rest" result line and the at-rest marker of the Graveyard_Screen, in `sealLight` on dark backgrounds, together with a text or shape cue.
 2. THE App SHALL draw the `error` token as an Aged_Paper neutral, and SHALL pair every error message with its existing text cue ("Try again" or the existing message) and a non-colour shape cue.
-3. THE App SHALL use no green hue for success and no red hue for errors. *(Replaces the green `success` token and the coral `error` token; default of open question Q4.)*
+3. THE App SHALL use no green hue for success and no red hue for errors. *(Replaces the green `success` token and the coral `error` token; approved by the human, Q4.)*
 4. THE theme tests SHALL check a contrast ratio of at least 4.5:1 between each of the tokens `success`, `error`, `ghost`, `muted` and `ink` and each of `background`, `surface`, `nightTop`, `nightMid` and `nightLow`.
 
 ### Requirement 5: Surfaces on paper
@@ -130,7 +131,7 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 
 #### Acceptance Criteria
 
-1. THE Practice_Grid and the outline colour of hanzi-writer SHALL use an ink-brown tone (token `gridLine`) and no Seal_Red. *(Amends `visual-identity` Requirement 1 and the Ink_Palette; default of open question Q5.)*
+1. THE Practice_Grid and the outline colour of hanzi-writer SHALL use an ink-brown tone (token `gridLine`) and no Seal_Red. *(Amends `visual-identity` Requirement 1 and the Ink_Palette; approved by the human, Q5.)*
 2. THE Write_Mode SHALL pass a `highlightColor` that is an indigo ink tone (token `hintInk`) with a contrast ratio of at least 4.5:1 against Paper, and SHALL keep the existing text message that announces a Stroke hint.
 3. THE theme tests SHALL check a contrast ratio of at least 4.5:1 between Paper and each of `inkOnPaper`, `drawing` and `hintInk`.
 4. THE Practice_Grid SHALL keep its five line groups, its opacity of at most 0.35 and its `aria-hidden` attribute.
@@ -159,7 +160,7 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 1. THE App SHALL replace `app/public/favicon.svg` with the Ink_Ghost silhouette drawn as an unfiltered path, with its bleeding edge baked into the path geometry.
 2. THE favicon SHALL contain no `filter` element and no filter attribute, because support for filters inside SVG favicons is not documented for the major browsers.
 3. THE favicon SHALL be one file of at most 4,096 bytes and SHALL reference no external resource.
-4. WHERE a browser ignores SVG favicons, THE `app/index.html` SHALL declare `rel="icon"` with `type="image/svg+xml"` and a `rel="mask-icon"` or `rel="apple-touch-icon"` fallback only if the fallback file is made from the same path and is at most 4,096 bytes. *(Optional; see open question Q7.)*
+4. THE App SHALL ship only the SVG favicon `app/public/favicon.svg`, declared in `app/index.html` with `rel="icon"` and `type="image/svg+xml"`, and SHALL add no raster icon, no `apple-touch-icon` and no `mask-icon`. *(Approved by the human, Q7.)*
 5. THE Test_Suite SHALL fail IF the favicon contains a `filter` element or a filter attribute, or IF the favicon path differs from the GhostFigure silhouette path.
 
 ### Requirement 8: Night scene
@@ -171,7 +172,7 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 1. THE App SHALL paint the Night_Scene behind every screen with CSS and inline SVG `data:` URIs only, with no image file.
 2. THE Night_Scene SHALL contain, from back to front, the Sky_Gradient, the Moon, two Mist_Bands, the Paper_Grain and the Vignette.
 3. THE Moon SHALL be a pale disc with a halo, placed in the upper right of the viewport, at least 4 rem across, and SHALL sit where no text or control is drawn at the Rite_Viewports.
-4. THE two Mist_Bands SHALL drift in opposite horizontal directions, each with a drift period of at least 90 seconds, and SHALL be visible in a screenshot at their resting position. *(Amends `visual-identity` Requirement 21.3 and 21.4 only in strength: the halo peak opacity limit of 0.10 stays for the halo; the disc is exempt; see open question Q8.)*
+4. THE two Mist_Bands SHALL drift in opposite horizontal directions, each with a drift period of at least 90 seconds, and SHALL be visible in a screenshot at their resting position. *(Amends `visual-identity` Requirement 21.3 and 21.4 only in strength: the halo peak opacity limit of 0.10 stays for the halo; the disc is exempt; the blue-black night stays and the Moon disc is a separate object; approved by the human, Q8.)*
 5. THE App SHALL give every text colour token a contrast ratio of at least 4.5:1 against the worst-case composite of the Sky_Gradient, both Mist_Bands at their peak opacity, the Moon halo and the Paper_Grain.
 6. WHILE Reduced_Motion is active, THE Mist_Bands SHALL be static at their resting positions.
 7. THE Night_Scene SHALL let mouse, touch and pen events reach the controls above it, and SHALL add no element to the accessibility tree.
@@ -202,7 +203,7 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 1. THE App SHALL draw every secondary button and every card as a Paper_Slip: an Aged_Paper surface with an ink label.
 2. THE App SHALL draw the Primary_Action in Seal_Red fill with the `paperLabel` text colour and a visible Aged_Paper border.
 3. THE App SHALL show at most one Primary_Action on each screen at a time.
-4. THE Primary_Action of each screen SHALL be: the IntroScreen, "Begin the Séance"; the Start_Menu, "Begin a Nightly Séance"; the Cangjie_Guide, its continue button; the Seance_Session after an Outcome, "Next ghost" or "Finish the séance"; the Leave_Prompt, "Stay"; the SessionSummary, "Begin another Séance". *(Default of open question Q9.)*
+4. THE Primary_Action of each screen SHALL be: the IntroScreen, "Begin the Séance"; the Start_Menu, "Begin a Nightly Séance"; the Cangjie_Guide, its continue button; the Seance_Session after an Outcome, "Next ghost" or "Finish the séance"; the Leave_Prompt, "Stay"; the SessionSummary, "Begin another Séance". *(Approved by the human, Q9.)*
 5. THE Summon step, the Write step before an Outcome, the Graveyard_Screen and the Sources & licences screen SHALL show no Primary_Action; their "Give up" and "Back to menu" buttons SHALL be Paper_Slips.
 6. THE App SHALL keep, for every button, its accessible name, a minimum height of 44 px and a visible focus ring.
 7. THE component tests of the screens of criterion 4 SHALL check that the Primary_Action carries the Seal_Red style class and that no other button on the same screen does.
@@ -231,7 +232,7 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 
 1. THE Write_Mode SHALL pass `strokeColor` from the Ink_Black tokens, `drawingColor` from the `drawing` token, `highlightColor` as in Requirement 5.2 and `outlineColor` from the `gridLine` token.
 2. THE Write_Mode SHALL pass `drawingWidth` of 6 or more, and SHALL leave `strokeFadeDuration`, `drawingFadeDuration` and `strokeHighlightSpeed` at values that keep each of their animations inside the Motion_Window.
-3. THE InkSurface SHALL apply one CSS `filter` that references an SVG `feDisplacementMap` definition to the hanzi-writer container, so that the edges of finished strokes bleed slightly.
+3. THE InkSurface SHALL apply one CSS `filter` that references an SVG `feDisplacementMap` definition to the hanzi-writer container, so that the edges of finished strokes bleed slightly. IF the selector for the finished strokes is brittle in hanzi-writer 3.7.3, THEN THE InkSurface SHALL drop the filter and rely on `drawingWidth`. *(Approved by the human, Q6.)*
 4. THE InkSurface filter SHALL add no new character or stroke data.
 5. WHILE Reduced_Motion is active, THE InkSurface filter SHALL stay applied, because it is a static texture and not an animation.
 6. THE Write_Mode SHALL leave the quiz options, the hint rule, the Outcome rules and the never-reveal rule unchanged.
@@ -239,17 +240,22 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 
 ### Requirement 13: Seal stamp
 
-**User Story:** As a player, I want a red seal to stamp the paper when I lay a ghost to rest, so that the win has a physical mark.
+**User Story:** As a player, I want a red seal with the ghost's own character to stamp the paper when I lay a ghost to rest, so that the win has a physical mark.
 
 #### Acceptance Criteria
 
-1. WHEN the combined Outcome of a ghost is `clean`, THE Seance_Session SHALL show one Seal_Stamp over the lower right corner of the Writing_Surface.
-2. THE Seal_Stamp SHALL be a Seal_Red square with a lighter inner border and rough edges, drawn as an inline SVG, and SHALL contain no text and no glyph. *(Default of open question Q10; the alternative is a seal holding the ghost's own character.)*
-3. THE Seal_Stamp SHALL stamp in 300 ms: it SHALL scale from 1.3 to 1 while its opacity rises from 0 to 1.
-4. WHILE Reduced_Motion is active, THE Seal_Stamp SHALL appear at once in its final state.
-5. THE Seal_Stamp SHALL be hidden from assistive technology, SHALL ignore pointer events and SHALL take no layout space, so that the one-screen fit of the Write step is unchanged.
-6. IF the combined Outcome is `struggled` or `gave-up`, THEN THE Seance_Session SHALL show no Seal_Stamp. *(Default of open question Q11.)*
-7. THE Seal_Stamp SHALL appear only after the Outcome is reached, so that the never-reveal rule is unchanged.
+1. WHEN the combined Outcome of a ghost is `clean`, THE Seance_Session SHALL show one Seal_Stamp over the lower right corner of the Writing_Surface, after the Write step has ended.
+2. THE Seal_Stamp SHALL be a `seal` square with a lighter inner border and rough edges, drawn as an inline SVG, that carries the Seal_Glyph. *(Approved by the human, Q10 as changed.)*
+3. THE Seal_Stamp SHALL take the Seal_Glyph from the dataset record of the ghost's target character, and SHALL contain no other Chinese text and no invented character shape.
+4. THE Seal_Stamp SHALL draw the Seal_Glyph in the Chinese_Font, in the `paperLabel` colour on `seal`, at a font size of 28 CSS pixels, as an HTML text element with `lang="zh"` placed over the SVG.
+5. THE theme tests SHALL check a contrast ratio of at least 4.5:1 between `paperLabel` and `seal`. THE design SHALL state that the Seal_Glyph counts as large text (28 CSS pixels in a regular weight is above the 24 CSS pixel threshold of WCAG 2.2, where 3:1 suffices) and that the stricter 4.5:1 is met anyway.
+6. THE Seal_Stamp SHALL have the role `img` and the accessible name "Seal: " followed by the Seal_Glyph, and SHALL mark its visible glyph and its SVG `aria-hidden`, so that the Seal_Glyph is announced once, in the accessible name of the Seal_Stamp.
+7. THE Seal_Stamp SHALL stamp in 300 ms: it SHALL scale from 1.3 to 1 while its opacity rises from 0 to 1.
+8. WHILE Reduced_Motion is active, THE Seal_Stamp SHALL appear at once in its final state.
+9. THE Seal_Stamp SHALL ignore pointer events and SHALL take no layout space, so that the one-screen fit of the Write step is unchanged.
+10. IF the combined Outcome is `struggled` or `gave-up`, THEN THE Seance_Session SHALL show no Seal_Stamp. *(Approved by the human, Q11.)*
+11. THE Seal_Stamp SHALL not exist in the DOM before the combined Outcome is `clean`: not during the Summon step, not during the Write step, and not after a `struggled` or `gave-up` Outcome, so that the never-reveal rule is unchanged.
+12. THE `SealStamp.test.tsx` and `SeanceSession.test.tsx` SHALL check criteria 3, 6, 10 and 11, including that no element with the role `img` and a name that starts with "Seal:" exists during the Summon step, during writing, and after a `struggled` or a `gave-up` Outcome.
 
 ### Requirement 14: Outcome motions
 
@@ -289,7 +295,7 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 
 #### Acceptance Criteria
 
-1. THE App SHALL bundle one Chinese font, LXGW WenKai Regular, release v1.530, under the SIL Open Font License 1.1. *(Amends `visual-identity` Requirements 12.1 to 12.3; requires approval; open question Q1.)*
+1. THE App SHALL bundle one Chinese font, LXGW WenKai Regular, release v1.530, under the SIL Open Font License 1.1. *(Amends `visual-identity` Requirements 12.1 to 12.3; approved by the human, Q1.)*
 2. THE Font_Pipeline SHALL read the source file `LXGWWenKai-Regular.ttf` of the release v1.530 from `https://github.com/lxgw/LxgwWenKai/releases/download/v1.530/LXGWWenKai-Regular.ttf`, SHALL verify that its SHA-256 is `2d73eea94ad808999d90c0000c239a84a33b09d4bc6ab6c5b8bbf1eda8a7fc8b`, and SHALL stop with a non-zero status IF the checksum differs.
 3. THE Font_Pipeline SHALL compute the Glyph_Set from the dataset, from `CANGJIE_KEYS`, from the Legend_Line and from every CJK character in the user-facing text of `app/src`, and SHALL write it to `data/fonts/glyph-set.txt` in codepoint order.
 4. THE Font_Pipeline SHALL subset the source font to exactly the Glyph_Set with the `subset-font` package pinned to an exact version, SHALL write the Font_Subset as WOFF2, and SHALL stop with a non-zero status IF any Glyph_Set character has no glyph in the source font.
@@ -300,7 +306,7 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 9. THE Notices_Script SHALL append the full text of the font's `OFL.txt`, copied verbatim from `data/raw/fonts/lxgw-wenkai/OFL.txt`, to the Notices_File, in a deterministic position.
 10. THE Sources & licences screen SHALL replace the sentence "Chinese text is drawn with fonts already installed on the device" with a sentence that names the bundled Chinese font and states that other Chinese text falls back to installed fonts.
 11. THE Test_Suite SHALL fail IF the Glyph_Set computed from the code and data differs from `data/fonts/glyph-set.txt`, IF the SHA-256 of the committed Font_Subset differs from the one in the Font_Sources_File, IF the README font entry differs from `FONTS`, or IF a CJK character in the user-facing text of `app/src` is missing from the Glyph_Set.
-12. THE Bundle_Check SHALL still compare the sum of the gzip sizes with the Bundle_Budget of 300,000 bytes, and the projected total with the Chinese_Font is 201,501 bytes.
+12. THE Bundle_Check SHALL still compare the sum of the gzip sizes with the Bundle_Budget of 300,000 bytes, and the projected total with the Chinese_Font is 201,501 bytes. *(As built: the committed subset has 321 glyphs and 66,532 bytes of WOFF2, SHA-256 `76fc7f88…dc26`; the projected total is 203,330 bytes, still inside the budget. See the design, "Final pipeline run".)*
 13. IF the total with the Chinese_Font exceeds the Bundle_Budget, THEN THE design's fallback SHALL keep the system Chinese fonts and bundle no CJK file.
 14. THE feature SHALL not change `app/src/data/software.ts` for the Chinese_Font, because the font is not an npm runtime dependency.
 
@@ -312,9 +318,9 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 
 1. THE App SHALL run every Causal_Motion for a duration inside the Motion_Window of 200 ms to 600 ms.
 2. THE App SHALL declare every animation, transition and keyframe inside one `@media (prefers-reduced-motion: no-preference)` block of `app/src/styles/index.css`, and SHALL show static end states otherwise.
-3. THE Steering_File SHALL list every Ambient_Motion by name: the two Mist_Bands, the idle float of the Ink_Ghost, the idle glow of Candle_Light and the wisp of a `restless` Tablet. *(Default of open question Q2.)*
+3. THE Steering_File SHALL list every Ambient_Motion by name: the two Mist_Bands, the idle float of the Ink_Ghost, the idle glow of Candle_Light and the wisp of a `restless` Tablet. *(Approved by the human, Q2: Ambient_Motion is exempt from the Motion_Window, named in the Steering_File, and sits behind Reduced_Motion.)*
 4. THE Test_Suite SHALL fail IF an animation or transition of `app/src/styles/index.css` lies outside the no-preference block, or IF a Causal_Motion duration lies outside the Motion_Window.
-5. THE App SHALL keep the Rite_Timings of Requirement 22.2 unchanged unless the human approves open question Q12.
+5. THE App SHALL keep the Rite_Timings of Requirement 22.2 unchanged. *(Approved by the human, Q12: the Rite_Timings are exempt from the Motion_Window.)*
 6. THE App SHALL play no sound.
 
 ### Requirement 18: Cultural care
@@ -326,7 +332,7 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 1. THE App SHALL show no funeral imagery: no joss paper, no offering money, no talisman script and no incense for the dead.
 2. THE App SHALL show no pumpkin, bat or cobweb.
 3. THE App SHALL show no new Chinese text for decoration: every Chinese glyph SHALL come from the dataset, from `CANGJIE_KEYS` or from the sourced Legend_Line.
-4. THE Seal_Stamp, the Tablets and the ghost SHALL carry no invented Chinese text, no pseudo-Chinese shapes and no imitation of seal-script characters.
+4. THE Tablets and the ghost SHALL carry no invented Chinese text, no pseudo-Chinese shapes and no imitation of seal-script characters, and THE Seal_Stamp SHALL carry only the Seal_Glyph of Requirement 13, set in the Chinese_Font and not in a seal-script imitation.
 5. THE App SHALL present the legend as a story and as a design premise, and SHALL make no claim about Cangjie beyond those allowed in `content-accuracy.md`.
 6. THE Test_Suite SHALL fail IF a CJK character appears in the user-facing text of `app/src` that is not in the Glyph_Set.
 7. THE Accuracy_Reviewer SHALL review the new copy and the Cultural_Care_Rules before the final checkpoint.
@@ -341,7 +347,7 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 2. THE storage schema version SHALL stay at 2, and the implementation SHALL write nothing new to storage.
 3. THE existing tests for the hint rules and for the never-reveal rule of the Summon step and of the Ghost_Card SHALL pass without change to their assertions.
 4. THE E2E_Suite specs `fits-one-screen.spec.ts` and `no-horizontal-overflow.spec.ts` SHALL pass at 375 × 812, 1024 × 768 and 320 × 640 with their thresholds unchanged.
-5. THE implementation SHALL leave `SUMMON_HOLD_MS`, `SUMMON_FADE_MS` and `SUMMON_INK_SPEED` unchanged unless the human approves open question Q12.
+5. THE implementation SHALL leave `SUMMON_HOLD_MS`, `SUMMON_FADE_MS` and `SUMMON_INK_SPEED` unchanged. *(Approved by the human, Q12.)*
 
 ### Requirement 20: Screenshots
 
@@ -352,7 +358,7 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 1. THE E2E_Suite SHALL provide the spec `e2e/screenshots.spec.ts`, which writes one PNG for each of these four views to the Screenshot_Folder: the IntroScreen, the Summon step with one key typed (mid-ghost), the Write step, and the Graveyard_Screen with a seeded history of at-rest, restless and unmet ghosts.
 2. THE screenshot spec SHALL use the 1024 × 768 viewport and the 375 × 812 viewport and SHALL name each file with its view and viewport.
 3. THE screenshot spec SHALL fail IF a PNG is not written or is empty.
-4. THE Screenshot_Folder SHALL be listed in `.gitignore`, without removing the rule that keeps `.kiro/`. *(Default of open question Q13.)*
+4. THE Screenshot_Folder SHALL be listed in `.gitignore`, without removing the rule that keeps `.kiro/`. *(Approved by the human, Q13.)*
 5. THE screenshot spec SHALL type no Cangjie code by hand: it SHALL read the code from `characters.json` at test time, as the existing specs do.
 6. THE README SHALL tell the reader where the screenshots are written.
 
@@ -363,7 +369,7 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 #### Acceptance Criteria
 
 1. THE Test_Suite SHALL cover this feature with unit tests and component tests only, and SHALL add no property-based test and no mutation test (decision of Nov 15 in `tech.md`).
-2. WHEN all new copy exists, THE maintainer SHALL run the Accuracy_Reviewer over the IntroScreen copy, the Cultural_Care_Rules, the Steering_File, the README changes and the font licence text, and SHALL fix every finding within the scope of this spec.
+2. WHEN all new copy exists, THE maintainer SHALL run the Accuracy_Reviewer over the IntroScreen copy, the Cultural_Care_Rules, the Steering_File, the README changes, the font licence text and the Seal_Stamp accessible name "Seal: " with its role and label wording, and SHALL fix every finding within the scope of this spec.
 3. WHEN the final checkpoint runs, THE maintainer SHALL run `npm test`, `npx tsc -p tsconfig.json`, `npx tsc -p app/tsconfig.json`, `npx tsc -p oracle/tsconfig.json`, `npm run build -w app`, `npm run check:bundle` and `npm run test:e2e`, and all SHALL succeed.
 4. THE README SHALL be updated with the Chinese_Font record, the `build:font` script, the new palette note and the screenshot folder.
 
@@ -373,6 +379,6 @@ The first task of this spec writes `.kiro/steering/art-direction.md` (front matt
 
 #### Acceptance Criteria
 
-1. THE design SHALL list, for each existing requirement that this feature amends, the old text, the new text and the open question that the human must approve, and the implementation SHALL change that requirement's behaviour only after the human approves the question.
+1. THE design SHALL list, for each existing requirement that this feature amends, the old text, the new text and the decision (Q1 to Q13) that the human approved.
 2. THE amended requirements SHALL be: `visual-identity` 3.5, 4.1 to 4.3, 12.1 to 12.3, 21.3 to 21.5, 21.12 and 22.5; `summon-ink` `SUMMON_INK_SPEED`; and `cangjie-seance` `SUMMON_HOLD_MS` and `SUMMON_FADE_MS` (listed as Rite_Timings; unchanged by default).
 3. WHEN the human approves an amendment, THE maintainer SHALL add an "Amended (approved by the human)" note to the old requirement in its spec, as the earlier amendments do.

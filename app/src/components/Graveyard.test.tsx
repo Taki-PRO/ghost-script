@@ -49,20 +49,20 @@ describe('Graveyard', () => {
       const rest = screen.getByLabelText(`${a}, at rest, 1 clean in a row`);
       expect(rest.textContent).toContain(a);
       expect(rest.textContent).toContain('✓');
-      expect(rest.className).toContain('grave-rest');
+      expect(rest.className).toContain('tablet-rest');
       expect(rest.querySelector('[lang="zh"]')?.textContent).toBe(a);
 
       const missed = screen.getByLabelText(`${b}, restless, due again`);
       expect(missed.textContent).toContain('!');
-      expect(missed.className).toContain('grave-restless');
+      expect(missed.className).toContain('tablet-restless');
 
       // clean but overdue: restless, with its streak
       const due = screen.getByLabelText(`${c}, restless, due again, 1 clean in a row`);
-      expect(due.className).toContain('grave-restless');
+      expect(due.className).toContain('tablet-restless');
 
       const unmet = screen.getByLabelText(`Ghost 4 of 300, never met`);
       expect(unmet.textContent).toBe('·');
-      expect(unmet.className).toContain('grave-wisp');
+      expect(unmet.className).toContain('tablet-unmet');
     });
 
     it('shows the legend counts in text', () => {
@@ -97,6 +97,26 @@ describe('Graveyard', () => {
     for (const cls of ['sticky', 'top-0', 'bg-night-top']) {
       expect(header?.classList.contains(cls)).toBe(true);
     }
+  });
+
+  it('gives each state its own tablet classes and no old grave classes', () => {
+    const history: ReviewHistory = {
+      [order[0]]: applyReview(undefined, 'clean', NOW, DEFAULT_CONFIG),
+      [order[1]]: applyReview(undefined, 'struggled', NOW, DEFAULT_CONFIG),
+    };
+    const { container } = show(history);
+    const items = screen.getByRole('list', { name: 'Graves' }).children;
+    expect(items[0].classList.contains('tablet')).toBe(true);
+    expect(items[0].classList.contains('tablet-rest')).toBe(true);
+    expect(items[1].classList.contains('tablet-restless')).toBe(true);
+    expect(items[2].classList.contains('tablet-unmet')).toBe(true);
+    expect(items[2].classList.contains('tablet-rest')).toBe(false);
+    expect(container.innerHTML).not.toMatch(/grave-(rest|restless|wisp)/);
+  });
+
+  it('draws Back to menu as a slip', () => {
+    show({});
+    expect(screen.getByRole('button', { name: 'Back to menu' }).classList.contains('slip')).toBe(true);
   });
 
   it('calls onBack from the Back to menu button', () => {

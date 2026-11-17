@@ -20,8 +20,9 @@ describe('IntroScreen', () => {
     expect(text).toMatch(/night/i);
     expect(text).toMatch(/forgotten[\s\S]*are ghosts/i);
     expect(text.replace(/\s+/g, ' ')).toContain(
-      'Type its shapes to summon it, then write it from memory.',
+      "Type a ghost's shapes to summon it, then write it from memory.",
     );
+    expect(text.replace(/\s+/g, ' ')).not.toContain('Type its shapes to summon it');
     expect(text).not.toMatch(/You lay each one to\s+rest by writing it/);
   });
 
@@ -78,6 +79,36 @@ describe('IntroScreen', () => {
     render(<IntroScreen onBegin={onBegin} />);
     vi.advanceTimersByTime(60_000);
     expect(onBegin).not.toHaveBeenCalled();
+  });
+});
+
+describe('IntroScreen look (ink and candlelight)', () => {
+  it('shows the shared ghost figure, hidden from assistive technology', () => {
+    const { container } = render(<IntroScreen onBegin={() => {}} />);
+    const svg = container.querySelector('svg');
+    expect(svg).not.toBeNull();
+    expect(svg?.getAttribute('aria-hidden')).toBe('true');
+  });
+
+  it('sets the title in the display serif at text-5xl', () => {
+    render(<IntroScreen onBegin={() => {}} />);
+    const h1 = screen.getByRole('heading', { level: 1 });
+    expect(h1).toHaveClass('font-display', 'text-5xl');
+  });
+
+  it('keeps the legend line as real static text under the ink-reveal figure, with no inline mask', () => {
+    const { container } = render(<IntroScreen onBegin={() => {}} />);
+    const figure = container.querySelector('figure');
+    expect(figure).toHaveClass('ink-reveal');
+    expect(figure?.getAttribute('style') ?? '').not.toMatch(/mask/i);
+    const zh = screen.getByText('天雨粟，鬼夜哭');
+    expect(zh.getAttribute('style') ?? '').not.toMatch(/mask/i);
+    expect(screen.getByText(/ghosts wept at night/)).toBeInTheDocument();
+  });
+
+  it('gives "Begin the Séance" the primary class', () => {
+    render(<IntroScreen onBegin={() => {}} />);
+    expect(screen.getByRole('button', { name: 'Begin the Séance' })).toHaveClass('slip-primary');
   });
 });
 

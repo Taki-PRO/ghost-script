@@ -130,7 +130,7 @@ Budget: about one and a half days. The design is deliberately lean: CSS and inli
 2. THE Ghost_Figure SHALL be hidden from assistive technology.
 3. THE Ghost_Figure SHALL have the same shape for every character.
 4. THE Ghost_Card SHALL keep the meaning text and the pinyin text at full opacity in every Ghost_State.
-5. WHILE the Ghost_State is `haunting`, THE Ghost_Figure SHALL float with a slow vertical movement of at most 6 CSS pixels.
+5. WHILE the Ghost_State is `haunting`, THE Ghost_Figure SHALL float with a slow vertical movement of at most 6 CSS pixels. *(Amended (approved by the human): see ink-and-candlelight Requirement 17.3 (Q2): the idle float is an Ambient_Motion, exempt from the Motion_Window, and keeps its 4 s and 6 px; the old text stays as written))*
 6. WHEN a new ghost begins, THE Ghost_Card SHALL be in the `haunting` state.
 
 ### Requirement 4: Ghosts Fade, Flicker and Drift Away
@@ -139,9 +139,9 @@ Budget: about one and a half days. The design is deliberately lean: CSS and inli
 
 #### Acceptance Criteria
 
-1. WHEN the Outcome of a ghost is `clean`, THE Ghost_Figure SHALL fade to fully transparent within 1500 ms and stay transparent.
-2. WHEN the Outcome of a ghost is `struggled`, THE Ghost_Figure SHALL flicker for 1200 ms and then stay at an opacity of 0.5.
-3. WHEN the Outcome of a ghost is `gave-up`, THE Ghost_Figure SHALL drift upward and sideways while fading to fully transparent within 2000 ms, and stay transparent.
+1. WHEN the Outcome of a ghost is `clean`, THE Ghost_Figure SHALL fade to fully transparent within 1500 ms and stay transparent. *(Amended (approved by the human): see ink-and-candlelight Requirement 14 (Q12a): the outcome motions now take 600 ms with new shapes (clean dissolves upward, struggled lingers at the edge, gave-up slips away); the state names are unchanged, and the old 1500 ms limit is replaced))*
+2. WHEN the Outcome of a ghost is `struggled`, THE Ghost_Figure SHALL flicker for 1200 ms and then stay at an opacity of 0.5. *(Amended (approved by the human): see ink-and-candlelight Requirement 14 (Q12a): the outcome motions now take 600 ms with new shapes (clean dissolves upward, struggled lingers at the edge, gave-up slips away); the state names are unchanged, and the old 1200 ms limit is replaced))*
+3. WHEN the Outcome of a ghost is `gave-up`, THE Ghost_Figure SHALL drift upward and sideways while fading to fully transparent within 2000 ms, and stay transparent. *(Amended (approved by the human): see ink-and-candlelight Requirement 14 (Q12a): the outcome motions now take 600 ms with new shapes (clean dissolves upward, struggled lingers at the edge, gave-up slips away); the state names are unchanged, and the old 2000 ms limit is replaced))*
 4. WHILE Reduced_Motion is active, THE App SHALL show the end state of criteria 1 to 3 immediately and SHALL run no animation on the Ghost_Figure, including the float of Requirement 3.5.
 5. THE Ghost_Card SHALL expose the Ghost_State as the attribute `data-ghost-state` with the value `haunting`, `faded`, `flickering` or `drifted`.
 6. WHEN the Outcome of a ghost is reached, THE App SHALL show the existing result text and the "Next ghost" button at that moment, without waiting for the Ghost_Figure animation to end.
@@ -256,9 +256,9 @@ Budget: about one and a half days. The design is deliberately lean: CSS and inli
 
 #### Acceptance Criteria
 
-1. THE App SHALL bundle only fonts licensed under the SIL Open Font License.
-2. THE App SHALL bundle exactly one font family, Cormorant Garamond, in weight 600, as the self-hosted `woff2` Latin subset of the `@fontsource/cormorant-garamond` npm package pinned to an exact version, loaded with `font-display: swap`.
-3. THE App SHALL bundle no CJK font file and SHALL draw Chinese text with the Chinese_Font_Stack, in exactly that order.
+1. THE App SHALL bundle only fonts licensed under the SIL Open Font License. *(Amended (approved by the human): see ink-and-candlelight Requirement 16.1 (Q1): one Chinese font, LXGW WenKai Regular, is added as a subset))*
+2. THE App SHALL bundle exactly one font family, Cormorant Garamond, in weight 600, as the self-hosted `woff2` Latin subset of the `@fontsource/cormorant-garamond` npm package pinned to an exact version, loaded with `font-display: swap`. *(Amended (approved by the human): see ink-and-candlelight Requirement 16.1 (Q1): the LXGW WenKai subset is bundled in addition to Cormorant Garamond))*
+3. THE App SHALL bundle no CJK font file and SHALL draw Chinese text with the Chinese_Font_Stack, in exactly that order. *(Amended (approved by the human): see ink-and-candlelight Requirements 16.1 and 16.7 (Q1): the LXGW WenKai subset is bundled and placed first in the Chinese font stack, with the old stack kept as the fallback))*
 4. THE App SHALL request no font or stylesheet from a third-party host at runtime.
 5. THE README SHALL record the name, the exact version, the licence and the copyright line of each bundled font.
 6. THE Bundle_Check SHALL compute the gzip size of every file in `app/dist` except `data/characters.json` and SHALL compare the sum with the Bundle_Budget.
@@ -394,16 +394,16 @@ This requirement was requested after tester feedback and is approved by the huma
 
 1. THE App SHALL paint the Night_Scene behind every screen, using only CSS gradients and inline `data:` URIs, so that no new image file, font file or network request is added.
 2. THE Night_Scene SHALL contain a Sky_Gradient from a darkest stop to a lightest stop, both blue-black, defined as the tokens `nightTop`, `nightMid` and `nightLow` in `app/src/styles/theme.ts`.
-3. THE Night_Scene SHALL contain two Mist_Layers that drift in opposite horizontal directions, each with a drift period of at least 90 seconds.
-4. THE Start_Menu SHALL show a Moon_Glow behind its title, whose peak opacity is at most 0.10.
-5. THE main button of the Start_Menu ("Begin a Nightly Séance") SHALL use the Candle_Accent as its background, and every focus ring in the App SHALL use the Candle_Accent colour.
+3. THE Night_Scene SHALL contain two Mist_Layers that drift in opposite horizontal directions, each with a drift period of at least 90 seconds. *(Amended (approved by the human): see ink-and-candlelight Requirements 8.4 and 17.3 (Q2): the mist drift is an Ambient_Motion, exempt from the Motion_Window; the drift periods of 120 s and 180 s stay))*
+4. THE Start_Menu SHALL show a Moon_Glow behind its title, whose peak opacity is at most 0.10. *(Amended (approved by the human): see ink-and-candlelight Requirements 8.3 and 8.4 (Q8): the halo keeps its peak of at most 0.10, and a separate moon disc is added; as built, the disc is at `82% 0%`, 3.2 rem across and half visible))*
+5. THE main button of the Start_Menu ("Begin a Nightly Séance") SHALL use the Candle_Accent as its background, and every focus ring in the App SHALL use the Candle_Accent colour. *(Amended (approved by the human): see ink-and-candlelight Requirement 3 (Q3): the main button is a seal-red Primary_Action, with amber only in its glow, and every focus ring is aged paper with a soft candle glow))*
 6. THE App SHALL give every text colour token a contrast ratio of at least 4.5:1 against the darkest stop, against the lightest stop, and against the worst-case composite of the lightest stop, both Mist_Layers at their peak opacity and the Moon_Glow at its peak opacity.
 7. THE Candle_Accent SHALL have a contrast ratio of at least 3:1 against the darkest stop, the lightest stop and the ring-offset colour, and THE focus ring SHALL stay visible on every screen.
 8. THE text on the main button SHALL have a contrast ratio of at least 4.5:1 against the Candle_Accent.
 9. THE App SHALL declare every animation of the Night_Scene and of the menu figure inside a `@media (prefers-reduced-motion: no-preference)` block, and WHILE Reduced_Motion is active, THE Mist_Layers SHALL be static.
 10. THE Night_Scene SHALL let mouse, touch and pen events reach the controls above it and SHALL add no element to the accessibility tree.
 11. THE page wrappers of the screens SHALL have a transparent background so that the Night_Scene shows through, while cards, buttons and graves keep their opaque backgrounds.
-12. THE `url()` values in `app/src/styles/index.css` SHALL all be inline `data:` URIs.
+12. THE `url()` values in `app/src/styles/index.css` SHALL all be inline `data:` URIs. *(Amended (approved by the human): see ink-and-candlelight Requirements 8.9 and 16.6 (Q1): one generated font file URL is allowed in `fonts.css`; `index.css` keeps its `data:` rule))*
 13. THE Night_Scene SHALL add no runtime dependency, and the Bundle_Check SHALL still pass against the Bundle_Budget.
 
 ### Requirement 22: Menu Entrance
@@ -416,7 +416,7 @@ This requirement was requested after tester feedback and is approved by the huma
 2. THE `h1` of the Start_Menu SHALL use the Cormorant Garamond display font at a size of at least 3rem (48 CSS pixels).
 3. THE Ghost_Card and the Start_Menu SHALL both draw their Ghost_Figure through the one component GhostFigure.
 4. THE GhostFigure SHALL be hidden from assistive technology, SHALL be unfocusable, SHALL contain no text element, and SHALL have the same shape in every place it is used.
-5. WHILE Reduced_Motion is not active, THE Ghost_Figure of the Start_Menu SHALL float with a slow vertical movement of at most 6 CSS pixels; WHILE Reduced_Motion is active, THE Ghost_Figure of the Start_Menu SHALL be static.
+5. WHILE Reduced_Motion is not active, THE Ghost_Figure of the Start_Menu SHALL float with a slow vertical movement of at most 6 CSS pixels; WHILE Reduced_Motion is active, THE Ghost_Figure of the Start_Menu SHALL be static. *(Amended (approved by the human): see ink-and-candlelight Requirement 17.3 (Q2): the idle float is an Ambient_Motion, exempt from the Motion_Window; 4 s and 6 px are unchanged))*
 6. THE Start_Menu SHALL keep its five buttons in the order of Requirement 11.1, with their callbacks of Requirement 11.2 to 11.4.
 
 ### Requirement 23: No Game-Rule Change and Verification of the Amendments

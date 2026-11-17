@@ -26,14 +26,17 @@ export default {
         'night-low': theme.nightLow,
         mist: theme.mist,
         moon: theme.moon,
-        candle: theme.candle,
+        'paper-label': theme.paperLabel,
+        'seal-light': theme.sealLight,
+        'hint-ink': theme.hintInk,
       },
       boxShadow: {
-        candle: '0 0 20px rgba(240, 184, 102, 0.35)',
+        'candle-glow': '0 0 20px rgba(240, 184, 102, 0.35)',
       },
       fontFamily: {
         display: ['"Cormorant Garamond"', 'Georgia', 'serif'],
         hanzi: [
+          '"LXGW WenKai Subset"',
           '"PingFang SC"',
           '"Hiragino Sans GB"',
           '"Songti SC"',

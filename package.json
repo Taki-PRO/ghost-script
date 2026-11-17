@@ -15,6 +15,7 @@
     "test:e2e:install": "playwright install chromium",
     "test:data": "vitest run --project node",
     "build:notices": "tsx scripts/build-notices.ts",
+    "build:font": "tsx scripts/build-font.ts",
     "check:data": "tsx scripts/data-check.ts",
     "check:bundle": "tsx scripts/check-bundle-size.ts",
     "oracle": "tsx oracle/src/index.ts"
@@ -23,6 +24,7 @@
     "@playwright/test": "1.65.1",
     "@types/node": "22.20.5",
     "fast-check": "3.23.2",
+    "subset-font": "2.9.0",
     "tsx": "4.19.3",
     "typescript": "5.7.3",
     "vitest": "2.1.9"

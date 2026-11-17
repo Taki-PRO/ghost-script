@@ -16,3 +16,9 @@ Thumbs.db
 
 # IMPORTANT: never ignore the .kiro directory. It is required for Kiroween judging.
 !.kiro/
+
+# Downloaded source font (26 MB, checksum-verified by scripts/build-font.ts)
+data/raw/fonts/cache/
+
+# Screenshots written by e2e/screenshots.spec.ts
+e2e/screenshots/

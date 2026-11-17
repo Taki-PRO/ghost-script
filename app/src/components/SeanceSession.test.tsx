@@ -19,19 +19,24 @@ const stub = vi.hoisted(() => ({
   mounts: 0,
   /** When true SummonStep is replaced by a stub whose onDone the tests call; otherwise the real one runs. */
   fastSummon: true,
-  summon: null as null | { record: { character: string }; onDone: (o: Outcome) => void },
-  props: [] as Array<{ record: { character: string }; onOutcome: (o: Outcome) => void }>,
+  summon: null as null | { record: { character: string }; onDone: (o: Outcome) => void; onWrongKey?: () => void },
+  props: [] as Array<{ record: { character: string }; onOutcome: (o: Outcome) => void; sealed?: boolean }>,
 }));
 
 vi.mock('../modes/WriteMode', async () => {
   const React = await import('react');
+  const { SealStamp } = await import('./SealStamp');
   return {
-    WriteMode: (props: { record: { character: string }; onOutcome: (o: Outcome) => void }) => {
+    WriteMode: (props: { record: { character: string }; onOutcome: (o: Outcome) => void; sealed?: boolean }) => {
       stub.props.push(props);
       React.useEffect(() => {
         stub.mounts += 1;
       }, []);
-      return React.createElement('div', { 'data-testid': 'write-stub' });
+      return React.createElement(
+        'div',
+        { 'data-testid': 'write-stub' },
+        props.sealed ? React.createElement(SealStamp, { character: props.record.character }) : null,
+      );
     },
   };
 });
@@ -52,7 +57,7 @@ vi.mock('../modes/SummonStep', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../modes/SummonStep')>();
   return {
     ...actual,
-    SummonStep: (props: { record: { character: string }; onDone: (o: Outcome) => void }) => {
+    SummonStep: (props: { record: { character: string }; onDone: (o: Outcome) => void; onWrongKey?: () => void }) => {
       React.useEffect(() => {
         if (!stub.fastSummon) return undefined;
         stub.summon = props;
@@ -658,5 +663,84 @@ describe('SeanceSession first meeting and walkthrough', () => {
     finishSummon();
     expect(screen.queryByTestId('walkthrough-write-line')).toBeNull();
     expect(writeProps().reservedPx).toBe(0);
+  });
+});
+
+describe('SeanceSession ink and candlelight wiring', () => {
+  const seal = () => screen.queryAllByRole('img').filter((e) => (e.getAttribute('aria-label') ?? '').startsWith('Seal:'));
+  const flinchOf = () => screen.getByLabelText("Ghost's clue").getAttribute('data-ghost-flinch');
+
+  it('no seal during Summon or while writing', () => {
+    setup(['口']);
+    expect(seal()).toHaveLength(0);
+    finishSummon();
+    expect(screen.getByTestId('write-stub')).toBeTruthy();
+    expect(seal()).toHaveLength(0);
+  });
+
+  it('no seal after struggled or gave-up', () => {
+    setup(['别', '错']);
+    emit('struggled');
+    expect(seal()).toHaveLength(0);
+    fireEvent.click(screen.getByRole('button', { name: 'Next ghost' }));
+    emit('gave-up');
+    expect(seal()).toHaveLength(0);
+  });
+
+  it('a struggled summon then a clean write gives no seal', () => {
+    setup(['口']);
+    act(() => stub.summon!.onDone('struggled'));
+    act(() => lastProps().onOutcome('clean'));
+    expect(seal()).toHaveLength(0);
+  });
+
+  it('a clean outcome shows one seal naming the character once', () => {
+    setup(['口']);
+    emit('clean');
+    const found = seal();
+    expect(found).toHaveLength(1);
+    const name = found[0]!.getAttribute('aria-label')!;
+    expect(name.split('口')).toHaveLength(2);
+  });
+
+  it('the seal is gone on the next ghost', () => {
+    setup(['别', '错']);
+    emit('clean');
+    expect(seal()).toHaveLength(1);
+    fireEvent.click(screen.getByRole('button', { name: 'Next ghost' }));
+    expect(seal()).toHaveLength(0);
+  });
+
+  it('counts wrong keys for the flinch and resets on the next ghost', () => {
+    setup(['口', '我']);
+    expect(flinchOf()).toBe('0');
+    act(() => stub.summon!.onWrongKey!());
+    act(() => stub.summon!.onWrongKey!());
+    expect(flinchOf()).toBe('2');
+    emit('clean');
+    fireEvent.click(screen.getByRole('button', { name: 'Next ghost' }));
+    expect(flinchOf()).toBe('0');
+  });
+
+  it('Next ghost is the primary; while the Leave prompt is open Stay is primary and Next ghost a slip', () => {
+    setup(['别', '错']);
+    emit('clean');
+    const next = screen.getByRole('button', { name: 'Next ghost' });
+    expect(next.className).toContain('slip-primary');
+    expect(screen.getByRole('button', { name: 'Leave séance' }).className).not.toContain('slip-primary');
+    fireEvent.click(screen.getByRole('button', { name: 'Leave séance' }));
+    const stay = screen.getByRole('button', { name: 'Stay' });
+    expect(stay.className).toContain('slip-primary');
+    expect(screen.getByRole('button', { name: 'Leave' }).className).not.toContain('slip-primary');
+    expect(next.className).not.toContain('slip-primary');
+    expect(next.className).toContain('slip');
+    fireEvent.click(stay);
+    expect(next.className).toContain('slip-primary');
+  });
+
+  it('Finish the séance is the primary on the last ghost', () => {
+    setup(['别']);
+    emit('clean');
+    expect(screen.getByRole('button', { name: 'Finish the séance' }).className).toContain('slip-primary');
   });
 });

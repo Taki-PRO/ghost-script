@@ -178,4 +178,36 @@ describe('GhostPrompt', () => {
       cleanup();
     }
   });
+
+  it('renders data-ghost-flinch, default 0, in both sizes', () => {
+    for (const compact of [false, true]) {
+      const { container, rerender } = render(<GhostPrompt record={rec('山')} compact={compact} />);
+      const section = () => container.querySelector('section');
+      expect(section()?.getAttribute('data-ghost-flinch')).toBe('0');
+      rerender(<GhostPrompt record={rec('山')} compact={compact} flinch={3} />);
+      expect(section()?.getAttribute('data-ghost-flinch')).toBe('3');
+      cleanup();
+    }
+  });
+
+  it('restarts the figure on each flinch and never changes the state', () => {
+    const { container, rerender } = render(
+      <GhostPrompt record={rec('山')} outcome="struggled" flinch={0} />,
+    );
+    const before = container.querySelector('svg.ghost-figure');
+    rerender(<GhostPrompt record={rec('山')} outcome="struggled" flinch={1} />);
+    expect(container.querySelector('svg.ghost-figure')).not.toBe(before);
+    expect(container.querySelector('section')?.getAttribute('data-ghost-state')).toBe(
+      'flickering',
+    );
+  });
+
+  it('keeps the target out of text and attributes while flinching', () => {
+    for (const compact of [false, true]) {
+      const r = rec('么');
+      const { container } = render(<GhostPrompt record={r} compact={compact} flinch={2} />);
+      expect(allRenderedStrings(container).some((x) => x.includes(r.character))).toBe(false);
+      cleanup();
+    }
+  });
 });

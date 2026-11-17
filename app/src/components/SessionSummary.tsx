@@ -52,7 +52,7 @@ export function SessionSummary({ results, onPlayAgain }: SessionSummaryProps) {
           The séance is over
         </h1>
 
-        <p role="status" className="mt-6 rounded-lg bg-surface px-5 py-4 text-xl text-ink">
+        <p role="status" className="card-slip mt-6 px-5 py-4 text-xl">
           {countText}
         </p>
 
@@ -63,7 +63,7 @@ export function SessionSummary({ results, onPlayAgain }: SessionSummaryProps) {
               {rows.map((row) => (
                 <li
                   key={row.character}
-                  className="flex min-w-0 items-baseline gap-3 rounded-lg bg-surface px-4 py-3 text-ink"
+                  className="card-slip flex min-w-0 items-baseline gap-3 px-4 py-3"
                 >
                   <span lang="zh" className="shrink-0 text-2xl">
                     {row.character}
@@ -84,7 +84,7 @@ export function SessionSummary({ results, onPlayAgain }: SessionSummaryProps) {
         <button
           type="button"
           onClick={onPlayAgain}
-          className="mt-10 min-h-[44px] rounded-lg border border-ghost bg-surface px-8 py-3 text-lg font-medium text-ink hover:bg-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          className="slip-primary mt-10 px-8 py-3 text-lg font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           Begin another Séance
         </button>

@@ -4,14 +4,15 @@
 
 One art direction for every screen: a séance at a writing desk, ink and paper by candlelight. The design changes presentation only. It touches the theme tokens, `index.css`, the Tailwind config, six components, the two modes, the favicon, one font pipeline and the e2e suite. It changes no engine file, no dataset and no storage.
 
-The design makes these decisions, each with a default that the human can reverse (see "Open questions"):
+The design makes these decisions, all approved by the human (see "Decisions"):
 
 - Seal red is the only accent. Amber survives only as light.
 - The ghost is one SVG path with a displacement filter, reused at every size. The favicon uses an unfiltered copy.
 - The night is made of pseudo-element backgrounds: sky, moon, two mist bands, grain, vignette.
 - The legend line is written by a CSS mask wipe, not by hanzi-writer, because four of its six glyphs are not in the dataset.
-- LXGW WenKai is subset to 316 characters and bundled. The measured cost is 64,746 bytes of gzip.
-- Causal motion stays within 200 to 600 ms. Ambient motion and the rite timings are named exemptions until the human decides.
+- LXGW WenKai is subset to 316 characters and bundled. The measured cost is 64,746 bytes of gzip. *(As built: 321 glyphs, 66,532 bytes WOFF2, 66,575 bytes gzip; see "Final pipeline run".)*
+- Causal motion stays within 200 to 600 ms. Ambient motion and the rite timings are named exemptions, approved by the human.
+- A clean outcome stamps a seal that carries the ghost's own character, in the bundled font.
 
 ## Research findings
 
@@ -35,6 +36,7 @@ Facts for the LXGW WenKai record:
 - Licence file: `OFL.txt` of tag v1.530. Its first line is "Copyright 2021-2026 LXGW (https://github.com/lxgw/LxgwWenKai), with Reserved Font Name '霞鹜', '霞鶩', '落霞孤鹜', '落霞孤鶩' and 'LXGW'". It adds a permission: the Reserved Font Names may continue in versions subsetted or converted to WOFF/WOFF2 solely for web delivery, if they are not offered as installable desktop fonts. Our subset is web-only and is served from the site, so it stays inside that permission. The file's second line carries a second copyright: "Copyright 2020 The Klee Project Authors (https://github.com/fontworks-fonts/Klee)". Both lines go in every font record.
 - Glyph set: 316 characters: the 300 dataset characters; 11 key shapes that are not dataset characters (金 土 竹 戈 弓 心 尸 廿 田 難 卜; the other 14 key shapes are dataset characters); and 粟 鬼 夜 哭 and the fullwidth comma ， of the legend line (天 and 雨 are dataset characters). The set was computed from `characters.json`, `CANGJIE_KEYS` and the legend line, and a scan of every CJK character in non-test `app/src` files found no other character shown in the UI. The scan also found CJK characters in code comments and type documentation (么 第 我 米 字 格 ？ ～); these are not shown, and the Font_Pipeline strips comments before it scans (see "Font pipeline").
 - Subset: 64,708 bytes WOFF2; gzip of that file 64,746 bytes (WOFF2 is already compressed, so gzip adds 38 bytes). SHA-256 of this subset: `ae374b26…0e39`; the pipeline task records the full value..
+- Final pipeline run (task 3.2 re-run, after the font's copyright lines were added to `credits.ts`): 321 characters (the 316 above plus 孤 落 霞 鶩 鹜 from the Reserved Font Names), 66,532 bytes WOFF2, 66,575 bytes gzip, SHA-256 `76fc7f88d0ba1adb931478b416d50c09198f1acd3db9bd2af356321a9608dc26`. Projected bundle total: 136,755 + 66,575 = 203,330 bytes. The figures above are the earlier measurement. *(As built: the committed subset has 321 glyphs, 66,532 bytes WOFF2 and SHA-256 `76fc7f88…dc26`; the 316-character figures elsewhere in this design are the first plan.)*
 - Bundle: the current total is 136,755 bytes. Projected total with the font: 136,755 + 64,746 = **201,501 bytes**, under the 300,000-byte budget with 98,499 bytes spare. Added CSS and SVG are expected to add under 5,000 bytes, so the total stays under 210,000.
 - Risk to check in a task: LXGW WenKai draws some simplified characters with forms that differ from the hanzi-writer stroke data (Make Me a Hanzi). A human compares the Graveyard glyphs with the Write-step strokes for a sample of 20 characters. The font is used only for display of characters that are already revealed, never to check strokes.
 
@@ -106,7 +108,7 @@ Layers:
 | `hintInk` | `#2c3e5a` | hanzi-writer highlight on paper | 7.92 on paper; 1.62 against `inkOnPaper`, so it reads as a different tone |
 | `candle` | unchanged `#f0b866` | inside glows only | rule-checked by grep test, not by contrast |
 
-`seal` on paper is 4.44:1 (computed), under 4.5:1. The seal is a graphic mark with no text, so 3:1 applies; the theme test checks 3:1 for `seal` on `paper` and does not claim 4.5:1. Old `seal` (`#a3301f`, 5.13 on paper) is replaced; no text uses `seal` on paper.
+`seal` on paper is 4.44:1 (computed), under 4.5:1. No text sits on paper in `seal`, so 3:1 applies for graphics; the theme test checks 3:1 for `seal` on `paper` and does not claim 4.5:1. The Seal_Glyph is paper on seal, not seal on paper: `paperLabel` on `seal` is 5.05:1 (see "Seal contrast" under SealStamp). Old `seal` (`#a3301f`, 5.13 on paper) is replaced; no text uses `seal` on paper.
 
 Computed contrast values come from `/tmp/ink/c.mjs` (the same WCAG formula as `theme.ts`); the tasks re-check them with `contrastRatio` in `theme.test.ts`.
 
@@ -146,7 +148,7 @@ New optional prop `flinch?: number` (count of wrong keys this ghost, default 0).
 
 ### SummonStep
 
-New optional prop `onWrongKey?: () => void`. It is called once in the same handler that the Summon engine uses to count a miss (`missesOnSlot` or `mistakes` increases), after the state update, and never for hints, accepted keys, blocked keys or invalid keys. `SeanceSession` passes `() => setFlinch(n => n + 1)` and resets `flinch` to 0 when the ghost changes. The Rite_Timings stay as they are by default. Keycap styling is CSS classes only (`keycap`, `keycap-next`), with no change to heights, widths or accessible names.
+New optional prop `onWrongKey?: () => void`. It is called once in the same handler that the Summon engine uses to count a miss (`missesOnSlot` or `mistakes` increases), after the state update, and never for hints, accepted keys, blocked keys or invalid keys. `SeanceSession` passes `() => setFlinch(n => n + 1)` and resets `flinch` to 0 when the ghost changes. The Rite_Timings stay as they are (Q12, approved by the human). Keycap styling is CSS classes only (`keycap`, `keycap-next`), with no change to heights, widths or accessible names.
 
 Keycap style: `background: linear-gradient(180deg, #e9dfc6, #d4c8aa)`, inner highlight `inset 0 1px 0 rgba(255,250,235,.6)`, lower edge `inset 0 -3px 0 rgba(60,40,20,.35)`, a scuff made from two low-alpha radial gradients, and an outer `box-shadow` for depth. Label colour `inkOnPaper`: 11.1:1 or better on the lightest cap stop (checked in tests). The next-key marker keeps its underline and bold, and adds a Candle_Light glow.
 
@@ -154,30 +156,38 @@ Keycap style: `background: linear-gradient(180deg, #e9dfc6, #d4c8aa)`, inner hig
 
 - `WriteMode` options: `strokeColor: inkOnPaper`, `drawingColor: drawing`, `highlightColor: hintInk`, `outlineColor: gridLine`, `drawingWidth: 6`. Other quiz options stay.
 - New optional prop `sealed?: boolean`, passed by `SeanceSession` when the combined Outcome is `clean`. `InkSurface` gets `overlay?: ReactNode`, drawn after the container, absolutely placed, `pointer-events: none`.
-- `InkSurface` renders its own hidden `<svg width="0" height="0" aria-hidden="true">` with one `<filter>` (id from `useId`): a small `feTurbulence` (`baseFrequency` 0.9) feeding `feDisplacementMap` with `scale` 1.2. Only one surface is on screen at a time, so there is no id collision.
-- The filter is applied to the character group that hanzi-writer draws inside its SVG (finished strokes), not to the whole SVG, so the stroke the player is drawing stays sharp and hit testing is untouched (a CSS `filter` does not change event targets). If a selector for that group is brittle in hanzi-writer 3.7.3, the filter is dropped and `drawingWidth` of 6 alone gives the look (open question Q6).
+- `InkSurface` renders its own hidden `<svg width="0" height="0" aria-hidden="true">` with one `<filter>` (id from `useId`): a small `feTurbulence` (`baseFrequency` 0.9) feeding `feDisplacementMap` with `scale` 1.2. *(As built: `baseFrequency` 0.03 and `scale` 12 in `InkSurface.tsx`, with two octaves and seed 7; the values here were the first plan.)* Only one surface is on screen at a time, so there is no id collision.
+- The filter is applied to the character group that hanzi-writer draws inside its SVG (finished strokes), not to the whole SVG, so the stroke the player is drawing stays sharp and hit testing is untouched (a CSS `filter` does not change event targets). If a selector for that group is brittle in hanzi-writer 3.7.3, the filter is dropped and `drawingWidth` of 6 alone gives the look (decision Q6, approved by the human).
 - Risk: a filter can slow rendering on old iPads. The filter applies to a static group, not to the live stroke, so the cost is paid at stroke completion only.
 
 ### SealStamp
 
 ```ts
-export interface SealStampProps { className?: string }
+export interface SealStampProps { character: string; className?: string }  // character: the target character of the dataset record
 export function SealStamp(props: SealStampProps): JSX.Element;
 ```
 
-An `aria-hidden` inline SVG, `viewBox="0 0 48 48"`, a rotated (-6°) red square with rough edges (the same displacement filter idea as the ghost), an inner paper-toned border at 70% opacity, and no text. Positioned `absolute bottom-2 right-2 h-12 w-12` over the `InkSurface`. The motion `seal-stamp` (300 ms, scale 1.3 to 1, opacity 0 to 1) runs only inside the no-preference block. The stamp renders only when `sealed` is true, which is after the Outcome, so the never-reveal rule is not touched.
+Markup: a wrapper `div` with `role="img"` and `aria-label={`Seal: ${character}`}`. Inside it, an inline SVG with `aria-hidden="true"` (`viewBox="0 0 48 48"`: a rotated (-6°) `seal` square with rough edges from the same displacement filter idea as the ghost, and an inner paper-toned border at 70% opacity), and a `span` with `lang="zh"` and `aria-hidden="true"` that holds the glyph, centred, 28 px, `paperLabel`, using the Chinese_Font through the existing `[lang='zh']` stack. Positioned `absolute bottom-2 right-2 h-12 w-12` over the `InkSurface`, `pointer-events: none`, no layout space. The motion `seal-stamp` (300 ms, scale 1.3 to 1, opacity 0 to 1) runs only inside the no-preference block.
+
+**Accessible name (decision, approved by the human).** The seal uses `role="img"` with `aria-label="Seal: 明"` (the character varies), and the visible glyph and the SVG are `aria-hidden`. The glyph is therefore announced once, inside the label. The alternative (the seal `aria-hidden` and the result line naming the outcome) was not chosen, because the result line does not name the character.
+
+**Source of the glyph.** `WriteMode` already holds the dataset record of the target character. When `sealed` is true it passes `<SealStamp character={record.char} />` to the `InkSurface` overlay. The glyph is not typed anywhere in the source, so no new decorative Chinese text exists, and every dataset character is already in the Glyph_Set and the Font_Subset (the Font_Pipeline builds the set from the dataset). The `unmet` and never-reveal rules are untouched, because the seal exists only after the Write step ends in `clean`.
+
+**When it exists.** The stamp is not rendered at all unless the combined Outcome is `clean`. It does not exist during the Summon step, during writing, or after a `struggled` or `gave-up` Outcome. Tests check that there is no element with role `img` whose name starts with "Seal:" in each of those four states.
+
+**Seal contrast.** `paperLabel` `#f3ead2` on `seal` `#b3361f` is 5.05:1 (computed; re-checked by `theme.test.ts`). The Seal_Glyph is 28 CSS pixels (21 pt) in a regular weight. WCAG 2.2 treats text of 18 pt (24 CSS pixels) or more as large text, which needs 3:1, so the glyph counts as large text. The 5.05:1 also meets the 4.5:1 for normal text, so the result holds under either reading. The lighter inner border is a graphic and needs 3:1 against `seal`; the test checks it.
 
 ### Night scene (`index.css`)
 
 No new DOM. Three existing pseudo-elements get more backgrounds:
 
-- `body::before` (fixed, behind all): Sky_Gradient, then the Moon as two `radial-gradient`s (a disc with a hard edge at 3.2 rem and a halo to 9 rem, placed at `82% 12%`), then the Vignette as a radial gradient that darkens to 55% at the corners, then the Paper_Grain as a `data:` SVG `feTurbulence` tile at 0.04 alpha.
+- `body::before` (fixed, behind all): Sky_Gradient, then the Moon as two `radial-gradient`s (a disc with a hard edge at 3.2 rem and a halo to 9 rem, placed at `82% 0%`, so the disc sits half over the top edge, above every control and line of text at the Rite_Viewports), then the Vignette as a radial gradient that darkens to 55% at the corners, then the Paper_Grain as a `data:` SVG `feTurbulence` tile at 0.04 alpha. *(As built: the grain alpha is 0.03, the moon disc is at `82% 0%` with a radius of 1.6 rem, so it is 3.2 rem across and half visible, and the mist peak is 0.09, set once as `--mist-peak-alpha`.)*
 - `body::after` and `#root::before`: the two Mist_Bands, each 200% wide, as horizontal elliptical gradients with a peak alpha of 0.09 (was 0.05), drifting with `mist-drift-a` (120 s) and `mist-drift-b` (180 s) as Ambient_Motion.
 - The moon halo peak alpha stays at or below 0.10. The disc is a deliberate brighter object placed top right; the new text-contrast test composites the disc colour against each text token at the disc's position and requires 4.5:1 only for text that can overlap it (no text is placed in the disc region at the Rite_Viewports; the e2e screenshot task checks this by bounding boxes).
 
 ### Intro and Start_Menu
 
-- IntroScreen: `GhostFigure` (h-24), `h1` in `font-display` at `text-5xl`, the two paragraphs (new second sentence), the legend figure with `ink-reveal` (a `mask-image: linear-gradient(90deg, #000 var(--wipe), transparent calc(var(--wipe) + 8%))` whose `--wipe` animates from 0% to 100% over 600 ms via `@property`; where `@property` is unsupported, the `mask-position` of a 200%-wide gradient is animated instead), and the Primary_Action "Begin the Séance".
+- IntroScreen: `GhostFigure` (h-24), `h1` in `font-display` at `text-5xl`, the two paragraphs (new second sentence), the legend figure with `ink-reveal` (a `mask-image: linear-gradient(90deg, #000 var(--wipe), transparent calc(var(--wipe) + 8%))` whose `--wipe` animates from 0% to 100% over 600 ms via `@property`; where `@property` is unsupported, the `mask-position` of a 200%-wide gradient is animated instead). *(As built: only the `mask-position` variant exists. `ink-reveal` uses a 300%-wide `mask-image` gradient with `mask-position` going from `100% 0` to `0% 0` over 600 ms, with no `@property`.)*, and the Primary_Action "Begin the Séance".
 - The reveal sits inside the no-preference block. Outside it, the line is fully visible. A test checks that the line text is in the DOM with no `mask` inline style.
 - Start_Menu: the main button uses the Primary_Action class; its glow uses `box-shadow` with `candle` at alpha, which is light.
 
@@ -200,7 +210,7 @@ Primary_Action per screen:
 | Graveyard_Screen | none | Back to menu |
 | Sources & licences | none | Back to menu |
 
-Note: the Leave_Prompt is shown inside the Seance_Session. While it is open after an Outcome, "Stay" and "Next ghost" would both be primary. Default: while the Leave_Prompt is open, "Next ghost" is drawn as a Paper_Slip. A component test covers it.
+Note: the Leave_Prompt is shown inside the Seance_Session. While it is open after an Outcome, "Stay" and "Next ghost" would both be primary. Decision (Q9, approved by the human): while the Leave_Prompt is open, "Next ghost" is drawn as a Paper_Slip. A component test covers it.
 
 ### Graveyard
 
@@ -251,7 +261,7 @@ No dataset or storage change. New static data:
 // theme.ts additions
 export const theme = { /* existing */, paperLabel: '#f3ead2', sealLight: '#ec7a64', hintInk: '#2c3e5a' } as const;
 
-// data/fonts/glyph-set.txt: one line, the 316 characters in codepoint order, no newline inside.
+// data/fonts/glyph-set.txt: one line, the 316 characters in codepoint order, no newline inside. As built: 321 characters, see "Final pipeline run" above.
 // data/raw/fonts/SOURCES.md: fields below.
 interface FontSourceRecord {
   name: 'LXGW WenKai Regular';
@@ -267,7 +277,7 @@ interface FontSourceRecord {
 
 ## Conflicts with existing requirements
 
-Each row names the existing requirement, how the direction conflicts, the proposed resolution, and the open question that decides it. Nothing here is applied until the human approves it.
+Each row names the existing requirement, how the direction conflicts, the resolution, and the decision that settles it. The human approved the resolution of every row that names a decision (Q1 to Q13, see "Decisions"), where "default" in a row now means the approved choice and "Option" names the alternative that was not chosen.
 
 | # | Existing requirement or decision | Conflict | Proposed resolution (default) | Question |
 |---|---|---|---|---|
@@ -321,29 +331,30 @@ Property-based testing does not apply. The feature is presentation: tokens, CSS,
 - **Tokens:** `theme.test.ts` adds `paperLabel` on `seal` (4.5), `sealLight` on every dark background (4.5), `hintInk` on paper (4.5), `ghost` and `error` on every dark background (4.5), `seal` on `paper` (3), and the border of the primary on `nightLow` (3). `index.css.test.ts` extends the equality, the single no-preference block, the animation durations (each Causal_Motion between 200 and 600 ms, read from the CSS), the `url()` rule, the worst-case composite with new layers, and the focus ring.
 - **Candle usage:** a test scans `app/src` and `index.css` for `bg-candle`, `border-candle`, `text-candle` and a flat `candle` colour outside gradients and shadows.
 - **GhostFigure:** one path, a filter with `feTurbulence` and `feDisplacementMap`, a unique id per instance, no `text`, `aria-hidden`; the favicon file matches the path and has no filter.
-- **GhostPrompt and SeanceSession:** `data-ghost-state` mapping stays; `data-ghost-flinch` changes only on `onWrongKey`; the Flinch never changes the state; the stamp renders only for `clean`; Primary_Action classes appear only on the listed buttons.
+- **GhostPrompt and SeanceSession:** `data-ghost-state` mapping stays; `data-ghost-flinch` changes only on `onWrongKey`; the Flinch never changes the state; the stamp renders only for `clean`, and no element with role `img` and a name starting "Seal:" exists during the Summon step, during writing, or after `struggled` or `gave-up`; Primary_Action classes appear only on the listed buttons.
 - **SummonStep:** `onWrongKey` is called once per counted miss and not for accepted keys, hints or blocked keys. The existing never-reveal and hint tests run unchanged.
 - **WriteMode and InkSurface:** the hanzi-writer options passed are the ones listed; the overlay slot renders the stamp; hanzi-writer is mocked as in the existing tests.
+- **SealStamp:** `role="img"` with `aria-label` "Seal: " plus the character; the glyph span and the SVG are `aria-hidden`; the glyph equals the `character` prop and `lang="zh"`; the label contains the character exactly once; `theme.test.ts` checks `paperLabel` on `seal` at 4.5.
 - **Graveyard:** the shapes, markers, accessible names, never-reveal and legend counts; glow and wisp classes by state.
 - **IntroScreen and StartMenu:** the new sentence, the old sentence absent, the title class, the Legend_Line text in the DOM without a mask style.
 - **Font pipeline:** `collectGlyphSet`, `missingGlyphs` and `unicodeRange` as pure functions with fixtures; the committed `glyph-set.txt` equals the set computed from the repo; the committed subset's SHA-256 equals the Font_Sources_File; `FONTS` equals the README entry; the notices file contains the OFL text.
 - **E2E:** `fits-one-screen` and `no-horizontal-overflow` keep their thresholds; `screenshots.spec.ts` writes four views at two viewports.
-- **Accuracy:** the `accuracy-reviewer` agent runs over copy, cultural-care rules and the font licence text.
+- **Accuracy:** the `accuracy-reviewer` agent runs over copy, cultural-care rules, the font licence text and the Seal_Stamp (its "Seal: " label, its glyph source and the check that no seal exists before a clean outcome).
 
-## Open questions
+## Decisions
 
-Defaults are in brackets. Each is decision-ready.
+All decisions below are approved by the human. Q1 to Q13 were open questions; each took its default except Q10, which the human changed. No question remains open.
 
-1. **Q1. Bundle the WenKai font?** Amends the approved system-CJK-fonts decision. [Yes: 64,746 bytes gzip, total 201,501 of 300,000.] The alternative keeps system fonts and drops Requirement 16.
-2. **Q2. Ambient motion exemption.** Mist (120 s, 180 s), idle ghost float (4 s), idle candle glow and the restless wisp have no cause. [Exempt and named in the steering file, all behind reduced motion.] The alternative makes them static.
-3. **Q3. Focus ring.** [Aged-paper ring with an amber glow.] The alternative keeps an amber ring and calls it light.
-4. **Q4. Success and error colours.** [Success is light seal red; error is a paper neutral with a text cue and a shape cue; `ghost` blue becomes neutral.] The alternative keeps coral for errors.
-5. **Q5. Grid and hint on paper.** [Grid in ink-brown, hint in indigo ink, no red on paper except the stamp.] The alternative keeps red for the hint highlight only.
-6. **Q6. Ink-bleed filter on the writing surface.** [Apply to finished strokes only; drop the filter if the selector is brittle in hanzi-writer 3.7.3.] The alternative skips the filter and relies on `drawingWidth` 6.
-7. **Q7. Extra icon files.** [Only `favicon.svg`.] The alternative adds an `apple-touch-icon` PNG made from the same path.
-8. **Q8. Night blues and the moon.** [Keep the blue-black sky and dim mist as ink tints; moon disc is a separate brighter object.] The alternative uses neutral black and grey for the sky.
-9. **Q9. Primary actions per screen.** [As in the table; "Back to menu" is a slip; "Stay" is primary in the Leave_Prompt.] The alternative makes "Leave séance" the primary of nothing and "Back to menu" primary on its two screens.
-10. **Q10. Seal content.** [Empty seal shape, no text.] The alternative holds the ghost's own character, which is revealed by then and is in the font subset.
-11. **Q11. Stamp on struggled?** [Stamp only on `clean`.] The alternative stamps `struggled` too, since it is also "laid to rest" in the result text.
-12. **Q12. Rite timings and outcome durations.** (a) [Outcome motions 600 ms; amends `visual-identity` 4.1 to 4.3.] (b) [Keep `SUMMON_HOLD_MS` and `SUMMON_FADE_MS` at 1500 ms, exempt as rite timings.] Alternative: fade 600 ms. (c) [Keep `SUMMON_INK_SPEED` 2.] Alternative: speed 1.
-13. **Q13. Screenshots in git.** [`e2e/screenshots/` is gitignored; the human copies chosen images into the README.] The alternative commits them.
+1. **Q1. Bundle the WenKai font.** Approved. 64,746 bytes gzip, total 201,501 of 300,000. Amends the system-CJK-fonts decision of `visual-identity`.
+2. **Q2. Ambient motion exemption.** Approved. Mist (120 s, 180 s), idle ghost float (4 s), idle candle glow and the restless wisp are exempt from the 200 to 600 ms window, are named in the Steering_File and sit behind reduced motion.
+3. **Q3. Focus ring.** Approved. Aged-paper ring with an amber glow.
+4. **Q4. Success and error colours.** Approved. Success is light seal red `#ec7a64`; error is a paper neutral with its text cue; `ghost` blue becomes a neutral.
+5. **Q5. Grid and hint on paper.** Approved. The grid is ink-brown; the hint is indigo `#2c3e5a`.
+6. **Q6. Ink-bleed filter.** Approved. Finished strokes only; dropped if the selector is brittle in hanzi-writer 3.7.3.
+7. **Q7. Icon files.** Approved. Only the SVG favicon.
+8. **Q8. Night blues and the moon.** Approved. The blue-black night stays; the moon disc is a separate object.
+9. **Q9. Primary actions per screen.** Approved. As in the table above, with "Stay" primary in the Leave_Prompt.
+10. **Q10. Seal content (changed by the human).** The seal carries the ghost's own character, which has been revealed by then. It is set in the bundled WenKai font, in `paperLabel` on `seal`. Its accessible name does not repeat the character: the seal has `role="img"` and `aria-label="Seal: 明"` (with the real character), and its visible glyph and SVG are `aria-hidden`. It appears only on a clean outcome, after the Write step ends, so the never-reveal rule is unaffected. The glyph comes from the dataset record of the target character, so the "no new decorative Chinese text" rule holds, and it is already in the font subset. Contrast of `paperLabel` on `seal` is 5.05:1 at 28 CSS pixels, which counts as large text (3:1) and also meets 4.5:1. A test checks that no seal exists during the Summon step, during writing, or after a `struggled` or `gave-up` outcome.
+11. **Q11. Stamp only on clean.** Approved.
+12. **Q12. Rite timings and outcome durations.** Approved. Outcome motions run 600 ms (amends `visual-identity` 4.1 to 4.3). `SUMMON_HOLD_MS`, `SUMMON_FADE_MS` and `SUMMON_INK_SPEED` stay unchanged and are exempt as Rite_Timings.
+13. **Q13. Screenshots.** Approved. They go to a gitignored `e2e/screenshots/`.

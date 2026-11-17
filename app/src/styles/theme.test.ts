@@ -7,40 +7,52 @@ describe('theme contrast (WCAG AA)', () => {
     expect(contrastRatio('#777777', '#777777')).toBeCloseTo(1, 5);
   });
 
-  const textTokens = ['ink', 'muted', 'ghost', 'success', 'error'] as const;
-  const backgrounds = ['background', 'surface'] as const;
+  const textTokens = ['ink', 'muted', 'ghost', 'success', 'error', 'sealLight'] as const;
+  const darkBackgrounds = ['background', 'surface', 'nightTop', 'nightMid', 'nightLow'] as const;
 
   for (const t of textTokens) {
-    for (const b of backgrounds) {
+    for (const b of darkBackgrounds) {
       it(`${t} on ${b} is >= 4.5:1`, () => {
         expect(contrastRatio(theme[t], theme[b])).toBeGreaterThanOrEqual(4.5);
       });
     }
   }
 
-  for (const t of ['inkOnPaper', 'drawing', 'seal'] as const) {
+  for (const t of ['inkOnPaper', 'drawing', 'hintInk'] as const) {
     it(`${t} on paper is >= 4.5:1`, () => {
       expect(contrastRatio(theme[t], theme.paper)).toBeGreaterThanOrEqual(4.5);
     });
   }
 
-  const stops = ['nightTop', 'nightMid', 'nightLow'] as const;
-  for (const t of textTokens) {
-    for (const s of stops) {
-      it(`${t} on ${s} is >= 4.5:1`, () => {
-        expect(contrastRatio(theme[t], theme[s])).toBeGreaterThanOrEqual(4.5);
-      });
-    }
-  }
+  it('success is an alias of sealLight', () => {
+    expect(theme.success).toBe(theme.sealLight);
+  });
 
-  for (const b of ['nightTop', 'nightLow', 'background'] as const) {
-    it(`candle on ${b} is >= 3:1`, () => {
-      expect(contrastRatio(theme.candle, theme[b])).toBeGreaterThanOrEqual(3);
-    });
-  }
+  it('paperLabel on seal is >= 4.5:1', () => {
+    expect(contrastRatio(theme.paperLabel, theme.seal)).toBeGreaterThanOrEqual(4.5);
+  });
 
-  it('background on candle is >= 4.5:1', () => {
-    expect(contrastRatio(theme.background, theme.candle)).toBeGreaterThanOrEqual(4.5);
+  it('seal on paper is >= 3:1 (graphic, no text)', () => {
+    expect(contrastRatio(theme.seal, theme.paper)).toBeGreaterThanOrEqual(3);
+  });
+
+  it('the Seal_Stamp inner border (paperLabel) on seal is >= 3:1', () => {
+    expect(contrastRatio(theme.paperLabel, theme.seal)).toBeGreaterThanOrEqual(3);
+  });
+
+  it('the primary button border (paper) on nightLow is >= 3:1', () => {
+    expect(contrastRatio(theme.paper, theme.nightLow)).toBeGreaterThanOrEqual(3);
+  });
+
+  it('uses the approved hex values', () => {
+    expect(theme.seal).toBe('#b3361f');
+    expect(theme.paperLabel).toBe('#f3ead2');
+    expect(theme.sealLight).toBe('#ec7a64');
+    expect(theme.hintInk).toBe('#2c3e5a');
+    expect(theme.ghost).toBe('#bdb7a6');
+    expect(theme.error).toBe('#e6dcc3');
+    expect(theme.gridLine).toBe('#7a6a4f');
+    expect(theme.candle).toBe('#f0b866');
   });
 
   it('ink and muted on nightTop are >= 4.5:1', () => {

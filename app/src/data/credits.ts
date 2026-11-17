@@ -56,8 +56,12 @@ export interface FontCredit {
   readonly name: string;
   readonly licence: string;
   readonly copyright: string;
-  readonly pkg: string;
+  /** npm package name. Absent for a font that is not installed through npm. */
+  readonly pkg?: string;
+  /** Package version, or the release tag for a font that is not an npm package. */
   readonly version: string;
+  /** Source URL, for a font that is not an npm package. */
+  readonly url?: string;
 }
 
 export const FONTS: readonly FontCredit[] = [
@@ -67,5 +71,13 @@ export const FONTS: readonly FontCredit[] = [
     copyright: 'Copyright 2015 The Cormorant Project Authors (github.com/CatharsisFonts/Cormorant)',
     pkg: '@fontsource/cormorant-garamond',
     version: '5.3.0',
+  },
+  {
+    name: 'LXGW WenKai Regular',
+    licence: 'SIL Open Font License 1.1',
+    copyright:
+      "Copyright 2021-2026 LXGW (https://github.com/lxgw/LxgwWenKai), with Reserved Font Name '霞鹜', '霞鶩', '落霞孤鹜', '落霞孤鶩' and 'LXGW'. Copyright 2020 The Klee Project Authors (https://github.com/fontworks-fonts/Klee)",
+    version: 'v1.530',
+    url: 'https://github.com/lxgw/LxgwWenKai',
   },
 ];

@@ -234,7 +234,7 @@ Out of scope: any change to the scheduler, `selectSession`, `buildSession`, outc
 #### Acceptance Criteria
 
 1. THE feature SHALL NOT change `app/src/engine/config.ts`, `app/src/engine/scheduler.ts`, `app/src/engine/outcome.ts`, `app/src/engine/cangjie.ts`, `app/src/engine/learningOrder.ts`, `app/src/storage/` or `app/public/data/characters.json`.
-2. THE feature SHALL keep `SUMMON_HOLD_MS` and `SUMMON_FADE_MS` at 1500 each, defined once in `app/src/modes/SummonStep.tsx`.
+2. THE feature SHALL keep `SUMMON_HOLD_MS` and `SUMMON_FADE_MS` at 1500 each, defined once in `app/src/modes/SummonStep.tsx`. *(Amended (approved by the human): see ink-and-candlelight Requirement 17.5 (Q12b): unchanged, exempt from the Motion_Window))*
 3. THE feature SHALL keep the Outcome of every ghost computed by `combineOutcomes` from the Step results, the thresholds from the engine config, and the Key_Hint rule unchanged.
 4. THE feature SHALL add no new property-based test and no mutation testing (tech.md, decision of Nov 15; the one exception, the summon-ink classification, is not affected).
 5. THE feature SHALL add no network request, no API key and no runtime model call.

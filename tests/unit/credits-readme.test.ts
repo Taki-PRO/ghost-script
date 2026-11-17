@@ -33,17 +33,24 @@ describe('README credits match app/src/data', () => {
   });
 
   it('font line matches FONTS', () => {
-    const line = readme.split('\n').find((l) => l.startsWith('- **Fonts:**'));
-    expect(line).toBeDefined();
-    const text = plain(line as string);
+    const lines = readme.split('\n');
+    const start = lines.findIndex((l) => l.startsWith('- **Fonts:**'));
+    expect(start).toBeGreaterThan(-1);
+    const block = [lines[start]];
+    for (const l of lines.slice(start + 1)) {
+      if (!l.startsWith('  ')) break;
+      block.push(l);
+    }
+    const text = plain(block.join('\n'));
     for (const f of FONTS) {
       expect(text).toContain(f.name);
-      expect(text).toContain(f.pkg);
+      if (f.pkg) expect(text).toContain(f.pkg);
+      if (f.url) expect(text).toContain(f.url);
       expect(text).toContain(f.version);
       expect(text).toContain(f.licence);
       expect(text).toContain(f.copyright);
     }
-    expect(text).toContain("Chinese text uses the device's fonts");
+    expect(text).toContain("Any other Chinese text uses the device's fonts");
   });
 
   it('legend citation appears in the README and in content-accuracy.md', () => {

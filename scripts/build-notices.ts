@@ -17,6 +17,30 @@ export interface NoticePackage {
   readonly files: readonly LicenceFile[];
 }
 
+/** A font that is not installed through npm. Its licence text is read from the repository. */
+export interface FontNotice {
+  readonly name: string;
+  readonly release: string;
+  readonly licence: string;
+  readonly source: string;
+  readonly text: string;
+}
+
+const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+
+/** The fonts that are not npm packages, with the verbatim licence file from data/raw/fonts. */
+export function repoFontNotices(root: string = REPO_ROOT): FontNotice[] {
+  return [
+    {
+      name: 'LXGW WenKai Regular',
+      release: 'v1.530',
+      licence: 'SIL Open Font License 1.1',
+      source: 'data/raw/fonts/lxgw-wenkai/OFL.txt',
+      text: readFileSync(join(root, 'data', 'raw', 'fonts', 'lxgw-wenkai', 'OFL.txt'), 'utf8'),
+    },
+  ];
+}
+
 const LICENCE_FILE = /^(licen[cs]e|copying)(\..*)?$/i;
 const RULE = '='.repeat(80);
 
@@ -81,7 +105,10 @@ export function collectRuntimePackages(appDir: string): NoticePackage[] {
   return [...found.values()].sort((a, b) => compare(a.name, b.name) || compare(a.version, b.version));
 }
 
-export function renderNotices(packages: readonly NoticePackage[]): string {
+export function renderNotices(
+  packages: readonly NoticePackage[],
+  fonts: readonly FontNotice[] = repoFontNotices(),
+): string {
   const sorted = [...packages].sort((a, b) => compare(a.name, b.name) || compare(a.version, b.version));
   let out =
     'Third-party notices for the runtime dependencies of Ghost Script.\n' +
@@ -89,6 +116,13 @@ export function renderNotices(packages: readonly NoticePackage[]): string {
   for (const p of sorted) {
     for (const f of [...p.files].sort((a, b) => compare(a.fileName, b.fileName))) {
       out += `\n${RULE}\n${p.name} ${p.version}\nLicence: ${p.licence}\nFile: ${f.fileName}\n${RULE}\n`;
+      out += f.text.endsWith('\n') ? f.text : `${f.text}\n`;
+    }
+  }
+  if (fonts.length > 0) {
+    out += `\n${RULE}\nFonts not installed through npm\n${RULE}\n`;
+    for (const f of [...fonts].sort((a, b) => compare(a.name, b.name))) {
+      out += `\n${RULE}\nFont: ${f.name}, release ${f.release}\nFont licence: ${f.licence}\nFile: ${f.source}\n${RULE}\n`;
       out += f.text.endsWith('\n') ? f.text : `${f.text}\n`;
     }
   }
@@ -104,7 +138,7 @@ export function runtimeSummary(
 }
 
 function main(): void {
-  const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+  const root = REPO_ROOT;
   let text: string;
   try {
     text = renderNotices(collectRuntimePackages(join(root, 'app')));

@@ -127,7 +127,7 @@ A read-only computation over the 300 records of `app/public/data/characters.json
 4. WHEN the player enters a wrong key, THE Summon_Step SHALL leave the Paper unchanged.
 5. WHILE a record's class is `opaque`, THE Summon_Step SHALL create no Ink_Writer until the code is complete or the player gives up, as before this feature.
 6. WHEN the player enters keys faster than the strokes can be drawn, THE Summon_Step SHALL draw the strokes one at a time in key order, and every stroke SHALL be drawn.
-7. WHEN the code is complete for such a record, THE Summon_Step SHALL form every stroke that is not yet inked, in ascending stroke order, keep the inked strokes, hold the character for `SUMMON_HOLD_MS`, fade it for `SUMMON_FADE_MS`, remove it from the page and then call `onDone` once with the Step result.
+7. WHEN the code is complete for such a record, THE Summon_Step SHALL form every stroke that is not yet inked, in ascending stroke order, keep the inked strokes, hold the character for `SUMMON_HOLD_MS`, fade it for `SUMMON_FADE_MS`, remove it from the page and then call `onDone` once with the Step result. *(Amended (approved by the human): see ink-and-candlelight Requirement 17.5 (Q12b): the hold and fade stay at `SUMMON_HOLD_MS` and `SUMMON_FADE_MS`, unchanged))*
 8. WHEN the player gives up for such a record, THE Summon_Step SHALL show the full code as before, SHALL NOT ink the Key_Strokes of keys that were not typed on their own, and SHALL form every stroke that is not yet inked as in AC 4.7.
 9. WHERE the player's system requests reduced motion, THE Summon_Step SHALL draw each ink and forming stroke without a drawing animation, each within one animation frame, and SHALL replace the fade as cangjie-seance AC 2.5 requires.
 10. IF the Ink_Writer cannot be created or a stroke animation fails, THEN THE Summon_Step SHALL keep accepting keys without ink and SHALL form the character with the existing plain-text fallback, with the same hold and fade.
@@ -191,7 +191,7 @@ A read-only computation over the 300 records of `app/public/data/characters.json
 #### Acceptance Criteria
 
 1. THE feature SHALL NOT change `app/src/engine/config.ts`, `app/src/engine/scheduler.ts`, `app/src/engine/outcome.ts` or `app/src/storage/`.
-2. THE feature SHALL keep `SUMMON_HOLD_MS` at 1500 and `SUMMON_FADE_MS` at 1500, each defined once in `app/src/modes/SummonStep.tsx`.
+2. THE feature SHALL keep `SUMMON_HOLD_MS` at 1500 and `SUMMON_FADE_MS` at 1500, each defined once in `app/src/modes/SummonStep.tsx`. *(Amended (approved by the human): see ink-and-candlelight Requirement 17.5 (Q12b): unchanged, exempt from the Motion_Window))*
 3. THE feature SHALL keep every Existing_Field of `characters.json` byte-identical, and until the final checkpoint the Test_Suite SHALL compare each record's Existing_Fields with a recorded checksum made from the committed file before this feature.
 4. WHEN the final checkpoint runs `git diff` on `app/public/data/characters.json`, THE diff SHALL contain added lines only.
 5. WHEN the existing-fields check has passed at the final checkpoint, THE final checkpoint SHALL delete the checksum fixture, the test that reads it and the provenance paragraph that describes it.

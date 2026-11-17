@@ -146,9 +146,9 @@ describe('WriteMode setup (Req 5.1, 5.2)', () => {
     const o = lastCall().opts as unknown as Record<string, unknown>;
     expect(o.strokeColor).toBe(theme.inkOnPaper);
     expect(o.outlineColor).toBe(theme.gridLine);
-    expect(o.highlightColor).toBe(theme.seal);
+    expect(o.highlightColor).toBe(theme.hintInk);
     expect(o.drawingColor).toBe(theme.drawing);
-    expect(o.drawingWidth).toBe(5);
+    expect(o.drawingWidth).toBe(6);
     expect(o.showOutline).toBe(false);
   });
 
@@ -229,6 +229,31 @@ describe('WriteMode setup (Req 5.1, 5.2)', () => {
   });
 });
 
+describe('WriteMode seal (Req 13)', () => {
+  const sealQuery = () => screen.queryByRole('img', { name: /^Seal:/ });
+  it('has no seal while writing, and none after any outcome unless sealed is passed', () => {
+    const { view } = setup();
+    expect(sealQuery()).toBeNull();
+    complete(0);
+    expect(sealQuery()).toBeNull();
+    view.unmount();
+    setup();
+    act(() => screen.getByRole('button', { name: 'Give up' }).click());
+    expect(sealQuery()).toBeNull();
+  });
+  it('shows the seal with the record character only when sealed', () => {
+    const { view } = setup();
+    view.rerender(
+      <WriteMode record={WO} dataset={dataset} config={DEFAULT_CONFIG} onOutcome={vi.fn()} sealed />,
+    );
+    expect(screen.getByRole('img', { name: `Seal: ${WO.character}` })).toBeInTheDocument();
+    expect(screen.getByTestId('ink-overlay')).toContainElement(screen.getByTestId('seal-stamp'));
+  });
+  it('does not change the quiz rules when sealed', () => {
+    setup();
+    expect(quiz().showHintAfterMisses).toBe(DEFAULT_CONFIG.strokeHintAfterConsecutiveMisses);
+  });
+});
 describe('WriteMode feedback (Req 5.3)', () => {
   it('counts mistakes only on onMistake, not on onCorrectStroke', () => {
     setup();

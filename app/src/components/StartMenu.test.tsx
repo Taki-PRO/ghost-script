@@ -67,12 +67,17 @@ describe('StartMenu (Req 1.5, 3.6, 7.1, 7.2, 9.4)', () => {
     expect(svg!.closest('.moon-glow')).toBe(h1.closest('.moon-glow'));
   });
 
-  it('styles the main button with candle colours and leaves the wrapper without bg-background', () => {
+  it('gives only the first button the seal-red primary class; the other four are paper slips', () => {
     setup();
-    const begin = screen.getByRole('button', { name: BEGIN });
-    expect(begin.className).toContain('bg-candle');
-    expect(begin.className).toContain('shadow-candle');
-    expect(begin.className).toContain('focus-visible:ring-2');
+    const buttons = screen.getAllByRole('button');
+    expect(buttons[0].className).toContain('slip-primary');
+    expect(buttons[0].className).not.toMatch(/candle/);
+    expect(buttons[0].className).toContain('focus-visible:ring-2');
+    for (const b of buttons.slice(1)) {
+      expect(b.classList.contains('slip')).toBe(true);
+      expect(b.className).not.toContain('slip-primary');
+      expect(b.className).not.toMatch(/candle/);
+    }
     expect(document.querySelector('main')?.className).not.toContain('bg-background');
   });
 

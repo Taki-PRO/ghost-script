@@ -36,4 +36,26 @@ describe('InkSurface', () => {
     expect(screen.getByTestId('ink-surface').style.display).not.toBe('none');
     expect(screen.getByTestId('ink-surface').style.width).toBe(before);
   });
+
+  it('defines one ink-bleed filter and applies it only to the finished-stroke group of the container', () => {
+    const ref = createRef<HTMLDivElement>();
+    render(<InkSurface size="240px" containerRef={ref} />);
+    const filter = screen.getByTestId('ink-surface').querySelector('filter')!;
+    expect(filter.querySelector('feTurbulence')).not.toBeNull();
+    expect(filter.querySelector('feDisplacementMap')).not.toBeNull();
+    expect(screen.getByTestId('ink-filter-defs').getAttribute('aria-hidden')).toBe('true');
+    const css = screen.getByTestId('ink-surface').querySelector('style')!.textContent!;
+    expect(css).toContain(`url(#${filter.id})`);
+    expect(css).toContain('[data-testid="ink-container"] svg > g > g:nth-child(2)');
+  });
+
+  it('renders the overlay after the container with pointer events off, only when given', () => {
+    const ref = createRef<HTMLDivElement>();
+    const { rerender } = render(<InkSurface size="240px" containerRef={ref} />);
+    expect(screen.queryByTestId('ink-overlay')).toBeNull();
+    rerender(<InkSurface size="240px" containerRef={ref} overlay={<span>x</span>} />);
+    const overlay = screen.getByTestId('ink-overlay');
+    expect(overlay.style.pointerEvents).toBe('none');
+    expect(screen.getByTestId('ink-container').compareDocumentPosition(overlay) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
 });

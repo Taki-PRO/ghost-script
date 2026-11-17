@@ -747,3 +747,73 @@ describe('SummonStep first meeting never reveals the target', () => {
     });
   }
 });
+
+describe('SummonStep onWrongKey and keycaps', () => {
+  function setupWrong(record: CharacterRecord) {
+    const onWrongKey = vi.fn();
+    render(
+      <SummonStep
+        record={record}
+        dataset={dataset}
+        config={DEFAULT_CONFIG}
+        onDone={vi.fn()}
+        onWrongKey={onWrongKey}
+      />,
+    );
+    return onWrongKey;
+  }
+
+  it('calls onWrongKey once per wrong physical key and per wrong on-screen key', () => {
+    const onWrongKey = setupWrong(WO); // HQI
+    press('B');
+    expect(onWrongKey).toHaveBeenCalledTimes(1);
+    clickKey('B');
+    expect(onWrongKey).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not call onWrongKey for a correct key, a Key hint display, or ignored keys', () => {
+    const onWrongKey = setupWrong(WO);
+    press('H');
+    expect(onWrongKey).not.toHaveBeenCalled();
+    press('b', { ctrlKey: true });
+    press('Shift');
+    press('z');
+    press('B', { isComposing: true });
+    expect(onWrongKey).not.toHaveBeenCalled();
+    press('B');
+    press('B');
+    press('B');
+    expect(onWrongKey).toHaveBeenCalledTimes(3);
+    expect(status().textContent).toContain('Hint: press Q');
+    press('Q');
+    expect(onWrongKey).toHaveBeenCalledTimes(3);
+  });
+
+  it('does not call onWrongKey after the step ends', () => {
+    const onWrongKey = setupWrong(WO);
+    typeCode('HQI');
+    press('B');
+    expect(onWrongKey).not.toHaveBeenCalled();
+    cleanup();
+    const again = setupWrong(WO);
+    fireEvent.click(screen.getByRole('button', { name: 'Give up' }));
+    press('B');
+    expect(again).not.toHaveBeenCalled();
+  });
+
+  it('works without the callback', () => {
+    setup(WO);
+    expect(() => press('B')).not.toThrow();
+  });
+
+  it('gives each key the keycap class, only the next key keycap-next, and Give up the slip class', () => {
+    setupFM(WO);
+    const keys = screen.getAllByRole('button', { name: /^Key / });
+    expect(keys).toHaveLength(25);
+    keys.forEach((k) => expect(k.className).toContain('keycap '));
+    const next = keys.filter((k) => k.className.includes('keycap-next'));
+    expect(next).toHaveLength(1);
+    expect(next[0]!.getAttribute('aria-label')).toMatch(/^Key H, .+, next$/);
+    expect(screen.getByRole('button', { name: 'Give up' }).className).toContain('slip');
+  });
+});

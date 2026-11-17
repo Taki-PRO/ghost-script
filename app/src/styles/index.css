@@ -18,8 +18,15 @@
   --paper: #e6dcc3;
   --ink-on-paper: #1c1914;
   --drawing: #3a342a;
-  --seal: #a3301f;
-  --grid-line: #a3301f;
+  --seal: #b3361f;
+  --grid-line: #7a6a4f;
+  --ink: #ece6d6;
+  --ghost: #bdb7a6;
+  --error: #e6dcc3;
+  --paper-label: #f3ead2;
+  --seal-light: #ec7a64;
+  --success: #ec7a64;
+  --hint-ink: #2c3e5a;
   --grave-restless: #261c24;
   --grave-rest: #1a2420;
   --grave-wisp: #14161c;
@@ -29,22 +36,37 @@
   --mist: #5b6f9a;
   --moon: #7283ab;
   --candle: #f0b866;
-  --mist-peak-alpha: 0.05;
+  --mist-peak-alpha: 0.09;
   --moon-peak-alpha: 0.06;
+  --moon-halo-alpha: 0.1;
+  --moon-disc-alpha: 0.55;
+  --vignette-alpha: 0.55;
 }
 
 html {
   scroll-padding-top: 5rem;
 }
 
-/* Night scene: three fixed pseudo-elements, no extra DOM. Decorative only. */
+/* Night scene: three fixed pseudo-elements, no extra DOM. Decorative only.
+   body::before holds, top to bottom: paper grain (inline SVG noise, alpha 0.03),
+   vignette, moon disc (hard edge, 3.2 rem across), moon halo (peak alpha 0.10,
+   to 9 rem), then the sky. The moon sits at the top right, half over the top edge, clear of text.
+   body::after and #root::before are the two mist bands, four ellipses in all.
+   Their vertical extents (centre plus or minus 70% of the radius, where the
+   gradient ends) never overlap, so at most one mist ellipse covers a point;
+   index.css.test.ts checks this before it uses one mist in the contrast sum. */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background: linear-gradient(180deg, var(--night-top) 0%, var(--night-mid) 55%, var(--night-low) 100%);
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.93 0 0 0 0 0.9 0 0 0 0 0.84 0 0 0 0.03 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"),
+    radial-gradient(ellipse at center, transparent 55%, rgb(0 0 0 / var(--vignette-alpha)) 100%),
+    radial-gradient(circle 1.6rem at 82% 0%, rgb(114 131 171 / var(--moon-disc-alpha)) 0, rgb(114 131 171 / var(--moon-disc-alpha)) 1.5rem, transparent 1.6rem),
+    radial-gradient(circle 9rem at 82% 0%, rgb(114 131 171 / var(--moon-halo-alpha)) 0, transparent 100%),
+    linear-gradient(180deg, var(--night-top) 0%, var(--night-mid) 55%, var(--night-low) 100%);
 }
 body::after {
   content: '';
@@ -56,8 +78,8 @@ body::after {
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 30% 22% at 15% 70%, rgb(91 111 154 / var(--mist-peak-alpha)), transparent 70%),
-    radial-gradient(ellipse 26% 18% at 60% 40%, rgb(91 111 154 / var(--mist-peak-alpha)), transparent 70%);
+    radial-gradient(ellipse 30% 12% at 15% 70%, rgb(91 111 154 / var(--mist-peak-alpha)), transparent 70%),
+    radial-gradient(ellipse 26% 10% at 60% 40%, rgb(91 111 154 / var(--mist-peak-alpha)), transparent 70%);
 }
 #root {
   position: relative;
@@ -73,8 +95,8 @@ body::after {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 34% 20% at 35% 80%, rgb(91 111 154 / var(--mist-peak-alpha)), transparent 70%),
-    radial-gradient(ellipse 28% 16% at 80% 25%, rgb(91 111 154 / var(--mist-peak-alpha)), transparent 70%);
+    radial-gradient(ellipse 34% 10% at 35% 90%, rgb(91 111 154 / var(--mist-peak-alpha)), transparent 70%),
+    radial-gradient(ellipse 28% 7% at 80% 27%, rgb(91 111 154 / var(--mist-peak-alpha)), transparent 70%);
 }
 
 /* Moon glow behind the menu title. */
@@ -95,14 +117,53 @@ body::after {
   background: radial-gradient(circle, rgb(114 131 171 / var(--moon-peak-alpha)) 0%, transparent 65%);
 }
 
-/* Every focus ring is candle-coloured. */
+/* Every focus ring is aged paper with a soft candle glow around it. The ring
+   is the Tailwind ring (2 px); the glow rides on --tw-shadow, which Tailwind
+   adds to the same box-shadow. */
 *:focus-visible {
-  --tw-ring-color: var(--candle) !important;
+  --tw-ring-color: var(--ink) !important;
+  --tw-shadow: 0 0 14px 3px color-mix(in srgb, var(--candle) 45%, transparent);
+  --tw-shadow-colored: var(--tw-shadow);
 }
 
-/* Chinese text uses the Chinese_Font_Stack (system fonts, no font file). */
+/* Paper_Slip buttons and cards. Candle appears only as glow. */
+@layer components {
+  .slip {
+    min-height: 44px;
+    color: var(--ink-on-paper);
+    background-color: var(--paper);
+    background-image: linear-gradient(160deg, rgba(255, 250, 235, 0.35) 0%, rgba(120, 90, 50, 0.12) 100%);
+    border: 1px solid color-mix(in srgb, var(--paper) 55%, var(--ink-on-paper));
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+  }
+  .slip:hover {
+    background-image: linear-gradient(160deg, rgba(255, 250, 235, 0.55) 0%, rgba(120, 90, 50, 0.08) 100%);
+  }
+  .slip-primary {
+    min-height: 44px;
+    color: var(--paper-label);
+    background-color: var(--seal);
+    border: 1px solid var(--paper);
+    border-radius: 6px;
+    box-shadow: 0 0 18px color-mix(in srgb, var(--candle) 40%, transparent);
+  }
+  .slip-primary:hover {
+    filter: brightness(1.1);
+  }
+  .card-slip {
+    color: var(--ink-on-paper);
+    background-color: var(--paper);
+    background-image: linear-gradient(160deg, rgba(255, 250, 235, 0.3) 0%, rgba(120, 90, 50, 0.12) 100%);
+    border: 1px solid color-mix(in srgb, var(--paper) 55%, var(--ink-on-paper));
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+  }
+}
+
+/* Chinese text uses the Chinese_Font_Stack: the bundled LXGW WenKai subset first, then system fonts. */
 [lang='zh'] {
-  font-family: "PingFang SC", "Hiragino Sans GB", "Songti SC", "Microsoft YaHei", "Noto Sans CJK SC", "Noto Serif CJK SC", sans-serif;
+  font-family: "LXGW WenKai Subset", "PingFang SC", "Hiragino Sans GB", "Songti SC", "Microsoft YaHei", "Noto Sans CJK SC", "Noto Serif CJK SC", sans-serif;
 }
 
 /* Paper: warm base, soft vignette, and one inline SVG noise (our own, no file). */
@@ -124,88 +185,171 @@ body::after {
   --key-w: clamp(min(32px, calc((100vw - 2rem - 18px) / 10)), calc((100vw - 2rem - 18px) / 10), 48px);
 }
 
-/* Ghost figure end states. Static, so they apply with or without motion. */
+/* Ghost figure end states. Static, so they apply with or without motion.
+   clean: dissolved upward. struggled: lingering at the right, half visible.
+   gave-up: slipped sideways and down, gone. */
 .ghost-figure {
   opacity: 1;
 }
 [data-ghost-state='faded'] .ghost-figure {
   opacity: 0;
+  transform: translateY(-14px);
+  filter: blur(2px);
 }
 [data-ghost-state='flickering'] .ghost-figure {
   opacity: 0.5;
+  transform: translateX(min(36vw, 9rem));
 }
 [data-ghost-state='drifted'] .ghost-figure {
   opacity: 0;
-  transform: translate(12px, -24px);
+  transform: translate(16px, 12px);
 }
 
-/* Graves. Shape differs by state, so colour is never the only signal. */
-.grave {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Keycaps: aged paper caps with a lower edge and a scuff. Label colour is the
+   ink on paper. Height is 44 px; width comes from .summon-keys. Candle appears
+   only inside box-shadow. */
+@layer components {
+  .keycap {
+    min-height: 44px;
+    color: var(--ink-on-paper);
+    background-color: #d4c8aa;
+    background-image:
+      radial-gradient(circle at 22% 28%, rgba(60, 40, 20, 0.1) 0, transparent 22%),
+      radial-gradient(circle at 78% 70%, rgba(60, 40, 20, 0.08) 0, transparent 26%),
+      linear-gradient(180deg, #e9dfc6, #d4c8aa);
+    border: 1px solid color-mix(in srgb, var(--paper) 55%, var(--ink-on-paper));
+    border-radius: 6px;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 250, 235, 0.6),
+      inset 0 -3px 0 rgba(60, 40, 20, 0.35),
+      0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  .keycap-next {
+    --tw-shadow: 0 0 14px 3px color-mix(in srgb, var(--candle) 45%, transparent);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 250, 235, 0.6),
+      inset 0 -3px 0 rgba(60, 40, 20, 0.35),
+      0 2px 4px rgba(0, 0, 0, 0.5),
+      var(--tw-shadow);
+  }
+}
+
+/* Tablets (Graveyard). The outline shape comes from the component classes;
+   these rules add the stone, the glow and the wisp. Shape and marker carry the
+   state, the glow and wisp are extra. Pseudo-elements ignore pointer events. */
+.tablet {
   position: relative;
-  min-height: 48px;
-  color: #ece6d6;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(236, 230, 214, 0.12);
 }
-.grave-wisp {
-  background: var(--grave-wisp);
-  border: 2px dashed #a9a79f;
-  border-radius: 9999px 9999px 8px 8px;
+.tablet-unmet {
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.6);
 }
-.grave-restless {
-  background: var(--grave-restless);
-  border: 3px double #f19188;
-  border-radius: 40% 60% 8px 8px / 50% 50% 8px 8px;
-  clip-path: polygon(0 12%, 15% 0, 35% 8%, 55% 0, 75% 8%, 100% 0, 100% 100%, 0 100%);
+.tablet-rest {
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.5),
+    0 4px 14px 0 color-mix(in srgb, var(--candle) 30%, transparent);
 }
-.grave-rest {
-  background: var(--grave-rest);
-  border: 2px solid #8fd19e;
-  border-radius: 9999px 9999px 4px 4px;
+.tablet-rest::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(ellipse 60% 40% at 50% 100%, color-mix(in srgb, var(--candle) 28%, transparent), transparent 100%);
+}
+.tablet-restless::after {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  width: 8px;
+  height: 14px;
+  margin-left: -4px;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0.6;
+  background: radial-gradient(ellipse at 50% 70%, rgb(189 183 166 / 0.7) 0, transparent 70%);
 }
 
-/* All motion lives here. Reduced-motion users get the static end states above. */
+/* All motion lives here. Reduced-motion users get the static end states above.
+   Causal motions run 200 to 600 ms. Ambient motions have no cause and are the
+   only slow ones (art-direction.md names them): mist-drift-a, mist-drift-b,
+   ghost-float, tablet-glow and wisp-rise. The rite timings (SUMMON_HOLD_MS,
+   SUMMON_FADE_MS, SUMMON_INK_SPEED) live in SummonStep.tsx and are unchanged. */
 @media (prefers-reduced-motion: no-preference) {
   @keyframes ghost-float {
     from { transform: translateY(-6px); }
     to { transform: translateY(6px); }
   }
-  @keyframes ghost-fade {
-    from { opacity: 1; }
-    to { opacity: 0; }
+  @keyframes ghost-smoke {
+    from { opacity: 1; transform: translateY(0); filter: blur(0); }
+    to { opacity: 0; transform: translateY(-14px); filter: blur(2px); }
   }
-  @keyframes ghost-flicker {
-    0% { opacity: 1; }
-    20% { opacity: 0.2; }
-    40% { opacity: 0.9; }
-    60% { opacity: 0.15; }
-    80% { opacity: 0.8; }
-    100% { opacity: 0.5; }
+  @keyframes ghost-linger {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0.5; transform: translateX(min(36vw, 9rem)); }
   }
-  @keyframes ghost-drift {
+  @keyframes ghost-slip {
     from { opacity: 1; transform: translate(0, 0); }
-    to { opacity: 0; transform: translate(12px, -24px); }
+    to { opacity: 0; transform: translate(16px, 12px); }
   }
-  @keyframes grave-flicker {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.75; }
+  @keyframes ghost-flinch {
+    0% { transform: translateX(0); opacity: 1; }
+    25% { transform: translateX(-4px); opacity: 0.7; }
+    60% { transform: translateX(3px); opacity: 0.9; }
+    100% { transform: translateX(0); opacity: 1; }
+  }
+  @keyframes seal-stamp {
+    from { opacity: 0; transform: scale(1.3); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes ink-reveal {
+    from { mask-position: 100% 0; }
+    to { mask-position: 0% 0; }
+  }
+  @keyframes tablet-glow {
+    from { opacity: 0.7; }
+    to { opacity: 1; }
+  }
+  @keyframes wisp-rise {
+    from { transform: translateY(0); opacity: 0.6; }
+    to { transform: translateY(-8px); opacity: 0.15; }
   }
 
   [data-ghost-state='haunting'] .ghost-figure {
     animation: ghost-float 4s ease-in-out infinite alternate;
   }
+  /* The Flinch plays once on each wrong key; the figure is remounted by its key. */
+  [data-ghost-state='haunting']:not([data-ghost-flinch='0']) .ghost-figure {
+    animation:
+      ghost-float 4s ease-in-out infinite alternate,
+      ghost-flinch 400ms ease-out;
+  }
   [data-ghost-state='faded'] .ghost-figure {
-    animation: ghost-fade 1.5s ease-out forwards;
+    animation: ghost-smoke 600ms ease-out forwards;
   }
   [data-ghost-state='flickering'] .ghost-figure {
-    animation: ghost-flicker 1.2s steps(12, end) forwards;
+    animation: ghost-linger 600ms ease-out forwards;
   }
   [data-ghost-state='drifted'] .ghost-figure {
-    animation: ghost-drift 2s ease-in forwards;
+    animation: ghost-slip 600ms ease-in forwards;
   }
-  .grave-restless {
-    animation: grave-flicker 2.5s ease-in-out infinite;
+  .seal-stamp {
+    animation: seal-stamp 300ms ease-out both;
+  }
+  /* The legend line is written left to right by a soft mask wipe. */
+  .ink-reveal {
+    mask-image: linear-gradient(90deg, #000 0, #000 36%, transparent 44%, transparent 100%);
+    mask-size: 300% 100%;
+    mask-repeat: no-repeat;
+    mask-position: 0% 0;
+    animation: ink-reveal 600ms ease-out both;
+  }
+  .tablet-rest::before {
+    animation: tablet-glow 3s ease-in-out infinite alternate;
+  }
+  .tablet-restless::after {
+    animation: wisp-rise 4s ease-in-out infinite;
   }
 
   @keyframes mist-drift-a {

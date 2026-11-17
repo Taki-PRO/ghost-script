@@ -35,28 +35,28 @@ export function StartMenu({
         <button
           type="button"
           onClick={onStartSeance}
-          className={`min-h-[44px] rounded-md bg-candle px-6 py-3 text-base font-medium text-background shadow-candle hover:brightness-110 ${focusRing}`}
+          className={`slip-primary min-h-[44px] px-6 py-3 text-base font-medium ${focusRing}`}
         >
           Begin a Nightly Séance
         </button>
         <button
           type="button"
           onClick={onReviewLegend}
-          className={`min-h-[44px] rounded-md border border-muted bg-surface px-6 py-3 text-base text-ink ${focusRing}`}
+          className={`slip min-h-[44px] px-6 py-3 text-base ${focusRing}`}
         >
           Read the legend again
         </button>
         <button
           type="button"
           onClick={onReviewCangjieGuide}
-          className={`min-h-[44px] rounded-md border border-muted bg-surface px-6 py-3 text-base text-ink ${focusRing}`}
+          className={`slip min-h-[44px] px-6 py-3 text-base ${focusRing}`}
         >
           How Cangjie works
         </button>
         <button
           type="button"
           onClick={onOpenGraveyard}
-          className={`min-h-[44px] rounded-md border border-muted bg-surface px-6 py-3 text-base text-ink ${focusRing}`}
+          className={`slip min-h-[44px] px-6 py-3 text-base ${focusRing}`}
         >
           Graveyard
         </button>
@@ -65,7 +65,7 @@ export function StartMenu({
             type="button"
             onClick={onOpenCredits}
             aria-describedby="menu-sources-hint"
-            className={`min-h-[44px] rounded-md border border-muted bg-surface px-6 py-3 text-base text-ink ${focusRing}`}
+            className={`slip min-h-[44px] px-6 py-3 text-base ${focusRing}`}
           >
             Sources &amp; licences
           </button>

@@ -1,0 +1,347 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Create `.kiro/steering/art-direction.md`": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886144210
+      },
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886238431
+      }
+    ],
+    "1. Steering first": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886238456
+      }
+    ],
+    "2.1 Add and change tokens in `theme.ts`, `tailwind.config.ts` and `theme.test.ts`": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886240011
+      },
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886451218
+      }
+    ],
+    "3.1 Write the Font_Pipeline `scripts/build-font.ts`": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886240787
+      },
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886451717
+      }
+    ],
+    "2.2 Palette variables, Paper_Slip classes and focus ring in `index.css`": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886452917
+      },
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886555602
+      }
+    ],
+    "3.2 Run the pipeline and commit its outputs": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886454113
+      },
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886556092
+      },
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886960820
+      },
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794887166537
+      }
+    ],
+    "4.1 Draw the Ink_Ghost in `GhostFigure.tsx` and replace the favicon": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886455284
+      },
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886557294
+      }
+    ],
+    "2. Palette and tokens": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886555622
+      }
+    ],
+    "3.3 Wire the font into the app": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886558653
+      },
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886768973
+      }
+    ],
+    "3.4 Record the font in Credits, README and notices": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886559702
+      },
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886769147
+      }
+    ],
+    "4.2 Add the Flinch to `GhostPrompt.tsx`": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886561066
+      },
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886769243
+      }
+    ],
+    "5.1 Restyle `StartMenu.tsx`": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886562099
+      },
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886770081
+      }
+    ],
+    "7.1 Keycaps and `onWrongKey` in `SummonStep.tsx`": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886563437
+      },
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886771513
+      }
+    ],
+    "3. Chinese font": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886769167
+      }
+    ],
+    "4. The ghost": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886769314
+      }
+    ],
+    "5.2 Rebuild `IntroScreen.tsx`": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886772747
+      },
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886953446
+      }
+    ],
+    "5.3 Restyle `CangjieGuide.tsx`": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886773929
+      },
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886953646
+      }
+    ],
+    "5.4 Restyle `SessionSummary.tsx`": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886775167
+      },
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886954046
+      }
+    ],
+    "5.5 Rebuild the tablets in `Graveyard.tsx`": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886776316
+      },
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886955247
+      }
+    ],
+    "7.2 Seal, ink filter and brush options": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886777456
+      },
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886956733
+      }
+    ],
+    "5. Screens": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886955271
+      }
+    ],
+    "6.1 Build the Night_Scene in `index.css`": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886958150
+      },
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794887167037
+      }
+    ],
+    "7.4 Wire the session in `SeanceSession.tsx`": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794886959534
+      },
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794887168418
+      }
+    ],
+    "6. Night scene": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794887167063
+      }
+    ],
+    "7.3 Motion and rite styles in `index.css`": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794887169619
+      },
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794887400666
+      }
+    ],
+    "7. The rite: keys, strokes, seal and outcomes": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794887400694
+      }
+    ],
+    "9.1 Add `e2e/screenshots.spec.ts`": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794887401891
+      },
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794887883419
+      }
+    ],
+    "9. Screenshots": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794887883452
+      }
+    ],
+    "10.1 Run the accuracy review": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794887883589
+      },
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794888083086
+      }
+    ],
+    "10.3 Record approved amendments in the old specs": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794887884450
+      },
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794888084502
+      }
+    ],
+    "11. Final checkpoint": [
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794888085479
+      },
+      {
+        "executionId": "1a92e1de-c96a-4ac9-8562-b41a270153fb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794888263551
+      }
+    ]
+  }
+}

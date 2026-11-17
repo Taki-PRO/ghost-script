@@ -10,14 +10,14 @@ export const theme = {
   surface: '#181a21',
   ink: '#ece6d6', // primary text (candlelit paper)
   muted: '#a9a79f', // secondary text
-  ghost: '#9fc4d6', // accent
-  success: '#8fd19e', // accepted
-  error: '#f19188', // rejected
+  ghost: '#bdb7a6', // neutral secondary text, pinyin
+  success: '#ec7a64', // accepted; alias of sealLight
+  error: '#e6dcc3', // rejected: aged paper, always with a text cue and a shape cue
   paper: '#e6dcc3', // writing surface background
   inkOnPaper: '#1c1914', // completed strokes, text on paper
   drawing: '#3a342a', // the stroke being drawn
-  seal: '#a3301f', // hint highlight (red seal)
-  gridLine: '#a3301f', // practice grid lines (decorative, drawn at low opacity)
+  seal: '#b3361f', // Primary_Action fill, Seal_Stamp
+  gridLine: '#7a6a4f', // practice grid and hanzi-writer outline (decorative, drawn at 0.25 opacity)
   graveRestless: '#261c24', // dark tint of surface
   graveRest: '#1a2420', // dark tint of surface
   graveWisp: '#14161c', // dark tint of surface
@@ -26,7 +26,10 @@ export const theme = {
   nightLow: '#12203f', // lightest sky stop
   mist: '#5b6f9a', // mist colour (dim, drawn at low alpha)
   moon: '#7283ab', // moon glow colour (dim, drawn at low alpha)
-  candle: '#f0b866', // main button, focus ring
+  paperLabel: '#f3ead2', // label on seal
+  sealLight: '#ec7a64', // success marks on dark backgrounds
+  hintInk: '#2c3e5a', // hanzi-writer stroke hint on paper
+  candle: '#f0b866', // light only: inside box-shadow and gradients, never a fill
 } as const;
 
 export type ThemeToken = keyof typeof theme;

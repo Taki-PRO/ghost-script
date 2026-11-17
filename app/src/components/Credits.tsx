@@ -34,7 +34,7 @@ export function Credits({ onBack }: CreditsProps) {
             type="button"
             onClick={onBack}
             aria-label="Back to menu"
-            className="min-h-[44px] shrink-0 whitespace-nowrap rounded-md border border-muted bg-surface px-4 py-2 text-base text-ink hover:bg-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            className="slip min-h-[44px] shrink-0 whitespace-nowrap px-4 py-2 text-base focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             Back to menu
           </button>
@@ -127,12 +127,15 @@ export function Credits({ onBack }: CreditsProps) {
           <ul className="mt-3 list-disc space-y-1 pl-6 text-base text-ink">
             {FONTS.map((f) => (
               <li key={f.name} className={WRAP}>
-                {f.name}, {f.licence}. {f.copyright}.
+                {f.name}
+                {f.url ? ` ${f.version}` : ''}, {f.licence}. {f.copyright}
+                {f.copyright.endsWith('.') ? '' : '.'}
+                {f.url ? ` Source: ${f.url}` : ''}
               </li>
             ))}
           </ul>
           <p className="mt-3 text-base text-ink">
-            Chinese text uses fonts already installed on your device.
+            Chinese characters are drawn with LXGW WenKai (subset to the characters in this game). Any other Chinese text uses fonts already installed on the device.
           </p>
         </section>
 

@@ -45,6 +45,8 @@ export interface SummonStepProps {
   firstMeeting?: boolean;
   /** One line per key (Walkthrough_Ghost only); the line for the first unfilled key shows while typing. */
   walkthroughLines?: readonly string[];
+  /** Called once for each wrong key that the engine counts as a miss, and for no other event. */
+  onWrongKey?: () => void;
 }
 
 type Phase = 'typing' | 'forming' | 'fading';
@@ -83,6 +85,7 @@ export function SummonStep({
   onDone,
   firstMeeting = false,
   walkthroughLines,
+  onWrongKey,
 }: SummonStepProps) {
   const code = record.cangjie ?? '';
   const lettersOnly = KEY_FACE_CHARACTERS.has(record.character);
@@ -108,6 +111,8 @@ export function SummonStep({
   const doneRef = useRef(false);
   const onDoneRef = useRef(onDone);
   onDoneRef.current = onDone;
+  const onWrongKeyRef = useRef(onWrongKey);
+  onWrongKeyRef.current = onWrongKey;
   const configRef = useRef(config);
   configRef.current = config;
 
@@ -160,6 +165,10 @@ export function SummonStep({
     if (message !== null) setFeedback(message);
     if (next.status !== 'active') setPhase('forming');
   }, []);
+  /** Report a counted miss (the engine's mistake count went up). */
+  const reportMiss = useCallback((prev: SummonState, next: SummonState) => {
+    if (next.mistakes > prev.mistakes) onWrongKeyRef.current?.();
+  }, []);
 
   const enterKey = useCallback(
     (key: CangjieKey) => {
@@ -167,8 +176,9 @@ export function SummonStep({
       if (prev.status !== 'active') return;
       const next = applyKeyEntry(prev, key, configRef.current);
       commit(next, afterKey(prev, next));
+      reportMiss(prev, next);
     },
-    [commit, afterKey],
+    [commit, afterKey, reportMiss],
   );
 
   // Physical keyboard.
@@ -181,10 +191,11 @@ export function SummonStep({
       if (next === prev) return;
       e.preventDefault();
       commit(next, afterKey(prev, next));
+      reportMiss(prev, next);
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [commit, afterKey]);
+  }, [commit, afterKey, reportMiss]);
 
   // Ink classes: the writer exists from the start, with no stroke visible.
   useEffect(() => {
@@ -438,9 +449,9 @@ export function SummonStep({
                   aria-label={isNext ? `${baseName}, next` : baseName}
                   disabled={finished}
                   onClick={() => enterKey(key)}
-                  className={`flex min-h-[44px] w-full min-w-0 flex-col items-center justify-center rounded-md border px-0 text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost disabled:opacity-50 ${
-                    isHint || isNext ? 'border-ghost ring-2 ring-ghost' : 'border-muted'
-                  }`}
+                  className={`flex min-h-[44px] w-full min-w-0 flex-col items-center justify-center keycap px-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost disabled:opacity-50 ${
+                    isHint || isNext ? 'ring-2 ring-ghost' : ''
+                  } ${isNext ? 'keycap-next' : ''}`}
                 >
                   <span
                     aria-hidden="true"
@@ -469,7 +480,7 @@ export function SummonStep({
         <button
           type="button"
           onClick={handleGiveUp}
-          className="min-h-[44px] rounded-md border border-muted px-4 py-2 text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost"
+          className="slip min-h-[44px] px-4 py-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost"
         >
           Give up
         </button>

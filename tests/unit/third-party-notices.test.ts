@@ -68,6 +68,18 @@ describe('committed third-party notices', () => {
     expect(SOFTWARE_CREDITS.map((c) => ({ ...c }))).toEqual(parsed);
   });
 
+  it('appends the verbatim WenKai OFL text after the packages, in one fixed section', () => {
+    const committed = readFileSync(NOTICES_PATH, 'utf8');
+    const ofl = readFileSync('data/raw/fonts/lxgw-wenkai/OFL.txt', 'utf8');
+    const section = committed.indexOf('Fonts not installed through npm\n');
+    expect(section).toBeGreaterThan(-1);
+    expect(committed.indexOf('Fonts not installed through npm\n', section + 1)).toBe(-1);
+    expect(committed.indexOf('Font: LXGW WenKai Regular, release v1.530\nFont licence: SIL Open Font License 1.1\n')).toBeGreaterThan(section);
+    expect(committed.slice(section)).toContain(ofl);
+    for (const p of collectRuntimePackages('app')) expect(committed.indexOf(`\n${p.name} ${p.version}\n`)).toBeLessThan(section);
+    expect(committed.endsWith(ofl.endsWith('\n') ? ofl : `${ofl}\n`)).toBe(true);
+  });
+
   it('includes the font licence text', () => {
     const font = collectRuntimePackages('app').find((p) => p.name === '@fontsource/cormorant-garamond');
     expect(font).toBeDefined();

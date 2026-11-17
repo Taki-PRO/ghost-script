@@ -55,8 +55,10 @@ function initialStep(record: CharacterRecord | undefined): Step {
   return record && isPlayableInCangjie(record.cangjie) ? 'summon' : 'write';
 }
 
-const BTN =
-  'min-h-[44px] rounded-md border border-muted bg-surface px-4 py-2 text-base text-ink hover:bg-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost';
+const FOCUS =
+  'focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost focus-visible:ring-offset-2 focus-visible:ring-offset-background';
+const BTN = `slip min-h-[44px] px-4 py-2 text-base ${FOCUS}`;
+const BTN_PRIMARY = `slip-primary min-h-[44px] px-4 py-2 text-base font-medium ${FOCUS}`;
 
 const RESULT_TEXT: Record<Outcome, string> = {
   clean: 'Laid to rest',
@@ -85,6 +87,7 @@ export function SeanceSession({
   const [index, setIndex] = useState(0);
   const [result, setResult] = useState<Outcome | null>(null);
   const [step, setStep] = useState<Step>(() => initialStep(list[0]));
+  const [flinch, setFlinch] = useState(0);
   const summonResultRef = useRef<Outcome | null>(null);
 
   const resolvedRef = useRef(false);
@@ -152,6 +155,7 @@ export function SeanceSession({
     }
     scrollToTop();
     summonResultRef.current = null;
+    setFlinch(0);
     setResult(null);
     setStep(initialStep(list[index + 1]));
     setIndex(index + 1);
@@ -169,6 +173,8 @@ export function SeanceSession({
     },
     [handleOutcome],
   );
+
+  const handleWrongKey = useCallback(() => setFlinch((n) => n + 1), []);
 
   const openLeave = () => setConfirmingLeave(true);
   const stay = () => setConfirmingLeave(false);
@@ -215,7 +221,7 @@ export function SeanceSession({
           onKeyDown={(e) => {
             if (e.key === 'Escape') stay();
           }}
-          className="w-full rounded-lg border border-candle bg-surface p-4 text-center"
+          className="w-full rounded-lg border border-muted bg-surface p-4 text-center"
         >
           <p id="leave-question" className="text-ink">
             {savingWorks ? LEAVE_TEXT_SAVED : LEAVE_TEXT_NOT_SAVING}
@@ -224,13 +230,13 @@ export function SeanceSession({
             <button type="button" onClick={leave} className={BTN}>
               Leave
             </button>
-            <button ref={stayBtnRef} type="button" onClick={stay} className={BTN}>
+            <button ref={stayBtnRef} type="button" onClick={stay} className={BTN_PRIMARY}>
               Stay
             </button>
           </div>
         </div>
       )}
-      <GhostPrompt record={record} outcome={result} compact />
+      <GhostPrompt record={record} outcome={result} compact flinch={flinch} />
       <p className="text-sm text-muted">{stepLabel}</p>
       {step === 'summon' ? (
         <SummonStep
@@ -239,6 +245,7 @@ export function SeanceSession({
           dataset={dataset}
           config={config}
           onDone={handleSummonDone}
+          onWrongKey={handleWrongKey}
           firstMeeting={firstMeeting.has(record.character)}
           walkthroughLines={walkthroughLines}
         />
@@ -255,6 +262,7 @@ export function SeanceSession({
             config={config}
             onOutcome={handleWriteOutcome}
             reservedPx={isWalkthrough ? WALKTHROUGH_LINE_PX : 0}
+            sealed={result === 'clean'}
           />
         </>
       )}
@@ -265,7 +273,7 @@ export function SeanceSession({
             ref={nextRef}
             type="button"
             onClick={handleAdvance}
-            className="rounded-lg border border-ghost px-5 py-3 text-ink hover:bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost"
+            className={`${confirmingLeave ? 'slip' : 'slip-primary font-medium'} min-h-[44px] px-5 py-3 ${FOCUS}`}
           >
             {isLast ? 'Finish the séance' : 'Next ghost'}
           </button>

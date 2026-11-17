@@ -17,10 +17,18 @@ const focusRing =
 
 const MARKER: Record<GraveState, string> = { unmet: '·', restless: '!', 'at-rest': '✓' };
 const SHAPE: Record<GraveState, string> = {
-  unmet: 'grave-wisp',
-  restless: 'grave-restless',
-  'at-rest': 'grave-rest',
+  unmet: 'tablet tablet-unmet',
+  restless: 'tablet tablet-restless',
+  'at-rest': 'tablet tablet-rest',
 };
+// Outline differs per state (arched solid, chipped dashed, plain dotted): shape is a signal.
+const OUTLINE: Record<GraveState, string> = {
+  unmet: 'rounded-sm border-2 border-dotted border-muted',
+  restless: 'rounded-t-md border-2 border-dashed border-ghost',
+  'at-rest': 'rounded-t-3xl border-2 border-solid border-ink',
+};
+const HILLSIDE =
+  'linear-gradient(180deg, transparent 0%, rgba(24, 26, 33, 0.85) 45%, rgba(14, 15, 19, 0.95) 100%)';
 const LEGEND: readonly { state: GraveState; label: string }[] = [
   { state: 'unmet', label: 'Never met' },
   { state: 'restless', label: 'Restless' },
@@ -56,7 +64,7 @@ export function Graveyard({ dataset, history, now, onBack }: GraveyardProps) {
           <button
             type="button"
             onClick={onBack}
-            className={`min-h-[44px] shrink-0 whitespace-nowrap rounded-md border border-muted bg-surface px-6 py-2 text-base text-ink ${focusRing}`}
+            className={`slip min-h-[44px] shrink-0 whitespace-nowrap px-6 py-2 text-base ${focusRing}`}
           >
             Back to menu
           </button>
@@ -70,7 +78,7 @@ export function Graveyard({ dataset, history, now, onBack }: GraveyardProps) {
             <li key={state} className="flex items-center gap-2">
               <span
                 aria-hidden="true"
-                className={`grave ${SHAPE[state]} inline-flex h-8 w-8 items-center justify-center`}
+                className={`${SHAPE[state]} ${OUTLINE[state]} relative inline-flex h-8 w-8 items-center justify-center bg-surface`}
               >
                 {MARKER[state]}
               </span>
@@ -85,21 +93,27 @@ export function Graveyard({ dataset, history, now, onBack }: GraveyardProps) {
         )}
         <ul
           aria-label="Graves"
-          className="grid gap-2"
-          style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(48px, 1fr))' }}
+          className="grid gap-2 rounded-md p-3"
+          style={{
+            gridTemplateColumns: 'repeat(auto-fill, minmax(48px, 1fr))',
+            backgroundImage: HILLSIDE,
+          }}
         >
           {model.graves.map((grave) => (
             <li
               key={grave.position}
               aria-label={graveLabel(grave, total)}
-              className={`grave ${SHAPE[grave.state]} flex min-h-[56px] flex-col items-center justify-center text-ink`}
+              className={`${SHAPE[grave.state]} ${OUTLINE[grave.state]} relative flex min-h-[56px] flex-col items-center justify-center bg-surface text-ink`}
             >
               {grave.state !== 'unmet' && (
                 <span lang="zh" className="text-xl leading-none">
                   {grave.char}
                 </span>
               )}
-              <span aria-hidden="true" className="text-xs leading-none">
+              <span
+                aria-hidden="true"
+                className={`text-xs leading-none ${grave.state === 'at-rest' ? 'text-seal-light' : ''}`}
+              >
                 {MARKER[grave.state]}
               </span>
             </li>

@@ -14,10 +14,16 @@ describe('credits data', () => {
   it('has the combined-work note, MIT code licence and the font', () => {
     expect(COMBINED_WORK_NOTE).toContain('combined work');
     expect(CODE_LICENCE).toBe('MIT');
-    expect(FONTS).toHaveLength(1);
+    expect(FONTS).toHaveLength(2);
     expect(FONTS[0].name).toBe('Cormorant Garamond');
     expect(FONTS[0].licence).toBe('SIL Open Font License 1.1');
     expect(FONTS[0].copyright).toContain('The Cormorant Project Authors');
+    const wenkai = FONTS[1];
+    expect(wenkai.name).toBe('LXGW WenKai Regular');
+    expect(wenkai.version).toBe('v1.530');
+    expect(wenkai.licence).toBe('SIL Open Font License 1.1');
+    expect(wenkai.copyright).toContain('Copyright 2021-2026 LXGW (https://github.com/lxgw/LxgwWenKai)');
+    expect(wenkai.copyright).toContain('Copyright 2020 The Klee Project Authors (https://github.com/fontworks-fonts/Klee)');
   });
 });
 

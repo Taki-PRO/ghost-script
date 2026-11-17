@@ -49,8 +49,11 @@ describe('Credits', () => {
     for (const f of FONTS) {
       expect(text()).toContain(f.name);
       expect(text()).toContain(f.licence);
+      expect(text()).toContain(f.copyright);
     }
-    expect(text()).toContain('Chinese text uses fonts already installed on your device.');
+    expect(text()).toContain(
+      'Chinese characters are drawn with LXGW WenKai (subset to the characters in this game). Any other Chinese text uses fonts already installed on the device.',
+    );
   });
 
   it('shows every Software row with name, version and licence', () => {
@@ -204,6 +207,7 @@ describe('Credits', () => {
     render(<Credits onBack={onBack} />);
     const btn = screen.getByRole('button', { name: 'Back to menu' });
     expect(btn.className).toContain('min-h-[44px]');
+    expect(btn.className.split(/\s+/)).toContain('slip');
     expect(btn.className).toContain('focus-visible:ring');
     await userEvent.click(btn);
     expect(onBack).toHaveBeenCalledTimes(1);

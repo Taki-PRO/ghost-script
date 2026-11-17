@@ -141,3 +141,33 @@ describe('SessionSummary return times (first-meeting 9.3-9.5)', () => {
     expect(screen.getByRole('button', { name: 'Begin another Séance' })).toBeTruthy();
   });
 });
+
+describe('SessionSummary paper look (ink-and-candlelight 10.1, 10.2, 10.4)', () => {
+  it('draws the count line as a paper card and the button as the one seal primary', () => {
+    setup(10, 7);
+    expect(screen.getByRole('status')).toHaveClass('card-slip');
+    const button = screen.getByRole('button', { name: 'Begin another Séance' });
+    expect(button).toHaveClass('slip-primary');
+    expect(screen.getAllByRole('button')).toHaveLength(1);
+  });
+  it('draws every return row as a paper card', () => {
+    const NOW = new Date(2026, 10, 20, 22, 0).getTime();
+    render(
+      <SessionSummary
+        results={{
+          total: 2,
+          laidToRest: 2,
+          finishedAt: NOW,
+          returns: [
+            { character: 'A1', pinyin: 'yī', meaning: 'one', nextDue: NOW },
+            { character: 'B2', pinyin: 'èr', meaning: 'two', nextDue: NOW + 10 * 60_000 },
+          ],
+        }}
+        onPlayAgain={() => {}}
+      />,
+    );
+    const items = screen.getAllByRole('listitem');
+    expect(items).toHaveLength(2);
+    items.forEach((li) => expect(li).toHaveClass('card-slip'));
+  });
+});

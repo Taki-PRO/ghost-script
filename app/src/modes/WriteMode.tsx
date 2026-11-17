@@ -8,6 +8,7 @@ import { resolveCompletion } from '../engine/outcome';
 import { writeSurfaceSize } from '../engine/surfaceSize';
 import { theme } from '../styles/theme';
 import { InkSurface } from '../components/InkSurface';
+import { SealStamp } from '../components/SealStamp';
 
 export interface WriteModeProps {
   record: CharacterRecord;
@@ -17,6 +18,8 @@ export interface WriteModeProps {
   onOutcome: (outcome: Outcome) => void;
   /** Height in px reserved for a line above the surface (first-meeting walkthrough). Default 0. */
   reservedPx?: number;
+  /** True after a clean outcome: the seal appears on the paper. */
+  sealed?: boolean;
 }
 
 export { resolveCompletion } from '../engine/outcome';
@@ -44,7 +47,7 @@ type Status = 'writing' | 'resolved' | 'failed';
  * next ghost: after resolving it keeps showing the revealed character until the
  * parent changes `record` (SeanceSession owns advancing).
  */
-export function WriteMode({ record, dataset, config, onOutcome, reservedPx = 0 }: WriteModeProps) {
+export function WriteMode({ record, dataset, config, onOutcome, reservedPx = 0, sealed = false }: WriteModeProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const writerRef = useRef<HanziWriter | null>(null);
   const resolvedRef = useRef(false);
@@ -94,9 +97,9 @@ export function WriteMode({ record, dataset, config, onOutcome, reservedPx = 0 }
         showOutline: false,
         strokeColor: theme.inkOnPaper,
         outlineColor: theme.gridLine,
-        highlightColor: theme.seal,
+        highlightColor: theme.hintInk,
         drawingColor: theme.drawing,
-        drawingWidth: 5,
+        drawingWidth: 6,
         charDataLoader: makeCharDataLoader(dataset),
         onLoadCharDataError: fail,
       });
@@ -169,6 +172,7 @@ export function WriteMode({ record, dataset, config, onOutcome, reservedPx = 0 }
         containerRef={containerRef}
         role="group"
         ariaLabel="Writing area: draw the character from memory, stroke by stroke"
+        overlay={sealed ? <SealStamp character={record.character} /> : undefined}
       />
       <p role="status" aria-live="polite" className="min-h-[1.5rem] text-center text-ink">
         {feedback}
