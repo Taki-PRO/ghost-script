@@ -241,6 +241,7 @@ describe('index.css', () => {
       expect(varValue('--night-top')).toBe(theme.nightTop);
       expect(varValue('--night-mid')).toBe(theme.nightMid);
       expect(varValue('--night-low')).toBe(theme.nightLow);
+      expect(varValue('--sky-hold')).toBe(theme.skyHold);
       expect(varValue('--mist')).toBe(theme.mist);
       expect(varValue('--moon')).toBe(theme.moon);
       expect(varValue('--candle')).toBe(theme.candle);
@@ -253,7 +254,7 @@ describe('index.css', () => {
       expect(outside).not.toContain('--mist-peak-alpha');
       const [or, og, ob] = rgb(theme.moon);
       expect(outside).toContain(`rgb(${or} ${og} ${ob} / var(--moon-peak-alpha))`);
-      expect(outside).not.toMatch(/rgb\((?!91 111 154|114 131 171)\d+ \d+ \d+ \/ var\(--(mist|moon)/);
+      expect(outside).not.toMatch(/rgb\((?!91 111 154|114 131 171|5 8 19 \/ var\(--moon-shade-alpha\))\d+ \d+ \d+ \/ var\(--(mist|moon)/);
     });
 
     it('every url( is followed by data:', () => {
@@ -270,7 +271,7 @@ describe('index.css', () => {
     });
 
     it('scene pseudo-elements ignore pointer events', () => {
-      for (const s of ['body::before', 'body::after', '#root::before', '.moon-glow::before']) {
+      for (const s of ['body::before', 'body::after', '#root::before', '#root::after', '.moon-glow::before']) {
         expect(ruleBody(s)).toMatch(/pointer-events:\s*none/);
       }
       expect(ruleBody('#root')).toMatch(/position:\s*relative/);
@@ -332,15 +333,18 @@ describe('index.css', () => {
       expect(new Set(c).size, sel).toBe(1);
       return c[0];
     };
-    // Sky colour at a height: top to mid over 0 to 55%, mid to low over 55 to 100%.
+    // Sky colour at a height within the first screen: top to mid over 0 to 55%,
+    // mid to skyHold over 55 to 88%, skyHold from 88% down (and below the first screen).
     const sky = (y: number): number[] =>
       y <= 55
         ? blend(rgb(theme.nightTop), rgb(theme.nightMid), y / 55)
-        : blend(rgb(theme.nightMid), rgb(theme.nightLow), (y - 55) / 45);
-    // The grain tint and alpha come from the feColorMatrix in body::before. Its alpha is
+        : y <= 88
+          ? blend(rgb(theme.nightMid), rgb(theme.skyHold), (y - 55) / 33)
+          : rgb(theme.skyHold);
+    // The grain tint and alpha come from the feColorMatrix in #root::after. Its alpha is
     // scaled by the noise (at most 1), so the matrix alpha is the worst case.
     const grainLayer = (bg: number[]): number[] => {
-      const grain = ruleBody('body::before').match(/values='0 0 0 0 ([\d.]+) 0 0 0 0 ([\d.]+) 0 0 0 0 ([\d.]+) 0 0 0 (0\.\d+) 0'/);
+      const grain = ruleBody('#root::after').match(/values='0 0 0 0 ([\d.]+) 0 0 0 0 ([\d.]+) 0 0 0 0 ([\d.]+) 0 0 0 (0\.\d+) 0'/);
       expect(grain).not.toBeNull();
       return blend(bg, [1, 2, 3].map((n) => Math.round(parseFloat(grain![n]) * 255)), parseFloat(grain![4]));
     };
@@ -399,6 +403,10 @@ describe('index.css', () => {
       }
     });
 
+    it('keeps every text token at 4.5:1 on the held sky below the first screen, with grain', () => {
+      for (const t of TEXT) expect(ratioOn(t, grainLayer(sky(100))), t).toBeGreaterThanOrEqual(4.5);
+    });
+
     it('keeps ink and error at 4.5:1 on the disc composite', () => {
       for (const t of ['ink', 'error']) expect(ratioOn(t, discBg()), t).toBeGreaterThanOrEqual(4.5);
     });
@@ -416,6 +424,58 @@ describe('index.css', () => {
       expect(body).toContain('circle calc(var(--moon-size) / 2) at calc(100% - var(--moon-inset-x)) var(--moon-inset-y)');
       expect(body).toContain('circle 7rem at calc(100% - var(--moon-inset-x)) var(--moon-inset-y)');
       expect(body).not.toMatch(/at 82% 0%/);
+    });
+
+    describe('Moon_Shade', () => {
+      const remOf = (name: string): number => {
+        const v = varValue(name);
+        expect(v, name).toMatch(/^[\d.]+rem$/);
+        return parseFloat(v);
+      };
+      // Shade colour is the nightTop ink (5 8 19); paint order: sky at 2%, halo, disc, shade, grain.
+      const underShade = (): number[] =>
+        blend(
+          blend(sky(2), rgb(theme.moon), parseFloat(varValue('--moon-halo-alpha'))),
+          rgb(theme.moon),
+          parseFloat(varValue('--moon-disc-alpha')),
+        );
+      const darkestBg = (): number[] =>
+        grainLayer(blend(underShade(), rgb(theme.nightTop), parseFloat(varValue('--moon-shade-alpha'))));
+
+      it('defines the three shade properties', () => {
+        expect(parseFloat(varValue('--moon-shade-alpha'))).toBe(0.35);
+        expect(remOf('--moon-shade-offset')).toBe(0.5);
+        expect(remOf('--moon-shade-radius')).toBe(1.25);
+        expect(rgb(theme.nightTop)).toEqual([5, 8, 19]);
+      });
+
+      it('is the first layer of body::before, above the disc, off-centre to the lower right', () => {
+        const body = ruleBody('body::before');
+        const shade =
+          'radial-gradient(circle var(--moon-shade-radius) at calc(100% - var(--moon-inset-x) + var(--moon-shade-offset)) calc(var(--moon-inset-y) + var(--moon-shade-offset)), rgb(5 8 19 / var(--moon-shade-alpha)) 0, transparent 100%)';
+        const bg = body.slice(body.indexOf('background:') + 'background:'.length).trim();
+        expect(bg.startsWith(shade)).toBe(true);
+        expect(body.indexOf(shade)).toBeLessThan(body.indexOf('var(--moon-disc-alpha)'));
+        expect(body.match(/var\(--moon-shade-alpha\)/g)).toHaveLength(1);
+      });
+
+      it('stays inside the disc: offset x sqrt(2) + radius is at most half the moon size', () => {
+        expect(remOf('--moon-shade-offset') * Math.SQRT2 + remOf('--moon-shade-radius')).toBeLessThanOrEqual(
+          remOf('--moon-size') / 2,
+        );
+      });
+
+      it('keeps ink and error at 4.5:1 at the lightest and the darkest point', () => {
+        for (const t of ['ink', 'error']) {
+          expect(ratioOn(t, discBg()), `${t} lightest`).toBeGreaterThanOrEqual(4.5);
+          expect(ratioOn(t, darkestBg()), `${t} darkest`).toBeGreaterThanOrEqual(4.5);
+        }
+      });
+
+      it('shades visibly: lightest to darkest luminance ratio is at least 1.25', () => {
+        const ratio = (lum(discBg()) + 0.05) / (lum(darkestBg()) + 0.05);
+        expect(ratio).toBeGreaterThanOrEqual(1.25);
+      });
     });
 
     it('leaves a Moon_Room below 992 px with a clamp() and no media rule', () => {
@@ -437,14 +497,71 @@ describe('index.css', () => {
       expect(main).toMatch(/min-height:\s*100dvh;/);
     });
 
-    it('layers the night scene: sky, moon disc and halo, vignette, grain on body::before', () => {
+    it('keeps only the Moon disc and halo on the fixed body::before', () => {
       const body = ruleBody('body::before');
-      expect(body).toContain('var(--night-top)');
+      expect(body).toMatch(/position:\s*fixed/);
       expect(body).toContain('var(--moon-disc-alpha)');
       expect(body).toContain('var(--moon-halo-alpha)');
-      expect(body).toContain('var(--vignette-alpha)');
-      expect(body).toContain('feTurbulence');
-      expect(body).toMatch(/position:\s*fixed/);
+      expect(body).not.toContain('linear-gradient(180deg');
+      expect(body).not.toContain('var(--night-top)');
+      expect(body).not.toContain('var(--vignette-alpha)');
+      expect(body).not.toContain('feTurbulence');
+      expect(body).not.toMatch(/url\(/);
+    });
+
+    it('paints the Canvas_Sky on html and leaves the body without a background (24.1)', () => {
+      const html = [...outside.matchAll(/(?:^|\n)html\s*\{([^}]*)\}/g)].map((m) => m[1]).join('\n');
+      expect(html).toMatch(/background-color:\s*var\(--sky-hold\)/);
+      expect(html).toContain(
+        'linear-gradient(180deg, var(--night-top) 0%, var(--night-mid) 55%, var(--sky-hold) 88%, var(--sky-hold) 100%)',
+      );
+      expect(html).toMatch(/background-size:\s*100% 100vh/);
+      expect(html).toMatch(/background-repeat:\s*no-repeat/);
+      expect(html.match(/linear-gradient\(/g)).toHaveLength(1);
+      const base = blockAt(css, css.indexOf('@layer base')).body;
+      const body = blockAt(base, base.indexOf('body {')).body;
+      expect(body).not.toMatch(/bg-background|background/);
+    });
+
+    it('draws grain over vignette on #root::after, absolute and page-high (24.3)', () => {
+      const body = ruleBody('#root::after');
+      expect(body).toMatch(/position:\s*absolute/);
+      expect(body).toMatch(/top:\s*0;/);
+      expect(body).toMatch(/bottom:\s*0;/);
+      expect(body).toMatch(/left:\s*0;/);
+      expect(body).toMatch(/right:\s*0;/);
+      expect(body).toMatch(/z-index:\s*-1/);
+      expect(body).toMatch(/pointer-events:\s*none/);
+      expect(body.indexOf('feTurbulence')).toBeGreaterThan(-1);
+      expect(body.indexOf('feTurbulence')).toBeLessThan(body.indexOf('var(--vignette-alpha)'));
+    });
+
+    it('makes both mist layers absolute and repeating once per screen-high tile (24.4)', () => {
+      for (const sel of ['body::after', '#root::before']) {
+        const body = ruleBody(sel);
+        expect(body, sel).toMatch(/position:\s*absolute/);
+        expect(body, sel).not.toMatch(/position:\s*fixed/);
+        expect(body, sel).toMatch(/top:\s*0;/);
+        expect(body, sel).toMatch(/bottom:\s*0;/);
+        expect(body, sel).toMatch(/width:\s*200%/);
+        expect(body, sel).toMatch(/background-size:\s*100% 100vh/);
+        expect(body, sel).toMatch(/background-repeat:\s*repeat-y/);
+      }
+    });
+
+    it('clips horizontal overflow on the body, with a hidden fallback before it (24.4)', () => {
+      const base = blockAt(css, css.indexOf('@layer base')).body;
+      const body = blockAt(base, base.indexOf('body {')).body;
+      expect(body).toMatch(/position:\s*relative/);
+      expect(body).toMatch(/overflow-x:\s*hidden;\s*overflow-x:\s*clip;/);
+      // A non-visible html overflow keeps the body value from moving to the viewport,
+      // so the body clips the 200% layers and the document width stays the viewport width.
+      const html = blockAt(base, base.indexOf('html {')).body;
+      expect(html).toMatch(/overflow-x:\s*hidden;\s*overflow-x:\s*clip;/);
+    });
+
+    it('sets no will-change on a Document_Layer (24.4)', () => {
+      expect(css).not.toContain('will-change');
     });
 
     it('keeps the moon halo peak at or below 0.10 and the disc brighter than the halo', () => {

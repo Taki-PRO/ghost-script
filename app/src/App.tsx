@@ -94,13 +94,25 @@ type View =
   | { screen: 'intro'; dataset: CharacterDataset }
   | { screen: 'menu'; dataset: CharacterDataset }
   | { screen: 'graveyard'; dataset: CharacterDataset; history: ReviewHistory; now: number }
-  | { screen: 'credits'; dataset: CharacterDataset }
+  | { screen: 'credits'; dataset: CharacterDataset; origin: 'menu' | 'intro' }
   | { screen: 'cangjie-guide'; dataset: CharacterDataset; }
   | ({ screen: 'seance'; dataset: CharacterDataset; sessionId: number } & SeancePlan)
   | { screen: 'summary'; dataset: CharacterDataset; results: SessionResults };
 
-function Shell({ children, compact = false }: { children: React.ReactNode; compact?: boolean }) {
-  const sizing = compact ? 'no-moon-room min-h-[100dvh] px-2 py-2' : 'min-h-screen px-4 py-6';
+function Shell({
+  children,
+  compact = false,
+  tight = false,
+}: {
+  children: React.ReactNode;
+  compact?: boolean;
+  tight?: boolean;
+}) {
+  const sizing = compact
+    ? 'no-moon-room min-h-[100dvh] px-2 py-2'
+    : tight
+      ? 'min-h-screen px-4 py-2'
+      : 'min-h-screen px-4 py-6';
   return (
     <main className={`${sizing} w-full flex items-center justify-center text-ink`}>
       <div className="w-full max-w-3xl flex flex-col items-center">{children}</div>
@@ -177,8 +189,9 @@ export default function App() {
     case 'intro': {
       const { dataset } = view;
       return (
-        <Shell>
+        <Shell tight>
           <IntroScreen
+            onOpenSources={() => setView({ screen: 'credits', dataset, origin: 'intro' })}
             onBegin={() => {
               setIntroSeen(true);
               setSavingWorks(isSavingWorking());
@@ -201,7 +214,7 @@ export default function App() {
             onOpenGraveyard={() =>
               setView({ screen: 'graveyard', dataset, history: loadState().history, now: Date.now() })
             }
-            onOpenCredits={() => setView({ screen: 'credits', dataset })}
+            onOpenCredits={() => setView({ screen: 'credits', dataset, origin: 'menu' })}
           />
         </Shell>
       );
@@ -220,10 +233,15 @@ export default function App() {
       );
     }
     case 'credits': {
-      const { dataset } = view;
+      const { dataset, origin } = view;
       return (
         <Shell>
-          <Credits onBack={() => setView({ screen: 'menu', dataset })} />
+          <Credits
+            backTo={origin}
+            onBack={() =>
+              setView(origin === 'intro' ? { screen: 'intro', dataset } : { screen: 'menu', dataset })
+            }
+          />
         </Shell>
       );
     }

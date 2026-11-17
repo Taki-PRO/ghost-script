@@ -7,6 +7,7 @@ import { learningOrder } from '../engine/learningOrder';
 import { applyReview } from '../engine/scheduler';
 import type { ReviewHistory } from '../engine/scheduler';
 import { DEFAULT_CONFIG } from '../engine/config';
+import { theme } from '../styles/theme';
 import raw from '../../public/data/characters.json';
 
 const dataset: CharacterDataset = new Map(
@@ -126,6 +127,26 @@ describe('Graveyard', () => {
     const list = screen.getByRole('list', { name: 'Graves' });
     expect(svg.contains(list)).toBe(false);
     expect(container.querySelectorAll('svg')).toHaveLength(1);
+  });
+
+  it('draws the fixed-height hillside with the theme fills and a hillNear ground', () => {
+    show({});
+    const svg = screen.getByTestId('hillside');
+    expect(svg.getAttribute('viewBox')).toBe('0 0 100 48');
+    expect(svg.getAttribute('preserveAspectRatio')).toBe('none');
+    expect(svg.getAttribute('focusable')).toBe('false');
+    for (const cls of ['absolute', 'left-0', 'top-0', 'h-48', 'w-full']) {
+      expect(svg.classList.contains(cls), cls).toBe(true);
+    }
+    const fills = Array.from(svg.querySelectorAll('path')).map((p) => p.getAttribute('fill'));
+    expect(fills).toEqual([theme.hillFar, theme.hillNear]);
+    const wrapper = svg.parentElement as HTMLElement;
+    expect(wrapper.style.backgroundImage).toContain('linear-gradient(');
+    expect(wrapper.style.backgroundImage).toContain('12rem');
+    // jsdom may normalise #161e38 to rgb(22, 30, 56).
+    expect(wrapper.style.backgroundImage.replace(/\s/g, '').toLowerCase()).toMatch(
+      /(#161e38|rgb\(22,30,56\))/,
+    );
   });
 
   it('gives each tablet the tilt class of its position mod 5', () => {

@@ -7,9 +7,16 @@
 @layer base {
   html {
     color-scheme: dark;
+    /* A non-visible value on html stops the body overflow from moving to the
+       viewport, so the body clips the 200% mist layers in its own box. */
+    overflow-x: hidden;
+    overflow-x: clip;
   }
   body {
-    @apply bg-background text-ink;
+    @apply text-ink;
+    position: relative;
+    overflow-x: hidden;
+    overflow-x: clip;
   }
 }
 
@@ -33,6 +40,7 @@
   --night-top: #050813;
   --night-mid: #0a1126;
   --night-low: #12203f;
+  --sky-hold: #101c38;
   --mist: #5b6f9a;
   --moon: #7283ab;
   --candle: #f0b866;
@@ -41,6 +49,9 @@
   --moon-peak-alpha: 0.06;
   --moon-halo-alpha: 0.1;
   --moon-disc-alpha: 0.65;
+  --moon-shade-alpha: 0.35;
+  --moon-shade-offset: 0.5rem;
+  --moon-shade-radius: 1.25rem;
   --moon-size: 4rem;
   --moon-inset-x: 2.5rem;
   --moon-inset-y: 2.5rem;
@@ -48,21 +59,28 @@
   --vignette-alpha: 0.55;
 }
 
+/* Canvas_Sky: the sky is the html background, one screen high, held at
+   --sky-hold below 88% so it covers any page height. The body has no background. */
 html {
   scroll-padding-top: 5rem;
+  background-color: var(--sky-hold);
+  background-image: linear-gradient(180deg, var(--night-top) 0%, var(--night-mid) 55%, var(--sky-hold) 88%, var(--sky-hold) 100%);
+  background-size: 100% 100vh;
+  background-repeat: no-repeat;
 }
 
-/* Night scene: three fixed pseudo-elements, no extra DOM. Decorative only.
-   body::before holds, top to bottom: paper grain (inline SVG noise, alpha 0.03),
-   vignette, moon disc (full disc, --moon-size across, 0.2 rem soft edge), moon
-   halo (peak alpha 0.10, 7 rem), then the sky. The moon is centred
-   --moon-inset-x from the right and --moon-inset-y from the top. Below 992 px
-   #root leaves a top room (--moon-room) so content stays clear of it.
-   body::after (band A, 88% height) and #root::before (band B, 72% height) are
-   the two mist bands, two ellipses each. The vertical extents of the bands
-   (centre plus or minus 70% of the radius, where the gradient ends) never
-   overlap, so at most one band covers a point; index.css.test.ts checks this
-   before it uses one band in each contrast sum. */
+/* Night scene. The sky is on html (above). body::before is the fixed Moon:
+   disc (full disc, --moon-size across, 0.2 rem soft edge) and halo (peak alpha
+   0.10, 7 rem), centred --moon-inset-x from the right and --moon-inset-y from
+   the top of the viewport. Below 992 px #root leaves a top room (--moon-room)
+   so content stays clear of it. The three Document_Layers are absolute and as
+   tall as the page: #root::after (grain over vignette), body::after (mist band
+   A, 88% of each screen-high tile) and #root::before (band B, 72%). The mist
+   layers repeat once per 100vh tile. The vertical extents of the bands (centre
+   plus or minus 70% of the radius, where the gradient ends) never overlap, so
+   at most one band covers a point; index.css.test.ts checks this before it
+   uses one band in each contrast sum. No layer sets will-change: it would
+   promote a page-high layer. */
 body::before {
   content: '';
   position: fixed;
@@ -70,22 +88,22 @@ body::before {
   z-index: 0;
   pointer-events: none;
   background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.93 0 0 0 0 0.9 0 0 0 0 0.84 0 0 0 0.03 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"),
-    radial-gradient(ellipse at center, transparent 55%, rgb(0 0 0 / var(--vignette-alpha)) 100%),
+    radial-gradient(circle var(--moon-shade-radius) at calc(100% - var(--moon-inset-x) + var(--moon-shade-offset)) calc(var(--moon-inset-y) + var(--moon-shade-offset)), rgb(5 8 19 / var(--moon-shade-alpha)) 0, transparent 100%),
     radial-gradient(circle calc(var(--moon-size) / 2) at calc(100% - var(--moon-inset-x)) var(--moon-inset-y), rgb(114 131 171 / var(--moon-disc-alpha)) 0, rgb(114 131 171 / var(--moon-disc-alpha)) calc(var(--moon-size) / 2 - 0.2rem), transparent calc(var(--moon-size) / 2)),
-    radial-gradient(circle 7rem at calc(100% - var(--moon-inset-x)) var(--moon-inset-y), rgb(114 131 171 / var(--moon-halo-alpha)) 0, transparent 100%),
-    linear-gradient(180deg, var(--night-top) 0%, var(--night-mid) 55%, var(--night-low) 100%);
+    radial-gradient(circle 7rem at calc(100% - var(--moon-inset-x)) var(--moon-inset-y), rgb(114 131 171 / var(--moon-halo-alpha)) 0, transparent 100%);
 }
 body::after {
   content: '';
-  position: fixed;
+  position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   width: 200%;
   z-index: 0;
   pointer-events: none;
-  background:
+  background-size: 100% 100vh;
+  background-repeat: repeat-y;
+  background-image:
     radial-gradient(ellipse 30% 9% at 18% 88%, rgb(91 111 154 / var(--mist-a-alpha)), transparent 70%),
     radial-gradient(ellipse 24% 8% at 66% 88%, rgb(91 111 154 / var(--mist-a-alpha)), transparent 70%);
 }
@@ -96,16 +114,31 @@ body::after {
 }
 #root::before {
   content: '';
-  position: fixed;
+  position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   width: 200%;
   z-index: -1;
   pointer-events: none;
-  background:
+  background-size: 100% 100vh;
+  background-repeat: repeat-y;
+  background-image:
     radial-gradient(ellipse 32% 7% at 40% 72%, rgb(91 111 154 / var(--mist-b-alpha)), transparent 70%),
     radial-gradient(ellipse 26% 7% at 88% 72%, rgb(91 111 154 / var(--mist-b-alpha)), transparent 70%);
+}
+#root::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.93 0 0 0 0 0.9 0 0 0 0 0.84 0 0 0 0.03 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"),
+    radial-gradient(ellipse at center, transparent 55%, rgb(0 0 0 / var(--vignette-alpha)) 100%);
 }
 /* Moon_Room: below 992 px every screen leaves room under the moon. The height
    rules keep a min-h-screen screen one viewport tall in total. */
@@ -405,11 +438,9 @@ body::after {
   }
   body::after {
     animation: mist-drift-a 120s linear infinite alternate;
-    will-change: transform;
   }
   #root::before {
     animation: mist-drift-b 180s linear infinite alternate;
-    will-change: transform;
   }
   .menu-figure {
     animation: ghost-float 4s ease-in-out infinite alternate;

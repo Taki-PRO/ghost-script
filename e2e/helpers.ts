@@ -12,6 +12,8 @@ import { pickWalkthroughGhost } from '../app/src/engine/walkthrough';
 // layers add nothing to the document scroll width. `findOverflow` therefore
 // does not inspect pseudo-elements.
 
+export { luminance, luminanceRatio, type Rgb } from './colour';
+
 export const STORAGE_KEY = 'ghost-script:state';
 export const START = '/ghost-script/';
 
@@ -384,4 +386,89 @@ export async function layToRestClean(page: Page, character: string): Promise<voi
     await page.waitForTimeout(150);
   }
   await expect(page.getByRole('img', { name: `Seal: ${character}` })).toBeVisible({ timeout: 15_000 });
+}
+
+// ---------------------------------------------------------------------------
+// Ink wait and full-page pixels (Requirements 20.9, 24.7, 25.3, 25.9).
+// ---------------------------------------------------------------------------
+
+/**
+ * Waits until every animation of `blockquote.ink-reveal` has finished, then
+ * fails unless all play states are `finished`. Resolves at once when the
+ * blockquote has no animation (reduced motion). Fails when there is no blockquote.
+ */
+export async function waitForInkReveal(page: Page): Promise<void> {
+  await page.evaluate(async () => {
+    const q = document.querySelector('blockquote.ink-reveal');
+    if (!q) throw new Error('blockquote.ink-reveal not found');
+    await Promise.all(q.getAnimations().map((a) => a.finished));
+  });
+  const states = await page.evaluate(() =>
+    Array.from(document.querySelector('blockquote.ink-reveal')?.getAnimations() ?? []).map((a) => a.playState),
+  );
+  expect(states.every((s) => s === 'finished'), `animation states: ${states.join(', ')}`).toBe(true);
+}
+
+/**
+ * Colour of a PNG at each point (image pixels, origin top left). Decodes the
+ * buffer in a second page with `createImageBitmap` and a canvas; no dependency.
+ */
+export async function pixelsAt(
+  page: Page,
+  png: Buffer,
+  points: readonly { readonly x: number; readonly y: number }[],
+): Promise<Array<[number, number, number]>> {
+  const decoder = await page.context().newPage();
+  try {
+    return await decoder.evaluate(
+      async ({ base64, points }) => {
+        const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+        const bitmap = await createImageBitmap(new Blob([bytes], { type: 'image/png' }));
+        const canvas = document.createElement('canvas');
+        canvas.width = bitmap.width;
+        canvas.height = bitmap.height;
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        if (!ctx) throw new Error('no 2d context');
+        ctx.drawImage(bitmap, 0, 0);
+        return points.map(({ x, y }): [number, number, number] => {
+          if (x < 0 || y < 0 || x >= bitmap.width || y >= bitmap.height) {
+            throw new Error(`point ${x},${y} is outside the ${bitmap.width} x ${bitmap.height} image`);
+          }
+          const d = ctx.getImageData(Math.floor(x), Math.floor(y), 1, 1).data;
+          return [d[0]!, d[1]!, d[2]!];
+        });
+      },
+      { base64: png.toString('base64'), points: points.map((p) => ({ x: p.x, y: p.y })) },
+    );
+  } finally {
+    await decoder.close();
+  }
+}
+
+/**
+ * Seeds one at-rest, one restless and one gave-up character (the first three of
+ * the learning order), opens the Graveyard and waits for the fonts. No App hook.
+ */
+export async function seedGraveyard(
+  page: Page,
+): Promise<{ at: string; restless: string; gaveUp: string; total: number }> {
+  const farFuture = 32_503_680_000_000;
+  const keys = learningOrder(datasetMap());
+  const [a, b, c] = keys;
+  expect(c, 'characters.json has fewer than three characters').toBeDefined();
+  await seed(
+    page,
+    seedState({
+      history: {
+        [a as string]: { step: 3, lastOutcome: 'clean', nextDue: farFuture },
+        [b as string]: { step: 0, lastOutcome: 'struggled', nextDue: 0 },
+        [c as string]: { step: 0, lastOutcome: 'gave-up', nextDue: 0 },
+      },
+    }),
+  );
+  await page.goto(START);
+  await page.getByRole('button', { name: 'Graveyard' }).click();
+  await expect(page.getByRole('heading', { level: 1, name: 'Graveyard' })).toBeVisible();
+  await page.evaluate(() => document.fonts.ready);
+  return { at: a as string, restless: b as string, gaveUp: c as string, total: keys.length };
 }

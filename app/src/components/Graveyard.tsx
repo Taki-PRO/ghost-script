@@ -5,6 +5,10 @@ import type { Grave, GraveState } from '../engine/graveyard';
 import { learningOrder } from '../engine/learningOrder';
 import type { ReviewHistory } from '../engine/scheduler';
 import { tabletTiltIndex } from '../engine/tabletTilt';
+import { theme } from '../styles/theme';
+
+/** Height of the Hillside svg: three rows of tablets at 4 rem (`h-48`). */
+const HILL_HEIGHT_REM = 12;
 
 export interface GraveyardProps {
   dataset: CharacterDataset;
@@ -91,17 +95,22 @@ export function Graveyard({ dataset, history, now, onBack }: GraveyardProps) {
             No ghost has been met yet. Begin a séance to wake the first one.
           </p>
         )}
-        <div className="relative isolate overflow-hidden rounded-md">
+        <div
+          className="relative isolate overflow-hidden rounded-md"
+          style={{
+            backgroundImage: `linear-gradient(to bottom, transparent ${HILL_HEIGHT_REM}rem, ${theme.hillNear} ${HILL_HEIGHT_REM}rem)`,
+          }}
+        >
           <svg
             aria-hidden="true"
             focusable="false"
-            viewBox="0 0 100 100"
+            viewBox="0 0 100 48"
             preserveAspectRatio="none"
-            className="absolute inset-0 h-full w-full"
+            className="absolute left-0 top-0 h-48 w-full"
             data-testid="hillside"
           >
-            <path d="M0 62 C20 48 38 58 56 46 C74 36 88 50 100 42 L100 100 L0 100 Z" fill="#161a24" />
-            <path d="M0 80 C18 70 34 78 52 70 C72 62 86 74 100 68 L100 100 L0 100 Z" fill="#0f1118" />
+            <path d="M0 22 C18 14 34 22 52 16 C72 10 88 18 100 14 L100 48 L0 48 Z" fill={theme.hillFar} />
+            <path d="M0 36 C20 28 36 34 54 28 C74 22 88 32 100 26 L100 48 L0 48 Z" fill={theme.hillNear} />
           </svg>
           <ul
             aria-label="Graves"

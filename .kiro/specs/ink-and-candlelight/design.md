@@ -442,6 +442,187 @@ The eight PNGs of Requirement 20 are retaken after the work above (task 12.9). T
 - **Mist is subtle in a screenshot.** A band with a peak alpha of 0.18 of `#5b6f9a` over a dark navy sky is visible but quiet; stronger values fail `success` at 4.5:1. If the human wants it stronger, the cost is a lighter-weight `success` mark in the lower third, not a lower threshold.
 - **Content passing behind the Moon while scrolled** (see Moon).
 
+## Follow-up: intro fix (approved by the human)
+
+The human reviewed the intro and asked for five changes. Requirements 23 to 25, the criteria 20.9 and 20.10 and the amendments marked "intro fix" carry them. All numbers below were measured on the committed build (`app/dist`, Chromium, Playwright 1.65.1), by injecting the changed layout into the live page; the tasks re-measure on the real code. This work changes no engine rule, no dataset and no storage.
+
+### 1. The intro fits one screen
+
+**Why it does not fit today.** Measured at `introSeen: false`: the document is 873 px tall at 1024 × 768, 1185 px at 375 × 812 and 1379 px at 320 × 640, and "Begin the Séance" ends at 809, 1121 and 1315 px. Three causes add up:
+
+1. Two citations: the sources line (60, 120 and 120 px) and the full legend citation in the caption (80, 128 and 160 px).
+2. A nested `min-h-screen`. `App` wraps the screen in `Shell` (`<main class="min-h-screen px-4 py-6">`) and `IntroScreen` is itself a `<main class="min-h-screen py-10">`. The inner `100vh` plus the 48 px of `Shell` padding makes the page at least 100vh + 48 px tall, so even a short intro scrolls. (The Start_Menu and the Sources_Screen use the same nesting; the human did not ask about them and this design leaves them alone.)
+3. Width: the two paddings (`px-4` of `Shell`, `px-6` of the screen) leave 240 px of text width at 320 px, so each paragraph wraps to five or six lines.
+
+**Prototype results** (page height `sh`, bottom of the button, bottom of the link; viewport height in brackets). A: citations removed, nesting fixed, link added, nothing shrunk. D3: the design below.
+
+| Viewport | A: button bottom | A: page height | D3: button bottom | D3: link bottom | D3: page height |
+|---|---|---|---|---|---|
+| 1024 × 768 | 649 | 768 | 586 | 630 | 768 |
+| 375 × 812 | 789 | 845 | 658 | 702 | 812 |
+| 320 × 640 | 951 | 1007 | 583 | 627 | 640 |
+
+So removing the citations alone is enough at 1024 × 768 and just enough for the button (not the page) at 375 × 812, and falls 311 px short at 320 × 640. D3 fits all three, with 13 px to spare at 320 × 640.
+
+**Decision (D3).**
+
+| Part | Today | New |
+|---|---|---|
+| `Shell` for the intro | `min-h-screen px-4 py-6` | `min-h-screen px-4 py-2` through a new `tight` prop; the Moon_Room rules are unchanged |
+| `IntroScreen` root | `main`, `min-h-screen`, `px-6 py-10` | `main`, no `min-height`, no padding of its own (`Shell` gives them) |
+| Ghost | `h-24 w-20`, `mb-4` | `h-12 w-10` below 640 px, `h-24 w-20` from 640 px; `mb-1` |
+| `h1` | `text-5xl`, `mt-2` | `text-4xl` (2.25rem) below 640 px, `text-5xl` from 640 px; line height 1.1; `mt-1` |
+| Two paragraphs | `text-lg`, `mt-6` and `mt-4` | `text-base leading-snug sm:text-lg`; `mt-2` below 640 px, as now from 640 px |
+| Legend slip | `mt-8`, `px-5 py-5`, English `text-base`, caption `text-sm` | `mt-3 sm:mt-8`, `px-4 py-2.5 sm:py-5`; the Legend_Line stays 30 px (36 px from 640 px, Requirement 9.9), the English line and the caption keep their sizes |
+| Citations | two long blocks | removed |
+| Button | `mt-10` | `mt-2 sm:mt-10`, `py-2 sm:py-3`; still `min-h-[44px]`, still the one `slip-primary` |
+| Sources_Link | none | below the button, `inline-flex min-h-[44px] items-center`, underlined, `text-sm text-ghost`; an `<button type="button">` with the link look, so that it is a real control of at least 44 px for touch (a text-only inline link would be below the 44 px rule for buttons) |
+
+Requirement 9.1 changes with this: the title is 2.25rem below 640 px (it was "at least 3rem" everywhere). At 36 px "Ghost Script" fits on one line at 320 px (39 px high); at 48 px it wraps to two lines (96 px), which costs 57 px. No other content is dropped.
+
+**If the real build still misses at 320 × 640.** Shrink in this order and re-measure after each step, never touching the Legend_Line size or any text: (1) ghost `h-10 w-8`; (2) slip padding `py-2`; (3) caption `text-xs`; (4) paragraph line height `leading-tight`. The 13 px of spare height at 320 × 640 is the margin; the fit test fails if the page is taller than the viewport, so the margin is checked, not assumed.
+
+**Where the link goes and why.** Two alternatives were measured: the link inline at the end of the caption (D1, 16 px of spare height at 320 × 640) and a separate row of 28 px (D2, 12 px spare). A separate row of 44 px (D3) keeps the caption sentence as it is, keeps the link visible on every size and meets the 44 px target rule. It costs 16 px more than D2 and still fits.
+
+**Content accuracy.** The two removed lines are citations, not claims. The claim "In Chinese legend, Cangjie invented writing" and the Huainanzi line stay on the intro; their citations are on the Sources_Screen (`Cangjie` section with `CANGJIE_CITATIONS`; `The legend` section with `LEGEND_SOURCE.citation`), reached by one tap on "Sources". `content-accuracy.md` gets a short section saying so (task 15.1). The caption sentence "The Huainanzi records this line about the time Cangjie created writing." stays, so the attribution is still on the intro.
+
+### 2. Navigation: Sources from the intro
+
+The App `View` union changes in one place:
+
+```ts
+| { screen: 'credits'; dataset: CharacterDataset; origin: 'menu' | 'intro' }
+```
+
+- The menu opens it with `origin: 'menu'`; the intro opens it with `origin: 'intro'` through the new `IntroScreen` prop `onOpenSources: () => void`.
+- `Credits` gets the prop `backTo: 'menu' | 'intro'` (default `'menu'`, so every existing caller and test is unchanged). It sets the button text and `aria-label` to "Back to menu" or "Back to the intro". The App's `onBack` returns to `{ screen: 'menu', dataset }` or `{ screen: 'intro', dataset }` by `origin`.
+- Nothing in this path calls `setIntroSeen`: `introSeen` is written only by `onBegin`, as today. A player who opens "Sources" from the first-ever intro and goes back still has `introSeen: false`, and a reload shows the intro again. `App.test.tsx` checks the storage value before and after.
+- When the intro was opened from the menu ("Read the legend again"), "Sources" and "Back to the intro" return to that intro, and its "Begin the Séance" behaves as it does today.
+- `useLayoutEffect(scrollToTop)` runs on each `screen` change, so both transitions start at the top. The intro has no scroll state to keep, because it does not scroll.
+- The Sources_Link is a `<button>` (it changes the view; it does not navigate to a URL) with `type="button"`, a visible focus ring from the shared `*:focus-visible` rule and no `slip` or `slip-primary` class, so Requirement 10.3 and 10.7 (one primary per screen) hold.
+
+### 3. The fit test
+
+`e2e/fits-one-screen.spec.ts` gets one new `test.describe` after the existing loop, over the three viewports 1024 × 768, 375 × 812 and 320 × 640. The existing `describe`s, their viewports and their assertions are not touched (the human explicitly allows adding the intro to this file). Per viewport:
+
+```ts
+await seed(page, seedState({ introSeen: false }));
+await page.goto(START);
+const begin = page.getByRole('button', { name: 'Begin the Séance' });
+await expectInside(page, 'Begin the Séance', begin);
+await expectInside(page, 'Sources link', page.getByRole('button', { name: 'Sources' }));
+await expectNoVerticalScroll(page);
+```
+
+`expectInside` already checks visibility and the four edges against `innerWidth` and `innerHeight`. `expectNoVerticalScroll` is stricter than the human's rule (the button inside the viewport) and is the guard against the nested-`min-h-screen` regression: the page height must not exceed the viewport. The measured heights equal the viewport height at all three sizes, so it passes with the design above; if a real device font makes it fail by a few pixels the task may relax this one line, and must say so.
+
+### 4. The night scene covers the full page
+
+**Diagnosis of the flat band.** Measured on the Graveyard (375 × 812, the page is 4,364 px tall; 1024 × 768, 1,936 px):
+
+- `body::before`, `body::after` and `#root::before` are all `position: fixed` (not absolute), and the computed height of `body::before` is the viewport height (812 px, 768 px). Fixed layers paint one viewport-high region at the current scroll position and nothing else.
+- `html` has no background (`rgba(0, 0, 0, 0)`), so the canvas takes the colour of `body`: `bg-background`, `rgb(14, 15, 19)` (`#0e0f13`). Everything the fixed layers do not paint is that flat colour.
+- In a live, scrolled browser window there is **no band**: screenshots at the top and at the bottom of the scroll give the same sky at the same viewport heights (`7,9,14`, `10,14,25`, `12,18,36`, `13,18,32`). The band appears when the page is painted beyond one viewport: a Full_Page_Capture from the top (the sky ends after the first 812 px and the rest is `14,15,19`), a print, and the overscroll area on iOS Safari. I cannot see the human's device, so the design assumes the band was seen in one of these; it is the same cause in each.
+
+So the cause is the first and second candidates together: the layers are sized to the viewport (`inset: 0` on a fixed element) and the canvas colour behind them is the plain `#0e0f13`. `#root::before` being fixed (and not absolute) is not a cause; it has the same viewport size as the others. A test that scrolls the live viewport to the bottom and samples pixels would pass on the current code, so it would not catch the bug. The tests below use a Full_Page_Capture and computed styles.
+
+**Fix.**
+
+| Layer | Today | New |
+|---|---|---|
+| Sky | last background layer of `body::before` (fixed, viewport) | `html` background: `linear-gradient(180deg, nightTop 0%, nightMid 55%, skyHold 88%, skyHold 100%)` at `100% 100vh`, `no-repeat`, on `background-color: skyHold`. The browser paints the root background over the whole canvas, so it covers any page height, any capture and the overscroll area. |
+| `body` background | `bg-background` | none (transparent) |
+| Grain and vignette | first two layers of `body::before` | `#root::after`, `position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: -1`, the grain on top of the vignette (same gradients as now) |
+| Mist A | `body::after`, fixed, 200% wide | absolute, `top: 0; bottom: 0; width: 200%`, `background-size: 100% 100vh`, `background-repeat: repeat-y`; the same two ellipses |
+| Mist B | `#root::before`, fixed, 200% wide | the same change, with its own two ellipses |
+| Moon, halo, Moon_Shade | `body::before`, fixed | unchanged: still `body::before`, fixed, top right of the viewport |
+| `body` | static | `position: relative; overflow-x: clip` |
+
+Why each part:
+
+- **`skyHold` (`#101c38`) and not `nightLow`.** The old sky is a straight line from `nightMid` at 55% to `nightLow` at 100%. Its value at 88% is `#101c38` (16, 28, 56). Holding that colour below the first screen leaves the sky from 0% to 88% exactly as it is (the segment from 55% to 88% lies on the same straight line, so the sky at 72% is unchanged too) and makes the seam-free continuation. Holding `nightLow` instead would put mist band A over `#12203f`, where `success` falls to 4.45:1, below the 4.5:1 rule (computed with the WCAG formula of `theme.ts`: `ink` 9.96, `ghost` 6.20, `error` 9.09, `success` 4.45 on band A over `nightLow`). Over `skyHold` the composites are the ones of the table above (`success` 4.66 on band A). The cost: the last 12% of the first screen no longer brightens towards `nightLow`; the change is at most 8 to 25 levels of blue at the very bottom of a tall, dark screen. `nightLow` stays in the theme (the contrast tests use it as a conservative bound) but is no longer painted as sky. This is a visible consequence of decision Q20.
+- **Tiled mist.** The bands are at 88% and 72% of a viewport-high tile, repeated downward, so every screen height of a long page has both bands in its lower third, and the composites tested for 88% and 72% hold everywhere. The mist therefore scrolls with the page (today it stays on the screen) and repeats about every viewport height. The visible effect on a scrolling screen is a mist band that moves with the content rather than a fixed one; this is a consequence of decision Q20.
+- **Grain and vignette as one Document_Layer.** The grain is a tiled noise, so it covers any height. The vignette is one elliptical gradient over the whole page, so it darkens the page edges with no seam; on a tall page the ellipse is tall and thin, so the side darkening is slightly stronger at mid-height than on one screen. It only darkens, so no contrast value falls.
+- **The Moon stays fixed.** It belongs to the viewport (Requirement 8.3). In a Full_Page_Capture it appears once, at the top. Its known limit (scrolled text can pass behind it, 8.11) is unchanged.
+- **`overflow-x: clip`.** The 200%-wide absolute layers would add a horizontal scrollbar. `clip` hides the overflow without making `body` a scroll container, so `position: sticky` headers keep working (`hidden` could break them). Browsers before Safari 16 do not know `clip`; the e2e `no-horizontal-overflow.spec.ts` is the check, and a fallback `overflow-x: hidden` line before it does the same in older browsers.
+- **No `will-change: transform`.** Today the two mist layers carry it; on a layer as tall as a 4,000 px page it asks the browser to keep a very large texture (about 375 × 2 × 4,364 × 9 pixels at a device pixel ratio of 3). The drift animation of `transform` stays (it is inside the no-preference block) and the browser decides. Risk, below.
+
+**Tests.**
+
+- `index.css.test.ts` (Requirement 24.9): the `html` rule has the gradient with `--sky-hold`, `100% 100vh` and `no-repeat`; `body` has no `background` and `position: relative; overflow-x: clip`; `body::before` has the three Moon layers and no sky, no vignette and no grain `url(`; `#root::after` holds the grain and the vignette; `body::after` and `#root::before` are `position: absolute` with `repeat-y` and `100% 100vh`; no `will-change` on a Document_Layer; `--sky-hold` equals `theme.skyHold`; `skyHold` equals the old sky at 88% within 1 per channel; the sky function of the composite test follows the new gradient and each text token keeps 4.5:1 on band A at 88%, band B at 72%, the halo and the held colour. The composite test's `sky(y)` stays the same for y at or below 88 and returns `skyHold` above 88.
+- `theme.test.ts`: `skyHold` contrast with `ink`, `error`, `ghost`, `muted` and `success` at 4.5:1 (it is the darkest of the held colours, so this is the bound for plain text below the first screen).
+- `e2e/night-scene.spec.ts` (new, Requirement 24.7 and 24.8): at 375 × 812 and 1024 × 768, on the Graveyard (seeded as in `graveyard-fit.spec.ts`) and the Sources_Screen (opened from the menu): confirm the page is taller than the viewport; read the computed styles of Requirement 24.8; take `page.screenshot({ fullPage: true })` from scroll 0; decode it in a second page with `createImageBitmap` and a canvas (no new dependency; the helper is in `e2e/helpers.ts`); check the strip and the three sample points of 24.7. The 8-row limit and the blue tint (`b - r >= 20`) are chosen so that the held sky (`16,28,56`, with the grain adding at most 7 per channel and the vignette darkening at most 55%) passes and the plain colour (`14,15,19`) fails.
+
+**Limit that cannot be removed.** The Full_Page_Capture cannot show the Moon halo or the fixed Moon below the first screen, and the mist drifts, so pixel checks sample the left strip and the held colour only, never the mist.
+
+### 5. The intro screenshots wait for the ink
+
+Chosen: wait on the animations of the `blockquote`, not on an event and not on emulated reduced motion.
+
+```ts
+export async function waitForInkReveal(page: Page): Promise<void> {
+  await page.evaluate(async () => {
+    const q = document.querySelector('blockquote.ink-reveal');
+    if (!q) throw new Error('blockquote.ink-reveal not found');
+    await Promise.all(q.getAnimations().map((a) => a.finished));
+  });
+  const states = await page.evaluate(() =>
+    Array.from(document.querySelector('blockquote.ink-reveal')!.getAnimations()).map((a) => a.playState));
+  expect(states.every((s) => s === 'finished')).toBe(true);
+}
+```
+
+Why not `animationend`: the event fires once and the spec can attach its listener after it has fired (the animation starts at the first render, and `page.goto` resolves later). `getAnimations()` returns the animation in any state, and `finished` resolves at once if it is already finished. Why not reduced-motion emulation: the PNG would then show the experience of a player who asked for no motion, not the default one, and it would not test the animation at all. Under a real reduced-motion setting `getAnimations()` is empty, `Promise.all([])` resolves at once, and the blockquote is fully visible by the static end state. The animation uses `animation-fill-mode: both`, so the final frame (`mask-position: 0% 0`) stays after it ends; the PNG shows the finished line. The helper lives in `e2e/helpers.ts`; both intro tests of `screenshots.spec.ts` (the PNG at two sizes and the 320 × 640 moon check) call it before `expectMoonInside` and `save`.
+
+### 6. The Moon is shaded
+
+**Decision.** One more gradient layer on `body::before`, above the disc:
+
+```css
+--moon-shade-alpha: 0.35;
+--moon-shade-offset: 0.5rem;   /* down and to the right of the disc centre */
+--moon-shade-radius: 1.25rem;
+
+radial-gradient(circle var(--moon-shade-radius)
+    at calc(100% - var(--moon-inset-x) + var(--moon-shade-offset)) calc(var(--moon-inset-y) + var(--moon-shade-offset)),
+  rgb(5 8 19 / var(--moon-shade-alpha)) 0, transparent 100%)
+```
+
+A dark blob off-centre toward the lower right (the light comes from the upper left), faded to nothing at its edge. It stays inside the disc because the offset along the diagonal is 0.5 × √2 = 0.71 rem and the blob radius is 1.25 rem: 0.71 + 1.25 = 1.96 rem, under the disc radius of 2 rem, so the shade never darkens the halo or the sky outside the disc. The colour is the `nightTop` ink (`rgb(5 8 19)`), the same ink as the sky.
+
+**Contrast.** The shade only darkens the disc, so light text gets more contrast where the shade is, and the lightest point keeps the value it has now. Computed in paint order (sky at 2%, halo 0.10, disc 0.65, shade, grain 0.03): lightest point `(84, 96, 126)`, `ink` 5.00:1 and `error` 4.56:1; darkest point `(59, 68, 91)`, `ink` 7.81:1 and `error` 7.13:1. The ratio between the lightest and the darkest point is 1.56:1, so the shading is visible and the unit threshold of 1.25:1 has margin. No text lies on the disc (Requirement 8.12), so these numbers are the safety bound of 8.13, not a reading condition.
+
+**Tests.** `index.css.test.ts`: the three custom properties exist; the shade layer is in `body::before` and is the first moon layer (above the disc); geometry (offset × √2 + radius at most `--moon-size / 2`); `ink` and `error` at 4.5:1 at the lightest and the darkest points; the lightest-to-darkest ratio at least 1.25:1. The e2e pixel check of Requirement 25.3 reads the intro screenshot at the two points. The pixel check uses 1.2 (below the computed 1.56) because the grain, the 0.2 rem soft edge and anti-aliasing blur the sampled pixel.
+
+### 7. The Hillside is visible behind the first rows
+
+**Why it is not visible today.** The ridge SVG is `absolute inset-0` over the whole grid wrapper (about 1,400 px at 375 px wide) with `preserveAspectRatio="none"`, so its crest, at 46% of the height, lies about 650 px below the first row, and its fill (`#161a24`, `#0f1118`) is barely lighter than the sky there (a ratio of about 1.1 on the sky near the top). The first rows show plain sky.
+
+**Decision.**
+
+- A new constant `HILL_HEIGHT_REM = 12` (192 px, three rows of tablets at 64 px each). The SVG is `absolute left-0 top-0 h-48 w-full` (`12rem`), `viewBox="0 0 100 48"`, `preserveAspectRatio="none"`.
+- Far ridge: `M0 22 C18 14 34 22 52 16 C72 10 88 18 100 14 L100 48 L0 48 Z`, fill `theme.hillFar`. Crest about 12 of 48 units = 25% = 48 px, which is behind the first row (the row occupies 12 to 68 px of the wrapper).
+- Near ridge: `M0 36 C20 28 36 34 54 28 C74 22 88 32 100 26 L100 48 L0 48 Z`, fill `theme.hillNear`. Crest about 25 of 48 units = 52% = 100 px, behind the second row (76 to 132 px).
+- The wrapper (`relative isolate overflow-hidden rounded-md`) gets `style={{ backgroundImage: 'linear-gradient(to bottom, transparent 12rem, hillNear 12rem)' }}`, so the ground below the SVG is `hillNear` down to the last row and joins the SVG's bottom edge (also `hillNear`) with no seam. The SVG and the paths keep `aria-hidden`, `focusable="false"` and `data-testid="hillside"`.
+- New theme tokens `hillFar: '#202c4c'` and `hillNear: '#161e38'`. Computed: far ridge against the sky at 30% of the viewport (the sky at the crest) 1.41:1, near ridge against far 1.20:1. The thresholds are 1.3:1 and 1.1:1 (Requirement 25.6). The 3:1 of graphics does not apply: the hill carries no information and is `aria-hidden`; 1.4:1 is a visible silhouette that does not compete with the tablets.
+- Tablets on the hill: the stone `#1d2028` to `#2a2d36` is as light as `hillNear` (1.01:1 at the bottom), but the tablets keep their solid, dashed or no border, their markers and their shadows, so the three states stay told apart by shape, marker and name (Requirement 15.6). The `unmet` blank stone `#14161c` is 1.10:1 against `hillNear`, better than the 1.04 it has on the old ground, so it is slightly easier to see, not harder.
+- `index.css` is not touched by this task. If `index.css.test.ts` turns out to require every theme token to be mirrored as a custom property, the task adds the two tokens to the mirror test's exemption list instead of editing `index.css` (so that no wave has two tasks on that file).
+
+**Measurable checks.**
+
+- `theme.test.ts`: the two ratios above, computed with `contrastRatio` from the tokens (`hillFar` vs the sky colour at 30% from `nightTop` and `nightMid`).
+- `Graveyard.test.tsx`: the SVG has `viewBox="0 0 100 48"`, the two paths use the theme fills (no literal colour in the component source, checked by reading the fill attributes against `theme.hillFar` and `theme.hillNear`), the wrapper's background image names `hillNear`, the SVG has no `text` and keeps `aria-hidden`.
+- `e2e/graveyard-fit.spec.ts` (Requirement 25.8 and 25.9), at 375 × 812 and 1024 × 768: (a) the SVG box contains the vertical extent of the first row of tablets (the tablets whose `top` equals the first tablet's `top`); (b) the far ridge path's `getBoundingClientRect().top` lies between the first row's top and the second row's bottom; (c) the existing "hillside sits behind the grid" test (paint order) still passes, with its coverage assertion now targeting the hill wrapper instead of the SVG (approved by the human); (d) pixel sample in the 12 px left padding strip, 3 px inside the wrapper, one row above and one below the left end of the far ridge (`y = svgTop + 22 / 48 × svgHeight`; at x = wrapper.left + 3 the ridge y is measured with `getPointAtLength` on the path instead of the fixed 22/48 formula, because the curve already rises by that x): the lower pixel is at least 1.2 times as luminous as the upper one (computed 1.41, margin for grain).
+
+### Risks and what may not be achievable
+
+- **Fit at 320 × 640** has 13 px of spare height in the prototype. A different font load or a rounding difference could remove it; the fallback order above has four more steps that save about 35 px, never touching the Legend_Line.
+- **Page-height layers on phones.** Three absolute layers (two mist layers 200% wide, one grain layer) as tall as the page may use much texture memory on a low-end phone and make scrolling on a 4,000 px Graveyard heavier. The design removes `will-change`, but it cannot prove the cost without a device. Fallback if the human sees jank: keep the two mist layers `position: fixed` (live behaviour, as today) and tile only the sky and the grain; the e2e of Requirement 24 then excludes mist from the full-page check and keeps the computed-style check for the other layers.
+- **Mist scrolls with the page** instead of staying fixed (decision Q20). It is the price of covering the full page height with one mechanism that works in every capture.
+- **The last 12% of the first screen** no longer brightens to `nightLow`.
+- **Section 1** changes the title size below 640 px (Requirement 9.1).
+- **The flat band was not reproduced in a live browser window**; it was reproduced in a Full_Page_Capture. If the human saw it in a live window on a device I cannot measure, the Canvas_Sky still covers that case (the canvas is painted by the browser everywhere), but I cannot confirm that was the case.
+
 ## Conflicts with existing requirements
 
 Each row names the existing requirement, how the direction conflicts, the resolution, and the decision that settles it. The human approved the resolution of every row that names a decision (Q1 to Q13, see "Decisions"), where "default" in a row now means the approved choice and "Option" names the alternative that was not chosen.
@@ -487,6 +668,13 @@ Each row names the existing requirement, how the direction conflicts, the resolu
 | C37 | Requirement 15.1 (hillside from CSS gradients) and the dashed `unmet` square | The human wants a hillside silhouette and blank stone. | Inline SVG hillside, arched tablets with a fixed tilt, `unmet` without a dotted border. | Q16 |
 | C38 | Requirement 6.1 (flat fill) | The human wants an ink wash. | Tone gradient, darker wash layer and blurred hem; the favicon stays flat. | Q17 |
 | C39 | `IntroScreen` grey box (`bg-surface`) and `text-ghost`, `text-muted` | The human wants a paper slip. | `card-slip` with an ink-on-paper line at 30 and 36 px; the mask moves to the blockquote. | Q18 |
+| C40 | Requirement 9.1: `h1` of at least 3rem | At 320 × 640 the intro does not fit with a 3rem title that wraps to two lines. | 2.25rem below 640 px, 3rem from 640 px. | Q19 |
+| C41 | Requirement 9.2 and `content-accuracy.md`: the intro shows the attribution and the Cangjie sources | The intro does not fit with two long citations. | The intro shows the caption sentence and a "Sources" link; the citations stay on the Sources_Screen; `content-accuracy.md` records that the link satisfies the citation rule. | Q19 |
+| C42 | Requirement 8.4 and 8.8: two fixed mist layers; no new element | Fixed layers paint one viewport-high region, so a Full_Page_Capture shows a flat band below the first screen. | Mist, grain and vignette become Document_Layers (absolute, page height, tiled per viewport); the sky is the Canvas_Sky (`html` background). `#root::after` is the new pseudo-element. | Q20 |
+| C43 | The sky above 88% of the first screen: `nightMid` to `nightLow` | `nightLow` held below the first screen puts `success` at 4.45:1 on mist band A. | The gradient is held at `skyHold` (`#101c38`, its value at 88%); the first 88% is unchanged. | Q20 |
+| C44 | Requirement 19.4: `fits-one-screen.spec.ts` unchanged | The intro needs a fit test. | The human explicitly allows adding the intro tests; existing checks unchanged. | Q21 |
+| C45 | Requirement 8.3 and 8.13: a flat disc | The human wants a disc that reads as a moon. | Moon_Shade layer; contrast tested at the lightest and the darkest point. | Q22 |
+| C46 | Requirement 15.11: Hillside in tones darker than `surface`, stretched over the grid | The hill is invisible behind the first rows. | Lighter ridge tokens, a fixed-height SVG at the top of the grid, a measured contrast and position. | Q23 |
 
 ## Error Handling
 
@@ -514,6 +702,7 @@ Property-based testing does not apply. The feature is presentation: tokens, CSS,
 - **Font pipeline:** `collectGlyphSet`, `missingGlyphs` and `unicodeRange` as pure functions with fixtures; the committed `glyph-set.txt` equals the set computed from the repo; the committed subset's SHA-256 equals the Font_Sources_File; `FONTS` equals the README entry; the notices file contains the OFL text.
 - **E2E:** `fits-one-screen` and `no-horizontal-overflow` keep their thresholds; `screenshots.spec.ts` writes four views at two viewports.
 - **Accuracy:** the `accuracy-reviewer` agent runs over copy, cultural-care rules, the font licence text and the Seal_Stamp (its "Seal: " label, its glyph source and the check that no seal exists before a clean outcome).
+- **Intro fix:** `IntroScreen.test.tsx` (no `http`, the "Sources" button calls `onOpenSources`, no primary class on it, the caption sentence), `App.test.tsx` (origin `intro` and `menu`, back labels, `introSeen` unchanged), `Credits.test.tsx` (back labels, both citations present), `index.css.test.ts` (Canvas_Sky, Document_Layers, `skyHold`, the composites over the new sky, the Moon_Shade geometry and contrast), `theme.test.ts` (`skyHold`, `hillFar`, `hillNear`), `Graveyard.test.tsx` (hill geometry and fills). E2E: the intro fit in `fits-one-screen.spec.ts`, the full-page sky in the new `night-scene.spec.ts`, the Moon shade pixels in `night-scene.spec.ts`, the hill in `graveyard-fit.spec.ts`, and `waitForInkReveal` in `screenshots.spec.ts`. No property-based test and no mutation test (decision of Nov 15).
 
 ## Decisions
 
@@ -537,3 +726,8 @@ All decisions below are approved by the human. Q1 to Q13 were open questions; ea
 16. **Q16. Graveyard (screenshot review).** Approved by the human. Inline SVG hillside, arched stone tablets, a fixed five-value tilt by position modulo 5, `unmet` as blank dark stone.
 17. **Q17. Ghost (screenshot review).** Approved by the human. Ink wash with a tone gradient, a darker wash layer and a blurred hem; the favicon stays flat and unfiltered.
 18. **Q18. Intro legend (screenshot review).** Approved by the human. Paper slip, ink-on-paper line at 30 px and 36 px, the wipe on the blockquote.
+19. **Q19. Intro fits one screen (intro fix).** Approved by the human. The two citations leave the intro; one "Sources" link opens the Sources_Screen; "Back" returns to the intro and `introSeen` is not set; the intro takes the layout of section 1 (title 2.25rem below 640 px, a Shell with 0.5rem of vertical padding, no nested `min-h-screen`).
+20. **Q20. Full-page night scene (intro fix).** Approved by the human. Canvas_Sky on `html` held at `skyHold`; grain and vignette in `#root::after`; mist as tiled Document_Layers; the Moon stays fixed. Consequences: the mist scrolls with the page, and the last 12% of the first screen no longer brightens.
+21. **Q21. Fit test (intro fix).** Approved by the human. The intro is added to `e2e/fits-one-screen.spec.ts` at 1024 × 768, 375 × 812 and 320 × 640; the existing checks stay unchanged.
+22. **Q22. Moon shade (intro fix).** Approved by the human. One off-centre dark patch, peak alpha 0.35; the disc composite keeps 4.5:1 for `ink` and `error` at its lightest and darkest points.
+23. **Q23. Visible Hillside (intro fix).** Approved by the human. Tokens `hillFar` and `hillNear`, a 12 rem SVG at the top of the grid, a measured contrast of 1.3:1 and 1.1:1, a crest behind the first two rows.

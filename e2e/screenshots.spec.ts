@@ -14,6 +14,7 @@ import {
   seedBefore,
   seedState,
   visibleInkPaths,
+  waitForInkReveal,
   type SeedState,
 } from './helpers';
 
@@ -85,6 +86,7 @@ for (const vp of VIEWPORTS) {
       await seed(page, seedState({ introSeen: false }));
       await page.goto(START);
       await expect(page.getByRole('button', { name: 'Begin the Séance' })).toBeVisible();
+      await waitForInkReveal(page);
       await expectMoonInside(page, 'intro');
       await save(page, 'intro');
     });
@@ -133,6 +135,7 @@ test.describe('moon at 320 x 640', () => {
     await seed(page, seedState({ introSeen: false }));
     await page.goto(START);
     await expect(page.getByRole('button', { name: 'Begin the Séance' })).toBeVisible();
+    await waitForInkReveal(page);
     await expectMoonInside(page, 'intro 320');
   });
 

@@ -32,6 +32,15 @@ describe('art-direction steering file', () => {
     expect(text).toMatch(/seal sits in the paper margin and covers no stroke/);
   });
 
+  it('has the intro-fix rules (approved by the human)', () => {
+    expect(text).toMatch(/Moon disc has a soft off-centre shade, darker toward the lower right/);
+    expect(text).toMatch(/night sky, the grain and the mist cover the full page height/);
+    expect(text).toMatch(/mist repeats once per screen-high tile/);
+    expect(text).toMatch(/intro shows no raw citation/);
+    expect(text).toMatch(/small "Sources" link/);
+    expect(text).toMatch(/not a Primary_Action/);
+  });
+
   it('keeps the Primary_Action table', () => {
     expect(text).toContain('| Intro | Begin the Séance |');
     expect(text).toContain('| Summary | Begin another Séance |');

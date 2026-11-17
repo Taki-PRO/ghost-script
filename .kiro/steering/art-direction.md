@@ -55,6 +55,11 @@ One original ink-wash ghost: a brushed silhouette with bleeding edges, one inlin
 - The Mist has two bands in the lower third: 0.18 at 88% and 0.10 at 72%. Text keeps 4.5:1 on each band.
 - The seal sits in the paper margin and covers no stroke.
 
+## Intro fix (approved by the human)
+- The Moon disc has a soft off-centre shade, darker toward the lower right. Text on it keeps 4.5:1.
+- The night sky, the grain and the mist cover the full page height on screens that scroll. The mist repeats once per screen-high tile.
+- The intro shows no raw citation. One small "Sources" link opens the Sources & licences screen. It is a paper slip, not a Primary_Action; the intro's Primary_Action stays "Begin the Séance".
+
 ## Motion
 - Motion that follows a player action or game event runs 200 to 600 ms and shows cause and effect.
 - Ambient exemption (approved by the human, Q2): the two mist bands, the idle ghost float, the idle candle glow and the wisp of a restless tablet. They have no cause and may be slow. They are named here and nowhere else.

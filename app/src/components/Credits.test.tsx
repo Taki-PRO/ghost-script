@@ -14,7 +14,7 @@ function text(): string {
 
 describe('Credits', () => {
   it('shows every data source with name, version, use, licence and URL as text', () => {
-    render(<Credits onBack={() => {}} />);
+    render(<Credits onBack={() => {}} backTo="menu" />);
     const t = text();
     for (const s of DATA_SOURCES) {
       for (const v of [s.name, s.version, s.use, s.licence, s.url]) expect(t).toContain(v);
@@ -22,13 +22,13 @@ describe('Credits', () => {
   });
 
   it('states the combined-work note and the MIT code licence', () => {
-    render(<Credits onBack={() => {}} />);
+    render(<Credits onBack={() => {}} backTo="menu" />);
     expect(text()).toContain(COMBINED_WORK_NOTE);
     expect(text()).toContain(`licensed ${CODE_LICENCE}`);
   });
 
   it('shows the legend line, the citation and that the English is our own', () => {
-    render(<Credits onBack={() => {}} />);
+    render(<Credits onBack={() => {}} backTo="menu" />);
     const zh = screen.getByText(LEGEND_SOURCE.zh);
     expect(zh).toHaveAttribute('lang', 'zh');
     expect(text()).toContain(LEGEND_SOURCE.english);
@@ -37,7 +37,7 @@ describe('Credits', () => {
   });
 
   it('shows both Wikipedia titles and URLs as text', () => {
-    render(<Credits onBack={() => {}} />);
+    render(<Credits onBack={() => {}} backTo="menu" />);
     for (const c of CANGJIE_CITATIONS) {
       expect(text()).toContain(c.title);
       expect(text()).toContain(c.url);
@@ -45,7 +45,7 @@ describe('Credits', () => {
   });
 
   it('shows the font entry and the installed-fonts sentence', () => {
-    render(<Credits onBack={() => {}} />);
+    render(<Credits onBack={() => {}} backTo="menu" />);
     for (const f of FONTS) {
       expect(text()).toContain(f.name);
       expect(text()).toContain(f.licence);
@@ -57,7 +57,7 @@ describe('Credits', () => {
   });
 
   it('shows every Software row with name, version and licence', () => {
-    render(<Credits onBack={() => {}} />);
+    render(<Credits onBack={() => {}} backTo="menu" />);
     const heading = screen.getByRole('heading', { name: 'Software' });
     const section = heading.closest('section') as HTMLElement;
     for (const p of SOFTWARE_CREDITS) {
@@ -68,7 +68,7 @@ describe('Credits', () => {
   });
 
   it('has exactly one link, to the notices file under the base URL', () => {
-    const { container } = render(<Credits onBack={() => {}} />);
+    const { container } = render(<Credits onBack={() => {}} backTo="menu" />);
     const anchors = container.querySelectorAll('a');
     expect(anchors).toHaveLength(1);
     const href = anchors[0].getAttribute('href') ?? '';
@@ -78,14 +78,14 @@ describe('Credits', () => {
   });
 
   it('names the heading and the landmark "Sources & licences" and never says Credits', () => {
-    render(<Credits onBack={() => {}} />);
+    render(<Credits onBack={() => {}} backTo="menu" />);
     expect(screen.getByRole('heading', { level: 1, name: 'Sources & licences' })).toBeInTheDocument();
     expect(screen.getByRole('main', { name: 'Sources & licences' })).toBeInTheDocument();
     expect(text()).not.toMatch(/\bcredits\b/i);
   });
 
   it('has one Back to menu button, in the same sticky header as the h1', () => {
-    render(<Credits onBack={() => {}} />);
+    render(<Credits onBack={() => {}} backTo="menu" />);
     const buttons = screen.getAllByRole('button', { name: 'Back to menu' });
     expect(buttons).toHaveLength(1);
     const h1 = screen.getByRole('heading', { level: 1 });
@@ -126,7 +126,7 @@ describe('Credits', () => {
     }
 
     it('renders both layouts: tables hidden below sm, card lists hidden from sm', () => {
-      const { container } = render(<Credits onBack={() => {}} />);
+      const { container } = render(<Credits onBack={() => {}} backTo="menu" />);
       for (const id of ['credits-sources', 'credits-software'] as const) {
         const { table, list } = parts(container, id);
         expect(table).not.toBeNull();
@@ -141,7 +141,7 @@ describe('Credits', () => {
     });
 
     it('shows every data source as a table row and as a card with five labelled values', () => {
-      const { container } = render(<Credits onBack={() => {}} />);
+      const { container } = render(<Credits onBack={() => {}} backTo="menu" />);
       const { table, list } = parts(container, 'credits-sources');
       expect(list.querySelectorAll(':scope > li')).toHaveLength(DATA_SOURCES.length);
       for (const s of DATA_SOURCES) {
@@ -154,7 +154,7 @@ describe('Credits', () => {
     });
 
     it('shows every software package as a table row and as a card with three labelled values', () => {
-      const { container } = render(<Credits onBack={() => {}} />);
+      const { container } = render(<Credits onBack={() => {}} backTo="menu" />);
       const { table, list } = parts(container, 'credits-software');
       expect(list.querySelectorAll(':scope > li')).toHaveLength(SOFTWARE_CREDITS.length);
       for (const p of SOFTWARE_CREDITS) {
@@ -167,7 +167,7 @@ describe('Credits', () => {
     });
 
     it('uses the table column labels as the card labels', () => {
-      const { container } = render(<Credits onBack={() => {}} />);
+      const { container } = render(<Credits onBack={() => {}} backTo="menu" />);
       for (const id of ['credits-sources', 'credits-software'] as const) {
         const { table, list } = parts(container, id);
         const headers = Array.from(table.querySelectorAll('thead th')).map((h) => h.textContent);
@@ -179,7 +179,7 @@ describe('Credits', () => {
     });
 
     it('lets every table cell, card value, the legend citation and each Cangjie citation wrap anywhere', () => {
-      const { container } = render(<Credits onBack={() => {}} />);
+      const { container } = render(<Credits onBack={() => {}} backTo="menu" />);
       const cells = container.querySelectorAll('tbody th, tbody td');
       expect(cells).toHaveLength(DATA_SOURCES.length * 5 + SOFTWARE_CREDITS.length * 3);
       for (const c of cells) expect(c.className).toContain(WRAP);
@@ -197,7 +197,7 @@ describe('Credits', () => {
   });
 
   it('lets every Fonts list item wrap anywhere, so a long copyright line fits 320 px (Requirement 28)', () => {
-    const { container } = render(<Credits onBack={() => {}} />);
+    const { container } = render(<Credits onBack={() => {}} backTo="menu" />);
     const items = container.querySelectorAll('section[aria-labelledby="credits-fonts"] ul > li');
     expect(items).toHaveLength(FONTS.length);
     for (const li of items) expect(li.className).toContain('[overflow-wrap:anywhere]');
@@ -205,12 +205,21 @@ describe('Credits', () => {
 
   it('has a 44px Back to menu button that calls onBack', async () => {
     const onBack = vi.fn();
-    render(<Credits onBack={onBack} />);
+    render(<Credits onBack={onBack} backTo="menu" />);
     const btn = screen.getByRole('button', { name: 'Back to menu' });
     expect(btn.className).toContain('min-h-[44px]');
     expect(btn.className.split(/\s+/)).toContain('slip');
     expect(btn.className).toContain('focus-visible:ring');
     await userEvent.click(btn);
     expect(onBack).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('Credits back label', () => {
+  it('says "Back to menu" or "Back to the intro" by origin', () => {
+    const { rerender } = render(<Credits onBack={() => {}} backTo="menu" />);
+    expect(screen.getByRole('button', { name: 'Back to menu' })).toBeInTheDocument();
+    rerender(<Credits onBack={() => {}} backTo="intro" />);
+    expect(screen.getByRole('button', { name: 'Back to the intro' })).toBeInTheDocument();
   });
 });

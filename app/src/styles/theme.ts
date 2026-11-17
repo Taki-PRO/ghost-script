@@ -24,6 +24,9 @@ export const theme = {
   nightTop: '#050813', // darkest sky stop; sticky header background
   nightMid: '#0a1126', // middle sky stop
   nightLow: '#12203f', // lightest sky stop
+  skyHold: '#101c38', // sky held below 88% of the first screen (nightMid to nightLow at 33/45)
+  hillFar: '#202c4c', // Graveyard far ridge (decorative, aria-hidden)
+  hillNear: '#161e38', // Graveyard near ridge and the ground below it (decorative)
   mist: '#5b6f9a', // mist colour (dim, drawn at low alpha)
   moon: '#7283ab', // moon glow colour (dim, drawn at low alpha)
   paperLabel: '#f3ead2', // label on seal

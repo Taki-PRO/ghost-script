@@ -163,6 +163,17 @@ describe('App integration', () => {
     }
   });
 
+  it('intro -> Sources shows "Back to the intro", Back returns, and introSeen is untouched', async () => {
+    const user = await openApp();
+    await user.click(await screen.findByRole('button', { name: 'Sources' }));
+    expect(getIntroSeen()).toBe(false);
+    expect(screen.getByRole('heading', { name: 'Sources & licences' })).toBeTruthy();
+    await user.click(screen.getByRole('button', { name: 'Back to the intro' }));
+    expect(screen.getByRole('button', { name: /begin the séance/i })).toBeTruthy();
+    expect(getIntroSeen()).toBe(false);
+    const raw = localStorage.getItem(STORAGE_KEY);
+    expect(raw === null || JSON.parse(raw).introSeen === false).toBe(true);
+  });
   it('1.4: Begin persists introSeen and shows Ghost 1 of 10', async () => {
     const user = await openApp();
     await user.click(await screen.findByRole('button', { name: /begin the séance/i }));

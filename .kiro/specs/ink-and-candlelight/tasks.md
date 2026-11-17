@@ -14,6 +14,7 @@ Rules for the implementer:
 - Never add Chinese text for decoration. Every glyph comes from the dataset, `CANGJIE_KEYS` or the Legend_Line.
 - Tasks that edit `app/src/styles/index.css` are in different waves: 2.2, 3.3, 6.1, 7.3, 12.2 and 12.6. Tasks that edit `e2e/helpers.ts` (12.8) and `app/src/modes/WriteMode.tsx` (7.2, 12.7) are also in different waves.
 - Tasks 12.1 to 12.12 implement the follow-up from the human's screenshot review (design, "Follow-up: screenshot review"), approved by the human. They add unit and component tests only, no property test and no mutation test, and they write no `kiro-log.md` entry.
+- Tasks 15.1 to 15.12 implement the intro fix from the human's review (design, "Follow-up: intro fix"), approved by the human. They add unit and component tests only (plus e2e specs), no property test and no mutation test, and no task writes a `kiro-log.md` entry. `index.css` is edited by 15.3 (wave 14) and 15.6 (wave 15) only; `theme.ts` by 15.3 (wave 14) and 15.7 (wave 15) only; `e2e/helpers.ts` by 15.4 (wave 14) only; `app/src/App.tsx` by 15.2 only. Task 15.7 does not edit `index.css`.
 
 ## Tasks
 
@@ -196,6 +197,71 @@ Rules for the implementer:
   - Run `npm test`, `npx tsc -p tsconfig.json`, `npx tsc -p app/tsconfig.json`, `npx tsc -p oracle/tsconfig.json`, `npm run build -w app`, `npm run check:bundle` (budget 300,000 bytes) and `npm run test:e2e`. All must pass, with `fits-one-screen.spec.ts` and `no-horizontal-overflow.spec.ts` at their old thresholds. Ask the human if any question arises.
   - _Requirements: 19.4, 21.3_
 
+- [x] 15. Intro fix and night-scene follow-up (approved by the human)
+  - [x] 15.1 Record the intro's Sources link in `content-accuracy.md`
+    - Steering edit, approved by the human. In `.kiro/steering/content-accuracy.md` add a section "The intro cites by link": the intro shows no raw citation; its "Sources" link opens the Sources & licences screen, which carries `CANGJIE_CITATIONS` (the English Wikipedia articles "Cangjie input method" and "Chu Bong-Foo", for the intro's Cangjie claim) and `LEGEND_SOURCE.citation` (the Huainanzi line); that link satisfies the citation rule for the intro's Cangjie claim and for the legend line. Keep every other rule and the approved legend line unchanged.
+    - Add `tests/unit/content-accuracy-intro-link.test.ts`: reads the steering file and checks the section heading, the words "Sources & licences", `CANGJIE_CITATIONS` and `LEGEND_SOURCE.citation`, and that the "Approved legend line" section is still present. The no-personal-names test must stay green.
+    - Files: `.kiro/steering/content-accuracy.md`, `tests/unit/content-accuracy-intro-link.test.ts`.
+    - _Requirements: 23.11, 18.5_
+  - [x] 15.2 Intro fits one screen: Sources link, no raw citations, Credits origin
+    - `app/src/components/IntroScreen.tsx`: remove the sources line (`CANGJIE_CITATIONS`) and the `LEGEND_SOURCE.citation` span and their `data-testid`s; keep the caption sentence; add the required prop `onOpenSources` and the Sources_Link (`<button type="button">`, text "Sources", `inline-flex min-h-[44px] items-center text-sm text-ghost underline`, the shared focus ring, no `slip` or `slip-primary`) below the "Begin the Séance" button; drop `min-h-screen`, `px-6` and `py-10` from the root; apply the sizes of the design table (ghost `h-12 w-10 sm:h-24 sm:w-20`, `h1` `text-4xl sm:text-5xl` with line height 1.1, paragraphs `text-base leading-snug sm:text-lg`, tighter spacing below 640 px, slip padding, button `py-2 sm:py-3`). Keep the Legend_Line at `text-3xl sm:text-4xl`, `ink-reveal` on the `blockquote`, the text of both paragraphs and the one Primary_Action.
+    - `app/src/App.tsx`: change the credits view to `{ screen: 'credits'; dataset; origin: 'menu' | 'intro' }`; the menu passes `origin: 'menu'`, the intro passes `onOpenSources={() => setView({ screen: 'credits', dataset, origin: 'intro' })}`; `onBack` returns to the menu or to `{ screen: 'intro', dataset }` by `origin`; give `Shell` a `tight` prop (`min-h-screen px-4 py-2`) and use it for the intro. Do not call `setIntroSeen` on this path.
+    - `app/src/components/Credits.tsx`: add `backTo?: 'menu' | 'intro'` (default `'menu'`); the button text and `aria-label` are "Back to menu" or "Back to the intro".
+    - Tests: `IntroScreen.test.tsx` (no text matches `http`; the button named "Sources" calls `onOpenSources`; it has neither `slip-primary` nor `slip`; the caption sentence is present; the root has no `min-h-screen`; the `h1` has `text-4xl` and `sm:text-5xl`; replace every assertion on the removed `data-testid`s; keep the new-sentence, old-sentence, Legend_Line, "wept" and primary-class assertions); `Credits.test.tsx` (both back labels; every `CANGJIE_CITATIONS` entry and the full `LEGEND_SOURCE.citation` are present; keep the sticky-header assertions); `App.test.tsx` (intro to Sources shows "Back to the intro", Back shows the intro again, `introSeen` in storage is unchanged; menu to Sources shows "Back to menu" and returns to the menu).
+    - Files: `app/src/components/IntroScreen.tsx`, `app/src/components/IntroScreen.test.tsx`, `app/src/components/Credits.tsx`, `app/src/components/Credits.test.tsx`, `app/src/App.tsx`, `app/src/App.test.tsx`.
+    - _Requirements: 9.1, 9.2, 23.1, 23.2, 23.3, 23.4, 23.5, 23.7, 23.8, 23.9, 23.10, 10.3, 10.7_
+  - [x] 15.3 Cover the full page height: Canvas_Sky, Document_Layers and `skyHold`
+    - `app/src/styles/theme.ts`: add `skyHold: '#101c38'`. `theme.test.ts`: `skyHold` equals the old sky at 88% (blend of `nightMid` and `nightLow` at 33/45, within 1 per channel); `ink`, `error`, `ghost`, `muted` and `success` keep 4.5:1 on `skyHold`; recompute with `contrastRatio` and adjust the value, not the threshold, if one fails.
+    - `app/src/styles/index.css`: add `--sky-hold`; put the Canvas_Sky on `html` (`background-color: var(--sky-hold)`, one `linear-gradient(180deg, var(--night-top) 0%, var(--night-mid) 55%, var(--sky-hold) 88%, var(--sky-hold) 100%)`, `background-size: 100% 100vh`, `no-repeat`); remove `bg-background` from `body` in `@layer base` and give `body` `position: relative` and `overflow-x: clip` (preceded by an `overflow-x: hidden` fallback line); remove the sky, vignette and grain layers from `body::before` (it keeps only the Moon disc and halo); add `#root::after` (absolute, `top: 0; bottom: 0; left: 0; right: 0`, `z-index: -1`, `pointer-events: none`, grain over vignette with the same gradients as before); make `body::after` and `#root::before` `position: absolute` (not fixed) with `background-size: 100% 100vh` and `background-repeat: repeat-y`; remove both `will-change: transform` lines; keep the drift keyframes inside the no-preference block and the single-block rule.
+    - `app/src/styles/index.css.test.ts`: update every test that reads these layers (the layer-order test of `body::before`, the `position: fixed` assertions of the mist layers, the pointer-events list, which gains `#root::after`); add the tests of Requirement 24.9; change `sky(y)` of the composite test to follow the new gradient (unchanged up to 88, `skyHold` above); keep every threshold at 4.5.
+    - Confirm by running `npm test` that no other test reads the removed `bg-background` body style.
+    - Files: `app/src/styles/theme.ts`, `app/src/styles/theme.test.ts`, `app/src/styles/index.css`, `app/src/styles/index.css.test.ts`.
+    - _Requirements: 8.2, 8.4, 8.5, 8.6, 8.7, 8.8, 24.1, 24.2, 24.3, 24.4, 24.5, 24.6, 24.9_
+  - [x] 15.4 Add the e2e helpers for the ink wait and for full-page pixels
+    - In `e2e/helpers.ts` add `waitForInkReveal(page)` (awaits `finished` of every animation of `blockquote.ink-reveal`, then fails unless all `playState`s are `finished`; resolves at once when there are none), `pixelsAt(page, png, points)` (decodes a PNG buffer in a second page with `createImageBitmap` and a canvas and returns `[r, g, b]` per point; no new dependency), `luminance(rgb)` and `luminanceRatio(a, b)` (`(L1 + 0.05) / (L2 + 0.05)`, the WCAG formula, lighter over darker), and `seedGraveyard(page)` that seeds one at-rest, one restless and one gave-up character as `graveyard-fit.spec.ts` does and opens the Graveyard. Leave every existing export unchanged.
+    - Files: `e2e/helpers.ts`.
+    - _Requirements: 20.9, 24.7, 25.3, 25.9_
+  - [x] 15.5 Update the Steering_File `art-direction.md` and its test
+    - In `.kiro/steering/art-direction.md` add: the Moon disc has a soft off-centre shading (darker toward the lower right); the night sky, the grain and the mist cover the full page height on screens that scroll, with the mist repeating once per screen-high tile; the intro shows no raw citation and links to the Sources & licences screen with one small "Sources" link that is not a Primary_Action. Keep `inclusion: always`, the Primary_Action table and the named ambient exemptions.
+    - Extend `tests/unit/steering-art-direction.test.ts`: the three new rules are present, the table still lists "Begin the Séance" for the intro, and no personal name appears.
+    - Files: `.kiro/steering/art-direction.md`, `tests/unit/steering-art-direction.test.ts`.
+    - _Requirements: 1.4, 1.5, 23.2, 24.4, 25.1_
+  - [x] 15.6 Shade the Moon in `index.css`
+    - In `app/src/styles/index.css` add `--moon-shade-alpha: 0.35`, `--moon-shade-offset: 0.5rem`, `--moon-shade-radius: 1.25rem` and the Moon_Shade `radial-gradient` as the first layer of `body::before`, above the disc (design, section 6).
+    - In `index.css.test.ts`: allow the shade's `rgb(5 8 19 / var(--moon-shade-alpha))` in the test that rejects other `rgb(... / var(--moon` colours; test that the three properties exist, that the shade is the first layer of `body::before`, that `offset × √2 + radius` is at most `--moon-size / 2`, that `ink` and `error` keep 4.5:1 at the lightest point and at the darkest point (paint order: sky at 2%, halo, disc, shade, grain) and that the luminance ratio of the two points is at least 1.25. Keep the existing disc and halo tests.
+    - Files: `app/src/styles/index.css`, `app/src/styles/index.css.test.ts`.
+    - _Requirements: 8.3, 8.13, 25.1, 25.2, 25.3, 25.4_
+  - [x] 15.7 Make the Hillside visible in `Graveyard.tsx`
+    - In `app/src/styles/theme.ts` add `hillFar: '#202c4c'` and `hillNear: '#161e38'`; in `theme.test.ts` check `hillFar` against the sky at 30% (from `nightTop` and `nightMid`) at 1.3:1 and `hillNear` against `hillFar` at 1.1:1; adjust the colours, not the thresholds, if one fails.
+    - In `app/src/components/Graveyard.tsx` replace the full-height SVG by the fixed-height one of the design (`HILL_HEIGHT_REM` = 12, `h-48`, `top-0`, `viewBox="0 0 100 48"`, `preserveAspectRatio="none"`, the two ridge paths with `theme.hillFar` and `theme.hillNear`, `aria-hidden`, `focusable="false"`, `data-testid="hillside"`) and give the wrapper the `linear-gradient(to bottom, transparent 12rem, hillNear 12rem)` background image; no literal colour in the component. Do not edit `index.css`; if the palette-variable test requires every token to be mirrored, exempt the two tokens in that test.
+    - In `Graveyard.test.tsx`: the viewBox, the two path fills equal the theme tokens, the wrapper background names `hillNear`, no `text`, `aria-hidden`; keep every never-reveal, marker, name and tilt test.
+    - Files: `app/src/styles/theme.ts`, `app/src/styles/theme.test.ts`, `app/src/components/Graveyard.tsx`, `app/src/components/Graveyard.test.tsx`.
+    - _Requirements: 15.11, 25.5, 25.6, 25.7, 25.10_
+  - [x] 15.8 Add the intro to `e2e/fits-one-screen.spec.ts`
+    - The human explicitly allows editing this file to add the intro. After the existing loop, add one `test.describe` over 1024 × 768, 375 × 812 and 320 × 640 with `introSeen: false`: `expectInside` for the "Begin the Séance" button and for the "Sources" button, then `expectNoVerticalScroll`. Do not change any existing line, viewport or assertion of the file.
+    - Files: `e2e/fits-one-screen.spec.ts`.
+    - _Requirements: 23.6, 19.4_
+  - [x] 15.9 Run the accuracy review on the changed intro
+    - Run the Accuracy_Reviewer over `IntroScreen.tsx` and its copy (the remaining paragraphs, the Legend_Line, "wept", the caption sentence, the "Sources" link), the Credits sections `The legend` and `Cangjie`, the new section of `content-accuracy.md` and the new rules of `art-direction.md`. Check that no claim lost its source: each claim of the intro must be reachable through the Sources_Link. Fix every finding within this spec; any fix may edit the files of 15.1, 15.2 and 15.5 only.
+    - Files: those of 15.1, 15.2 and 15.5, only if a finding needs a fix.
+    - _Requirements: 23.12, 18.5, 18.7, 21.2_
+  - [x] 15.10 Add `e2e/night-scene.spec.ts`
+    - New spec. At 375 × 812 and 1024 × 768, on the Graveyard (`seedGraveyard`) and on the Sources_Screen (opened from the menu): assert the page is taller than the viewport; read the computed styles of Requirement 24.8; take a Full_Page_Capture from scroll 0 and check the strip, the blue tint and the three sample points of Requirement 24.7 with `pixelsAt`. At the same two sizes on the intro, sample the screenshot at the lit and the shaded Moon points and check the luminance ratio of Requirement 25.3 (call `waitForInkReveal` first so that the capture is stable).
+    - Files: `e2e/night-scene.spec.ts` (new).
+    - _Requirements: 24.7, 24.8, 25.3_
+  - [x] 15.11 Add the hill checks to `e2e/graveyard-fit.spec.ts`
+    - At 375 × 812 and 1024 × 768 add a `describe` with the checks of Requirement 25.8 (SVG box contains the first row; the far ridge top lies between the first row's top and the second row's bottom) and 25.9 (the pixel sample at the left end of the far ridge). Do not change the existing tests of the file.
+    - Files: `e2e/graveyard-fit.spec.ts`.
+    - _Requirements: 25.8, 25.9_
+  - [x] 15.12 Wait for the legend ink and retake the eight screenshots
+    - In `e2e/screenshots.spec.ts` call `waitForInkReveal(page)` in both intro tests (the PNG test and the 320 × 640 moon check) before `expectMoonInside` and `save`; do not emulate reduced motion. Run `npm run test:e2e -- screenshots` and confirm that all eight PNGs exist and are not empty. Open the intro PNGs only to check that the Legend_Line is complete, the Moon shows its shade and the Graveyard PNG shows the hill behind the first rows.
+    - Files: `e2e/screenshots.spec.ts`.
+    - _Requirements: 20.9, 20.10_
+
+- [x] 16. Final checkpoint after the intro fix
+  - Run `npm test`, `npx tsc -p tsconfig.json`, `npx tsc -p app/tsconfig.json`, `npx tsc -p oracle/tsconfig.json`, `npm run build -w app`, `npm run check:bundle` (budget 300,000 bytes) and `npm run test:e2e`. All must pass, with `fits-one-screen.spec.ts` (existing checks), `no-horizontal-overflow.spec.ts` and `seal-margin.spec.ts` at their old thresholds. Ask the human if any question arises.
+  - _Requirements: 19.4, 21.3, 23.6, 24.7, 24.8_
+
 ## Notes
 
 - Tasks 12.1 to 14 are the follow-up from the human's screenshot review. 12.2 and 12.6 both edit `index.css` and `index.css.test.ts`, so they are in waves 9 and 10; 12.2 creates `moonRoom.ts`, which 12.7 imports in wave 10.
@@ -204,6 +270,8 @@ Rules for the implementer:
 - Task 10.2 is human-only and is not a coding task.
 - The decisions Q1 to Q13 in the design ("Decisions") fix the choices used here.
 - No task writes `kiro-log.md`. Any log entry is human-only and is not part of this plan.
+- Tasks 15.1 to 16 are the intro fix. 15.3 and 15.6 both edit `index.css` and `index.css.test.ts`, so they are in waves 14 and 15; 15.3 and 15.7 both edit `theme.ts`, so they are also in waves 14 and 15. 15.2 owns `IntroScreen.tsx`, `Credits.tsx` and `App.tsx`; 15.9 can touch them only in a later wave. The e2e specs 15.8, 15.10, 15.11 and 15.12 each own one file and use the helpers of 15.4.
+- Measured, not guessed: the intro layout, the full-page diagnosis and the Moon and hill numbers in the design were measured on the committed build; the tasks re-measure on the real code and adjust values, not thresholds.
 
 ## Task Dependency Graph
 
@@ -223,7 +291,11 @@ Rules for the implementer:
     { "id": 10, "tasks": ["12.5", "12.6", "12.7"] },
     { "id": 11, "tasks": ["12.8", "12.12"] },
     { "id": 12, "tasks": ["12.9", "12.10", "12.11"] },
-    { "id": 13, "tasks": ["13.1"] }
+    { "id": 13, "tasks": ["13.1"] },
+    { "id": 14, "tasks": ["15.1", "15.2", "15.3", "15.4", "15.5"] },
+    { "id": 15, "tasks": ["15.6", "15.7", "15.8", "15.9"] },
+    { "id": 16, "tasks": ["15.10", "15.11"] },
+    { "id": 17, "tasks": ["15.12"] }
   ]
 }
 ```

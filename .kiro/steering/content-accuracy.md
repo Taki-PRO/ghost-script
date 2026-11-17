@@ -56,3 +56,6 @@ Judges may not read Chinese, so they cannot spot a wrong character. Correctness 
 
 ## Approved claim: character amnesia
 - Allowed, citing the English Wikipedia article "Character amnesia" (https://en.wikipedia.org/wiki/Character_amnesia): character amnesia (提笔忘字) is forgetting how to write characters you once knew, and it is tied to heavy use of input methods such as romanised (phonetic) input. Whenever we say this, we also say, or must not contradict, that how widespread it is is debated. No statistics.
+
+## The intro cites by link
+- The intro shows no raw citation. Its "Sources" link opens the Sources & licences screen, which carries the full citations: `CANGJIE_CITATIONS` (the English Wikipedia articles "Cangjie input method" and "Chu Bong-Foo", for the intro's Cangjie claim) and `LEGEND_SOURCE.citation` (the Huainanzi line). That link satisfies the citation rule for the intro's Cangjie claim and for the legend line; approved by the human. Every other rule and the approved legend line stay unchanged.

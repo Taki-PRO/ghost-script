@@ -90,3 +90,38 @@ for (const vp of VIEWPORTS) {
     });
   });
 }
+
+// The intro fits one screen (Requirement 23.6). introSeen is false, so the App opens on the intro.
+const INTRO_VIEWPORTS = [
+  { width: 1024, height: 768 },
+  { width: 375, height: 812 },
+  { width: 320, height: 640 },
+] as const;
+
+for (const vp of INTRO_VIEWPORTS) {
+  test.describe(`intro fit at ${vp.width} x ${vp.height}`, () => {
+    test.use({ viewport: vp });
+
+    test('intro fits', async ({ page }) => {
+      expect(page.viewportSize()).toEqual(vp);
+      await seed(page, seedState({ introSeen: false }));
+      await page.goto(START);
+      const begin = page.getByRole('button', { name: 'Begin the Séance' });
+      const sources = page.getByRole('button', { name: 'Sources' });
+      await expectInside(page, 'Begin the Séance', begin);
+      await expectInside(page, 'Sources', sources);
+      await expectNoVerticalScroll(page);
+      const m = await page.evaluate(() => ({
+        scrollHeight: document.documentElement.scrollHeight,
+        innerHeight: window.innerHeight,
+        beginBottom: Array.from(document.querySelectorAll('button'))
+          .find((b) => b.textContent?.includes('Begin the Séance'))
+          ?.getBoundingClientRect().bottom,
+      }));
+      test.info().annotations.push({
+        type: 'slack',
+        description: `page ${m.innerHeight - m.scrollHeight}px, Begin button ${Math.round(m.innerHeight - (m.beginBottom ?? 0))}px`,
+      });
+    });
+  });
+}

@@ -524,6 +524,169 @@
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794891080447
       }
+    ],
+    "15.1 Record the intro's Sources link in `content-accuracy.md`": [
+      {
+        "executionId": "3b73a9d9-dc86-42a8-8812-31abe11d3d39",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794894061151
+      },
+      {
+        "executionId": "3b73a9d9-dc86-42a8-8812-31abe11d3d39",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794894472325
+      }
+    ],
+    "15.2 Intro fits one screen: Sources link, no raw citations, Credits origin": [
+      {
+        "executionId": "3b73a9d9-dc86-42a8-8812-31abe11d3d39",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794894061446
+      },
+      {
+        "executionId": "3b73a9d9-dc86-42a8-8812-31abe11d3d39",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794894472626
+      }
+    ],
+    "15.3 Cover the full page height: Canvas_Sky, Document_Layers and `skyHold`": [
+      {
+        "executionId": "3b73a9d9-dc86-42a8-8812-31abe11d3d39",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794894062662
+      },
+      {
+        "executionId": "3b73a9d9-dc86-42a8-8812-31abe11d3d39",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794894474230
+      }
+    ],
+    "15.4 Add the e2e helpers for the ink wait and for full-page pixels": [
+      {
+        "executionId": "3b73a9d9-dc86-42a8-8812-31abe11d3d39",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794894063854
+      },
+      {
+        "executionId": "3b73a9d9-dc86-42a8-8812-31abe11d3d39",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794894475436
+      }
+    ],
+    "15.5 Update the Steering_File `art-direction.md` and its test": [
+      {
+        "executionId": "3b73a9d9-dc86-42a8-8812-31abe11d3d39",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794894065066
+      },
+      {
+        "executionId": "3b73a9d9-dc86-42a8-8812-31abe11d3d39",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794894477031
+      }
+    ],
+    "15.6 Shade the Moon in `index.css`": [
+      {
+        "executionId": "3b73a9d9-dc86-42a8-8812-31abe11d3d39",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794894478296
+      },
+      {
+        "executionId": "3b73a9d9-dc86-42a8-8812-31abe11d3d39",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794894592220
+      }
+    ],
+    "15.7 Make the Hillside visible in `Graveyard.tsx`": [
+      {
+        "executionId": "3b73a9d9-dc86-42a8-8812-31abe11d3d39",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794894479438
+      },
+      {
+        "executionId": "3b73a9d9-dc86-42a8-8812-31abe11d3d39",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794894593296
+      }
+    ],
+    "15.8 Add the intro to `e2e/fits-one-screen.spec.ts`": [
+      {
+        "executionId": "3b73a9d9-dc86-42a8-8812-31abe11d3d39",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794894481038
+      },
+      {
+        "executionId": "3b73a9d9-dc86-42a8-8812-31abe11d3d39",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794894594501
+      }
+    ],
+    "15.9 Run the accuracy review on the changed intro": [
+      {
+        "executionId": "3b73a9d9-dc86-42a8-8812-31abe11d3d39",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794894482170
+      },
+      {
+        "executionId": "3b73a9d9-dc86-42a8-8812-31abe11d3d39",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794894596104
+      }
+    ],
+    "15.10 Add `e2e/night-scene.spec.ts`": [
+      {
+        "executionId": "3b73a9d9-dc86-42a8-8812-31abe11d3d39",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794894597313
+      },
+      {
+        "executionId": "3b73a9d9-dc86-42a8-8812-31abe11d3d39",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794894882295
+      }
+    ],
+    "15.11 Add the hill checks to `e2e/graveyard-fit.spec.ts`": [
+      {
+        "executionId": "3b73a9d9-dc86-42a8-8812-31abe11d3d39",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794894598737
+      },
+      {
+        "executionId": "3b73a9d9-dc86-42a8-8812-31abe11d3d39",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794895180663
+      }
+    ],
+    "15.12 Wait for the legend ink and retake the eight screenshots": [
+      {
+        "executionId": "3b73a9d9-dc86-42a8-8812-31abe11d3d39",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794895181385
+      },
+      {
+        "executionId": "3b73a9d9-dc86-42a8-8812-31abe11d3d39",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794895272255
+      }
+    ],
+    "15. Intro fix and night-scene follow-up (approved by the human)": [
+      {
+        "executionId": "3b73a9d9-dc86-42a8-8812-31abe11d3d39",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794895272280
+      }
+    ],
+    "16. Final checkpoint after the intro fix": [
+      {
+        "executionId": "3b73a9d9-dc86-42a8-8812-31abe11d3d39",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794895272462
+      },
+      {
+        "executionId": "3b73a9d9-dc86-42a8-8812-31abe11d3d39",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794895420332
+      }
     ]
   }
 }

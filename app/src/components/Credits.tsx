@@ -4,6 +4,8 @@ import { SOFTWARE_CREDITS } from '../data/software';
 
 export interface CreditsProps {
   onBack: () => void;
+  /** Where Back leads; sets the button label. */
+  backTo: 'menu' | 'intro';
 }
 
 const H2 = 'text-xl font-semibold text-ink font-display';
@@ -14,7 +16,8 @@ const DT = "text-xs font-semibold uppercase tracking-wide text-muted after:conte
 const DD = `text-sm text-ink ${WRAP}`;
 
 /** Credits screen (Requirement 9, 13.2, 16.11). URLs are text; the only link is the notices file. */
-export function Credits({ onBack }: CreditsProps) {
+export function Credits({ onBack, backTo }: CreditsProps) {
+  const backLabel = backTo === 'intro' ? 'Back to the intro' : 'Back to menu';
   const noticesHref = `${import.meta.env.BASE_URL}THIRD_PARTY_NOTICES.txt`;
 
   return (
@@ -33,10 +36,10 @@ export function Credits({ onBack }: CreditsProps) {
           <button
             type="button"
             onClick={onBack}
-            aria-label="Back to menu"
+            aria-label={backLabel}
             className="slip min-h-[44px] shrink-0 whitespace-nowrap px-4 py-2 text-base focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
-            Back to menu
+            {backLabel}
           </button>
         </header>
 

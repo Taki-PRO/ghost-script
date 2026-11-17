@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { moonRoomPx } from '../app/src/engine/moonRoom';
 import { learningOrder } from '../app/src/engine/learningOrder';
-import { START, datasetMap, findOverflow, seed, seedState } from './helpers';
+import { START, datasetMap, findOverflow, luminance, pixelsAt, seed, seedState } from './helpers';
 
 // Graveyard fit (Requirements 8.11, 15.7, 15.14): tilted tablets cause no
 // horizontal overflow, the sticky header starts below the Moon_Room, the
@@ -57,7 +57,11 @@ test.describe('graveyard content', () => {
       const hill = document.querySelector('[data-testid="hillside"]');
       const grid = document.querySelector('[aria-label="Graves"]');
       if (!hill || !grid) throw new Error('hillside or grid missing');
-      const h = hill.getBoundingClientRect();
+      // The SVG is 12 rem at the top of the grid; the wrapper carries the SVG
+      // and the ground gradient below it, so the wrapper is what covers the grid.
+      const wrapper = hill.parentElement;
+      if (!wrapper) throw new Error('hill wrapper missing');
+      const h = wrapper.getBoundingClientRect();
       const g = grid.getBoundingClientRect();
       const first = grid.querySelector('li');
       if (!first) throw new Error('no tablets');
@@ -72,7 +76,7 @@ test.describe('graveyard content', () => {
         hillIndex,
       };
     });
-    expect(result.covers, 'the hillside does not cover the grid').toBe(true);
+    expect(result.covers, 'the hill wrapper does not cover the grid').toBe(true);
     expect(result.before, 'the hillside is not before the grid in the document').toBe(true);
     expect(result.tabletIndex, 'no tablet at the probe point').toBeGreaterThanOrEqual(0);
     expect(result.hillIndex, 'the hillside is not under the probe point').toBeGreaterThanOrEqual(0);
@@ -140,6 +144,100 @@ for (const vp of [
       });
       const room = moonRoomPx(vp.width);
       expect(top, `header top ${top} is above the Moon_Room ${room}`).toBeGreaterThanOrEqual(room);
+    });
+  });
+}
+
+// Hillside (Requirements 25.8 and 25.9): the hill sits behind the first rows
+// and its far ridge shows against the sky.
+for (const vp of [
+  { width: 375, height: 812 },
+  { width: 1024, height: 768 },
+] as const) {
+  test.describe(`graveyard hillside at ${vp.width} x ${vp.height}`, () => {
+    test.use({ viewport: vp });
+
+    test('the SVG contains the first row and the far ridge crest lies behind rows one and two', async ({ page }) => {
+      await openGraveyard(page);
+      const m = await page.evaluate(() => {
+        const hill = document.querySelector('[data-testid="hillside"]');
+        const grid = document.querySelector('[aria-label="Graves"]');
+        const ridge = hill?.querySelector('path');
+        if (!hill || !grid || !ridge) throw new Error('hillside, ridge or grid missing');
+        const tablets = Array.from(grid.querySelectorAll(':scope > li')).map((li) => li.getBoundingClientRect());
+        const firstTop = tablets[0]!.top;
+        const row1 = tablets.filter((r) => Math.abs(r.top - firstTop) < 0.5);
+        const rest = tablets.filter((r) => Math.abs(r.top - firstTop) >= 0.5);
+        const secondTop = Math.min(...rest.map((r) => r.top));
+        const row2 = rest.filter((r) => Math.abs(r.top - secondTop) < 0.5);
+        const h = hill.getBoundingClientRect();
+        return {
+          svgTop: h.top,
+          svgBottom: h.bottom,
+          row1Top: Math.min(...row1.map((r) => r.top)),
+          row1Bottom: Math.max(...row1.map((r) => r.bottom)),
+          row2Bottom: Math.max(...row2.map((r) => r.bottom)),
+          crest: ridge.getBoundingClientRect().top,
+        };
+      });
+      const detail = JSON.stringify(m);
+      expect(m.svgTop, detail).toBeLessThanOrEqual(m.row1Top + 0.5);
+      expect(m.svgBottom, detail).toBeGreaterThanOrEqual(m.row1Bottom - 0.5);
+      expect(m.crest, detail).toBeGreaterThanOrEqual(m.row1Top - 0.5);
+      expect(m.crest, detail).toBeLessThanOrEqual(m.row2Bottom + 0.5);
+    });
+
+    test('the hillside paints behind the first tablet', async ({ page }) => {
+      await openGraveyard(page);
+      const r = await page.evaluate(() => {
+        const hill = document.querySelector('[data-testid="hillside"]');
+        const first = document.querySelector('[aria-label="Graves"] > li');
+        if (!hill || !first) throw new Error('hillside or tablet missing');
+        const f = first.getBoundingClientRect();
+        const stack = document.elementsFromPoint(f.left + f.width / 2, f.top + f.height / 2);
+        return { tabletIndex: stack.findIndex((el) => first.contains(el)), hillIndex: stack.indexOf(hill) };
+      });
+      expect(r.tabletIndex, 'no tablet at the probe point').toBeGreaterThanOrEqual(0);
+      expect(r.hillIndex, 'the hillside is not under the first tablet').toBeGreaterThanOrEqual(0);
+      expect(r.tabletIndex, 'the hillside paints over the first tablet').toBeLessThan(r.hillIndex);
+    });
+
+    test('the far ridge is lighter than the sky at its left end', async ({ page }) => {
+      await openGraveyard(page);
+      const hill = page.getByTestId('hillside');
+      await hill.scrollIntoViewIfNeeded();
+      await page.evaluate(() => document.fonts.ready);
+      // The ridge is not flat at its left end: the curve rises as it leaves
+      // x = 0. The strip is 3 px inside the wrapper, so the ridge top there is
+      // read from the path itself (the point of the outline at that x).
+      const at = await page.evaluate(() => {
+        const hill = document.querySelector('[data-testid="hillside"]') as SVGSVGElement | null;
+        const ridge = hill?.querySelector('path');
+        const wrapper = hill?.parentElement;
+        if (!hill || !ridge || !wrapper) throw new Error('hillside missing');
+        const h = hill.getBoundingClientRect();
+        const w = wrapper.getBoundingClientRect();
+        const x = w.left + 3;
+        const unitX = ((x - h.left) / h.width) * 100;
+        const total = ridge.getTotalLength();
+        let ridgeUnitY = 22;
+        for (let l = 0; l <= total; l += total / 2000) {
+          const pt = ridge.getPointAtLength(l);
+          ridgeUnitY = pt.y;
+          if (pt.x >= unitX) break;
+        }
+        return { x, ridgeY: h.top + (ridgeUnitY / 48) * h.height };
+      });
+      const png = await page.screenshot();
+      const [upper, lower] = await pixelsAt(page, png, [
+        { x: at.x, y: at.ridgeY - 1 },
+        { x: at.x, y: at.ridgeY + 1 },
+      ]);
+      const ratio = (luminance(lower!) + 0.05) / (luminance(upper!) + 0.05);
+      expect(
+        ratio,
+        `lower ${lower}, upper ${upper}, luminance ${luminance(lower!)} / ${luminance(upper!)}, ratio ${ratio}`,
+      ).toBeGreaterThanOrEqual(1.2);
     });
   });
 }
