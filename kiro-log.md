@@ -690,7 +690,7 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 ## Nov 18, 2026: Credit check
 
 - **Credits used:** 1,657.16 of 4,000 (last logged: 490 on Nov 15). Most of the jump went on the three large specs since then: the design pass (ink-and-candlelight and its follow-ups), harder-ghosts with its clue rule, and the self-contained Power.
-- **Left:** 2,342.84 for the IDE-versus-CLI comparison, the clue fixes from my sample review, and any fixes the paper test or the third review finds. New features are frozen, so that should be enough.
+- **Left:** 2,342.84 for the IDE-versus-CLI comparison, the clue fixes from my sample review, and any fixes the paper test or the third review finds. No new features are planned after the comparison, so that should be enough.
 
 ---
 
