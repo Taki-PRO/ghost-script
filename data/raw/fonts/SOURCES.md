@@ -19,3 +19,12 @@ This file records the provenance and licence of every font in this repository.
 - **Subset file:** `app/src/assets/fonts/lxgw-wenkai-subset.woff2` (WOFF2, web delivery only)
 - **Subset SHA-256:** 76fc7f88d0ba1adb931478b416d50c09198f1acd3db9bd2af356321a9608dc26
 - **Used for:** displaying Chinese characters, subset to the glyph set in `data/fonts/glyph-set.txt`
+
+## Subsets (all WOFF2, web delivery only, made with subset-font 2.9.0 from the source above)
+| File | Glyphs | Bytes | Gzip bytes | SHA-256 |
+|---|---|---|---|---|
+| `app/src/assets/fonts/lxgw-wenkai-subset.woff2` (level 1, loaded at start) | 321 | 66,532 | 66,575 | `76fc7f88d0ba1adb931478b416d50c09198f1acd3db9bd2af356321a9608dc26` |
+| `app/src/assets/fonts/lxgw-wenkai-subset-level2.woff2` (lazy, by `unicode-range`) | 395 | 90,252 | 90,300 | `1a637cde47325ab3b81e28fc4aa2fbf340a3c0e55406d1caa63281b14424ee27` |
+| `app/src/assets/fonts/lxgw-wenkai-subset-level3.woff2` (lazy, by `unicode-range`) | 496 | 116,432 | 116,490 | `1b9593a800e4e2c1eb6ed2db3d2c15bf25736ff0ea8ea04c9ad03d01dd51dde8` |
+
+The level 2 set holds the keys of `characters-level2.json` that are not in the level 1 set. The level 3 set holds the keys of `characters-level3.json` that are in neither earlier set. The three sets are disjoint and `app/src/styles/fonts.css` has one `@font-face` rule per subset with the same family name and disjoint `unicode-range` values.

@@ -1,3 +1,4 @@
+import type { Level } from '../data/types';
 import { GhostFigure } from './GhostFigure';
 
 export interface StartMenuProps {
@@ -6,6 +7,12 @@ export interface StartMenuProps {
   onReviewCangjieGuide: () => void;
   onOpenGraveyard: () => void;
   onOpenCredits: () => void;
+  /** The Chosen_Level, named on the level slip. */
+  level: Level;
+  /** Opens the Level_Screen. */
+  onChooseLevel: () => void;
+  /** Set while the Chosen_Level is a Finished_Level; `moveOn` is absent at level 3. */
+  finishedNotice: { text: string; moveOn?: { label: string; onClick: () => void } } | null;
 }
 
 const focusRing =
@@ -22,6 +29,9 @@ export function StartMenu({
   onReviewCangjieGuide,
   onOpenGraveyard,
   onOpenCredits,
+  level,
+  onChooseLevel,
+  finishedNotice,
 }: StartMenuProps) {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center px-4 py-8 text-ink">
@@ -39,6 +49,27 @@ export function StartMenu({
         >
           Begin a Nightly Séance
         </button>
+        <button
+          type="button"
+          onClick={onChooseLevel}
+          className={`slip min-h-[44px] px-6 py-3 text-base ${focusRing}`}
+        >
+          Starting level: {level}
+        </button>
+        {finishedNotice && (
+          <div className="flex flex-col gap-2">
+            <p className="text-center text-sm text-ghost">{finishedNotice.text}</p>
+            {finishedNotice.moveOn && (
+              <button
+                type="button"
+                onClick={finishedNotice.moveOn.onClick}
+                className={`slip min-h-[44px] px-6 py-3 text-base ${focusRing}`}
+              >
+                {finishedNotice.moveOn.label}
+              </button>
+            )}
+          </div>
+        )}
         <button
           type="button"
           onClick={onReviewLegend}

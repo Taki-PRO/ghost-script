@@ -62,6 +62,8 @@ test.describe('first meeting: content', () => {
     await seed(page, seedState({ introSeen: false, cangjieIntroSeen: false }));
     await page.goto(START);
     await page.getByRole('button', { name: 'Begin the Séance' }).click();
+    // A first run now passes through the Level_Screen (spec harder-ghosts).
+    await page.getByRole('button', { name: /^Level 1/ }).click();
     const summon = page.getByRole('region', { name: 'Summon step' });
     await expect(summon).toBeVisible({ timeout: 10_000 });
     await expect(page.getByRole('heading', { name: /How Cangjie works/ })).toHaveCount(0);

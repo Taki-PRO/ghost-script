@@ -60,3 +60,50 @@ describe('Cangjie codes in characters.json', () => {
     expect(others).toEqual(['别', '错'].sort());
   });
 });
+
+// Levels 2 and 3 (harder-ghosts): the same verbatim-code rules, every record.
+const NOT_PLAYABLE_BY_LEVEL: ReadonlyArray<readonly [2 | 3, number, string[]]> = [
+  [2, 400, ['广', '换', '压', '灭']],
+  [3, 500, ['历', '内', '敌', '锻', '镜', '宽', '亏', '杀', '贡']],
+];
+
+describe.each(NOT_PLAYABLE_BY_LEVEL)(
+  'Cangjie codes in characters-level%i.json (%i records)',
+  (level, count, notPlayable) => {
+    const levelData = JSON.parse(
+      read(`../../app/public/data/characters-level${level}.json`),
+    ) as Record<string, Row>;
+    const levelEntries = Object.entries(levelData);
+
+    it(`has ${count} records`, () => {
+      expect(levelEntries).toHaveLength(count);
+    });
+
+    it('every code is the single raw Unihan value, or null with no raw value', () => {
+      for (const [char, rec] of levelEntries) {
+        if (rec.cangjie === null) {
+          expect(raw.get(char) ?? [], `${char} raw values`).toEqual([]);
+        } else {
+          expect(rec.cangjie, `${char} code shape`).toMatch(/^[A-Y]{1,5}$/);
+          expect(raw.get(char), `${char} raw value`).toEqual([rec.cangjie]);
+        }
+      }
+    });
+
+    it('sources.cangjie is "unihan" exactly when cangjie is non-null', () => {
+      for (const [char, rec] of levelEntries) {
+        expect(rec.sources.cangjie, `${char} source`).toBe(
+          rec.cangjie !== null ? 'unihan' : 'missing',
+        );
+      }
+    });
+
+    it('the not-Playable characters are exactly the named set', () => {
+      const others = levelEntries
+        .filter(([, rec]) => !isPlayableInCangjie(rec.cangjie))
+        .map(([char]) => char)
+        .sort();
+      expect(others).toEqual([...notPlayable].sort());
+    });
+  },
+);

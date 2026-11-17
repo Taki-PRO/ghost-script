@@ -18,7 +18,8 @@
 
 import { existsSync } from 'node:fs';
 import { readFile, rename, writeFile } from 'node:fs/promises';
-import { dirname, join, resolve } from 'node:path';
+import { basename, dirname, join, relative, resolve } from 'node:path';
+import { gzipSync } from 'node:zlib';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import type {
@@ -26,6 +27,8 @@ import type {
   BuildResult,
   CangjieError,
   CharacterRecord,
+  Level,
+  LevelManifest,
   MissingFieldError,
   Prompt,
   PromptOverrideFailure,
@@ -47,6 +50,26 @@ import type { CcCedictEntry } from './lib/parse-cc-cedict';
 import { mergeCharacter } from './lib/merge';
 import { serialiseDataset } from './lib/serialise';
 import { parsePromptOverrides } from './lib/parse-prompt-overrides';
+import { parsePromptApprovals } from './lib/parse-prompt-approvals';
+import {
+  LEVELS,
+  LEVEL_FILES,
+  buildManifest,
+  formatFileReport,
+  serialiseManifest,
+} from './lib/levels';
+import {
+  buildReviewSample,
+  buildSampleProvenance,
+  serialiseSampleProvenance,
+} from './lib/review-sample';
+import {
+  computePromptCounts,
+  renderCountsModule,
+  renderReadmeBlock,
+  replaceReadmeBlock,
+} from './lib/prompt-counts';
+import type { PromptCounts } from './lib/prompt-counts';
 import type { PromptOverride } from './lib/prompt';
 import { numberedToToneMarks, selectPrompt } from './lib/prompt';
 
@@ -131,7 +154,15 @@ export async function buildDataset(opts: BuildOptions): Promise<BuildResult> {
   // 4. Read prompt overrides when provided and present. An absent path or
   //    missing file means an empty overrides map. A parse failure (shape /
   //    reviewer / duplicate) is an input-validation failure → throw.
-  const overrides = await loadOverrides(opts.promptOverridesPath);
+  const isLaterLevel = opts.level === 2 || opts.level === 3;
+  const overrides = await loadOverrides(
+    opts.promptOverridesPath,
+    isLaterLevel,
+  );
+  // Approvals only matter at level 2 and 3 (absent file means none).
+  const approvals = isLaterLevel
+    ? await loadApprovals(opts.promptApprovalsPath)
+    : new Set<string>();
 
   // An override naming a character NOT in character-list.txt is an
   // unknown-character error. Collect those first (they have no per-character
@@ -247,7 +278,18 @@ export async function buildDataset(opts: BuildOptions): Promise<BuildResult> {
       cangjie,
     );
     if (merged.ok) {
-      records.set(char, merged.record);
+      records.set(
+        char,
+        isLaterLevel
+          ? {
+              ...merged.record,
+              promptReview:
+                override !== undefined || approvals.has(char)
+                  ? 'reviewed'
+                  : 'unreviewed',
+            }
+          : merged.record,
+      );
     } else {
       // Should not happen (missingFields already checked), but stay fail-slow.
       errors.push({ character: char, missingFields: merged.missingFields });
@@ -263,7 +305,7 @@ export async function buildDataset(opts: BuildOptions): Promise<BuildResult> {
   }
 
   // 7. Serialise and verify the output record count matches the list length.
-  const output = serialiseDataset(records);
+  const output = serialiseDataset(records, { minify: isLaterLevel });
   if (records.size !== characters.length) {
     throw new Error(
       `Output integrity check failed: serialised ${records.size} record(s) ` +
@@ -272,7 +314,12 @@ export async function buildDataset(opts: BuildOptions): Promise<BuildResult> {
   }
 
   // Compute the prompt-review CSV in character-list order.
-  const promptReviewCsv = buildPromptReviewCsv(characters, ccCedict, overrides);
+  const promptReviewCsv = buildPromptReviewCsv(
+    characters,
+    ccCedict,
+    overrides,
+    approvals,
+  );
 
   const summonInkCounts: Record<SummonInkClass, number> = {
     transparent: 0,
@@ -300,12 +347,15 @@ export async function buildDataset(opts: BuildOptions): Promise<BuildResult> {
  */
 async function loadOverrides(
   promptOverridesPath: string | undefined,
+  requireHuman = false,
 ): Promise<Map<string, PromptOverride>> {
   if (promptOverridesPath === undefined || !existsSync(promptOverridesPath)) {
     return new Map<string, PromptOverride>();
   }
   const raw = await readFile(promptOverridesPath, 'utf8');
-  const result = parsePromptOverrides(raw);
+  const result = requireHuman
+    ? parsePromptOverrides(raw, { requiredReviewer: 'human' })
+    : parsePromptOverrides(raw);
   if (!result.ok) {
     const summary = result.errors
       .map(
@@ -313,10 +363,35 @@ async function loadOverrides(
       )
       .join('\n');
     throw new Error(
-      `prompt-overrides.csv failed validation (${result.errors.length} error(s)):\n${summary}`,
+      `${requireHuman ? basename(promptOverridesPath) : 'prompt-overrides.csv'} failed validation (${result.errors.length} error(s)):\n${summary}`,
     );
   }
   return result.overrides;
+}
+
+/**
+ * Read and parse the shared prompt-approvals CSV. An absent path or file means
+ * no approvals. A parse failure throws an Error naming every bad row.
+ */
+async function loadApprovals(
+  promptApprovalsPath: string | undefined,
+): Promise<Set<string>> {
+  if (promptApprovalsPath === undefined || !existsSync(promptApprovalsPath)) {
+    return new Set<string>();
+  }
+  const raw = await readFile(promptApprovalsPath, 'utf8');
+  const result = parsePromptApprovals(raw);
+  if (!result.ok) {
+    const summary = result.errors
+      .map(
+        (e) => `  line ${e.line}: ${e.character || '(empty)'} — ${e.reason}`,
+      )
+      .join('\n');
+    throw new Error(
+      `${basename(promptApprovalsPath)} failed validation (${result.errors.length} error(s)):\n${summary}`,
+    );
+  }
+  return result.approvals;
 }
 
 /**
@@ -396,6 +471,7 @@ function buildPromptReviewCsv(
   characters: string[],
   ccCedict: Map<string, CcCedictEntry>,
   overrides: Map<string, PromptOverride>,
+  approvals: ReadonlySet<string> = new Set<string>(),
 ): string {
   const rows: string[] = [REVIEW_HEADER];
 
@@ -418,7 +494,11 @@ function buildPromptReviewCsv(
 
     const choice = selection.choice;
     const source = choice.fromOverride ? 'override' : 'default';
-    const reviewedBy = choice.fromOverride ? (override?.reviewedBy ?? '') : '';
+    const reviewedBy = choice.fromOverride
+      ? (override?.reviewedBy ?? '')
+      : approvals.has(char)
+        ? 'human'
+        : '';
 
     rows.push(
       [
@@ -472,10 +552,334 @@ function repoRoot(): string {
   return resolve(here, '..');
 }
 
+// --- All levels --------------------------------------------------------------
+
+/** Inputs of one level for buildAllLevels. */
+export interface LevelInputPaths {
+  characterListPath: string;
+  /** Absent path or absent file means no overrides. */
+  promptOverridesPath?: string;
+}
+
+/** Options of buildAllLevels: the shared sources plus one input set per level. */
+export interface AllLevelsOptions {
+  hanziWriterDataDir: string;
+  makeMeAHanziPath: string;
+  ccCedictPath: string;
+  unihanPath: string;
+  unihanSha256: string;
+  /** Shared by level 2 and 3. Absent path or absent file means no approvals. */
+  promptApprovalsPath?: string;
+  levels: Readonly<Record<Level, LevelInputPaths>>;
+}
+
+/** What one successful level contributes. */
+export interface LevelBuild {
+  level: Level;
+  /** Number of records. */
+  count: number;
+  /** Serialised Level_Dataset (level 1 pretty, levels 2 and 3 minified). */
+  output: string;
+  /** The level's Review_File content. */
+  promptReviewCsv: string;
+  cangjieMissing: string[];
+  notPlayable: string[];
+  summonInkCounts: Record<SummonInkClass, number>;
+}
+
+/** The failures of one level. */
+export interface LevelFailure {
+  level: Level;
+  errors: MissingFieldError[];
+  cangjieErrors: CangjieError[];
+}
+
+/** Every file content a successful all-levels build produces. */
+export interface AllLevelsOutput {
+  levels: LevelBuild[];
+  manifest: LevelManifest;
+  /** levels.json content. */
+  manifestJson: string;
+  /** Review_Samples of level 2 and 3. */
+  samples: Record<2 | 3, string>;
+  /** Sample_Provenance JSON content. */
+  provenanceJson: string;
+  promptCounts: PromptCounts;
+  /** Content of app/src/data/promptCounts.generated.ts. */
+  countsModule: string;
+  /** Sentence placed between the README markers. */
+  readmeBlock: string;
+}
+
+export type AllLevelsResult =
+  | ({ ok: true } & AllLevelsOutput)
+  | { ok: false; failures: LevelFailure[] };
+
 /**
- * CLI entry point. Resolves the hardcoded repo-root paths, runs buildDataset,
- * reports progress, and writes the output atomically on success. Never throws:
- * all failure modes set process.exitCode = 1 and return.
+ * Builds all three levels without writing anything. Every level is built
+ * before the result is decided, so one report lists the failures of all
+ * levels. Input-file errors (missing sources, invalid lists, invalid override
+ * or approval files, hash mismatch) throw, as in buildDataset.
+ */
+export async function buildAllLevels(
+  opts: AllLevelsOptions,
+): Promise<AllLevelsResult> {
+  // Approvals name characters of level 2 or 3; one that is in neither list is
+  // reported before anything is built.
+  const orders = new Map<Level, string[]>();
+  for (const level of LEVELS) {
+    const raw = await readFile(opts.levels[level].characterListPath, 'utf8');
+    const parsed = parseCharacterList(raw);
+    if (!parsed.ok) {
+      const summary = parsed.errors
+        .map((e) => `  line ${e.line}: ${e.character || '(empty)'} — ${e.reason}`)
+        .join('\n');
+      throw new Error(
+        `${basename(opts.levels[level].characterListPath)} failed validation (${parsed.errors.length} error(s)):\n${summary}`,
+      );
+    }
+    orders.set(level, parsed.characters);
+  }
+  const approvals = await loadApprovals(opts.promptApprovalsPath);
+  const laterChars = new Set([
+    ...(orders.get(2) as string[]),
+    ...(orders.get(3) as string[]),
+  ]);
+  const unknownApprovals = [...approvals].filter((c) => !laterChars.has(c));
+  if (unknownApprovals.length > 0) {
+    throw new Error(
+      `${basename(opts.promptApprovalsPath as string)} names character(s) that are in neither level 2 nor level 3: ${unknownApprovals.join(' ')}`,
+    );
+  }
+
+  const builds: LevelBuild[] = [];
+  const failures: LevelFailure[] = [];
+  for (const level of LEVELS) {
+    const input = opts.levels[level];
+    const result = await buildDataset({
+      characterListPath: input.characterListPath,
+      hanziWriterDataDir: opts.hanziWriterDataDir,
+      makeMeAHanziPath: opts.makeMeAHanziPath,
+      ccCedictPath: opts.ccCedictPath,
+      promptOverridesPath: input.promptOverridesPath,
+      unihanPath: opts.unihanPath,
+      unihanSha256: opts.unihanSha256,
+      ...(level === 1
+        ? {}
+        : { level, promptApprovalsPath: opts.promptApprovalsPath }),
+    });
+    if (!result.ok) {
+      failures.push({
+        level,
+        errors: result.errors,
+        cangjieErrors: result.cangjieErrors,
+      });
+      continue;
+    }
+    builds.push({
+      level,
+      count: Object.keys(JSON.parse(result.output) as object).length,
+      output: result.output,
+      promptReviewCsv: result.promptReviewCsv,
+      cangjieMissing: result.cangjieMissing,
+      notPlayable: result.notPlayable,
+      summonInkCounts: result.summonInkCounts,
+    });
+  }
+  if (failures.length > 0) {
+    return { ok: false, failures };
+  }
+
+  const parsedByLevel = new Map<Level, Record<string, CharacterRecord>>();
+  for (const b of builds) {
+    parsedByLevel.set(
+      b.level,
+      JSON.parse(b.output) as Record<string, CharacterRecord>,
+    );
+  }
+  const manifest = buildManifest(
+    LEVELS.map((level) => ({
+      level,
+      order: orders.get(level) as string[],
+      records: new Map(Object.entries(parsedByLevel.get(level) as object)) as Map<
+        string,
+        CharacterRecord
+      >,
+    })),
+  );
+  const csvOf = (level: Level): string =>
+    (builds.find((b) => b.level === level) as LevelBuild).promptReviewCsv;
+  const countOf = (level: Level): number =>
+    (builds.find((b) => b.level === level) as LevelBuild).count;
+  const samples: Record<2 | 3, string> = {
+    2: buildReviewSample(csvOf(2), 2),
+    3: buildReviewSample(csvOf(3), 3),
+  };
+  const provenanceJson = serialiseSampleProvenance(
+    buildSampleProvenance({ 2: countOf(2), 3: countOf(3) }),
+  );
+  const promptCounts = computePromptCounts({
+    level2: parsedByLevel.get(2) as Record<string, CharacterRecord>,
+    level3: parsedByLevel.get(3) as Record<string, CharacterRecord>,
+  });
+  return {
+    ok: true,
+    levels: builds,
+    manifest,
+    manifestJson: serialiseManifest(manifest),
+    samples,
+    provenanceJson,
+    promptCounts,
+    countsModule: renderCountsModule(promptCounts),
+    readmeBlock: renderReadmeBlock(promptCounts),
+  };
+}
+
+/** Where each generated file goes. */
+export interface AllLevelsPaths {
+  datasets: Record<Level, string>;
+  manifest: string;
+  reviewFiles: Record<Level, string>;
+  samples: Record<2 | 3, string>;
+  provenance: string;
+  countsModule: string;
+  readme: string;
+}
+
+/** The generated-file paths inside a repository root. */
+export function defaultPaths(root: string): AllLevelsPaths {
+  return {
+    datasets: {
+      1: join(root, 'app/public/data', LEVEL_FILES[1]),
+      2: join(root, 'app/public/data', LEVEL_FILES[2]),
+      3: join(root, 'app/public/data', LEVEL_FILES[3]),
+    },
+    manifest: join(root, 'app/public/data/levels.json'),
+    reviewFiles: {
+      1: join(root, 'data/prompt-review.csv'),
+      2: join(root, 'data/prompt-review-level2.csv'),
+      3: join(root, 'data/prompt-review-level3.csv'),
+    },
+    samples: {
+      2: join(root, 'data/prompt-review-sample-level2.csv'),
+      3: join(root, 'data/prompt-review-sample-level3.csv'),
+    },
+    provenance: join(root, 'data/prompt-review-sample-provenance.json'),
+    countsModule: join(root, 'app/src/data/promptCounts.generated.ts'),
+    readme: join(root, 'README.md'),
+  };
+}
+
+/** Every file to write with its content, in a fixed order. */
+function filesToWrite(
+  output: AllLevelsOutput,
+  paths: AllLevelsPaths,
+  readmeText: string,
+): Array<{ path: string; content: string }> {
+  const level = (n: Level): LevelBuild =>
+    output.levels.find((b) => b.level === n) as LevelBuild;
+  return [
+    ...LEVELS.map((n) => ({ path: paths.datasets[n], content: level(n).output })),
+    { path: paths.manifest, content: output.manifestJson },
+    ...LEVELS.map((n) => ({
+      path: paths.reviewFiles[n],
+      content: level(n).promptReviewCsv,
+    })),
+    { path: paths.samples[2], content: output.samples[2] },
+    { path: paths.samples[3], content: output.samples[3] },
+    { path: paths.provenance, content: output.provenanceJson },
+    { path: paths.countsModule, content: output.countsModule },
+    {
+      path: paths.readme,
+      content: replaceReadmeBlock(readmeText, output.readmeBlock),
+    },
+  ];
+}
+
+/**
+ * Writes every generated file. The README block is computed first, so a
+ * missing marker throws before any file is touched. Every file is written to a
+ * temp file before the first rename.
+ */
+export async function writeAllLevels(
+  output: AllLevelsOutput,
+  paths: AllLevelsPaths,
+): Promise<void> {
+  const readmeText = await readFile(paths.readme, 'utf8');
+  const files = filesToWrite(output, paths, readmeText);
+  await atomicWriteAll(files);
+}
+
+/** Writes all temp files, then renames them into place. */
+async function atomicWriteAll(
+  files: ReadonlyArray<{ path: string; content: string }>,
+): Promise<void> {
+  for (const f of files) {
+    await writeFile(`${f.path}.tmp`, f.content, 'utf8');
+  }
+  for (const f of files) {
+    await rename(`${f.path}.tmp`, f.path);
+  }
+}
+
+/** The failure report of a failed all-levels build, grouped by level. */
+export function formatAllLevelsFailures(
+  failures: readonly LevelFailure[],
+): string {
+  const blocks = failures.map((f) => {
+    const lines: string[] = [`Level ${f.level}:`];
+    if (f.errors.length > 0) {
+      lines.push(`  ${f.errors.length} character(s) could not be built:`);
+      for (const e of f.errors) lines.push(`    ${formatError(e)}`);
+    }
+    if (f.cangjieErrors.length > 0) {
+      lines.push(
+        `  ${f.cangjieErrors.length} character(s) have an unusable Cangjie code:`,
+      );
+      for (const line of formatCangjieErrors(f.cangjieErrors).split('\n')) {
+        lines.push(`    ${line}`);
+      }
+    }
+    return lines.join('\n');
+  });
+  return `${blocks.join('\n')}\n\nNo output written.\n`;
+}
+
+/**
+ * The success report: per-level Cangjie and summon-ink lines, then one line per
+ * data file with record count, raw bytes and gzip bytes. Paths are shown
+ * relative to `baseDir`.
+ */
+export function formatAllLevelsReport(
+  output: AllLevelsOutput,
+  paths: AllLevelsPaths,
+  baseDir: string,
+): string {
+  let text = '';
+  for (const b of output.levels) {
+    text +=
+      `Level ${b.level}: ${b.count} character(s)\n` +
+      formatCangjieSummary(b.count, b.cangjieMissing, b.notPlayable) +
+      formatSummonInkSummary(b.summonInkCounts);
+  }
+  const line = (path: string, records: number, content: string): string =>
+    formatFileReport(
+      relative(baseDir, path),
+      records,
+      Buffer.byteLength(content, 'utf8'),
+      gzipSync(Buffer.from(content, 'utf8')).length,
+    ) + '\n';
+  for (const b of output.levels) {
+    text += line(paths.datasets[b.level], b.count, b.output);
+  }
+  text += line(paths.manifest, output.manifest.levels.length, output.manifestJson);
+  return text;
+}
+
+/**
+ * CLI entry point. Resolves the hardcoded repo-root paths, builds every level,
+ * reports progress, and writes the outputs on success. Never throws: all
+ * failure modes set process.exitCode = 1 and return.
  */
 async function main(): Promise<void> {
   const root = repoRoot();
@@ -501,20 +905,32 @@ async function main(): Promise<void> {
     return;
   }
 
-  const opts: BuildOptions = {
-    characterListPath: join(root, 'data/character-list.txt'),
+  const opts: AllLevelsOptions = {
     hanziWriterDataDir: join(root, 'data/raw/hanzi-writer-data'),
     makeMeAHanziPath: join(root, 'data/raw/make-me-a-hanzi/dictionary.txt'),
     ccCedictPath: join(root, 'data/raw/cc-cedict/cedict_ts.u8'),
-    promptOverridesPath: join(root, 'data/prompt-overrides.csv'),
-    promptReviewPath: join(root, 'data/prompt-review.csv'),
     unihanPath: join(root, 'data/raw/unihan', unihanFile),
     unihanSha256,
+    promptApprovalsPath: join(root, 'data/prompt-approvals.csv'),
+    levels: {
+      1: {
+        characterListPath: join(root, 'data/character-list.txt'),
+        promptOverridesPath: join(root, 'data/prompt-overrides.csv'),
+      },
+      2: {
+        characterListPath: join(root, 'data/character-list-level2.txt'),
+        promptOverridesPath: join(root, 'data/prompt-overrides-level2.csv'),
+      },
+      3: {
+        characterListPath: join(root, 'data/character-list-level3.txt'),
+        promptOverridesPath: join(root, 'data/prompt-overrides-level3.csv'),
+      },
+    },
   };
 
-  let result: BuildResult;
+  let result: AllLevelsResult;
   try {
-    result = await buildDataset(opts);
+    result = await buildAllLevels(opts);
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     const prefix =
@@ -525,39 +941,24 @@ async function main(): Promise<void> {
   }
 
   if (!result.ok) {
-    if (result.errors.length > 0) {
-      const lines = result.errors.map((e) => formatError(e));
-      process.stderr.write(
-        `${result.errors.length} character(s) could not be built:\n`,
-      );
-      process.stderr.write(`${lines.join('\n')}\n`);
-    }
-    if (result.cangjieErrors.length > 0) {
-      process.stderr.write(
-        `${result.cangjieErrors.length} character(s) have an unusable Cangjie code:\n`,
-      );
-      process.stderr.write(`${formatCangjieErrors(result.cangjieErrors)}\n`);
-    }
-    process.stderr.write(`\nNo output written.\n`);
+    process.stderr.write(formatAllLevelsFailures(result.failures));
     process.exitCode = 1;
     return;
   }
 
-  // Success: write both artefacts atomically (temp file + rename).
-  const outputPath = join(root, 'app/public/data/characters.json');
-  await atomicWrite(outputPath, result.output);
-
-  const reviewPath =
-    opts.promptReviewPath ?? join(root, 'data/prompt-review.csv');
-  await atomicWrite(reviewPath, result.promptReviewCsv);
-
-  const count = Object.keys(JSON.parse(result.output) as object).length;
+  const paths = defaultPaths(root);
+  try {
+    await writeAllLevels(result, paths);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    process.stderr.write(`Error: ${message}\n`);
+    process.exitCode = 1;
+    return;
+  }
   process.stdout.write(
-    `Built ${count} character(s) → ${outputPath}\n` +
-      formatCangjieSummary(count, result.cangjieMissing, result.notPlayable) +
-      formatSummonInkSummary(result.summonInkCounts) +
+    formatAllLevelsReport(result, paths, root) +
       `All required fields (pinyin, meanings, strokeCount, strokeData, decomposition) and prompt are non-null.\n` +
-      `Wrote prompt review → ${reviewPath}\n`,
+      `Wrote prompt review files, review samples, levels.json and prompt counts.\n`,
   );
 }
 
@@ -597,13 +998,6 @@ export function formatCangjieErrors(errors: readonly CangjieError[]): string {
   return errors
     .map((e) => `${e.character}: ${e.values.join(', ')} (${e.reason})`)
     .join('\n');
-}
-
-/** Atomically write `content` to `path` via a temp file + rename. */
-async function atomicWrite(path: string, content: string): Promise<void> {
-  const tmpPath = `${path}.tmp`;
-  await writeFile(tmpPath, content, 'utf8');
-  await rename(tmpPath, path);
 }
 
 /**

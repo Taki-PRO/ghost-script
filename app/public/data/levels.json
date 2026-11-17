@@ -1,0 +1,37 @@
+{
+  "levels": [
+    {
+      "level": 1,
+      "file": "characters.json",
+      "count": 300,
+      "averageStrokes": 7,
+      "exampleMeanings": [
+        "child",
+        "year",
+        "now"
+      ]
+    },
+    {
+      "level": 2,
+      "file": "characters-level2.json",
+      "count": 400,
+      "averageStrokes": 8.1,
+      "exampleMeanings": [
+        "level",
+        "to stretch",
+        "to break"
+      ]
+    },
+    {
+      "level": 3,
+      "file": "characters-level3.json",
+      "count": 500,
+      "averageStrokes": 8.7,
+      "exampleMeanings": [
+        "to discuss",
+        "window",
+        "brave"
+      ]
+    }
+  ]
+}

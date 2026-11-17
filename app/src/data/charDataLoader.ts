@@ -1,7 +1,7 @@
 import type { CharDataLoaderFn } from 'hanzi-writer';
 import { isValidCangjieCode } from '../engine/cangjieRules';
 import { isValidSummonInk } from '../engine/summonInk';
-import type { CharacterRecord, StrokeData } from './types';
+import type { CharacterRecord, Level, LevelInfo, LevelManifest, StrokeData } from './types';
 
 /** In-memory dataset keyed by character (insertion order = JSON key order). */
 export type CharacterDataset = ReadonlyMap<string, CharacterRecord>;
@@ -22,6 +22,17 @@ export function defaultDatasetUrl(): string {
   const base = import.meta.env?.BASE_URL ?? '/';
   return `${base}data/characters.json`;
 }
+
+function dataBase(): string {
+  return `${import.meta.env?.BASE_URL ?? '/'}data/`;
+}
+
+/** Location of one level's dataset, honouring Vite's base path. Level 1 equals defaultDatasetUrl(). */
+export function levelUrl(level: Level): string {
+  return `${dataBase()}${LEVEL_FILE_NAMES[level]}`;
+}
+
+export type ManifestResult = { ok: true; manifest: LevelManifest } | { ok: false };
 
 // ---------------------------------------------------------------------------
 // Validation helpers (JSON boundary: everything is `unknown`)
@@ -101,8 +112,47 @@ function isCharacterRecord(v: unknown): v is CharacterRecord {
     isPrompt(v.prompt) &&
     isCangjie(v.cangjie) &&
     isValidSummonInk(v.summonInk, v.cangjie as string | null, v.strokeCount) &&
-    isPlainObject(v.sources)
+    isPlainObject(v.sources) &&
+    isPromptReview(v.promptReview)
   );
+}
+
+/** Absent, 'reviewed' or 'unreviewed'; anything else is invalid. */
+function isPromptReview(v: unknown): boolean {
+  return v === undefined || v === 'reviewed' || v === 'unreviewed';
+}
+
+/** File name of each Level_Dataset inside data/ (same names as scripts/lib/levels.ts). */
+const LEVEL_FILE_NAMES: Readonly<Record<Level, string>> = {
+  1: 'characters.json',
+  2: 'characters-level2.json',
+  3: 'characters-level3.json',
+};
+
+const MANIFEST_FILE_NAME = 'levels.json';
+
+function isLevelInfo(v: unknown, level: Level): v is LevelInfo {
+  if (!isPlainObject(v)) return false;
+  return (
+    v.level === level &&
+    v.file === LEVEL_FILE_NAMES[level] &&
+    typeof v.count === 'number' &&
+    Number.isInteger(v.count) &&
+    v.count > 0 &&
+    typeof v.averageStrokes === 'number' &&
+    Number.isFinite(v.averageStrokes) &&
+    v.averageStrokes > 0 &&
+    Array.isArray(v.exampleMeanings) &&
+    v.exampleMeanings.length === 3 &&
+    v.exampleMeanings.every(isNonEmptyString)
+  );
+}
+
+function isLevelManifest(v: unknown): v is LevelManifest {
+  if (!isPlainObject(v)) return false;
+  const levels: unknown = v.levels;
+  if (!Array.isArray(levels) || levels.length !== 3) return false;
+  return ([1, 2, 3] as const).every((level, i) => isLevelInfo(levels[i], level));
 }
 
 // ---------------------------------------------------------------------------
@@ -141,6 +191,25 @@ export async function loadDataset(url: string = defaultDatasetUrl()): Promise<Lo
     dataset.set(key, value);
   }
   return { ok: true, dataset };
+}
+
+/** Fetch and validate one level's dataset with the same checks as level 1. Never throws. */
+export function loadLevel(level: Level): Promise<LoadResult> {
+  return loadDataset(levelUrl(level));
+}
+
+/** Fetch and validate the Level_Manifest. Never throws. */
+export async function loadManifest(
+  url: string = `${dataBase()}${MANIFEST_FILE_NAME}`,
+): Promise<ManifestResult> {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) return { ok: false };
+    const parsed: unknown = JSON.parse(await response.text());
+    return isLevelManifest(parsed) ? { ok: true, manifest: parsed } : { ok: false };
+  } catch {
+    return { ok: false };
+  }
 }
 
 /** Typed lookup. Returns undefined when the character is absent. */

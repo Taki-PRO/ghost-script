@@ -3,6 +3,7 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import type { CharacterRecord } from '../data/types';
 import type { CharacterDataset } from '../data/charDataLoader';
 import { Graveyard } from './Graveyard';
+import type { GraveyardProps } from './Graveyard';
 import { learningOrder } from '../engine/learningOrder';
 import { applyReview } from '../engine/scheduler';
 import type { ReviewHistory } from '../engine/scheduler';
@@ -19,8 +20,24 @@ const DAY = 24 * 60 * 60 * 1000;
 
 afterEach(cleanup);
 
-function show(history: ReviewHistory, onBack: () => void = () => {}) {
-  return render(<Graveyard dataset={dataset} history={history} now={NOW} onBack={onBack} />);
+function show(
+  history: ReviewHistory,
+  onBack: () => void = () => {},
+  extra: Partial<GraveyardProps> = {},
+) {
+  return render(
+    <Graveyard
+      dataset={dataset}
+      level={1}
+      chosenLevel={1}
+      history={history}
+      now={NOW}
+      status={{ kind: 'idle' }}
+      onChangeLevel={() => {}}
+      onBack={onBack}
+      {...extra}
+    />,
+  );
 }
 
 describe('Graveyard', () => {
@@ -182,5 +199,85 @@ describe('Graveyard', () => {
     show({}, onBack);
     fireEvent.click(screen.getByRole('button', { name: 'Back to menu' }));
     expect(onBack).toHaveBeenCalledTimes(1);
+  });
+
+  describe('levels', () => {
+    // A smaller dataset of real records stands in for another level.
+    const smaller: CharacterDataset = new Map(Array.from(dataset.entries()).slice(0, 40));
+    const smallOrder = learningOrder(smaller);
+
+    it('shows level 1 pressed with the "showing" cue by default and the others not', () => {
+      show({});
+      const group = screen.getByRole('group', { name: 'Level' });
+      const slips = Array.from(group.querySelectorAll('button'));
+      expect(slips.map((b) => b.textContent)).toEqual(['Level 1showing', 'Level 2', 'Level 3']);
+      expect(slips.map((b) => b.getAttribute('aria-pressed'))).toEqual(['true', 'false', 'false']);
+      expect(screen.getByRole('button', { name: 'Level 1' }).classList.contains('slip')).toBe(true);
+      expect(screen.getAllByText('showing')).toHaveLength(1);
+    });
+
+    it('marks the shown level, which can differ from the chosen level', () => {
+      show({}, undefined, { level: 3, chosenLevel: 1, dataset: smaller });
+      expect(screen.getByRole('button', { name: 'Level 3' }).getAttribute('aria-pressed')).toBe('true');
+      expect(screen.getByRole('button', { name: 'Level 1' }).getAttribute('aria-pressed')).toBe('false');
+      expect(screen.getByText(/ghosts of level 3/)).toBeTruthy();
+      expect(screen.getByText(/draw new ghosts from level 1/)).toBeTruthy();
+    });
+
+    it('calls onChangeLevel with the level of the activated slip', () => {
+      const onChangeLevel = vi.fn();
+      show({}, undefined, { onChangeLevel });
+      fireEvent.click(screen.getByRole('button', { name: 'Level 2' }));
+      expect(onChangeLevel).toHaveBeenCalledWith(2);
+    });
+
+    it('says the graves are the ghosts of the shown level', () => {
+      show({});
+      expect(screen.getByText(/These graves are the ghosts of level 1/)).toBeTruthy();
+    });
+
+    it('counts add up to the shown level count and labels use that count', () => {
+      const history: ReviewHistory = {
+        [smallOrder[0]]: applyReview(undefined, 'clean', NOW, DEFAULT_CONFIG),
+        [smallOrder[1]]: applyReview(undefined, 'struggled', NOW, DEFAULT_CONFIG),
+      };
+      show(history, undefined, { level: 2, dataset: smaller });
+      expect(screen.getByText('Never met: 38')).toBeTruthy();
+      expect(screen.getByText('Restless: 1')).toBeTruthy();
+      expect(screen.getByText('At rest: 1')).toBeTruthy();
+      expect(screen.getByRole('list', { name: 'Graves' }).children).toHaveLength(40);
+      expect(screen.getByLabelText('Ghost 3 of 40, never met')).toBeTruthy();
+    });
+
+    it('carries no never-met character in text or attributes and shows met glyphs of the shown level', () => {
+      const history: ReviewHistory = {
+        [smallOrder[0]]: applyReview(undefined, 'clean', NOW, DEFAULT_CONFIG),
+      };
+      const { container } = show(history, undefined, { level: 2, dataset: smaller });
+      const html = container.innerHTML;
+      expect(html.includes(smallOrder[0])).toBe(true);
+      for (const ch of smaller.keys()) {
+        if (ch !== smallOrder[0]) expect(html.includes(ch), ch).toBe(false);
+      }
+      const rest = screen.getByLabelText(`${smallOrder[0]}, at rest, 1 clean in a row`);
+      expect(rest.textContent).toContain(smallOrder[0]);
+    });
+
+    it('shows the loading status in place of the graves while the dataset is null', () => {
+      show({}, undefined, { level: 2, dataset: null, status: { kind: 'loading', level: 2 } });
+      expect(screen.getByRole('status').textContent).toBe('Loading level 2…');
+      expect(screen.queryByRole('list', { name: 'Graves' })).toBeNull();
+      expect(screen.queryByTestId('hillside')).toBeNull();
+    });
+
+    it('on failure shows the alert and keeps the previous level and its graves', () => {
+      show({}, undefined, { level: 1, status: { kind: 'failed', level: 2 } });
+      expect(screen.getByRole('alert').textContent).toBe(
+        'Level 2 could not be loaded. Check your connection and try again.',
+      );
+      expect(screen.getByRole('button', { name: 'Level 1' }).getAttribute('aria-pressed')).toBe('true');
+      expect(screen.getByRole('button', { name: 'Level 2' }).getAttribute('aria-pressed')).toBe('false');
+      expect(screen.getByRole('list', { name: 'Graves' }).children).toHaveLength(dataset.size);
+    });
   });
 });

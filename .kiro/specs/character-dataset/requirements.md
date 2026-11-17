@@ -8,7 +8,7 @@ The character-dataset feature builds the data pipeline that produces `app/public
 
 - **Pipeline**: The TypeScript script(s) in `scripts/` that read raw datasets and `character-list.txt` and write `app/public/data/characters.json`.
 - **CharacterRecord**: A single JSON object in `characters.json` representing one simplified Chinese character and all its associated data fields.
-- **character-list.txt**: The file `data/character-list.txt` containing the curated list of ~300 simplified Chinese characters, one per line, with a recorded source and licence.
+- **character-list.txt**: The file `data/character-list.txt` containing the curated list of ~300 simplified Chinese characters, one per line, with a recorded source and licence. *(Amended (approved by the human): see harder-ghosts Requirement 2: there are now three Level_Lists, `data/character-list.txt` (level 1, unchanged), `data/character-list-level2.txt` and `data/character-list-level3.txt`.)*
 - **hanzi-writer-data**: The open-source npm package (Arphic Public License) supplying per-stroke SVG path data and stroke counts.
 - **Make Me a Hanzi**: The open-source dataset whose `dictionary.txt` file supplies component decomposition data.
 - **CC-CEDICT**: The CC BY-SA 3.0 licensed Chinese–English dictionary supplying pinyin readings and English meanings.
@@ -38,9 +38,9 @@ The character-dataset feature builds the data pipeline that produces `app/public
 
 #### Acceptance Criteria
 
-1. THE Pipeline SHALL read the character list exclusively from `data/character-list.txt`.
-2. THE character-list.txt file SHALL contain between 280 and 320 simplified Chinese characters, one character per line, with no duplicates.
-3. THE character-list.txt file SHALL include a `#`-prefixed comment on its first line recording the name of the published frequency or learner list it was derived from, its URL, and an SPDX licence identifier (or the full name of the licence if no SPDX identifier exists).
+1. THE Pipeline SHALL read the character list exclusively from `data/character-list.txt`. *(Amended (approved by the human): see harder-ghosts Requirement 2: the Pipeline also reads `data/character-list-level2.txt` and `data/character-list-level3.txt`; this item still describes the level 1 list.)*
+2. THE character-list.txt file SHALL contain between 280 and 320 simplified Chinese characters, one character per line, with no duplicates. *(Amended (approved by the human): see harder-ghosts Requirement 2: this item applies to level 1; the level 2 and level 3 lists have exactly 400 and 500 characters.)*
+3. THE character-list.txt file SHALL include a `#`-prefixed comment on its first line recording the name of the published frequency or learner list it was derived from, its URL, and an SPDX licence identifier (or the full name of the licence if no SPDX identifier exists). *(Amended (approved by the human): see harder-ghosts Requirement 2: the level 2 and level 3 lists carry `#` header lines naming the source, file, rule, commit, licence and original standard.)*
 4. IF a character in `character-list.txt` is not a valid simplified Chinese character (i.e., its Unicode codepoint does not fall within CJK Unified Ideographs U+4E00–U+9FFF), THEN THE Pipeline SHALL emit an error to stderr identifying the offending character and its line number, exit with a non-zero exit code, and produce no output files.
 5. WHERE the character source list requires attribution in derivative works, THE README SHALL include that attribution before the pipeline is first run in a production context.
 
@@ -105,7 +105,7 @@ The character-dataset feature builds the data pipeline that produces `app/public
 
 #### Acceptance Criteria
 
-1. THE Test_Suite SHALL include a property test asserting that every character listed in `character-list.txt` appears as a key in `characters.json` exactly once.
+1. THE Test_Suite SHALL include a property test asserting that every character listed in `character-list.txt` appears as a key in `characters.json` exactly once. *(Amended (approved by the human): see harder-ghosts Requirement 3: the tests also run over the level 2 and level 3 Level_Datasets and their Level_Lists.)*
 2. THE Test_Suite SHALL include a property test asserting that every CharacterRecord whose `pinyin` field is non-null contains at least one non-empty pinyin string.
 3. THE Test_Suite SHALL include a property test asserting that every CharacterRecord whose `meanings` field is non-null contains at least one non-empty meaning string.
 4. THE Test_Suite SHALL include a property test asserting that every CharacterRecord whose `strokeCount` field is non-null has a `strokeCount` value that is an integer greater than zero.
@@ -114,7 +114,7 @@ The character-dataset feature builds the data pipeline that produces `app/public
 7. THE Test_Suite SHALL include a property test asserting that the sequence of components revealed by the hint engine for a character is a subsequence of (and contains only components drawn from) the non-null leaf components of that character's `decomposition` field as returned by the engine module in `src/engine/`.
 8. THE Test_Suite SHALL include a determinism test that invokes the Pipeline function (or reads two separately produced output files) with identical inputs and asserts byte-for-byte string equality between the two resulting `characters.json` contents; "identical inputs" means the same `character-list.txt` content, the same raw dataset files (verified by content hash), and no environment-variable differences that affect output.
 9. THE Test_Suite SHALL be runnable with `npm test` from the repository root and SHALL complete without network access after the raw datasets are present in `data/raw/`.
-10. THE Test_Suite SHALL include an exhaustive unit test over all 300 records asserting that every non-null `cangjie` matches `^[A-Y]{1,5}$`, that `sources.cangjie` is `"unihan"` exactly when `cangjie` is non-null, and that every non-null `cangjie` equals the raw Unihan `kCangjie` value for that character (Amended by cangjie-seance; no new property tests, per tech.md).
+10. THE Test_Suite SHALL include an exhaustive unit test over all 300 records asserting that every non-null `cangjie` matches `^[A-Y]{1,5}$`, that `sources.cangjie` is `"unihan"` exactly when `cangjie` is non-null, and that every non-null `cangjie` equals the raw Unihan `kCangjie` value for that character (Amended by cangjie-seance; no new property tests, per tech.md). *(Amended (approved by the human): see harder-ghosts Requirement 3: new plain unit tests cover every Level_Dataset (300, 400 and 500 records); this item stays on the 300 level 1 records.)*
 11. *(Withdrawn: merged into AC 5.10 as a unit test; number kept so existing references stay stable.)*
 12. *(Withdrawn: merged into AC 5.10 as a unit test; number kept so existing references stay stable.)*
 

@@ -45,6 +45,7 @@ At most one per screen at a time.
 | Séance, after an outcome | Next ghost / Finish the séance |
 | Leave prompt | Stay (then "Next ghost" is a paper slip) |
 | Summary | Begin another Séance |
+| Level screen | none |
 | Summon, writing, Graveyard, Sources & licences | none |
 
 ## The ghost

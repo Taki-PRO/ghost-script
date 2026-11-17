@@ -1,3 +1,4 @@
+import type { Level } from '../data/types';
 import type { AttemptRecord, Outcome, ReviewEntry, ReviewHistory } from '../engine/scheduler';
 
 /**
@@ -9,10 +10,15 @@ import type { AttemptRecord, Outcome, ReviewEntry, ReviewHistory } from '../engi
  */
 
 /** Schema version written by this build. */
-export const CURRENT_SCHEMA_VERSION = 2;
+export const CURRENT_SCHEMA_VERSION = 3;
 
 /** The single localStorage key holding the persisted blob. */
 export const STORAGE_KEY = 'ghost-script:state';
+
+
+function isLevel(v: unknown): v is Level {
+  return v === 1 || v === 2 || v === 3;
+}
 
 /** The persisted blob. Req 7.1, 7.2. */
 export interface PersistedState {
@@ -20,6 +26,10 @@ export interface PersistedState {
   readonly introSeen: boolean;
   /** Whether the player has read "How Cangjie works". Added in schema 2. */
   readonly cangjieIntroSeen: boolean;
+  /** The starting level. Added in schema 3. */
+  readonly level: Level;
+  /** True once the player has chosen a level (or had a save before levels existed). Added in schema 3. */
+  readonly levelChosen: boolean;
   readonly history: ReviewHistory;
 }
 
@@ -51,17 +61,27 @@ export interface Store {
   setIntroSeen(seen: boolean): void;
   getCangjieIntroSeen(): boolean;
   setCangjieIntroSeen(seen: boolean): void;
+  getLevel(): Level;
+  getLevelChosen(): boolean;
+  /** Sets the level and marks it as chosen; leaves everything else as it is. */
+  setLevel(level: Level): void;
   resetToDefaults(): void;
   /** False once any write has failed or had no backend during this page session; never reverts. */
   isSavingWorking(): boolean;
 }
 
 /**
- * Migrations shipped with the app. EMPTY: a version-1 blob has no migration
- * path to version 2 and resets to defaults. Add `2: (old) => ...` etc. when
- * CURRENT_SCHEMA_VERSION is bumped again.
+ * Migrations shipped with the app. `2` migrates a version-2 blob to version 3
+ * (level 1; levelChosen is true when the intro was already seen). There is no
+ * `1`: a version-1 blob has no migration path and resets to defaults. Add
+ * `3: (old) => ...` etc. when CURRENT_SCHEMA_VERSION is bumped again.
  */
-const SHIPPED_MIGRATIONS: MigrationMap = {};
+const SHIPPED_MIGRATIONS: MigrationMap = {
+  2: (old) => {
+    const b = old as Record<string, unknown>;
+    return { ...b, level: 1, levelChosen: b.introSeen === true };
+  },
+};
 
 const OUTCOMES: readonly string[] = ['clean', 'struggled', 'gave-up'];
 
@@ -110,11 +130,15 @@ function validateState(blob: unknown, version: number): PersistedState | undefin
   if (blob.schemaVersion !== version) return undefined;
   if (typeof blob.introSeen !== 'boolean') return undefined;
   if (typeof blob.cangjieIntroSeen !== 'boolean') return undefined;
+  if (!isLevel(blob.level)) return undefined;
+  if (typeof blob.levelChosen !== 'boolean') return undefined;
   if (!isValidHistory(blob.history)) return undefined;
   return {
     schemaVersion: version,
     introSeen: blob.introSeen,
     cangjieIntroSeen: blob.cangjieIntroSeen,
+    level: blob.level,
+    levelChosen: blob.levelChosen,
     history: blob.history,
   };
 }
@@ -131,6 +155,8 @@ export function createStore(options: StoreOptions = {}): Store {
     schemaVersion: version,
     introSeen: false,
     cangjieIntroSeen: false,
+    level: 1,
+    levelChosen: false,
     history: Object.freeze({}) as ReviewHistory,
   });
 
@@ -183,6 +209,8 @@ export function createStore(options: StoreOptions = {}): Store {
         schemaVersion: version,
         introSeen: state.introSeen,
         cangjieIntroSeen: state.cangjieIntroSeen,
+        level: state.level,
+        levelChosen: state.levelChosen,
         history: state.history,
       };
       backend.setItem(key, JSON.stringify(blob));
@@ -204,6 +232,8 @@ export function createStore(options: StoreOptions = {}): Store {
       schemaVersion: version,
       introSeen: prior.introSeen,
       cangjieIntroSeen: prior.cangjieIntroSeen,
+      level: prior.level,
+      levelChosen: prior.levelChosen,
       history: { ...prior.history, [char]: entry },
     };
     saveState(next);
@@ -228,6 +258,19 @@ export function createStore(options: StoreOptions = {}): Store {
     saveState({ ...prior, cangjieIntroSeen: seen });
   }
 
+  function getLevel(): Level {
+    return loadState().level;
+  }
+
+  function getLevelChosen(): boolean {
+    return loadState().levelChosen;
+  }
+
+  function setLevel(level: Level): void {
+    const prior = loadState();
+    saveState({ ...prior, level, levelChosen: true });
+  }
+
   function resetToDefaults(): void {
     try {
       getBackend()?.removeItem(key);
@@ -244,6 +287,9 @@ export function createStore(options: StoreOptions = {}): Store {
     setIntroSeen,
     getCangjieIntroSeen,
     setCangjieIntroSeen,
+    getLevel,
+    getLevelChosen,
+    setLevel,
     resetToDefaults,
     isSavingWorking,
   };
@@ -262,5 +308,8 @@ export const getIntroSeen = (): boolean => defaultStore.getIntroSeen();
 export const setIntroSeen = (seen: boolean): void => defaultStore.setIntroSeen(seen);
 export const getCangjieIntroSeen = (): boolean => defaultStore.getCangjieIntroSeen();
 export const setCangjieIntroSeen = (seen: boolean): void => defaultStore.setCangjieIntroSeen(seen);
+export const getLevel = (): Level => defaultStore.getLevel();
+export const getLevelChosen = (): boolean => defaultStore.getLevelChosen();
+export const setLevel = (level: Level): void => defaultStore.setLevel(level);
 export const resetToDefaults = (): void => defaultStore.resetToDefaults();
 export const isSavingWorking = (): boolean => defaultStore.isSavingWorking();

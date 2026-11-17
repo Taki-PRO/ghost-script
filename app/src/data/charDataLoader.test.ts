@@ -3,7 +3,10 @@ import realDataJson from '../../public/data/characters.json';
 import {
   defaultDatasetUrl,
   getRecord,
+  levelUrl,
   loadDataset,
+  loadLevel,
+  loadManifest,
   makeCharDataLoader,
   toHanziWriterData,
 } from './charDataLoader';
@@ -334,5 +337,141 @@ describe('makeCharDataLoader', () => {
     expect(onLoad).toHaveBeenCalledWith(toHanziWriterData(realData[ch].strokeData));
     expect(onError).not.toHaveBeenCalled();
     expect(f).not.toHaveBeenCalled();
+  });
+});
+
+describe('levelUrl', () => {
+  it('uses the base path and the level file names', () => {
+    const base = import.meta.env?.BASE_URL ?? '/';
+    expect(levelUrl(1)).toBe(`${base}data/characters.json`);
+    expect(levelUrl(2)).toBe(`${base}data/characters-level2.json`);
+    expect(levelUrl(3)).toBe(`${base}data/characters-level3.json`);
+  });
+
+  it('level 1 equals the default dataset URL', () => {
+    expect(levelUrl(1)).toBe(defaultDatasetUrl());
+  });
+});
+
+describe('promptReview', () => {
+  it.each(['reviewed', 'unreviewed'])('accepts %s', async (value) => {
+    const rec = validRecord('人') as unknown as Mutable;
+    rec.promptReview = value;
+    stubFetchBody({ 人: rec });
+    const res = await loadDataset();
+    expect(res.ok).toBe(true);
+    if (res.ok) expect(res.dataset.get('人')?.promptReview).toBe(value);
+  });
+
+  it('accepts a record without promptReview', async () => {
+    stubFetchBody({ 人: validRecord('人') });
+    const res = await loadDataset();
+    expect(res.ok).toBe(true);
+    if (res.ok) expect(res.dataset.get('人')?.promptReview).toBeUndefined();
+  });
+
+  it.each([
+    ['Reviewed', 'Reviewed'],
+    ['empty string', ''],
+    ['true', true],
+    ['null', null],
+    ['number', 1],
+    ['object', { value: 'reviewed' }],
+  ])('rejects %s', async (_name, value) => {
+    const rec = validRecord('人') as unknown as Mutable;
+    rec.promptReview = value;
+    stubFetchBody({ 人: rec });
+    await expect(loadDataset()).resolves.toEqual({ ok: false, reason: 'invalid-shape' });
+  });
+});
+
+describe('loadLevel', () => {
+  it('loads a level 2 file with a stubbed fetch', async () => {
+    const a = validRecord('人') as unknown as Mutable;
+    a.promptReview = 'unreviewed';
+    const b = validRecord('大') as unknown as Mutable;
+    b.promptReview = 'reviewed';
+    const f = stubFetchBody({ 人: a, 大: b });
+    const res = await loadLevel(2);
+    expect(f).toHaveBeenCalledTimes(1);
+    expect(f).toHaveBeenCalledWith(levelUrl(2));
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    expect([...res.dataset.keys()]).toEqual(['人', '大']);
+    expect(res.dataset.get('人')?.promptReview).toBe('unreviewed');
+  });
+
+  it('reports a failed fetch and an invalid record', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: false, status: 404 }) as unknown as Response));
+    await expect(loadLevel(3)).resolves.toEqual({ ok: false, reason: 'fetch-failed' });
+    const bad = validRecord('人') as unknown as Mutable;
+    bad.promptReview = 'maybe';
+    stubFetchBody({ 人: bad });
+    await expect(loadLevel(3)).resolves.toEqual({ ok: false, reason: 'invalid-shape' });
+  });
+});
+
+describe('loadManifest', () => {
+  const info = (level: number, file: string) => ({
+    level,
+    file,
+    count: 300 + (level - 1) * 100,
+    averageStrokes: 7 + level / 10,
+    exampleMeanings: ['eight', 'father', 'white'],
+  });
+  const validManifest = () => ({
+    levels: [
+      info(1, 'characters.json'),
+      info(2, 'characters-level2.json'),
+      info(3, 'characters-level3.json'),
+    ],
+  });
+
+  it('loads a valid manifest from the default URL', async () => {
+    const f = stubFetchBody(validManifest());
+    const res = await loadManifest();
+    const base = import.meta.env?.BASE_URL ?? '/';
+    expect(f).toHaveBeenCalledWith(`${base}data/levels.json`);
+    expect(res).toEqual({ ok: true, manifest: validManifest() });
+  });
+
+  it('uses a custom url', async () => {
+    const f = stubFetchBody(validManifest());
+    await loadManifest('/x/levels.json');
+    expect(f).toHaveBeenCalledWith('/x/levels.json');
+  });
+
+  it('fails on network error, bad status and non-JSON', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => Promise.reject(new TypeError('network'))));
+    await expect(loadManifest()).resolves.toEqual({ ok: false });
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: false, status: 500 }) as unknown as Response));
+    await expect(loadManifest()).resolves.toEqual({ ok: false });
+    stubFetchBody('not json');
+    await expect(loadManifest()).resolves.toEqual({ ok: false });
+  });
+
+  type M = ReturnType<typeof validManifest>;
+  const cases: [string, (m: M) => unknown][] = [
+    ['top level is an array', () => []],
+    ['levels missing', () => ({})],
+    ['two levels', (m) => ({ levels: m.levels.slice(0, 2) })],
+    ['four levels', (m) => ({ levels: [...m.levels, info(3, 'characters-level3.json')] })],
+    ['levels out of order', (m) => ({ levels: [m.levels[1], m.levels[0], m.levels[2]] })],
+    ['wrong file name', (m) => void (m.levels[1].file = 'other.json')],
+    ['count 0', (m) => void (m.levels[0].count = 0)],
+    ['count fractional', (m) => void (m.levels[0].count = 1.5)],
+    ['count a string', (m) => void ((m.levels[0] as Record<string, unknown>).count = '300')],
+    ['averageStrokes not a number', (m) => void ((m.levels[2] as Record<string, unknown>).averageStrokes = 'x')],
+    ['two example meanings', (m) => void (m.levels[0].exampleMeanings = ['a', 'b'])],
+    ['four example meanings', (m) => void (m.levels[0].exampleMeanings = ['a', 'b', 'c', 'd'])],
+    ['empty example meaning', (m) => void (m.levels[1].exampleMeanings = ['a', '', 'c'])],
+    ['non-string example meaning', (m) => void (m.levels[1].exampleMeanings = ['a', 'b', 3 as unknown as string])],
+  ];
+
+  it.each(cases)('rejects: %s', async (_name, mutate) => {
+    const m = validManifest();
+    const out = mutate(m);
+    stubFetchBody(out === undefined ? m : out);
+    await expect(loadManifest()).resolves.toEqual({ ok: false });
   });
 });

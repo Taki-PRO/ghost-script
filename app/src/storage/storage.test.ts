@@ -51,7 +51,15 @@ const entry = (outcome: 'clean' | 'struggled' | 'gave-up' = 'clean', prior?: Rev
   applyReview(prior, outcome, NOW, DEFAULT_CONFIG);
 
 const validBlob = (over: Record<string, unknown> = {}): string =>
-  JSON.stringify({ schemaVersion: 2, introSeen: false, cangjieIntroSeen: false, history: {}, ...over });
+  JSON.stringify({
+    schemaVersion: 3,
+    introSeen: false,
+    cangjieIntroSeen: false,
+    level: 1,
+    levelChosen: false,
+    history: {},
+    ...over,
+  });
 
 const v1Blob = (over: Record<string, unknown> = {}): string => validBlob({ schemaVersion: 1, ...over });
 
@@ -75,6 +83,8 @@ describe('first run and round trip', () => {
       schemaVersion: CURRENT_SCHEMA_VERSION,
       introSeen: true,
       cangjieIntroSeen: true,
+      level: 2,
+      levelChosen: true,
       history: { 女: entry('clean'), 好: entry('struggled') },
     };
     s.saveState(state);
@@ -85,9 +95,16 @@ describe('first run and round trip', () => {
 });
 
 describe('schema 2 and cangjieIntroSeen (Req 8)', () => {
-  it('uses schema version 2 and a default with cangjieIntroSeen false', () => {
-    expect(CURRENT_SCHEMA_VERSION).toBe(2);
-    expect(DEFAULT_STATE).toEqual({ schemaVersion: 2, introSeen: false, cangjieIntroSeen: false, history: {} });
+  it('uses schema version 3 and a default with cangjieIntroSeen false', () => {
+    expect(CURRENT_SCHEMA_VERSION).toBe(3);
+    expect(DEFAULT_STATE).toEqual({
+      schemaVersion: 3,
+      introSeen: false,
+      cangjieIntroSeen: false,
+      level: 1,
+      levelChosen: false,
+      history: {},
+    });
     expect(createStore({ backend, key: KEY }).getCangjieIntroSeen()).toBe(false);
   });
 
@@ -130,7 +147,7 @@ describe('schema 2 and cangjieIntroSeen (Req 8)', () => {
     defaults.setCangjieIntroSeen(true);
     expect(defaults.getCangjieIntroSeen()).toBe(true);
     expect(JSON.parse(localStorage.getItem(STORAGE_KEY) as string)).toMatchObject({
-      schemaVersion: 2,
+      schemaVersion: 3,
       cangjieIntroSeen: true,
     });
     localStorage.clear();
@@ -144,12 +161,16 @@ describe('migrations from known older versions', () => {
       backend,
       key: KEY,
       currentVersion: 2,
-      migrations: { 1: (old) => ({ ...(old as object), introSeen: true, cangjieIntroSeen: false }) },
+      migrations: {
+        1: (old) => ({ ...(old as object), introSeen: true, cangjieIntroSeen: false, level: 1, levelChosen: false }),
+      },
     });
     expect(s.loadState()).toEqual({
       schemaVersion: 2,
       introSeen: true,
       cangjieIntroSeen: false,
+      level: 1,
+      levelChosen: false,
       history: { 女: goodEntry },
     });
   });
@@ -163,7 +184,7 @@ describe('migrations from known older versions', () => {
       migrations: {
         1: (old) => {
           const o = old as { seen: boolean; entries: unknown };
-          return { introSeen: o.seen, cangjieIntroSeen: true, history: o.entries };
+          return { introSeen: o.seen, cangjieIntroSeen: true, level: 1, levelChosen: false, history: o.entries };
         },
       },
     });
@@ -171,6 +192,8 @@ describe('migrations from known older versions', () => {
       schemaVersion: 2,
       introSeen: true,
       cangjieIntroSeen: true,
+      level: 1,
+      levelChosen: false,
       history: { 女: goodEntry },
     });
   });
@@ -189,7 +212,7 @@ describe('migrations from known older versions', () => {
         },
         2: (old) => {
           order.push(2);
-          return { ...(old as object), history: { 女: goodEntry } };
+          return { ...(old as object), level: 1, levelChosen: false, history: { 女: goodEntry } };
         },
       },
     });
@@ -197,6 +220,8 @@ describe('migrations from known older versions', () => {
       schemaVersion: 3,
       introSeen: true,
       cangjieIntroSeen: false,
+      level: 1,
+      levelChosen: false,
       history: { 女: goodEntry },
     });
     expect(order).toEqual([1, 2]);
@@ -238,9 +263,12 @@ describe('migrations from known older versions', () => {
     ['null', null],
     ['a string', 'junk'],
     ['an array', []],
-    ['a bad shape', { introSeen: 'yes', cangjieIntroSeen: false, history: {} }],
-    ['a missing cangjieIntroSeen', { introSeen: true, history: {} }],
-    ['a bad history', { introSeen: true, cangjieIntroSeen: false, history: { 女: { step: -1 } } }],
+    ['a bad shape', { introSeen: 'yes', cangjieIntroSeen: false, level: 1, levelChosen: false, history: {} }],
+    ['a missing cangjieIntroSeen', { introSeen: true, level: 1, levelChosen: false, history: {} }],
+    [
+      'a bad history',
+      { introSeen: true, cangjieIntroSeen: false, level: 1, levelChosen: false, history: { 女: { step: -1 } } },
+    ],
   ])('resets when a migration returns %s', (_name, out) => {
     backend.data.set(KEY, v1Blob({ introSeen: true }));
     const s = createStore({ backend, key: KEY, currentVersion: 2, migrations: { 1: () => out } });
@@ -283,7 +311,7 @@ describe('corrupt data resets to defaults', () => {
     ['a JSON string', '"hello"'],
     ['wrong introSeen type', validBlob({ introSeen: 'yes' })],
     ['wrong cangjieIntroSeen type', validBlob({ cangjieIntroSeen: 'yes' })],
-    ['missing cangjieIntroSeen', JSON.stringify({ schemaVersion: 2, introSeen: false, history: {} })],
+    ['missing cangjieIntroSeen', JSON.stringify({ schemaVersion: 3, introSeen: false, level: 1, levelChosen: false, history: {} })],
     ['history not an object', validBlob({ history: [] })],
     ['step -1', validBlob({ history: { 女: { ...goodEntry, step: -1 } } })],
     ['step 2.5', validBlob({ history: { 女: { ...goodEntry, step: 2.5 } } })],
@@ -296,11 +324,11 @@ describe('corrupt data resets to defaults', () => {
     ['attempts not an array', validBlob({ history: { 女: { ...goodEntry, history: {} } } })],
     [
       '__proto__ key in history',
-      `{"schemaVersion":2,"introSeen":false,"cangjieIntroSeen":false,"history":{"__proto__":${JSON.stringify(goodEntry)}}}`,
+      `{"schemaVersion":3,"introSeen":false,"cangjieIntroSeen":false,"level":1,"levelChosen":false,"history":{"__proto__":${JSON.stringify(goodEntry)}}}`,
     ],
     [
       'constructor key in history',
-      `{"schemaVersion":2,"introSeen":false,"cangjieIntroSeen":false,"history":{"constructor":${JSON.stringify(goodEntry)}}}`,
+      `{"schemaVersion":3,"introSeen":false,"cangjieIntroSeen":false,"level":1,"levelChosen":false,"history":{"constructor":${JSON.stringify(goodEntry)}}}`,
     ],
   ];
   it.each(cases)('resets on %s', (_n, raw) => {
@@ -444,7 +472,7 @@ describe('intro flag and reset', () => {
 describe('schemaVersion stamping and default immutability', () => {
   it('saveState writes the store version, not the passed one', () => {
     const s = createStore({ backend, key: KEY, currentVersion: 4 });
-    s.saveState({ schemaVersion: 99, introSeen: true, cangjieIntroSeen: true, history: {} });
+    s.saveState({ schemaVersion: 99, introSeen: true, cangjieIntroSeen: true, level: 3, levelChosen: true, history: {} });
     const raw = JSON.parse(backend.data.get(KEY) as string) as PersistedState;
     expect(raw.schemaVersion).toBe(4);
     expect(s.loadState().schemaVersion).toBe(4);
@@ -467,6 +495,8 @@ describe('schemaVersion stamping and default immutability', () => {
       schemaVersion: CURRENT_SCHEMA_VERSION,
       introSeen: false,
       cangjieIntroSeen: false,
+      level: 1,
+      levelChosen: false,
       history: {},
     });
     expect(Object.isFrozen(DEFAULT_STATE)).toBe(true);
@@ -622,6 +652,172 @@ describe('isSavingWorking (visual-identity 21.1)', () => {
     spy.mockRestore();
     defaults.setIntroSeen(true);
     expect(defaults.isSavingWorking()).toBe(false); // sticky for the session
+    localStorage.clear();
+  });
+});
+
+describe('schema 3, level and levelChosen (harder-ghosts Req 11)', () => {
+  const v2Blob = (over: Record<string, unknown> = {}): string =>
+    JSON.stringify({ schemaVersion: 2, introSeen: false, cangjieIntroSeen: false, history: {}, ...over });
+  const manyHistory = { 女: goodEntry, 好: { ...goodEntry, step: 2 }, 他: { ...goodEntry, lastOutcome: 'gave-up' } };
+
+  it('defaults to level 1 with levelChosen false (11.2)', () => {
+    const s = createStore({ backend, key: KEY });
+    expect(s.defaultState).toMatchObject({ level: 1, levelChosen: false });
+    expect(s.getLevel()).toBe(1);
+    expect(s.getLevelChosen()).toBe(false);
+  });
+
+  it('migrates a complete version 2 blob with the shipped migration (11.3, 11.9)', () => {
+    backend.data.set(KEY, v2Blob({ introSeen: true, cangjieIntroSeen: true, history: { 女: goodEntry } }));
+    const s = createStore({ backend, key: KEY });
+    expect(s.loadState()).toEqual({
+      schemaVersion: 3,
+      introSeen: true,
+      cangjieIntroSeen: true,
+      level: 1,
+      levelChosen: true,
+      history: { 女: goodEntry },
+    });
+  });
+
+  it('migrates an empty version 2 blob with introSeen false to levelChosen false (11.9)', () => {
+    backend.data.set(KEY, v2Blob());
+    const s = createStore({ backend, key: KEY });
+    expect(s.loadState()).toEqual({ ...s.defaultState });
+    expect(s.getLevelChosen()).toBe(false);
+    expect(s.getLevel()).toBe(1);
+  });
+
+  it('migrates a version 2 blob with several characters and keeps every entry (11.9)', () => {
+    backend.data.set(KEY, v2Blob({ introSeen: true, history: manyHistory }));
+    const s = createStore({ backend, key: KEY });
+    const loaded = s.loadState();
+    expect(loaded.history).toEqual(manyHistory);
+    expect(loaded).toMatchObject({ introSeen: true, cangjieIntroSeen: false, level: 1, levelChosen: true });
+  });
+
+  it('resets a corrupt version 2 blob (11.9)', () => {
+    backend.data.set(KEY, v2Blob({ introSeen: true, history: { 女: { ...goodEntry, step: -1 } } }));
+    const s = createStore({ backend, key: KEY });
+    expect(s.loadState()).toEqual(s.defaultState);
+    backend.data.set(KEY, v2Blob({ introSeen: 'yes' }));
+    expect(s.loadState()).toEqual(s.defaultState);
+    backend.data.set(KEY, v2Blob({ history: [] }));
+    expect(s.loadState()).toEqual(s.defaultState);
+  });
+
+  it('round-trips a version 3 save through a migration and a later save (11.9)', () => {
+    backend.data.set(KEY, v2Blob({ introSeen: true, history: manyHistory }));
+    const s = createStore({ backend, key: KEY });
+    s.setLevel(2);
+    const raw = JSON.parse(backend.data.get(KEY) as string) as Record<string, unknown>;
+    expect(raw).toMatchObject({ schemaVersion: 3, level: 2, levelChosen: true });
+    expect(createStore({ backend, key: KEY }).loadState()).toEqual({
+      schemaVersion: 3,
+      introSeen: true,
+      cangjieIntroSeen: false,
+      level: 2,
+      levelChosen: true,
+      history: manyHistory,
+    });
+  });
+
+  it('setLevel sets levelChosen and keeps history, introSeen and cangjieIntroSeen (11.7)', () => {
+    const s = createStore({ backend, key: KEY });
+    s.setIntroSeen(true);
+    s.setCangjieIntroSeen(true);
+    const e = entry();
+    s.recordOutcome('女', e);
+    s.setLevel(3);
+    expect(s.getLevel()).toBe(3);
+    expect(s.getLevelChosen()).toBe(true);
+    expect(s.loadState()).toMatchObject({ introSeen: true, cangjieIntroSeen: true, history: { 女: e } });
+  });
+
+  it('recordOutcome, setIntroSeen and setCangjieIntroSeen keep level and levelChosen', () => {
+    const s = createStore({ backend, key: KEY });
+    s.setLevel(2);
+    expect(s.recordOutcome('女', entry())).toMatchObject({ level: 2, levelChosen: true });
+    s.setIntroSeen(true);
+    s.setCangjieIntroSeen(true);
+    expect(s.loadState()).toMatchObject({ level: 2, levelChosen: true });
+  });
+
+  it('saveState writes level and levelChosen', () => {
+    const s = createStore({ backend, key: KEY });
+    s.saveState({ ...s.defaultState, level: 3, levelChosen: true });
+    expect(JSON.parse(backend.data.get(KEY) as string)).toMatchObject({ level: 3, levelChosen: true });
+  });
+
+  it.each([
+    ['level 0', { level: 0 }],
+    ['level 4', { level: 4 }],
+    ['level 1.5', { level: 1.5 }],
+    ["level '2' string", { level: '2' }],
+    ['level null', { level: null }],
+    ['levelChosen a string', { levelChosen: 'true' }],
+    ['levelChosen 1', { levelChosen: 1 }],
+    ['levelChosen null', { levelChosen: null }],
+  ])('loads the default state for a version 3 save with %s (11.6)', (_n, over) => {
+    backend.data.set(KEY, validBlob({ introSeen: true, ...over }));
+    const s = createStore({ backend, key: KEY });
+    expect(s.loadState()).toEqual(s.defaultState);
+  });
+
+  it.each([['level missing', 'level'], ['levelChosen missing', 'levelChosen']])(
+    'loads the default state for a version 3 save with %s',
+    (_n, field) => {
+      const blob = JSON.parse(validBlob({ introSeen: true })) as Record<string, unknown>;
+      delete blob[field];
+      backend.data.set(KEY, JSON.stringify(blob));
+      const s = createStore({ backend, key: KEY });
+      expect(s.loadState()).toEqual(s.defaultState);
+    },
+  );
+
+  it('accepts levels 1, 2 and 3 in a version 3 save', () => {
+    for (const level of [1, 2, 3]) {
+      backend.data.set(KEY, validBlob({ level, levelChosen: true }));
+      expect(createStore({ backend, key: KEY }).getLevel()).toBe(level);
+    }
+  });
+
+  it('resets a save newer than version 3 and never migrates it (11.5)', () => {
+    backend.data.set(KEY, validBlob({ schemaVersion: 4, introSeen: true, level: 2, levelChosen: true }));
+    const s = createStore({ backend, key: KEY });
+    expect(s.loadState()).toEqual(s.defaultState);
+  });
+
+  it('resets a version 1 save with the shipped migrations (11.5)', () => {
+    backend.data.set(KEY, v1Blob({ introSeen: true, history: { 女: goodEntry } }));
+    const s = createStore({ backend, key: KEY });
+    expect(s.loadState()).toEqual(s.defaultState);
+    expect(s.getLevelChosen()).toBe(false);
+  });
+
+  it('keeps the level in memory defaults and flags the failed save when storage is unwritable (11.5, 11.8)', () => {
+    backend.throwOn.setItem = true;
+    const s = createStore({ backend, key: KEY });
+    expect(() => s.setLevel(2)).not.toThrow();
+    expect(s.isSavingWorking()).toBe(false);
+    expect(backend.data.size).toBe(0);
+    const none = createStore({ key: KEY, backend: () => undefined });
+    expect(() => none.setLevel(3)).not.toThrow();
+    expect(none.getLevel()).toBe(1);
+    expect(none.isSavingWorking()).toBe(false);
+  });
+
+  it('persists through the default module-level store', () => {
+    localStorage.clear();
+    defaults.setLevel(2);
+    expect(defaults.getLevel()).toBe(2);
+    expect(defaults.getLevelChosen()).toBe(true);
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY) as string)).toMatchObject({
+      schemaVersion: 3,
+      level: 2,
+      levelChosen: true,
+    });
     localStorage.clear();
   });
 });

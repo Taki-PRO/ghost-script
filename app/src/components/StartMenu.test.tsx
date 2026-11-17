@@ -10,7 +10,10 @@ const GRAVEYARD = 'Graveyard';
 const CREDITS = 'Sources & licences';
 const CAPTION = 'Where the words, strokes, codes and fonts come from.';
 
-function setup() {
+type Notice = React.ComponentProps<typeof StartMenu>['finishedNotice'];
+
+function setup(opts: { level?: 1 | 2 | 3; finishedNotice?: Notice } = {}) {
+  const onChooseLevel = vi.fn();
   const onStartSeance = vi.fn();
   const onReviewLegend = vi.fn();
   const onReviewCangjieGuide = vi.fn();
@@ -23,6 +26,9 @@ function setup() {
       onReviewCangjieGuide={onReviewCangjieGuide}
       onOpenGraveyard={onOpenGraveyard}
       onOpenCredits={onOpenCredits}
+      level={opts.level ?? 1}
+      onChooseLevel={onChooseLevel}
+      finishedNotice={opts.finishedNotice ?? null}
     />,
   );
   return {
@@ -31,6 +37,7 @@ function setup() {
     onReviewCangjieGuide,
     onOpenGraveyard,
     onOpenCredits,
+    onChooseLevel,
     user: userEvent.setup(),
   };
 }
@@ -38,12 +45,13 @@ function setup() {
 afterEach(() => cleanup());
 
 describe('StartMenu (Req 1.5, 3.6, 7.1, 7.2, 9.4)', () => {
-  it('renders a heading and exactly five named buttons in order', () => {
+  it('renders a heading and exactly six named buttons in order', () => {
     setup();
     expect(screen.getByRole('heading')).toBeTruthy();
-    expect(screen.getAllByRole('button')).toHaveLength(5);
+    expect(screen.getAllByRole('button')).toHaveLength(6);
     expect(screen.getAllByRole('button').map((b) => b.textContent)).toEqual([
       BEGIN,
+      'Starting level: 1',
       LEGEND,
       GUIDE,
       GRAVEYARD,
@@ -67,7 +75,7 @@ describe('StartMenu (Req 1.5, 3.6, 7.1, 7.2, 9.4)', () => {
     expect(svg!.closest('.moon-glow')).toBe(h1.closest('.moon-glow'));
   });
 
-  it('gives only the first button the seal-red primary class; the other four are paper slips', () => {
+  it('gives only the first button the seal-red primary class; the other five are paper slips', () => {
     setup();
     const buttons = screen.getAllByRole('button');
     expect(buttons[0].className).toContain('slip-primary');
@@ -165,6 +173,7 @@ describe('StartMenu (Req 1.5, 3.6, 7.1, 7.2, 9.4)', () => {
     expect(onReviewLegend).not.toHaveBeenCalled();
 
     await user.tab();
+    await user.tab();
     expect(document.activeElement).toBe(legend);
     await user.keyboard('{Enter}');
     expect(onReviewLegend).toHaveBeenCalledTimes(1);
@@ -197,5 +206,54 @@ describe('StartMenu (Req 1.5, 3.6, 7.1, 7.2, 9.4)', () => {
       expect(b.className).toContain('min-h-[44px]');
       expect(b.className).toContain('focus-visible:ring-2');
     }
+  });
+});
+
+describe('StartMenu level slip and finished notice (Req 7.1, 7.5, 8.6, 8.7)', () => {
+  it('shows "Starting level: N" directly under Begin and calls onChooseLevel', async () => {
+    const m = setup({ level: 2 });
+    const slip = screen.getByRole('button', { name: 'Starting level: 2' });
+    const begin = screen.getByRole('button', { name: BEGIN });
+    expect(begin.nextElementSibling).toBe(slip);
+    expect(slip.classList.contains('slip')).toBe(true);
+    expect(slip.className).not.toContain('slip-primary');
+    await m.user.click(slip);
+    expect(m.onChooseLevel).toHaveBeenCalledTimes(1);
+    expect(m.onStartSeance).not.toHaveBeenCalled();
+  });
+
+  it('shows no notice when finishedNotice is null', () => {
+    setup({ level: 1 });
+    expect(screen.queryByText(/You have met every ghost/)).toBeNull();
+    expect(screen.queryByRole('button', { name: /Move on to level/ })).toBeNull();
+  });
+
+  it.each([1, 2] as const)('level %i notice shows the line and a Move on slip', async (n) => {
+    const onClick = vi.fn();
+    const m = setup({
+      level: n,
+      finishedNotice: {
+        text: `You have met every ghost of level ${n}.`,
+        moveOn: { label: `Move on to level ${n + 1}`, onClick },
+      },
+    });
+    expect(screen.getByText(`You have met every ghost of level ${n}.`)).toBeTruthy();
+    const move = screen.getByRole('button', { name: `Move on to level ${n + 1}` });
+    expect(move.classList.contains('slip')).toBe(true);
+    expect(move.className).not.toContain('slip-primary');
+    await m.user.click(move);
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(m.onStartSeance).not.toHaveBeenCalled();
+    expect(document.querySelectorAll('.slip-primary')).toHaveLength(1);
+  });
+
+  it('level 3 notice shows the line and no Move on slip', () => {
+    setup({
+      level: 3,
+      finishedNotice: { text: 'You have met every ghost of level 3.' },
+    });
+    expect(screen.getByText('You have met every ghost of level 3.')).toBeTruthy();
+    expect(screen.queryByRole('button', { name: /Move on to level/ })).toBeNull();
+    expect(document.querySelectorAll('.slip-primary')).toHaveLength(1);
   });
 });

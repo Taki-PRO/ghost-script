@@ -17,7 +17,7 @@ These were verified on the day this spec was written, read-only, against the pin
 - The pinned file `hsk30-chars.csv` (commit `4ff9e3915ce87baaecd7ebe263085573a4ea3192` of `ivankra/hsk30`, 3,001 lines, 108,366 bytes, SHA-256 `8c5957108e6dafd120be10518a827a4d834ea3ce29acbfedeff1022cd7d05280`) has 300 rows with `WritingLevel` 1, 400 with `WritingLevel` 2 and 500 with `WritingLevel` 3. The other 1,800 rows have an empty `WritingLevel`. The 300 level 1 rows equal `data/character-list.txt` in content and in row order. No character is in two levels. Every character is one CJK codepoint in U+4E00 to U+9FFF.
 - `data/raw/hsk30/` holds only the licence file. The CSV is not committed. The committed `data/character-list.txt` was derived from it.
 - Every level 2 and level 3 character exists in hanzi-writer-data, in Make Me a Hanzi `dictionary.txt`, in CC-CEDICT (as a simplified headword) and in Unihan `kCangjie` with exactly one value that matches `^[A-Y]{1,5}$`. Nothing is missing from any source. Every one has at least one CC-CEDICT gloss the default prompt rule accepts.
-- The real pipeline (`buildDataset`), run in memory on the two new lists without writing any file, succeeds: level 2 is 2,508,739 bytes (511,365 bytes gzip level 9) and level 3 is 3,284,451 bytes (663,356 bytes gzip level 9). The level 1 file is 1,718,328 bytes (about 353,000 bytes gzip).
+- The real pipeline (`buildDataset`), run in memory on the two new lists without writing any file, succeeds: level 2 is 2,508,739 bytes (511,365 bytes gzip level 9) and level 3 is 3,284,451 bytes (663,356 bytes gzip level 9). The level 1 file is 1,718,328 bytes (about 353,000 bytes gzip). Those level 2 and level 3 sizes are for the pretty-printed format; the two files ship minified (Requirement 3.12), so their real sizes are smaller and the build reports them.
 - Characters that are not Playable in Cangjie mode (their code starts with X) skip the Summon step, as 别 and 错 do today. Level 2 has four: 广 换 压 灭. Level 3 has nine: 历 内 敌 锻 镜 宽 亏 杀 贡. Level 1 has two. No new character lacks a code.
 - The summon-ink classes would be, for level 2, 9 transparent, 116 partial and 275 opaque, and for level 3, 7 transparent, 140 partial and 353 opaque.
 - The source font (LXGW WenKai v1.530) has a glyph for every level 2 and level 3 character. The current font subset (66,532 bytes, 321 glyphs) does not. Level 2 needs 395 new glyphs and level 3 needs 496. The subset costs about 207 bytes per glyph.
@@ -35,12 +35,17 @@ Out of scope: traditional characters, Cantonese, the Exam Crypt mode, any change
 - **Level_Dataset**: The generated JSON file of one level: `app/public/data/characters.json` (level 1, kept under its current name), `app/public/data/characters-level2.json`, `app/public/data/characters-level3.json`.
 - **Level_Manifest**: The small generated file `app/public/data/levels.json` with, for each level, its file name, character count, average stroke count and example meanings.
 - **Example_Meaning**: An English meaning chosen by the Pipeline from a level's own records for the Level_Screen (Requirement 5.2).
-- **Source_Check**: The first task of this feature, which verifies that every level 2 and level 3 character exists in every source.
+- **Source_Check**: The first task of this feature, which verifies that every level 2 and level 3 character exists in every source and compares the result with the Expected_Result.
+- **Expected_Result**: The exact outcome listed in Requirement 1.8.
 - **Pinned_CSV**: `hsk30-chars.csv` at commit `4ff9e3915ce87baaecd7ebe263085573a4ea3192` of `ivankra/hsk30`.
 - **Playable**: A character whose Cangjie code is non-null and does not start with X (cangjie-seance).
 - **Unreviewed_Prompt**: A level 2 or level 3 record whose `prompt` no human has reviewed. Its record carries `promptReview: "unreviewed"`.
 - **Review_File**: A generated CSV with columns `character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives`, in the format of `data/prompt-review.csv`.
 - **Approvals_File**: `data/prompt-approvals.csv`, written only by the human, with columns `character,reviewedBy`. It records that a human reviewed the default prompt of a character and accepted it.
+- **Review_Sample**: A file `data/prompt-review-sample-level2.csv` or `data/prompt-review-sample-level3.csv` with the Review_File header and exactly 50 distinct rows copied from that level's Review_File, chosen with a fixed seeded PRNG (Requirement 4.10). The human reviews these rows.
+- **Sample_Provenance**: The generated file `data/prompt-review-sample-provenance.json`, which records the algorithm, the seed of each level, the sample size and the source file of each Review_Sample.
+- **Prompt_Counts**: The numbers of reviewed and unreviewed prompts of level 2, of level 3 and of both together, computed by the Pipeline from the Level_Datasets and never typed by hand.
+- **Reviewer_Value**: The `reviewedBy` value of a row. In every new file and every new row it is exactly `human`, or empty on an unreviewed row. The level 1 files keep their existing values (`human-approved` or empty).
 - **Chosen_Level**: The Level saved as the player's starting level.
 - **Level_Screen**: The screen that asks where to start.
 - **Start_Menu**: The component `StartMenu`.
@@ -66,7 +71,7 @@ Out of scope: traditional characters, Cantonese, the Exam Crypt mode, any change
 
 ### Requirement 1: Verify the Sources Before Any Other Work
 
-**User Story:** As the maintainer, I want the sources checked for levels 2 and 3 first, so that the plan stops for my decision if a source lacks a level or a character instead of working around it.
+**User Story:** As the maintainer, I want the sources checked for levels 2 and 3 first and automatically, so that the plan continues when the result is exactly the expected one and stops for my decision only when anything differs.
 
 #### Acceptance Criteria
 
@@ -74,9 +79,10 @@ Out of scope: traditional characters, Cantonese, the Exam Crypt mode, any change
 2. THE Source_Check SHALL read the Pinned_CSV and report, for each Level, the number of rows with that `WritingLevel`.
 3. THE Source_Check SHALL report, for every character of level 2 and level 3, whether it exists in hanzi-writer-data, in Make Me a Hanzi `dictionary.txt`, in CC-CEDICT as a simplified headword and in Unihan `kCangjie`, whether its `kCangjie` has exactly one value matching `^[A-Y]{1,5}$`, whether the default prompt rule yields a prompt, and whether the source font has a glyph.
 4. THE Source_Check SHALL report the characters that are not Playable, per level, and the summon-ink class counts, per level.
-5. IF the Pinned_CSV has no rows for a Level, OR a character is missing from any source, OR a `kCangjie` value is multiple or malformed, OR the default prompt rule yields no prompt, OR the source font has no glyph, THEN THE Source_Check SHALL stop the plan, write to the human the Level, the character, the source and exactly what is missing, and wait for the human's decision.
+5. IF the Source_Check result differs from the Expected_Result in any item (Requirement 1.8), THEN THE Source_Check SHALL exit non-zero, SHALL stop the plan, SHALL write to the human what differs (the item, the Level, the character, the source, the expected value and the found value), and the plan SHALL wait for the human's decision.
 6. THE Source_Check SHALL NOT replace a missing character, drop it silently, take its data from another source or generate any value.
-7. WHEN the Source_Check finds nothing missing, THE Source_Check SHALL report the per-level counts (400 and 500 expected) and the lists of characters that are not Playable, and the plan SHALL continue.
+7. WHEN the Source_Check result equals the Expected_Result in every item, THE Source_Check SHALL exit zero after reporting the per-level counts and the lists of characters that are not Playable, and the plan SHALL continue without asking the human.
+8. THE Expected_Result SHALL be: the Pinned_CSV size and SHA-256 as stated in the Facts; 300, 400 and 500 rows for `WritingLevel` 1, 2 and 3; the level 1 rows equal to `data/character-list.txt` in order; no character in two levels; every level 2 and level 3 character present in hanzi-writer-data, Make Me a Hanzi `dictionary.txt`, CC-CEDICT and Unihan `kCangjie` (one value matching `^[A-Y]{1,5}$`), with a default prompt and a source-font glyph; and the not-Playable set exactly 广 换 压 灭 at level 2 and 历 内 敌 锻 镜 宽 亏 杀 贡 at level 3.
 
 ---
 
@@ -107,12 +113,14 @@ Out of scope: traditional characters, Cantonese, the Exam Crypt mode, any change
 3. THE Pipeline SHALL apply the same exclusion rule to every Level: a character whose `cangjie` is null or starts with X stays in its Level_Dataset and skips the Summon step in play, and THE Pipeline SHALL print, for each Level, the characters that are not Playable and the characters without a code.
 4. THE Pipeline SHALL set `summonInk` on every new record with the existing `classifySummonInk` rule and SHALL print the class counts per Level.
 5. IF any Level has a per-character failure (missing field, prompt-selection failure, override error, bad Cangjie value), THEN THE Pipeline SHALL process every character of every Level, report all failures grouped by Level, exit non-zero and write no output file for any Level.
-6. WHEN every Level succeeds, THE Pipeline SHALL write the three Level_Datasets, the Level_Manifest and the Review_Files, each atomically, and SHALL print for each written data file its path, record count, raw bytes and gzip bytes (level 9).
+6. WHEN every Level succeeds, THE Pipeline SHALL write the three Level_Datasets, the Level_Manifest, the Review_Files, the two Review_Samples, the Sample_Provenance and the Prompt_Counts outputs (Requirement 4.13), each atomically, and SHALL print for each written data file its path, record count, raw bytes and gzip bytes (level 9).
 7. WHEN the Pipeline runs twice with identical inputs, THE Pipeline SHALL produce byte-for-byte identical output files.
 8. THE Level_Datasets SHALL have no character in common, and each key SHALL equal its record's `character`.
 9. WHEN the Pipeline has run, THE content of `app/public/data/characters.json` SHALL equal its content before this feature, and a Test_Suite test SHALL hold the SHA-256 of that file and of `data/prompt-review.csv` as they were before this feature and fail when either differs.
 10. THE existing dataset tests (property tests included) SHALL keep passing unchanged on the level 1 file, and new plain unit tests SHALL run over all three Level_Datasets and assert: the record counts 300, 400 and 500; every required field present; every component valid; every `cangjie` equal to the verbatim Unihan value and `sources.cangjie` correct; the Playable and not-Playable characters named in the Facts; every `summonInk` valid for its record; and the Level_Datasets and Level_Lists agree character for character.
 11. THE data check (`npm run check:data`) SHALL keep running the build and `test:data`, and SHALL fail when any Level fails.
+12. THE Pipeline SHALL write `characters-level2.json` and `characters-level3.json` minified (JSON with no whitespace outside strings, same key order and same record content as the pretty-printed form), and SHALL keep writing `characters.json` pretty-printed with 2 spaces, byte-identical to today; a Test_Suite test SHALL assert that each minified file parses to the same value as its pretty-printed form and contains no newline.
+13. THE Pipeline SHALL print, for `characters.json`, both level files and `levels.json`, the real raw bytes and gzip bytes (level 9) after each build.
 
 ---
 
@@ -124,13 +132,20 @@ Out of scope: traditional characters, Cantonese, the Exam Crypt mode, any change
 
 1. THE Pipeline SHALL choose each new prompt with the existing `selectPrompt` rule (default walk over CC-CEDICT entries in source order, with the skipped prefixes and proper-noun rule), or with a human override by index, and SHALL NOT use an AI model for any prompt.
 2. THE Pipeline SHALL read overrides for level 2 from `data/prompt-overrides-level2.csv` and for level 3 from `data/prompt-overrides-level3.csv`, with the columns, validation and index-only semantics of `data/prompt-overrides.csv`, and SHALL treat an absent file as no overrides.
-3. THE Pipeline SHALL read approvals from `data/prompt-approvals.csv` when it exists, and SHALL reject a row whose `character` is not in a Level_List or whose `reviewedBy` is empty.
+3. THE Pipeline SHALL read approvals from `data/prompt-approvals.csv` when it exists, and SHALL reject a row whose `character` is not in a Level_List of level 2 or 3, or whose `reviewedBy` is not exactly `human`; AND THE Pipeline SHALL apply the same `reviewedBy` rule to the rows of `data/prompt-overrides-level2.csv` and `data/prompt-overrides-level3.csv`.
 4. WHEN a level 2 or level 3 character has an override row or an approval row, THE Pipeline SHALL set `promptReview` to `"reviewed"` on its record; OTHERWISE THE Pipeline SHALL set `promptReview` to `"unreviewed"`.
 5. THE Pipeline SHALL NOT add `promptReview` to any level 1 record.
-6. THE Pipeline SHALL write `data/prompt-review-level2.csv` and `data/prompt-review-level3.csv` in the format of `data/prompt-review.csv` (same header, one row per character in Level_List order, the same `alternatives` rendering), and SHALL fill `reviewedBy` from the override or approval row when one exists; AND THE Pipeline SHALL keep writing `data/prompt-review.csv` for level 1 with content identical to today.
+6. THE Pipeline SHALL write `data/prompt-review-level2.csv` and `data/prompt-review-level3.csv` in the format of `data/prompt-review.csv` (same header, one row per character in Level_List order, the same `alternatives` rendering), and SHALL fill `reviewedBy` with `human` when an override or approval row exists and leave it empty otherwise; AND THE Pipeline SHALL keep writing `data/prompt-review.csv` for level 1 with content identical to today.
 7. THE character data loader SHALL accept a record with no `promptReview` or with `promptReview` equal to `"reviewed"` or `"unreviewed"`, and SHALL reject any other value.
-8. THE tasks of this feature SHALL NOT add rows to any overrides file or to the Approvals_File; reviewing the Review_Files and writing those rows SHALL be a human task.
+8. THE tasks of this feature SHALL NOT add rows to any overrides file or to the Approvals_File, and SHALL NOT review any prompt; reviewing the Review_Samples (and any other rows) and writing override or approval rows SHALL be a human task. Unreviewed_Prompts MAY ship (decided by the human).
 9. THE Test_Suite SHALL assert that every level 2 and level 3 `prompt.meaning` is one of the record's own CC-CEDICT `meanings` (after the permitted `(bound form) ` strip) and that every `prompt.pinyin` is the tone-mark form of one of its own readings, from the same entry (existing Requirement 6 of character-dataset, applied to all levels).
+10. WHEN the Pipeline succeeds, THE Pipeline SHALL write `data/prompt-review-sample-level2.csv` and `data/prompt-review-sample-level3.csv`, each with the Review_File header and exactly 50 distinct rows copied byte for byte from that level's Review_File, in the row order of that Review_File, chosen as follows: the PRNG is mulberry32, seeded with the 32-bit FNV-1a hash of the ASCII string `ghost-script/prompt-review-sample/v1/level2` (and `…/level3`); the 50 rows are the first 50 positions of a partial Fisher–Yates shuffle of the row positions, where for i from 0 to 49 the position j is `i + floor(random() * (n - i))`.
+11. THE Pipeline SHALL write the Sample_Provenance with the algorithm name and steps, the seed string and numeric seed of each level, the sample size, and the Review_File each sample comes from, as JSON, so that the CSV format of the samples stays unbroken; AND THE README SHALL state the same algorithm and seeds in its prompt-review section.
+12. THE sample generation SHALL be deterministic: THE Test_Suite SHALL assert that the same seed gives identical bytes on two runs, that each sample has exactly 50 distinct rows, that every row of a sample is a row of that level's Review_File, that the header equals the Review_File header, and that the Pipeline fails when a Review_File has fewer than 50 rows.
+13. THE Pipeline SHALL compute the Prompt_Counts from the three Level_Datasets at build time and write them to the generated file `app/src/data/promptCounts.generated.ts` and between the markers `<!-- prompt-counts:start -->` and `<!-- prompt-counts:end -->` of `README.md`; no count SHALL be typed by hand in any source, test or document.
+14. THE README SHALL state plainly, from the Prompt_Counts, how many level 2 and level 3 prompts are reviewed and how many are not (per level and together); THE Sources & licences screen SHALL state the same numbers (Requirement 16.5).
+15. THE Test_Suite SHALL assert that the Prompt_Counts equal a fresh count over the three Level_Datasets, that the README block equals the block rendered from the Prompt_Counts, and that the numbers in the Sources & licences text equal the Prompt_Counts.
+16. THE Test_Suite SHALL assert that every `reviewedBy` value in `data/prompt-review-level2.csv`, `data/prompt-review-level3.csv`, both Review_Samples, `data/prompt-approvals.csv` (when it exists) and `data/prompt-overrides-level2.csv` and `-level3.csv` (when they exist) is exactly `human`, or empty on a Review_File or Review_Sample row of an unreviewed prompt, and SHALL fail on any other value; AND for `data/prompt-overrides.csv` and `data/prompt-review.csv` (level 1) the test SHALL accept exactly the values and rows that exist before this feature (`human-approved` and empty), SHALL fail on any new row of `data/prompt-overrides.csv` whose `reviewedBy` is not `human`, and no task SHALL rewrite those two files.
 
 ---
 
@@ -149,7 +164,7 @@ Out of scope: traditional characters, Cantonese, the Exam Crypt mode, any change
 7. IF a Level_Dataset request fails, OR the response is not valid JSON, OR a record fails validation, THEN THE App SHALL treat that Level as not loaded and SHALL show the message for that screen (Requirements 6.6 and 10.5); IF the failure happens during the start-up load of Requirement 5.3, THEN THE App SHALL show the existing error screen.
 8. THE data loader SHALL validate each Level_Dataset with the same record checks it applies to level 1 and SHALL validate the Level_Manifest shape (three levels in order, counts as positive integers, three non-empty strings per level).
 9. THE bundle check SHALL keep the Bundle_Budget at 300,000 bytes, SHALL keep counting every file the first load fetches, SHALL list but not count the Level_Datasets and the lazy level font files (Requirement 13) with their gzip bytes, and SHALL fail when the counted total is over the budget.
-10. THE design SHALL state the expected raw and gzip bytes of each Level_Dataset, of the Level_Manifest and of each level font file, and THE Pipeline and the font build SHALL report the actual bytes after each build.
+10. THE design SHALL state the expected raw and gzip bytes of each Level_Dataset, of the Level_Manifest and of each level font file, and THE Pipeline and the font build SHALL report the real raw and gzip bytes of `characters.json`, both level files, `levels.json` and every font subset after each build; THE final checkpoint SHALL report them again.
 
 ---
 
@@ -199,6 +214,7 @@ Out of scope: traditional characters, Cantonese, the Exam Crypt mode, any change
 6. WHILE the Chosen_Level is a Finished_Level and is level 1 or level 2, THE Start_Menu SHALL show the line "You have met every ghost of level N." and a paper slip "Move on to level N+1" that sets the Chosen_Level as Requirement 7.2 does and keeps the Start_Menu Primary_Action unchanged.
 7. WHILE the Chosen_Level is a Finished_Level and is level 3, THE Start_Menu SHALL show the line "You have met every ghost of level 3." and no slip.
 8. THE Test_Suite SHALL cover, with fixed histories, a level 2 pool that contains level 1 ghosts that are due, a level 2 pool that excludes never-met level 1 and level 3 ghosts, and a finished level.
+9. THE levels SHALL NOT be cumulative: unmet characters of the other levels SHALL stay hidden and out of the Session_Pool, the only exception being the Walkthrough_Ghost of a Brand_New_Player (Requirement 9).
 
 ---
 
@@ -307,9 +323,9 @@ Out of scope: traditional characters, Cantonese, the Exam Crypt mode, any change
 
 #### Acceptance Criteria
 
-1. THE amendment task SHALL edit `.kiro/steering/content-accuracy.md` (approved by the human, wording to be confirmed) so that: "Character selection" names HSK 3.0 writing levels 1, 2 and 3 (exactly 300, 400 and 500) from `ivankra/hsk30` `hsk30-chars.csv`, column `WritingLevel`; the exhaustive Cangjie unit test is over all records of all three Level_Datasets; the required dataset tests apply to every Level; the "not an answer leak" list names the Level_Screen's Example_Meanings (English meanings only, no character) and the Graveyard glyphs of met ghosts at any level; and the Unreviewed_Prompt rule (Requirement 4) is stated.
-2. THE amendment task SHALL edit `.kiro/steering/art-direction.md` (approved by the human, wording to be confirmed) to add the rows "Level screen | none" and keep "Start menu | Begin a Nightly Séance", and SHALL update `tests/unit/steering-art-direction.test.ts` to expect the new row without removing an existing assertion.
-3. THE amendment task SHALL edit `.kiro/steering/product.md` (approved by the human, wording to be confirmed) so that "Must-have" says the Nightly Séance draws from the Chosen_Level's characters and that the game has 1,200 checked characters in three levels, and "Core game loop" keeps its text.
+1. THE amendment task SHALL edit `.kiro/steering/content-accuracy.md` (approved by the human, as worded in the design) so that: "Character selection" names HSK 3.0 writing levels 1, 2 and 3 (exactly 300, 400 and 500) from `ivankra/hsk30` `hsk30-chars.csv`, column `WritingLevel`; the exhaustive Cangjie unit test is over all records of all three Level_Datasets; the required dataset tests apply to every Level; the "not an answer leak" list names the Level_Screen's Example_Meanings (English meanings only, no character) and the Graveyard glyphs of met ghosts at any level; and the Unreviewed_Prompt rule (Requirement 4) is stated.
+2. THE amendment task SHALL edit `.kiro/steering/art-direction.md` (approved by the human, as worded in the design) to add the rows "Level screen | none" and keep "Start menu | Begin a Nightly Séance", and SHALL update `tests/unit/steering-art-direction.test.ts` to expect the new row without removing an existing assertion.
+3. THE amendment task SHALL edit `.kiro/steering/product.md` (approved by the human, as worded in the design) so that "Must-have" says the Nightly Séance draws from the Chosen_Level's characters and that the game has 1,200 checked characters in three levels, and "Core game loop" keeps its text.
 4. THE amendment task SHALL add "Amended (approved by the human): see harder-ghosts Requirement N" notes to the spec items this feature changes (character-dataset Requirements 1 and 5, ghost-game-core Requirement 6.12 and the start-menu items, first-meeting Requirement 3, the Storage items of ghost-game-core) and SHALL NOT rewrite their history or edit any `tasks.meta.json`.
 5. THE amendment task SHALL run before the tasks that depend on the amended text.
 6. THE steering edits SHALL be made only by the amendment task; no other task SHALL edit a steering file.
@@ -324,9 +340,9 @@ Out of scope: traditional characters, Cantonese, the Exam Crypt mode, any change
 
 1. THE README SHALL state the character counts (300, 400, 500; 1,200 in total), the three Level_Datasets and the Level_Manifest, update the data table row for the character list to "HSK 3.0 writing levels 1 to 3", and update the build and check instructions.
 2. THE README SHALL state the bundle weights it reports (counted bundle, each Level_Dataset's raw and gzip bytes).
-3. THE README SHALL state that the level 2 and level 3 prompts come from the same deterministic rule and that the human has reviewed only those listed as reviewed; it SHALL give the number of reviewed and unreviewed prompts at the time of writing.
+3. THE README SHALL state that the level 2 and level 3 prompts come from the same deterministic rule, that a human has reviewed only those counted as reviewed, and that a human reviews a random sample of 50 rows per level (Requirement 4.10); it SHALL give the numbers of reviewed and unreviewed level 2 and level 3 prompts through the generated block of Requirement 4.13, not by hand.
 4. THE README SHALL have a "Known limitations" section with this line: "The Lay to rest step needs a mouse, a finger or a pen to draw each stroke, so a keyboard-only player cannot lay a ghost to rest; that player can only give up."
-5. THE Sources & licences screen SHALL show the same limitation line, the character list row for writing levels 1 to 3 with the commit, and the sentence "The clues of levels 2 and 3 come from CC-CEDICT by a fixed rule, and a human has not reviewed all of them yet." WHILE at least one record in a Level_Dataset has `promptReview` `"unreviewed"`; a Test_Suite test SHALL read the three Level_Datasets and fail when the sentence is present and no record is unreviewed, or absent and some record is unreviewed.
+5. THE Sources & licences screen SHALL show the same limitation line, the character list row for writing levels 1 to 3 with the commit, and the sentence "The clues of levels 2 and 3 come from CC-CEDICT by a fixed rule. A human has reviewed R of the T clues and has not reviewed U." WHILE at least one record in a Level_Dataset has `promptReview` `"unreviewed"`, with R, T and U taken from the Prompt_Counts; a Test_Suite test SHALL read the three Level_Datasets and fail when the sentence is present and no record is unreviewed, or absent and some record is unreviewed, or when R, T or U differs from the count over the data.
 6. THE Sources & licences data in `app/src/data/credits.ts` SHALL replace "the ~300 characters taught in the app" with the three counts.
 7. THE new copy SHALL cite no statistic and make no claim about HSK, Cangjie or difficulty that content-accuracy.md does not allow; the Accuracy_Reviewer agent SHALL review it.
 
@@ -338,34 +354,38 @@ Out of scope: traditional characters, Cantonese, the Exam Crypt mode, any change
 
 #### Acceptance Criteria
 
-1. THE feature SHALL add unit, component and e2e tests only; it SHALL add no property-based test and no mutation test, and the existing property tests SHALL keep running and passing on the level 1 data and, where they read all datasets, on the new data.
+1. THE feature SHALL add unit, component and e2e tests only (the sample, counts and reviewer checks are plain unit tests); it SHALL add no property-based test and no mutation test, and the existing property tests SHALL keep running and passing on the level 1 data and, where they read all datasets, on the new data.
 2. THE feature SHALL NOT weaken, skip, delete or loosen any existing test; a changed assertion SHALL change only a value that names the schema version, the default state or a dataset count, and the task SHALL say so.
 3. THE feature SHALL keep engine logic pure in `app/src/engine/` (no React, no `localStorage`, no `fetch`, no clock) and UI in `app/src/components/`.
 4. THE feature SHALL NOT change the rite constants (`SUMMON_HOLD_MS`, `SUMMON_FADE_MS`, `SUMMON_INK_SPEED`), the scheduler, the outcome rules, the thresholds or the level 1 records.
-5. THE human-only tasks (reviewing the Review_Files, writing override and approval rows, the spot-check of a random sample of the new characters, the screenshot review of the Level_Screen) SHALL be marked as human tasks, and Kiro SHALL NOT do them.
-6. THE last task SHALL run `npm test`, the three `tsc --noEmit` runs (root, `app/`, `oracle/`), `npm run build -w app`, `npm run check:bundle` and `npm run test:e2e`, and SHALL report the results and the actual file sizes.
-7. THE feature SHALL write no personal name in any repository file; approvals SHALL read "approved by the human".
+5. THE human-only tasks (reviewing the Review_Samples, writing override and approval rows, the spot-check of a random sample of the new characters, the screenshot review of the Level_Screen) SHALL be marked as human tasks, and Kiro SHALL NOT do them.
+6. THE last task SHALL run `npm test`, the three `tsc --noEmit` runs (root, `app/`, `oracle/`), `npm run build -w app`, `npm run check:bundle` and `npm run test:e2e`, and SHALL report the results and the real raw and gzip size of `characters.json`, both level files, `levels.json` and every font subset.
+7. THE feature SHALL write no personal name in any repository file, data files included; approvals SHALL read "approved by the human", and every new `reviewedBy` value SHALL follow Requirement 4.16.
+8. THE last task SHALL also report the first ten ghosts in Learning_Order at level 2 and at level 3, each with character, meaning, pinyin and summon-ink class, read from the generated Level_Datasets by a script and not typed by hand.
 
 ---
 
-## Open questions for the human
+## Decisions approved by the human
 
-Each question has a recommended answer. The design and tasks follow the recommendation until the human decides otherwise.
+There are no open questions. The human approved the following decisions; the requirements above state them.
 
-1. **What happens when a level is finished?** Recommended: nothing changes automatically. Séances keep running over due and not-yet-due ghosts, and the Start_Menu offers a "Move on to level N+1" slip (Requirement 8.5 to 8.7).
-2. **Are the levels cumulative?** Recommended: no. Starting at level 2 does not require level 1. Level 1 ghosts that were never met stay hidden in the Graveyard and stay out of the Session_Pool, except the Walkthrough_Ghost for a new player.
-3. **`content-accuracy.md` amendments** (Requirement 15.1). Recommended: approve the four edits listed there.
-4. **`art-direction.md` amendments** (Requirement 15.2). Recommended: add "Level screen | none".
-5. **How an Unreviewed_Prompt is flagged, and whether unreviewed prompts may ship.** Recommended: an optional `promptReview` field on level 2 and 3 records only; the human clears it through override rows or the Approvals_File. Unreviewed prompts may ship if the human first reviews a random sample (content-accuracy.md manual review) and the Sources screen and README say plainly that some prompts are unreviewed.
-6. **Font subset impact.** Recommended: keep the level 1 font as is, add one lazy subset per level (about +82 KB and +103 KB, not counted in the budget), and say so in the README. The alternative, one bigger subset (about +185 KB), would put the counted bundle near 394 KB and over budget.
-7. **How the Graveyard switches levels.** Recommended: three paper slips with `aria-pressed` under the header, default the Chosen_Level, counts per shown level.
-8. **Where the level choice sits in the menu.** Recommended: one paper slip directly under "Begin a Nightly Séance" showing the current level.
-9. **Does tapping a level on the Level_Screen start the séance at once?** Recommended: yes, with no Primary_Action on that screen. The alternative is a radio group plus a seal-red "Begin" button.
-10. **File naming.** Recommended: keep `characters.json` as level 1 and add `characters-level2.json` and `characters-level3.json`, so no existing path, test, e2e helper or oracle path changes.
-11. **Minifying the level files.** Recommended: no. Keep the existing pretty-printed format for all three so the level 1 bytes do not change; a follow-up could cut about 60 percent of the raw size.
-12. **A level that fails to load at start-up** (Requirement 5.7). Recommended: show the existing error screen.
-13. **Oracle scope** (Requirement 14.3). Recommended: extend it to all 1,200 characters in this feature.
-14. **The 13 characters that are not Playable** (4 at level 2, 9 at level 3). Recommended: same rule as 别 and 错, they skip the Summon step.
-15. **The first-load rule** (Requirement 5.4). Recommended: the Level_Manifest is fetched only when the Level_Screen is shown, so the first load of a level 1 player is exactly today's.
-16. **Where the keyboard limitation line goes** (Requirement 16.4 and 16.5). Recommended: the README "Known limitations" and the Sources & licences screen.
-17. **A human to review the new prompts.** Recommended: review `data/prompt-review-level2.csv` and `-level3.csv` (900 rows) before deploy, or at least a random sample, and record it in `kiro-log.md`.
+1. A finished level changes nothing automatically. Séances continue over due and not-yet-due ghosts. The Start_Menu shows "You have met every ghost of level N." and, for levels 1 and 2, a "Move on to level N+1" paper slip; level 3 shows the line only (Requirements 8.5 to 8.7).
+2. Levels are not cumulative. Unmet level 1 ghosts stay hidden; the exception is the Walkthrough_Ghost (明) for a Brand_New_Player (Requirements 8.9 and 9).
+3. Tapping a level on the Level_Screen starts at once; the screen has no seal-red Primary_Action (Requirement 6).
+4. The Start_Menu has one paper slip under "Begin a Nightly Séance", reading "Starting level: N" (Requirement 7.1).
+5. The Graveyard has three paper slips with `aria-pressed`, defaults to the Chosen_Level and counts the shown level (Requirement 10).
+6. Unreviewed prompts may ship. The human reviews a random sample of 50 rows per level, generated by a seeded script step; the README and the Sources & licences screen state the reviewed and unreviewed counts, computed at build time (Requirements 4.8 and 4.10 to 4.16, 16.3, 16.5). The sample review itself is a human-only task.
+7. A prompt's unreviewed flag is cleared through `data/prompt-approvals.csv` (columns `character,reviewedBy`) or an override row (Requirement 4).
+8. The `content-accuracy.md` amendments are approved as worded in the design (Requirement 15.1).
+9. The `art-direction.md` amendment, the row "Level screen | none", is approved as worded (Requirement 15.2).
+10. Fonts: the level 1 subset stays untouched; two lazy subsets are loaded by `unicode-range` and are outside the Bundle_Budget count (Requirement 13).
+11. File names: `characters.json` stays level 1; the others are `characters-level2.json` and `characters-level3.json`.
+12. `characters-level2.json` and `characters-level3.json` are minified; `characters.json` stays byte-identical with its hash test. The build and the final checkpoint report the real raw and gzip size of every data and font file (Requirements 3.12, 3.13, 5.10).
+13. `levels.json` (about 0.6 KB gzip) is fetched when the Level_Screen first shows (Requirement 5.5).
+14. A level file that fails to load at start-up shows the existing error screen (Requirement 5.7).
+15. The Cangjie Oracle covers all 1,200 characters (Requirement 14.3).
+16. The keyboard-only limitation line is in a README "Known limitations" section and on the Sources & licences screen (Requirement 16.4 and 16.5).
+17. The 13 characters that are not Playable skip the Summon step, as 别 and 错 do (Requirement 3.3).
+18. All steering amendments are approved as worded in the design.
+19. No personal names appear in any file, data files included. Every new `reviewedBy` value is exactly `human`; the level 1 files keep their existing values (Requirement 4.16).
+20. The Source_Check is automatic: the plan continues when the result equals the Expected_Result and stops for the human only when anything differs (Requirement 1).

@@ -1,11 +1,11 @@
 ---
 name: cangjie-oracle
-description: Answer questions about Cangjie codes and character decompositions for the 300 Ghost Script characters by calling the Oracle tools, never from memory.
+description: Answer questions about Cangjie codes and character decompositions for the 1,200 Ghost Script characters by calling the Oracle tools, never from memory.
 ---
 
 # Cangjie Oracle
 
-The Oracle reads one checked dataset (`app/public/data/characters.json`). Cangjie codes come from Unicode Unihan (`kCangjie`, Unicode 18.0.0, marked provisional by Unihan). Decompositions come from Make Me a Hanzi.
+The Oracle reads the three checked level datasets (`app/public/data/characters.json`, `characters-level2.json` and `characters-level3.json`, 1,200 characters in all). Cangjie codes come from Unicode Unihan (`kCangjie`, Unicode 18.0.0, marked provisional by Unihan). Decompositions come from Make Me a Hanzi.
 
 ## Rule
 

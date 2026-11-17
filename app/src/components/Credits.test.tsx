@@ -2,7 +2,15 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen, within, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Credits } from './Credits';
-import { CODE_LICENCE, COMBINED_WORK_NOTE, DATA_SOURCES, FONTS } from '../data/credits';
+import {
+  CODE_LICENCE,
+  COMBINED_WORK_NOTE,
+  DATA_SOURCES,
+  FONTS,
+  KEYBOARD_LIMITATION,
+  UNREVIEWED_PROMPTS_SENTENCE,
+} from '../data/credits';
+import { PROMPT_COUNTS } from '../data/promptCounts.generated';
 import { CANGJIE_CITATIONS, LEGEND_SOURCE } from '../data/citations';
 import { SOFTWARE_CREDITS } from '../data/software';
 
@@ -25,6 +33,20 @@ describe('Credits', () => {
     render(<Credits onBack={() => {}} backTo="menu" />);
     expect(text()).toContain(COMBINED_WORK_NOTE);
     expect(text()).toContain(`licensed ${CODE_LICENCE}`);
+  });
+
+  it('shows the character-list row for three levels, the keyboard limitation and the prompt sentence', () => {
+    render(<Credits onBack={() => {}} backTo="menu" />);
+    const row = DATA_SOURCES.find((s) => s.name.startsWith('Character list'));
+    expect(row?.name).toBe('Character list — HSK 3.0 writing levels 1 to 3');
+    expect(row?.use).toBe('the 300, 400 and 500 characters taught in the app, in three levels');
+    expect(text()).toContain(KEYBOARD_LIMITATION);
+    expect(screen.getByRole('heading', { name: 'Known limitations' })).toBeInTheDocument();
+    expect(PROMPT_COUNTS.unreviewed).toBeGreaterThan(0);
+    expect(text()).toContain(UNREVIEWED_PROMPTS_SENTENCE);
+    expect(UNREVIEWED_PROMPTS_SENTENCE).toContain(
+      `reviewed ${PROMPT_COUNTS.reviewed} of the ${PROMPT_COUNTS.total} clues and has not reviewed ${PROMPT_COUNTS.unreviewed}`,
+    );
   });
 
   it('shows the legend line, the citation and that the English is our own', () => {

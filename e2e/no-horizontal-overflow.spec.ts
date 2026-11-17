@@ -93,6 +93,18 @@ for (const vp of VIEWPORTS) {
       expect(problems, problems.join('\n')).toEqual([]);
     });
 
+    test('Level screen', async ({ page }) => {
+      expectViewport(page);
+      await seed(page, seedState({ introSeen: false, cangjieIntroSeen: false }));
+      await page.goto(START);
+      await page.getByRole('button', { name: 'Begin the Séance' }).click();
+      await expect(page.getByRole('heading', { level: 1, name: 'Where will you begin?' })).toBeVisible();
+      await page.evaluate(() => document.fonts.ready);
+
+      const problems = await findOverflow(page, vp.width);
+      expect(problems, problems.join('\n')).toEqual([]);
+    });
+
     test('guard: an appended 600 px div is reported', async ({ page }) => {
       expectViewport(page);
       await seed(page, seedState());

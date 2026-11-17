@@ -1,0 +1,19 @@
+{
+  "algorithm": "mulberry32 PRNG; partial Fisher-Yates over row positions; sample sorted by list order",
+  "seedHash": "FNV-1a 32 bit over the ASCII seed string",
+  "sampleSize": 50,
+  "levels": {
+    "2": {
+      "seedString": "ghost-script/prompt-review-sample/v1/level2",
+      "seed": 2036869478,
+      "source": "data/prompt-review-level2.csv",
+      "rows": 400
+    },
+    "3": {
+      "seedString": "ghost-script/prompt-review-sample/v1/level3",
+      "seed": 2053647097,
+      "source": "data/prompt-review-level3.csv",
+      "rows": 500
+    }
+  }
+}

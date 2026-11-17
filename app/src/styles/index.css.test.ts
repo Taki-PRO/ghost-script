@@ -626,9 +626,11 @@ describe('index.css', () => {
   describe('fonts.css', () => {
     const fonts = readFileSync(join(here, 'fonts.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
 
-    it('has exactly one url(), the bundled WenKai subset', () => {
-      expect(fonts.match(/url\(/g)).toHaveLength(1);
+    it('has exactly three url(), the bundled WenKai subsets of levels 1, 2 and 3', () => {
+      expect(fonts.match(/url\(/g)).toHaveLength(3);
       expect(fonts).toContain('url("../assets/fonts/lxgw-wenkai-subset.woff2") format("woff2")');
+      expect(fonts).toContain('url("../assets/fonts/lxgw-wenkai-subset-level2.woff2") format("woff2")');
+      expect(fonts).toContain('url("../assets/fonts/lxgw-wenkai-subset-level3.woff2") format("woff2")');
     });
 
     it('declares the WenKai family with swap and has no media block', () => {

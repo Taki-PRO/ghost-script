@@ -14,6 +14,13 @@ export function defaultDatasetPath(): string {
   return fileURLToPath(new URL('../../app/public/data/characters.json', import.meta.url));
 }
 
+/** The three Level_Datasets, level 1 first. Level 1 stays in `characters.json`. */
+export function defaultDatasetPaths(): string[] {
+  return ['characters.json', 'characters-level2.json', 'characters-level3.json'].map((name) =>
+    fileURLToPath(new URL(`../../app/public/data/${name}`, import.meta.url)),
+  );
+}
+
 function isRecordLike(value: unknown): value is CharacterRecord {
   if (typeof value !== 'object' || value === null) return false;
   const r = value as Record<string, unknown>;
@@ -32,8 +39,8 @@ function isRecordLike(value: unknown): value is CharacterRecord {
   );
 }
 
-/** Reads characters.json and returns its records keyed by character. */
-export function loadDataset(path: string = defaultDatasetPath()): Map<string, CharacterRecord> {
+/** Reads one dataset file and returns its records keyed by character. */
+function loadFile(path: string): Map<string, CharacterRecord> {
   let text: string;
   try {
     text = readFileSync(path, 'utf8');
@@ -59,4 +66,28 @@ export function loadDataset(path: string = defaultDatasetPath()): Map<string, Ch
     map.set(key, value);
   }
   return map;
+}
+
+/**
+ * Reads one or more dataset files and merges them. With no argument it reads all three
+ * Level_Datasets (1,200 characters). Throws an OracleDataError if a file is missing or
+ * invalid, or if a character appears in more than one file.
+ */
+export function loadDataset(
+  paths: string | readonly string[] = defaultDatasetPaths(),
+): Map<string, CharacterRecord> {
+  const list = typeof paths === 'string' ? [paths] : paths;
+  const merged = new Map<string, CharacterRecord>();
+  const firstSeen = new Map<string, string>();
+  for (const path of list) {
+    for (const [key, value] of loadFile(path)) {
+      const earlier = firstSeen.get(key);
+      if (earlier !== undefined) {
+        throw new OracleDataError(`Character "${key}" appears twice: in ${earlier} and in ${path}`);
+      }
+      firstSeen.set(key, path);
+      merged.set(key, value);
+    }
+  }
+  return merged;
 }

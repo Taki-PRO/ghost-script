@@ -1,8 +1,10 @@
 import { useMemo } from 'react';
 import type { CharacterDataset } from '../data/charDataLoader';
+import type { Level } from '../data/types';
 import { buildGraveyard } from '../engine/graveyard';
 import type { Grave, GraveState } from '../engine/graveyard';
 import { learningOrder } from '../engine/learningOrder';
+import { LEVELS } from '../engine/levels';
 import type { ReviewHistory } from '../engine/scheduler';
 import { tabletTiltIndex } from '../engine/tabletTilt';
 import { theme } from '../styles/theme';
@@ -10,10 +12,23 @@ import { theme } from '../styles/theme';
 /** Height of the Hillside svg: three rows of tablets at 4 rem (`h-48`). */
 const HILL_HEIGHT_REM = 12;
 
+/** What the Graveyard is doing about a level switch; `level` is the level asked for. */
+export type GraveyardStatus =
+  | { kind: 'idle' }
+  | { kind: 'loading'; level: Level }
+  | { kind: 'failed'; level: Level };
+
 export interface GraveyardProps {
-  dataset: CharacterDataset;
+  /** Dataset of the shown level, or null while it loads. */
+  dataset: CharacterDataset | null;
+  /** The shown level. */
+  level: Level;
+  /** The player's chosen level (where séances draw new ghosts from). */
+  chosenLevel: Level;
   history: ReviewHistory;
   now: number;
+  status: GraveyardStatus;
+  onChangeLevel: (level: Level) => void;
   onBack: () => void;
 }
 
@@ -49,16 +64,27 @@ function graveLabel(grave: Grave, total: number): string {
 }
 
 /**
- * Graveyard screen (Req 7). Read-only: history and clock come from the caller.
- * An unmet grave carries no character, so none can be rendered for it.
+ * Graveyard screen (Req 7, harder-ghosts Req 10). Read-only: history and clock come from the
+ * caller, as does the dataset of the shown level. An unmet grave carries no character, so none
+ * can be rendered for it.
  */
-export function Graveyard({ dataset, history, now, onBack }: GraveyardProps) {
+export function Graveyard({
+  dataset,
+  level,
+  chosenLevel,
+  history,
+  now,
+  status,
+  onChangeLevel,
+  onBack,
+}: GraveyardProps) {
   const model = useMemo(
-    () => buildGraveyard(learningOrder(dataset), history, now),
+    () => (dataset ? buildGraveyard(learningOrder(dataset), history, now) : null),
     [dataset, history, now],
   );
-  const total = model.graves.length;
-  const noneMet = model.counts.unmet === total;
+  const total = model ? model.graves.length : 0;
+  const noneMet = model !== null && model.counts.unmet === total;
+  const loading = status.kind === 'loading';
 
   return (
     <main className="min-h-screen px-4 pb-8 text-ink">
@@ -73,71 +99,107 @@ export function Graveyard({ dataset, history, now, onBack }: GraveyardProps) {
             Back to menu
           </button>
         </header>
-        <p className="text-base text-ink">
-          Every ghost in the game, in the order you will meet them. A ghost you have not met stays
-          hidden.
-        </p>
-        <ul aria-label="Legend" className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink">
-          {LEGEND.map(({ state, label }) => (
-            <li key={state} className="flex items-center gap-2">
-              <span
-                aria-hidden="true"
-                className={`${SHAPE[state]} ${OUTLINE[state]} relative inline-flex h-8 w-8 items-center justify-center`}
+        <div role="group" aria-label="Level" className="flex flex-wrap items-center gap-3">
+          {LEVELS.map((n) => {
+            const shown = n === level;
+            return (
+              <button
+                key={n}
+                type="button"
+                aria-pressed={shown}
+                disabled={loading}
+                onClick={() => onChangeLevel(n)}
+                className={`slip min-h-[44px] px-5 py-2 text-base ${shown ? 'border-2 border-solid font-semibold' : ''} ${focusRing}`}
               >
-                {MARKER[state]}
-              </span>
-              <span>{`${label}: ${model.counts[state]}`}</span>
-            </li>
-          ))}
-        </ul>
-        {noneMet && (
-          <p className="text-base text-ink">
-            No ghost has been met yet. Begin a séance to wake the first one.
-          </p>
-        )}
-        <div
-          className="relative isolate overflow-hidden rounded-md"
-          style={{
-            backgroundImage: `linear-gradient(to bottom, transparent ${HILL_HEIGHT_REM}rem, ${theme.hillNear} ${HILL_HEIGHT_REM}rem)`,
-          }}
-        >
-          <svg
-            aria-hidden="true"
-            focusable="false"
-            viewBox="0 0 100 48"
-            preserveAspectRatio="none"
-            className="absolute left-0 top-0 h-48 w-full"
-            data-testid="hillside"
-          >
-            <path d="M0 22 C18 14 34 22 52 16 C72 10 88 18 100 14 L100 48 L0 48 Z" fill={theme.hillFar} />
-            <path d="M0 36 C20 28 36 34 54 28 C74 22 88 32 100 26 L100 48 L0 48 Z" fill={theme.hillNear} />
-          </svg>
-          <ul
-            aria-label="Graves"
-            className="relative grid gap-2 p-3"
-            style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(48px, 1fr))' }}
-          >
-            {model.graves.map((grave) => (
-              <li
-                key={grave.position}
-                aria-label={graveLabel(grave, total)}
-                className={`${SHAPE[grave.state]} ${OUTLINE[grave.state]} tablet-tilt-${tabletTiltIndex(grave.position)} relative flex min-h-[56px] flex-col items-center justify-center text-ink`}
-              >
-                {grave.state !== 'unmet' && (
-                  <span lang="zh" className="text-xl leading-none">
-                    {grave.char}
+                Level {n}
+                {shown && (
+                  <span aria-hidden="true" className="ml-2 text-sm">
+                    showing
                   </span>
                 )}
-                <span
-                  aria-hidden="true"
-                  className={`text-xs leading-none ${grave.state === 'at-rest' ? 'text-seal-light' : ''}`}
-                >
-                  {MARKER[grave.state]}
-                </span>
-              </li>
-            ))}
-          </ul>
+              </button>
+            );
+          })}
         </div>
+        <p className="text-sm text-ink">{`Your séances draw new ghosts from level ${chosenLevel}.`}</p>
+        {status.kind === 'loading' && (
+          <p role="status" className="text-base text-ink">
+            {`Loading level ${status.level}…`}
+          </p>
+        )}
+        {status.kind === 'failed' && (
+          <p role="alert" className="text-base text-ink">
+            {`Level ${status.level} could not be loaded. Check your connection and try again.`}
+          </p>
+        )}
+        <p className="text-base text-ink">
+          {`These graves are the ghosts of level ${level}, in the order you will meet them. A ghost you have not met stays hidden.`}
+        </p>
+        {model && (
+          <>
+            <ul aria-label="Legend" className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink">
+              {LEGEND.map(({ state, label }) => (
+                <li key={state} className="flex items-center gap-2">
+                  <span
+                    aria-hidden="true"
+                    className={`${SHAPE[state]} ${OUTLINE[state]} relative inline-flex h-8 w-8 items-center justify-center`}
+                  >
+                    {MARKER[state]}
+                  </span>
+                  <span>{`${label}: ${model.counts[state]}`}</span>
+                </li>
+              ))}
+            </ul>
+            {noneMet && (
+              <p className="text-base text-ink">
+                No ghost has been met yet. Begin a séance to wake the first one.
+              </p>
+            )}
+            <div
+              className="relative isolate overflow-hidden rounded-md"
+              style={{
+                backgroundImage: `linear-gradient(to bottom, transparent ${HILL_HEIGHT_REM}rem, ${theme.hillNear} ${HILL_HEIGHT_REM}rem)`,
+              }}
+            >
+              <svg
+                aria-hidden="true"
+                focusable="false"
+                viewBox="0 0 100 48"
+                preserveAspectRatio="none"
+                className="absolute left-0 top-0 h-48 w-full"
+                data-testid="hillside"
+              >
+                <path d="M0 22 C18 14 34 22 52 16 C72 10 88 18 100 14 L100 48 L0 48 Z" fill={theme.hillFar} />
+                <path d="M0 36 C20 28 36 34 54 28 C74 22 88 32 100 26 L100 48 L0 48 Z" fill={theme.hillNear} />
+              </svg>
+              <ul
+                aria-label="Graves"
+                className="relative grid gap-2 p-3"
+                style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(48px, 1fr))' }}
+              >
+                {model.graves.map((grave) => (
+                  <li
+                    key={grave.position}
+                    aria-label={graveLabel(grave, total)}
+                    className={`${SHAPE[grave.state]} ${OUTLINE[grave.state]} tablet-tilt-${tabletTiltIndex(grave.position)} relative flex min-h-[56px] flex-col items-center justify-center text-ink`}
+                  >
+                    {grave.state !== 'unmet' && (
+                      <span lang="zh" className="text-xl leading-none">
+                        {grave.char}
+                      </span>
+                    )}
+                    <span
+                      aria-hidden="true"
+                      className={`text-xs leading-none ${grave.state === 'at-rest' ? 'text-seal-light' : ''}`}
+                    >
+                      {MARKER[grave.state]}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </>
+        )}
       </div>
     </main>
   );

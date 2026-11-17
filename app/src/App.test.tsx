@@ -82,6 +82,7 @@ function seed(state: { introSeen: boolean; cangjieIntroSeen: boolean; history?: 
 /** First visit: the legend leads straight to the first ghost (no forced guide). */
 async function beginFirstVisit(user: ReturnType<typeof userEvent.setup>) {
   await user.click(await screen.findByRole('button', { name: /^begin the séance$/i }));
+  await user.click(await screen.findByRole('button', { name: /^level 1/i }));
 }
 
 const walkthroughChar = () => pickWalkthroughGhost(learningOrder(dataset), dataset)!;
@@ -177,6 +178,7 @@ describe('App integration', () => {
   it('1.4: Begin persists introSeen and shows Ghost 1 of 10', async () => {
     const user = await openApp();
     await user.click(await screen.findByRole('button', { name: /begin the séance/i }));
+    await user.click(await screen.findByRole('button', { name: /^level 1/i }));
     expect(getIntroSeen()).toBe(true);
     expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).introSeen).toBe(true);
     expect(screen.queryByRole('heading', { name: /how cangjie works/i })).toBeNull();

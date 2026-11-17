@@ -25,14 +25,16 @@ This file records the provenance and licence of every raw dataset in `data/raw/`
 - **Licence file:** data/raw/cc-cedict/LICENSE
 - **Used for:** pinyin readings and English meanings
 
-## Character list (HSK 3.0 writing level 1)
+## Character lists (HSK 3.0 writing levels 1, 2 and 3)
 - **Commit SHA:** 4ff9e3915ce87baaecd7ebe263085573a4ea3192
 - **Source URL:** https://github.com/ivankra/hsk30
-- **File:** hsk30-chars.csv (rows where WritingLevel == 1)
+- **File:** hsk30-chars.csv (rows where WritingLevel == 1, 2 and 3)
+- **Size (hsk30-chars.csv):** 108,366 bytes
+- **SHA-256 (hsk30-chars.csv):** 8c5957108e6dafd120be10518a827a4d834ea3ce29acbfedeff1022cd7d05280
 - **Licence:** MIT
 - **Original standard:** Ministry of Education GF0025-2021 (2021)
 - **Licence file:** data/raw/hsk30/LICENSE (copied from the repo at the pinned commit)
-- **Used for:** character-list.txt (the ~300 characters taught in the app)
+- **Used for:** character-list.txt (level 1, 300 characters), character-list-level2.txt (level 2, 400 characters) and character-list-level3.txt (level 3, 500 characters), each in CSV row order
 
 ## Unihan (`Unihan_DictionaryLikeData.txt`)
 - **Unicode version:** 18.0.0

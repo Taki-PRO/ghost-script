@@ -17,11 +17,21 @@ export { luminance, luminanceRatio, type Rgb } from './colour';
 export const STORAGE_KEY = 'ghost-script:state';
 export const START = '/ghost-script/';
 
+type SeedHistory = Record<string, { step: number; lastOutcome: string; nextDue: number }>;
 export interface SeedState {
+  readonly schemaVersion: 3;
+  readonly introSeen: boolean;
+  readonly cangjieIntroSeen: boolean;
+  readonly history: SeedHistory;
+  readonly level: 1 | 2 | 3;
+  readonly levelChosen: boolean;
+}
+/** A save written before levels existed (version 2); the app migrates it to version 3. */
+export interface SeedStateV2 {
   readonly schemaVersion: 2;
   readonly introSeen: boolean;
   readonly cangjieIntroSeen: boolean;
-  readonly history: Record<string, { step: number; lastOutcome: string; nextDue: number }>;
+  readonly history: SeedHistory;
 }
 
 /** Characters of the dataset, read at test time (the file is generated, never edited). */
@@ -37,6 +47,19 @@ export function datasetMap(): Map<string, CharacterRecord> {
   return new Map(Object.entries(raw));
 }
 
+function levelPath(level: 1 | 2 | 3): string {
+  const file = level === 1 ? 'characters.json' : `characters-level${level}.json`;
+  return fileURLToPath(new URL(`../app/public/data/${file}`, import.meta.url));
+}
+/** The generated dataset of one level, read at test time. */
+export function levelDatasetMap(level: 1 | 2 | 3): Map<string, CharacterRecord> {
+  const raw = JSON.parse(readFileSync(levelPath(level), 'utf8')) as Record<string, CharacterRecord>;
+  return new Map(Object.entries(raw));
+}
+/** The Learning_Order of one level, from the app's own `learningOrder`. */
+export function levelOrder(level: 1 | 2 | 3): string[] {
+  return learningOrder(levelDatasetMap(level));
+}
 /** One record of the dataset; throws when the character is missing. */
 export function datasetRecord(char: string): CharacterRecord {
   const record = datasetMap().get(char);
@@ -55,7 +78,7 @@ export function seedBefore(char: string, now: number = Date.now()): SeedState {
   const order = learningOrder(datasetMap());
   const index = order.indexOf(char);
   if (index < 0) throw new Error(`"${char}" is not in the learning order`);
-  const history: SeedState['history'] = {};
+  const history: SeedHistory = {};
   for (const earlier of order.slice(0, index)) {
     history[earlier] = { step: 0, lastOutcome: 'clean', nextDue: now + 30 * DAY_MS };
   }
@@ -63,7 +86,7 @@ export function seedBefore(char: string, now: number = Date.now()): SeedState {
 }
 
 /** Pre-load localStorage before the app starts; never overwrites a key the app has written. */
-export async function seed(page: Page, state: SeedState): Promise<void> {
+export async function seed(page: Page, state: SeedState | SeedStateV2): Promise<void> {
   await page.addInitScript(
     ({ key, value }) => {
       if (window.localStorage.getItem(key) === null) {
@@ -75,6 +98,19 @@ export async function seed(page: Page, state: SeedState): Promise<void> {
 }
 
 export function seedState(overrides: Partial<SeedState> = {}): SeedState {
+  const introSeen = overrides.introSeen ?? true;
+  return {
+    schemaVersion: 3,
+    introSeen,
+    cangjieIntroSeen: true,
+    history: {},
+    level: 1,
+    levelChosen: introSeen,
+    ...overrides,
+  };
+}
+/** A version 2 save for the migration test: opens on the menu at level 1 when `introSeen` is true. */
+export function seedV2(overrides: Partial<SeedStateV2> = {}): SeedStateV2 {
   return { schemaVersion: 2, introSeen: true, cangjieIntroSeen: true, history: {}, ...overrides };
 }
 
@@ -93,7 +129,7 @@ export function walkthroughRecord(): CharacterRecord {
 
 /** A seed state whose history holds every listed character, due now (`nextDue` 0). */
 export function seedWithHistory(chars: readonly string[], outcome: string): SeedState {
-  const history: SeedState['history'] = {};
+  const history: SeedHistory = {};
   for (const char of chars) {
     history[char] = { step: 0, lastOutcome: outcome, nextDue: 0 };
   }

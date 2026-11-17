@@ -19,6 +19,15 @@ describe('tabletTilt', () => {
     }
   });
 
+  it('is deterministic and never tilts more than 3 degrees for positions 1 to 500', () => {
+    for (let p = 1; p <= 500; p++) {
+      expect(tabletTilt(p)).toBe(tabletTilt(p));
+      expect(tabletTilt(p)).toBe(TABLET_TILTS_DEG[p % 5]);
+      expect(Math.abs(tabletTilt(p))).toBeLessThanOrEqual(3);
+      expect(tabletTiltIndex(p)).toBe(p % 5);
+    }
+  });
+
   it('matches the .tablet-tilt-N rules of index.css', () => {
     const here = dirname(fileURLToPath(import.meta.url));
     const css = readFileSync(join(here, '../styles/index.css'), 'utf8');

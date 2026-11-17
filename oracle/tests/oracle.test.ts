@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import type { CharacterRecord } from '../../app/src/data/types';
 import { isPlayableInCangjie } from '../../app/src/engine/cangjieRules';
-import { loadDataset } from '../src/dataset';
+import { defaultDatasetPaths, loadDataset } from '../src/dataset';
 import {
   CANGJIE_SOURCE,
   OracleInputError,
@@ -180,8 +180,18 @@ describe('invalid input throws OracleInputError', () => {
 describe('real dataset (exhaustive)', () => {
   const dataset = loadDataset();
 
-  it('holds 300 records', () => {
-    expect(dataset.size).toBe(300);
+  it('holds every record of the three Level_Datasets', () => {
+    const total = defaultDatasetPaths()
+      .map((path) => Object.keys(JSON.parse(readFileSync(path, 'utf8')) as object).length)
+      .reduce((a, b) => a + b, 0);
+    expect(defaultDatasetPaths()).toHaveLength(3);
+    expect(dataset.size).toBe(total);
+  });
+  it('answers for a character from each level file', () => {
+    for (const path of defaultDatasetPaths()) {
+      const first = Object.keys(JSON.parse(readFileSync(path, 'utf8')) as object)[0];
+      expect(lookup(dataset, first).found).toBe(true);
+    }
   });
 
   it('lookup, verify and decompose agree with every stored record', () => {

@@ -1,3 +1,5 @@
+import { PROMPT_COUNTS } from './promptCounts.generated';
+
 export interface DataSourceCredit {
   readonly name: string;
   readonly version: string;
@@ -6,7 +8,7 @@ export interface DataSourceCredit {
   readonly url: string;
 }
 
-/** The five rows of the README "Data and licences" table, same wording (Markdown backticks removed). */
+/** The rows of the README "Data and licences" table, same wording (Markdown backticks removed). */
 export const DATA_SOURCES: readonly DataSourceCredit[] = [
   {
     name: 'hanzi-writer-data',
@@ -37,10 +39,10 @@ export const DATA_SOURCES: readonly DataSourceCredit[] = [
     url: 'https://www.unicode.org/Public/18.0.0/ucd/Unihan.zip',
   },
   {
-    name: 'Character list — HSK 3.0 writing level 1',
+    name: 'Character list — HSK 3.0 writing levels 1 to 3',
     version:
       'commit 4ff9e3915ce87baaecd7ebe263085573a4ea3192 (ivankra/hsk30), original standard Ministry of Education GF0025-2021 (2021)',
-    use: 'the ~300 characters taught in the app',
+    use: 'the 300, 400 and 500 characters taught in the app, in three levels',
     licence: 'MIT',
     url: 'https://github.com/ivankra/hsk30',
   },
@@ -81,3 +83,13 @@ export const FONTS: readonly FontCredit[] = [
     url: 'https://github.com/lxgw/LxgwWenKai',
   },
 ];
+
+/** Known limitation (Requirement 16.4), also in the README "Known limitations" section. */
+export const KEYBOARD_LIMITATION =
+  'The Lay to rest step needs a mouse, a finger or a pen to draw each stroke, so a keyboard-only player cannot lay a ghost to rest; that player can only give up.';
+
+/**
+ * Reviewed and unreviewed clues of levels 2 and 3 (Requirement 16.5). The numbers come from
+ * PROMPT_COUNTS, which the pipeline generates from the data. Shown only while `PROMPT_COUNTS.unreviewed` is above zero.
+ */
+export const UNREVIEWED_PROMPTS_SENTENCE = `The clues of levels 2 and 3 come from CC-CEDICT by a fixed rule. A human has reviewed ${PROMPT_COUNTS.reviewed} of the ${PROMPT_COUNTS.total} clues and has not reviewed ${PROMPT_COUNTS.unreviewed}.`;

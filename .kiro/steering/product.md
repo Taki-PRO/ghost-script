@@ -40,7 +40,7 @@ Many people can **read** Chinese but can no longer **write** it by hand, because
 - The Cangjie summon step (spec `cangjie-seance`): every ghost is summoned by typing its Cangjie code, then written. This is the Resurrection core and replaces the earlier "Build mode" and separate-mode ideas.
 - Structure hints based on component breakdowns.
 - Haunting engine (spaced repetition), progress saved locally in the browser.
-- Nightly Séance: a short daily session (about 10 ghosts) drawn from about 300 checked characters. The summary lists when each ghost returns, and a brand-new player's first ghost is a short walkthrough (approved by the human).
+- Nightly Séance: a short daily session (about 10 ghosts) drawn from about 1,200 checked characters in three levels (HSK 3.0 writing levels 1 to 3); the Nightly Séance draws new ghosts from the chosen level. The summary lists when each ghost returns, and a brand-new player's first ghost is a short walkthrough (approved by the human).
 - Legend intro screen. English interface.
 - Cangjie Oracle MCP server (verified character-data lookups) + property-based tests.
 

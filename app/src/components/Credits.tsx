@@ -1,4 +1,12 @@
-import { CODE_LICENCE, COMBINED_WORK_NOTE, DATA_SOURCES, FONTS } from '../data/credits';
+import {
+  CODE_LICENCE,
+  COMBINED_WORK_NOTE,
+  DATA_SOURCES,
+  FONTS,
+  KEYBOARD_LIMITATION,
+  UNREVIEWED_PROMPTS_SENTENCE,
+} from '../data/credits';
+import { PROMPT_COUNTS } from '../data/promptCounts.generated';
 import { CANGJIE_CITATIONS, LEGEND_SOURCE } from '../data/citations';
 import { SOFTWARE_CREDITS } from '../data/software';
 
@@ -84,6 +92,16 @@ export function Credits({ onBack, backTo }: CreditsProps) {
               </li>
             ))}
           </ul>
+        </section>
+
+        <section aria-labelledby="credits-limits" className="mt-8">
+          <h2 id="credits-limits" className={H2}>
+            Known limitations
+          </h2>
+          <p className="mt-3 text-base leading-relaxed text-ink">{KEYBOARD_LIMITATION}</p>
+          {PROMPT_COUNTS.unreviewed > 0 && (
+            <p className="mt-3 text-base leading-relaxed text-ink">{UNREVIEWED_PROMPTS_SENTENCE}</p>
+          )}
         </section>
 
         <section aria-labelledby="credits-licensing" className="mt-8">

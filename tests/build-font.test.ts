@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -8,8 +8,11 @@ import {
   FontBuildError,
   cmapCoverage,
   collectGlyphSet,
+  computeLevelGlyphSets,
+  computeRepoGlyphSet,
   missingGlyphs,
   renderFontsCss,
+  renderLevelFontsCss,
   sha256Hex,
   stripComments,
   unicodeRange,
@@ -153,4 +156,74 @@ describe('build-font CLI', () => {
       rmSync(dir, { recursive: true, force: true });
     }
   }, 30000);
+});
+
+describe('level glyph sets', () => {
+  const level1 = computeRepoGlyphSet(ROOT);
+  const [level2, level3] = computeLevelGlyphSets(ROOT);
+  const keys = (file: string): string[] =>
+    Object.keys(JSON.parse(readFileSync(join(ROOT, 'app', 'public', 'data', file), 'utf8')) as Record<string, unknown>);
+
+  it('are disjoint from each other and from level 1', () => {
+    const all = [...level1, ...level2, ...level3];
+    expect(new Set(all).size).toBe(all.length);
+  });
+
+  it('together contain every key of the three Level_Datasets', () => {
+    const union = new Set([...level1, ...level2, ...level3]);
+    for (const file of ['characters.json', 'characters-level2.json', 'characters-level3.json']) {
+      for (const k of keys(file)) expect(union.has(k), `${k} from ${file}`).toBe(true);
+    }
+  });
+
+  it('keep the level 1 glyph set unchanged', () => {
+    expect(`${level1.join('')}\n`).toBe(readFileSync(join(ROOT, 'data', 'fonts', 'glyph-set.txt'), 'utf8'));
+  });
+
+  it('give each level exactly its keys that are not in an earlier set', () => {
+    expect(level2).toEqual(keys('characters-level2.json').filter((k) => !level1.includes(k)).sort());
+    expect(new Set(level3)).toEqual(
+      new Set(keys('characters-level3.json').filter((k) => !level1.includes(k) && !level2.includes(k))),
+    );
+  });
+});
+
+describe('fonts.css', () => {
+  const css = readFileSync(join(ROOT, 'app', 'src', 'styles', 'fonts.css'), 'utf8');
+  const rules = css.match(/@font-face\s*\{[^}]*\}/g) ?? [];
+
+  it('has three rules with the same family and the three subset files', () => {
+    expect(rules).toHaveLength(3);
+    for (const r of rules) expect(r).toContain('font-family: "LXGW WenKai Subset";');
+    expect(rules[0]).toContain('lxgw-wenkai-subset.woff2');
+    expect(rules[1]).toContain('lxgw-wenkai-subset-level2.woff2');
+    expect(rules[2]).toContain('lxgw-wenkai-subset-level3.woff2');
+  });
+
+  it('has pairwise disjoint unicode-ranges that match the glyph sets', () => {
+    const [l2, l3] = computeLevelGlyphSets(ROOT);
+    const expected = [computeRepoGlyphSet(ROOT), l2, l3].map(unicodeRange);
+    const ranges = rules.map((r) => /unicode-range:\s*([^;]+);/.exec(r)?.[1]);
+    expect(ranges).toEqual(expected);
+    const cps = ranges.flatMap((r) =>
+      (r ?? '').split(',').flatMap((part) => {
+        const [a, b] = part.replace('U+', '').split('-');
+        const lo = parseInt(a, 16);
+        const hi = b ? parseInt(b, 16) : lo;
+        return Array.from({ length: hi - lo + 1 }, (_, i) => lo + i);
+      }),
+    );
+    expect(new Set(cps).size).toBe(cps.length);
+  });
+});
+
+describe('renderLevelFontsCss', () => {
+  it('emits one rule per subset', () => {
+    const css = renderLevelFontsCss([
+      { set: ['一'], url: 'a.woff2' },
+      { set: ['日'], url: 'b.woff2' },
+    ]);
+    expect(css.match(/@font-face/g)).toHaveLength(2);
+    expect(css).toContain('url("b.woff2")');
+  });
 });

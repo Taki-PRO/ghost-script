@@ -32,6 +32,7 @@ export interface PromptOverrideError {
     | 'entry-index-out-of-range' // (reported by the build)
     | 'meaning-index-out-of-range' // (reported by the build)
     | 'missing-reviewer'
+    | 'invalid-reviewer' // (only with requiredReviewer)
     | 'malformed-row'
     | 'duplicate-character';
 }
@@ -40,6 +41,16 @@ export interface PromptOverrideError {
 export type ParsePromptOverridesResult =
   | { ok: true; overrides: Map<string, PromptOverride> }
   | { ok: false; errors: PromptOverrideError[] };
+
+/** Optional settings for parsePromptOverrides. */
+export interface ParsePromptOverridesOptions {
+  /**
+   * When set, every `reviewedBy` must equal this value (after trimming), else the
+   * row is reported as `invalid-reviewer`. Used for the level 2 and 3 files only;
+   * the level 1 file is parsed without it.
+   */
+  requiredReviewer?: 'human';
+}
 
 /** The exact required header, split into its four columns. */
 const EXPECTED_HEADER = ['character', 'entryIndex', 'meaningIndex', 'reviewedBy'];
@@ -103,7 +114,10 @@ function parseNonNegativeInteger(value: string): number | null {
  * Returns `{ ok: true, overrides }` only when zero errors are found; otherwise
  * `{ ok: false, errors }` with ALL errors.
  */
-export function parsePromptOverrides(rawCsv: string): ParsePromptOverridesResult {
+export function parsePromptOverrides(
+  rawCsv: string,
+  options: ParsePromptOverridesOptions = {},
+): ParsePromptOverridesResult {
   const lines = rawCsv.split('\n');
   const errors: PromptOverrideError[] = [];
   const overrides = new Map<string, PromptOverride>();
@@ -159,6 +173,14 @@ export function parsePromptOverrides(rawCsv: string): ParsePromptOverridesResult
 
     if (reviewedBy === '') {
       errors.push({ line: lineNumber, character, reason: 'missing-reviewer' });
+      continue;
+    }
+
+    if (
+      options.requiredReviewer !== undefined &&
+      reviewedBy !== options.requiredReviewer
+    ) {
+      errors.push({ line: lineNumber, character, reason: 'invalid-reviewer' });
       continue;
     }
 

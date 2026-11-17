@@ -46,6 +46,10 @@ describe('art-direction steering file', () => {
     expect(text).toContain('| Summary | Begin another Séance |');
   });
 
+  it('lists the Level screen with no Primary_Action (harder-ghosts, approved by the human)', () => {
+    expect(text).toContain('| Level screen | none |');
+  });
+
   it('names the ambient and rite-timing exemptions', () => {
     expect(text).toMatch(/Ambient exemption/);
     expect(text).toMatch(/Rite-timing exemption/);

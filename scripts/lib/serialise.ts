@@ -4,7 +4,7 @@
 //   - records are sorted by Unicode codepoint ascending (char.codePointAt(0))
 //   - each record's keys are emitted in a FIXED order
 //     (character, pinyin, meanings, strokeCount, strokeData, decomposition,
-//      prompt, cangjie, summonInk, sources)
+//      prompt, cangjie, summonInk, sources, then promptReview only when defined)
 //   - nested strokeData / decomposition / sources objects use the design's
 //     field order
 //
@@ -16,6 +16,7 @@ import type {
   Decomposition,
   FieldSources,
   Prompt,
+  PromptReview,
   StrokeData,
   SummonInk,
 } from '../../app/src/data/types';
@@ -31,10 +32,13 @@ import type {
  * sub-objects.
  *
  * @param records map of character → CharacterRecord
- * @returns deterministic JSON string (2-space indented)
+ * @param options `minify: true` writes JSON with no whitespace (levels 2 and 3);
+ *   the default keeps the 2-space form (level 1). Both forms parse equal.
+ * @returns deterministic JSON string
  */
 export function serialiseDataset(
   records: Map<string, CharacterRecord>,
+  options: { minify?: boolean } = {},
 ): string {
   const sortedChars = [...records.keys()].sort((a, b) => {
     const ca = a.codePointAt(0) ?? 0;
@@ -49,7 +53,9 @@ export function serialiseDataset(
     obj[char] = orderRecord(record);
   }
 
-  return JSON.stringify(obj, null, 2);
+  return options.minify === true
+    ? JSON.stringify(obj)
+    : JSON.stringify(obj, null, 2);
 }
 
 /** A CharacterRecord with its keys reconstructed in fixed design order. */
@@ -64,6 +70,7 @@ interface OrderedRecord {
   cangjie: string | null;
   summonInk: SummonInk;
   sources: FieldSources;
+  promptReview?: PromptReview;
 }
 
 /** Rebuilds summonInk as `{ class }` or `{ class, keyStrokes }` in that key order. */
@@ -74,7 +81,7 @@ function orderSummonInk(value: SummonInk): SummonInk {
 
 /** Rebuilds a record with keys in the fixed design order. */
 function orderRecord(record: CharacterRecord): OrderedRecord {
-  return {
+  const ordered: OrderedRecord = {
     character: record.character,
     pinyin: record.pinyin,
     meanings: record.meanings,
@@ -107,4 +114,8 @@ function orderRecord(record: CharacterRecord): OrderedRecord {
       cangjie: record.sources.cangjie,
     },
   };
+  if (record.promptReview !== undefined) {
+    ordered.promptReview = record.promptReview;
+  }
+  return ordered;
 }

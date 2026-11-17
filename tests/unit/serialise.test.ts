@@ -159,3 +159,32 @@ describe('serialiseDataset', () => {
     expect(first === second).toBe(true);
   });
 });
+
+describe('serialiseDataset promptReview and minify', () => {
+  it('writes promptReview after sources when the record has it', () => {
+    const m = new Map<string, CharacterRecord>();
+    m.set('人', makeRecord('人', { promptReview: 'unreviewed' }));
+    const parsed = JSON.parse(serialiseDataset(m)) as Record<string, CharacterRecord>;
+    const keys = Object.keys(parsed['人']);
+    expect(keys[keys.length - 1]).toBe('promptReview');
+    expect(keys[keys.length - 2]).toBe('sources');
+    expect(parsed['人'].promptReview).toBe('unreviewed');
+  });
+
+  it('writes no promptReview key when the record has none', () => {
+    const m = new Map<string, CharacterRecord>();
+    m.set('人', makeRecord('人'));
+    expect(serialiseDataset(m)).not.toContain('promptReview');
+  });
+
+  it('minified output has no newline and parses equal to the pretty form', () => {
+    const m = outOfOrderMap();
+    m.set('人', makeRecord('人', { promptReview: 'reviewed' }));
+    const pretty = serialiseDataset(m);
+    const minified = serialiseDataset(m, { minify: true });
+    expect(minified).not.toContain('\n');
+    expect(minified.length).toBeLessThan(pretty.length);
+    expect(JSON.parse(minified)).toEqual(JSON.parse(pretty));
+    expect(serialiseDataset(m, { minify: false })).toBe(pretty);
+  });
+});

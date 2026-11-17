@@ -1,0 +1,669 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Commit the pinned CSV and write and run the read-only Source_Check": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912052450
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912062856
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912367468
+      }
+    ],
+    "2. Checkpoint - Source gate": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912052474
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912367800
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912535669
+      }
+    ],
+    "3.1 Edit `.kiro/steering/content-accuracy.md`": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912052501
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912377859
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912536074
+      }
+    ],
+    "3.2 Edit `.kiro/steering/art-direction.md` and its test": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912052536
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912378077
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912537365
+      }
+    ],
+    "3.3 Edit `.kiro/steering/product.md`": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912052561
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912378164
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912538501
+      }
+    ],
+    "3.4 Add the amendment notes to the other specs": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912052583
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912378839
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912539690
+      }
+    ],
+    "4.1 Add the level lists and record the CSV in `SOURCES.md`": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912052603
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912541317
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912599559
+      }
+    ],
+    "4.2 Record the level 1 protection test before any pipeline change": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912052625
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912542068
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912599766
+      }
+    ],
+    "5.1 Add the shared types and the approvals parser": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912052648
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912604457
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912681050
+      }
+    ],
+    "5.2 Write the level helpers for the manifest": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912052681
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912687814
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912977380
+      }
+    ],
+    "5.3 Extend `serialise.ts` and `build-data.ts` to build all levels": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912052703
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794913250940
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794913476721
+      }
+    ],
+    "5.4 Run the build, commit the generated files and add the level dataset tests": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912052724
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794913481308
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794914886065
+      }
+    ],
+    "5.5 Generalise the bundle check": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912052744
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912688008
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912977799
+      }
+    ],
+    "5.6 Build the level font subsets": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912052766
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794914893261
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794915660260
+      }
+    ],
+    "5.7 Write the review-sample module (pure)": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912052787
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912689134
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912979129
+      }
+    ],
+    "5.8 Write the prompt-counts module and add the README markers": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912052808
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794913086200
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794913243397
+      }
+    ],
+    "6. Checkpoint - Data and pipeline": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912052828
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794918265120
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794925427589
+      }
+    ],
+    "7.1 Move the Save to schema version 3": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912052850
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912690317
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912980164
+      }
+    ],
+    "7.2 Extend the loader": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912052871
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912990257
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794913079185
+      }
+    ],
+    "7.3 Write the level engine module": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912052894
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912691271
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912981025
+      }
+    ],
+    "7.4 Extend the tablet tilt test to 500 positions": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912052916
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912991256
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794913080098
+      }
+    ],
+    "8.1 Build `LevelScreen`": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912052937
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794913086650
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794913244466
+      }
+    ],
+    "8.2 Extend `StartMenu`": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912052959
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794913087766
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794913245657
+      }
+    ],
+    "8.3 Extend `Graveyard`": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912052992
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794913088739
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794913246625
+      }
+    ],
+    "8.4 Update the credits data, the Credits screen and the README table": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912053019
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794914893448
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794915661279
+      }
+    ],
+    "9.1 Wire levels into `App.tsx`": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912053041
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794915765478
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794918252286
+      }
+    ],
+    "10.1 Read all three levels in the Oracle": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912053062
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794915663602
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794915755104
+      }
+    ],
+    "11.1 Update the e2e helpers": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912053086
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794914894016
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794915754146
+      }
+    ],
+    "11.2 Add `e2e/harder-ghosts.spec.ts`": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912053109
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794918258451
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794925428773
+      }
+    ],
+    "11.3 Diagnose and fix the existing e2e specs": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912053131
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794925429852
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794925636215
+      }
+    ],
+    "12.1 Finish the README": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912053152
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794925640886
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794925762108
+      }
+    ],
+    "12.2 Run the accuracy reviewer": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912053175
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794925762702
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794925911237
+      }
+    ],
+    "12.3 Add the first-ghosts report script": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912053197
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794925641708
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794925762294
+      }
+    ],
+    "13.1 HUMAN TASK: review the prompt samples": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912053217
+      }
+    ],
+    "13.2 HUMAN TASK: spot-check a random sample of the new characters": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912053237
+      }
+    ],
+    "13.3 HUMAN TASK: review the Level_Screen screenshots": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912053259
+      }
+    ],
+    "14. Final checkpoint": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912053283
+      },
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794925927858
+      }
+    ],
+    "1. Verify the data sources (runs first)": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912367499
+      }
+    ],
+    "3. Steering and spec amendments (approved by the human, as worded in the design)": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912539716
+      }
+    ],
+    "4. Level lists and the protected level 1": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794912599788
+      }
+    ],
+    "7. Storage, loader and engine": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794913080125
+      }
+    ],
+    "5. Pipeline, data build, bundle check and fonts": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794915660287
+      }
+    ],
+    "8. Screens": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794915661306
+      }
+    ],
+    "10. Cangjie Oracle": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794915755134
+      }
+    ],
+    "9. App wiring": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794918252322
+      }
+    ],
+    "11. End-to-end tests": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794925636251
+      }
+    ],
+    "12. README and accuracy review": [
+      {
+        "executionId": "5d4c6259-d1ab-49f3-914a-0c5b1abea27e",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794925911269
+      }
+    ]
+  }
+}

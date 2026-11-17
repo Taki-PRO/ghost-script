@@ -106,6 +106,32 @@ export interface CharacterRecord {
   /** Derived from `decomposition`, `cangjie` and the key table; see SummonInk. */
   summonInk: SummonInk;
   sources: FieldSources;
+  /** Present on level 2 and 3 records only. Absent means reviewed (level 1 baseline). */
+  promptReview?: PromptReview;
+}
+
+/** A writing level of the game (HSK 3.0 writing levels 1 to 3). */
+export type Level = 1 | 2 | 3;
+
+/** Whether a human has reviewed the record's ghost clue. */
+export type PromptReview = 'reviewed' | 'unreviewed';
+
+/** One entry of the Level_Manifest (app/public/data/levels.json). */
+export interface LevelInfo {
+  level: Level;
+  /** File name of the Level_Dataset, e.g. "characters-level2.json". */
+  file: string;
+  /** Number of records in the level. */
+  count: number;
+  /** Mean stroke count of the level's records, rounded to one decimal. */
+  averageStrokes: number;
+  /** English example meanings, never a character. */
+  exampleMeanings: string[];
+}
+
+/** The Level_Manifest: one LevelInfo per level, in level order. */
+export interface LevelManifest {
+  levels: LevelInfo[];
 }
 
 /**
@@ -150,6 +176,10 @@ export interface BuildOptions {
   promptOverridesPath?: string;
   /** Path to write prompt-review.csv on success (optional). */
   promptReviewPath?: string;
+  /** Level being built. Absent or 1: no promptReview field is written. */
+  level?: Level;
+  /** Path to prompt-approvals.csv (optional; absent file means no approvals). */
+  promptApprovalsPath?: string;
   /** Path to the Unihan_DictionaryLikeData.txt file. */
   unihanPath: string;
   /** Expected SHA-256 (hex) of the Unihan file. */

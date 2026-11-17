@@ -115,4 +115,26 @@ describe('loadDataset errors', () => {
     expect(() => loadDataset(path)).toThrow(OracleDataError);
     expect(() => loadDataset(path)).toThrow(path);
   });
+  it('throws OracleDataError naming the character when it appears in two files', () => {
+    const dir = tempDir();
+    const a = join(dir, 'a.json');
+    const b = join(dir, 'b.json');
+    const record = {
+      character: '我',
+      cangjie: 'HQI',
+      sources: {},
+      decomposition: { decomposition: '⿱', atomic: false, radical: '戈', components: [] },
+    };
+    writeFileSync(a, JSON.stringify({ 我: record }));
+    writeFileSync(b, JSON.stringify({ 我: record }));
+    expect(() => loadDataset([a, b])).toThrow(OracleDataError);
+    expect(() => loadDataset([a, b])).toThrow('我');
+  });
+  it('fails when one file of a list is missing', () => {
+    const dir = tempDir();
+    const a = join(dir, 'a.json');
+    writeFileSync(a, '{}');
+    const missing = join(dir, 'level2.json');
+    expect(() => loadDataset([a, missing])).toThrow(missing);
+  });
 });

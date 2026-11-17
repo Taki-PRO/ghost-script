@@ -11,6 +11,8 @@ The feature adds HSK 3.0 writing level 2 (400 characters) and level 3 (500 chara
 
 Testing is unit, component and e2e only. The Correctness Properties section is omitted on purpose (see Testing Strategy).
 
+Decisions in this design are approved by the human; there are no open questions. Level 2 and 3 prompts may ship unreviewed. A seeded 50-row sample per level is generated for the human to review, and the reviewed and unreviewed counts are generated from the data.
+
 ### What the investigation found
 
 Read-only findings, each with the file it comes from.
@@ -43,10 +45,12 @@ flowchart LR
   RAW[hanzi-writer-data<br/>Make Me a Hanzi<br/>CC-CEDICT<br/>Unihan] --> PIPE
   OV[prompt-overrides*.csv<br/>prompt-approvals.csv] --> PIPE
   PIPE --> D1[characters.json<br/>level 1, unchanged]
-  PIPE --> D2[characters-level2.json]
-  PIPE --> D3[characters-level3.json]
+  PIPE --> D2[characters-level2.json<br/>minified]
+  PIPE --> D3[characters-level3.json<br/>minified]
   PIPE --> MAN[levels.json]
   PIPE --> REV[prompt-review*.csv]
+  REV --> SAMP[prompt-review-sample-level2/3.csv<br/>prompt-review-sample-provenance.json]
+  D2 & D3 --> CNT[promptCounts.generated.ts<br/>README counts block]
   D1 & D2 & D3 --> FONT[scripts/build-font.ts]
   FONT --> F[3 subsets, 3 @font-face rules]
 ```
@@ -78,14 +82,19 @@ stateDiagram-v2
 
 | Decision | Alternatives | Reason |
 |---|---|---|
-| Keep `characters.json` as level 1; add `characters-level2.json`, `characters-level3.json`. | Rename to `characters-level1.json`; one directory per level. | No path in tests, e2e helpers, the Oracle or the font build changes, and the "300 records byte-identical" test is a single hash. Open question 10. |
+| Keep `characters.json` as level 1; add `characters-level2.json`, `characters-level3.json`. | Rename to `characters-level1.json`; one directory per level. | No path in tests, e2e helpers, the Oracle or the font build changes, and the "300 records byte-identical" test is a single hash. Approved by the human. |
 | Always load level 1 at start. | A small "core" file with 明 and the shape characters. | Level 1 is today's first load, so it is not heavier. A core file adds a build artefact and a second source of the same records. |
 | Level membership by trial loading (start-up plan), not a manifest of character lists. | `levels.json` with every character per level (about 3.6 KB raw). | Keeps the first load exactly as today. Costs one or two extra fetches only for players whose history spans levels. |
 | The manifest is small (counts, average strokes, three example meanings) and is fetched only for the Level_Screen. | Embed in the JS bundle. | A level 1 player never pays for it (Requirement 5.4, 5.5). |
 | `promptReview` is an optional record field on level 2 and 3 only. | A field on every record; a side file. | Level 1 stays byte-identical; the flag travels with the data. |
 | One approvals CSV for all levels. | Edit the review CSV. | The review CSV is an output (character-dataset Requirement 6.9) and is never read back. |
-| Tapping a level starts the séance; no Primary_Action. | Radio group plus a seal button. | Fewest taps, and fits 320 × 640 more easily. Open question 9. |
-| Lazy font subsets by `unicode-range`. | One larger subset; system fallback only. | Keeps level 1 text and weight unchanged; the browser fetches a level's subset only when its glyphs are drawn. Open question 6. |
+| Tapping a level starts the séance; no Primary_Action. | Radio group plus a seal button. | Fewest taps, and fits 320 × 640 more easily. Approved by the human. |
+| Lazy font subsets by `unicode-range`. | One larger subset; system fallback only. | Keeps level 1 text and weight unchanged; the browser fetches a level's subset only when its glyphs are drawn. Approved by the human. |
+| Level 2 and 3 files are minified; level 1 stays pretty-printed. | Pretty-print all three. | Level 1 must stay byte-identical, so only the new files can shrink. `serialiseDataset` gets a `minify` option used for levels 2 and 3. |
+| Prompt counts are generated (a `.ts` file and a README block). | Type the numbers; fetch `levels.json` on the Sources screen. | Numbers typed by hand go stale. A static generated module adds no request and no first-load fetch. |
+| Review samples are chosen by a seeded PRNG in the build. | A random pick by the human; `Math.random`. | The human reviews a reproducible list; the same inputs give the same bytes. |
+| Levels are not cumulative; the only cross-level never-met ghost is 明 (level 1) for a Brand_New_Player. | Pool every level. | Approved by the human. |
+| The Source_Check compares its result with the Expected_Result and exits non-zero on any difference. | Ask the human after every run. | The plan continues on an exact match and stops only when something differs. |
 
 ## Components and Interfaces
 
@@ -116,9 +125,11 @@ export interface CharacterRecord {
 New files:
 
 - `scripts/lib/levels.ts` (pure, Node-free): `LEVEL_FILES`, `exampleMeanings(order, records)`, `averageStrokes(records)`, `buildManifest(...)`, `formatLevelReport(...)`.
-- `scripts/lib/parse-prompt-approvals.ts`: parses `character,reviewedBy`, rejects empty reviewer, unknown character, duplicates (same style as `parse-prompt-overrides.ts`).
+- `scripts/lib/parse-prompt-approvals.ts`: parses `character,reviewedBy`, rejects a reviewer that is not exactly `human`, an unknown character and duplicates (same style as `parse-prompt-overrides.ts`).
 - `scripts/build-data.ts`: new exported `buildAllLevels(opts: AllLevelsOptions): Promise<AllLevelsResult>` that calls `buildDataset` once per level, merges the per-level failures into one report, and returns `{ ok: true, levels: [...], manifest }` or `{ ok: false, ... }`. `main()` writes every file atomically only after all levels pass.
 - `scripts/build-character-lists.ts` is not needed: the lists are committed files, and a unit test proves they equal the CSV rows (Requirement 2.5).
+
+`serialiseDataset(records, opts?: { minify?: boolean })` in `serialise.ts` writes `JSON.stringify(value)` with no whitespace when `minify` is true and the existing 2-space form otherwise; the key order and the codepoint sort are the same, so `JSON.parse` of both forms is equal. `buildAllLevels` passes `minify: true` for levels 2 and 3 only.
 
 `orderRecord` in `serialise.ts` appends `promptReview` after `sources` only when defined.
 
@@ -138,9 +149,14 @@ Level_Manifest (`app/public/data/levels.json`):
 
 The average strokes above are from the Source_Check numbers (7.04, 8.13, 8.67). The example meanings are chosen by the rule of Requirement 5.2 and are never typed by hand.
 
-Pipeline stdout, per level: the existing Cangjie lines, the summon-ink line, and one line per written file: `characters-level2.json  400 records  2508739 bytes  511365 bytes gzip`.
+Two more pure modules, both in `scripts/lib/`:
 
-`scripts/check-bundle-size.ts`: `EXCLUDED_PATH` becomes `LAZY_PATHS`, the three Level_Datasets and the two lazy font files. `summariseBundle` counts everything else. `main()` prints a second block, "Lazy files (not counted)", with each file's gzip bytes.
+- `review-sample.ts`: `fnv1a32(text)`, `mulberry32(seed)`, `sampleRows(rowCount, size, seed)` and `buildReviewSample(reviewCsv, level)`. See "Review samples and prompt counts".
+- `prompt-counts.ts`: `computePromptCounts(datasets)`, `renderCountsModule(counts)`, `renderReadmeBlock(counts)` and `replaceReadmeBlock(readme, block)`.
+
+Pipeline stdout, per level: the existing Cangjie lines, the summon-ink line, and one line per written file: `characters-level2.json  400 records  <raw> bytes  <gzip> bytes gzip` (real values, printed for `characters.json`, both level files and `levels.json`).
+
+`scripts/check-bundle-size.ts`: `EXCLUDED_PATH` becomes `LAZY_PATHS`, the three Level_Datasets and the two lazy font files. `summariseBundle` counts everything else. `main()` prints a second block, "Lazy files (not counted)", with each file's raw and gzip bytes.
 
 `scripts/build-font.ts`: `computeRepoGlyphSet(root)` keeps returning the level 1 set (level 1 keys, key shapes, legend), so `glyph-set.txt` and `lxgw-wenkai-subset.woff2` stay byte-identical. A new `computeLevelGlyphSets(root)` returns, for levels 2 and 3, the keys of that level's file minus the glyphs of earlier sets. `renderFontsCss` emits one rule per subset (files `lxgw-wenkai-subset-level2.woff2`, `…-level3.woff2`). The existing coverage check runs on all sets.
 
@@ -273,13 +289,13 @@ Each choice is a `<button>` whose accessible name is `Level N` followed by its l
 
 ### Files and weights
 
-Measured by running the real `buildDataset` in memory on the new lists (nothing written). The file sizes include the 2-space pretty printing the pipeline uses today. A `promptReview` line adds about 30 bytes per record (about 12 KB at level 2, 15 KB at level 3). Treat the figures as estimates within 2 percent; the build prints the real ones.
+Measured by running the real `buildDataset` in memory on the new lists (nothing written). The level 2 and 3 figures are for the 2-space pretty-printed form; those files ship minified, so the real figures are lower. The build and the final checkpoint print the real raw and gzip bytes of `characters.json`, both level files, `levels.json` and every font subset. A `promptReview` line adds about 30 bytes per record (about 12 KB at level 2, 15 KB at level 3). Treat the figures as estimates within 2 percent; the build prints the real ones.
 
 | File | Records | Raw bytes (estimate) | Gzip level 9 (estimate) | Loaded |
 |---|---|---|---|---|
 | `characters.json` (level 1) | 300 | 1,718,328 (exact today) | about 353,000 | at start, as today |
-| `characters-level2.json` | 400 | about 2,521,000 | about 514,000 | when chosen or needed |
-| `characters-level3.json` | 500 | about 3,299,000 | about 667,000 | when chosen or needed |
+| `characters-level2.json` (minified) | 400 | pretty-printed about 2,521,000; minified is smaller, the build prints it | at most about 514,000; the build prints it | when chosen or needed |
+| `characters-level3.json` (minified) | 500 | pretty-printed about 3,299,000; minified is smaller, the build prints it | at most about 667,000; the build prints it | when chosen or needed |
 | `levels.json` | 3 levels | about 1,000 | about 600 | when the Level_Screen opens |
 | `lxgw-wenkai-subset.woff2` (level 1) | 321 glyphs | 66,532 (exact today) | about 66,500 | at start, as today |
 | `lxgw-wenkai-subset-level2.woff2` | 395 glyphs | about 82,000 | about 82,000 | when a level 2 glyph is drawn |
@@ -287,7 +303,7 @@ Measured by running the real `buildDataset` in memory on the new lists (nothing 
 
 The font estimates use the current 207 bytes per glyph. WOFF2 is already compressed, so gzip does not shrink it.
 
-Counted bundle: 208,748 bytes today. The new code (screen, engine module, loader, storage) is estimated at 4,000 to 8,000 bytes gzip in the JS bundle, so the counted total stays under 220,000 of 300,000. A single combined font subset would add about 185,000 and push the total to about 394,000, which is why the subsets are lazy and excluded from the count (Open question 6).
+Counted bundle: 208,748 bytes today. The new code (screen, engine module, loader, storage) is estimated at 4,000 to 8,000 bytes gzip in the JS bundle, so the counted total stays under 220,000 of 300,000. A single combined font subset would add about 185,000 and push the total to about 394,000, which is why the subsets are lazy and excluded from the count (approved by the human).
 
 ### Level 2 and 3 facts (from the Source_Check dry run)
 
@@ -321,11 +337,47 @@ A level 2 or 3 record has every field of a level 1 record, plus `promptReview` (
 
 ### Data files owned by the human
 
-`data/prompt-overrides-level2.csv`, `data/prompt-overrides-level3.csv` and `data/prompt-approvals.csv` are written only by the human. The tasks create none of them. The Pipeline treats an absent file as empty, so the first build marks all 900 prompts `unreviewed`.
+`data/prompt-overrides-level2.csv`, `data/prompt-overrides-level3.csv` and `data/prompt-approvals.csv` are written only by the human. The tasks create none of them. The Pipeline treats an absent file as empty, so the first build marks all 900 prompts `unreviewed`. Unreviewed prompts may ship (approved by the human).
 
-### Content-accuracy wording planned for approval
+`data/prompt-approvals.csv` format: header `character,reviewedBy`, one row per accepted character of level 2 or 3, `reviewedBy` exactly `human`, no duplicates, the same CSV rules as `data/prompt-overrides.csv`. A row sets `promptReview` to `reviewed` for that character without changing its prompt. An override row of level 2 or 3 does the same and also changes the prompt by index; its `reviewedBy` is exactly `human` too.
 
-These are the planned steering edits (Requirement 15), wording to be confirmed by the human.
+### Review samples and prompt counts
+
+**Samples.** After the three Review_Files are rendered, `buildReviewSample(reviewCsv, level)` produces the Review_Sample:
+
+1. `n` is the number of data rows of that level's Review_File (400 or 500). If `n < 50` the build fails.
+2. `seedString` is `ghost-script/prompt-review-sample/v1/level2` or `…/level3`. `seed = fnv1a32(seedString)` (FNV-1a, 32 bit, over the ASCII bytes).
+3. `rand = mulberry32(seed)`, a float in [0, 1).
+4. `positions = [0, …, n-1]`. For `i` from 0 to 49: `j = i + floor(rand() * (n - i))`, swap `positions[i]` and `positions[j]`.
+5. The sample is `positions[0..49]` sorted ascending, so rows keep list order. Each output line is the Review_File line byte for byte, under the same header and with the same line endings.
+
+Distinct rows follow from the partial shuffle. The same seed and `n` give the same positions, so the selection does not change when the human adds override or approval rows; only the `reviewedBy` cell of a row can change.
+
+**Provenance.** The CSV format has no comment lines, so `data/prompt-review-sample-provenance.json` carries the record:
+
+```json
+{
+  "algorithm": "mulberry32 PRNG; partial Fisher-Yates over row positions; sample sorted by list order",
+  "seedHash": "FNV-1a 32 bit over the ASCII seed string",
+  "sampleSize": 50,
+  "levels": {
+    "2": { "seedString": "ghost-script/prompt-review-sample/v1/level2", "seed": "<number>", "source": "data/prompt-review-level2.csv", "rows": "<n>" },
+    "3": { "seedString": "ghost-script/prompt-review-sample/v1/level3", "seed": "<number>", "source": "data/prompt-review-level3.csv", "rows": "<n>" }
+  }
+}
+```
+
+The script computes and writes the real numbers in place of the `<…>` markers. The README repeats the algorithm and the seed strings in its prompt-review section.
+
+**Counts.** `computePromptCounts` reads the loaded Level_Datasets and returns `{ level2: { reviewed, unreviewed, total }, level3: { … }, reviewed, unreviewed, total }` by counting `promptReview` per record (level 1 is not part of the count). The pipeline writes it to `app/src/data/promptCounts.generated.ts` (`export const PROMPT_COUNTS = {…} as const;`, header comment "generated, do not edit") and replaces the text between `<!-- prompt-counts:start -->` and `<!-- prompt-counts:end -->` in `README.md` with a sentence of the form "Of the T prompts of levels 2 and 3, R are reviewed by a human and U are not (level 2: …; level 3: …). A human reviews a random sample of 50 rows per level." The build fails when the markers are missing. `credits.ts` builds the Sources & licences sentence from `PROMPT_COUNTS`. One unit test ties the displayed numbers to a fresh count over the data, and another ties the README block to the same count.
+
+### Reviewer values
+
+`reviewedBy` is exactly `human` in every new file and row: the Review_Files of levels 2 and 3 (empty on an unreviewed row), both Review_Samples, `data/prompt-approvals.csv`, `data/prompt-overrides-level2.csv`, `data/prompt-overrides-level3.csv`, and any new row of `data/prompt-overrides.csv`. A pure function `checkReviewedBy(file, rows)` in `tests/unit/reviewed-by.test.ts` returns the offending rows. For the two level 1 files the test pins their existing content: `data/prompt-review.csv` may only hold `human-approved` or empty values, and `data/prompt-overrides.csv` rows must equal the pinned existing rows or have `reviewedBy` `human`. No task rewrites those two files.
+
+### Content-accuracy wording (approved by the human)
+
+These are the steering edits (Requirement 15), approved by the human as worded here.
 
 - `content-accuracy.md`, "Sources to use", Character selection: "HSK 3.0 handwriting characters (书写字), writing levels 1, 2 and 3 (exactly 300, 400 and 500), from `ivankra/hsk30` `hsk30-chars.csv`, column `WritingLevel`."
 - `content-accuracy.md`, "Required tests": "The Cangjie unit test covers every record of every Level_Dataset."
@@ -348,6 +400,8 @@ These are the planned steering edits (Requirement 15), wording to be confirmed b
 | History key in no level | Ignored by the Graveyard and the pool (as today for unknown keys); never deleted. |
 | Storage unavailable or write fails | Existing sticky "not saving" notice; the level stays in memory for the page session. |
 | Save has a bad `level` | Reset to defaults (existing rule for any failed validation). |
+| A Review_File has fewer than 50 rows, or the README markers are missing | The build fails with a message naming the level or the file; nothing is written. |
+| Source_Check differs from the Expected_Result | Exit non-zero, print what differs, the plan stops for the human. |
 | Font file for a level fails to load | The Chinese font stack falls back to system CJK fonts; nothing breaks. |
 
 ## Testing Strategy
@@ -362,6 +416,11 @@ These are the planned steering edits (Requirement 15), wording to be confirmed b
 - `engine/levels.ts`: pool order, no never-met other-level ghosts, due ghosts of other levels, duplicates, `isLevelFinished`, `unplacedHistoryKeys` with `constructor` and `__proto__`, `nextLevelToLoad` for every state, `nextLevel`.
 - `planSeance`: level 1 first session identical to today's; level 2 and 3 first session starts with the Walkthrough_Ghost; level 2 session with due level 1 ghosts.
 - Storage: migration cases of Requirement 11.9, `setLevel` keeps history, validation, newer version, unwritable storage.
+- Review samples: same seed gives identical bytes on two runs; exactly 50 distinct rows; every row is a row of that level's Review_File; same header; fewer than 50 rows fails; the provenance file equals what the script computes; fixed expected positions for a small fixed `n` and seed.
+- Prompt counts: counts equal a fresh count over the three data files; the README block equals the rendered block; the Sources & licences sentence shows the same numbers; the missing-marker failure.
+- Reviewer values: `checkReviewedBy` fails on any value other than `human` (or empty on unreviewed rows) in the new files, accepts exactly the existing level 1 values and rows, and fails on a new level 1 override row whose reviewer is not `human`.
+- Minified files: `JSON.parse` equals the pretty-printed form, no newline, key order equal; `characters.json` bytes unchanged.
+- Source_Check: the pure comparison reports every difference from the Expected_Result and nothing when equal.
 - Loader: `promptReview` accepted and rejected values, manifest validation, `levelUrl`.
 - Bundle check: lazy paths listed but not counted; budget unchanged.
 - Fonts: disjoint glyph sets, union covers all keys, CSS rules disjoint, level 1 subset unchanged.
@@ -381,4 +440,4 @@ Level screen fit and no horizontal scroll at 1024 × 768, 375 × 812 and 320 × 
 
 ### Final verification
 
-`npm test`, `tsc --noEmit` at root, `app/` and `oracle/`, `npm run build -w app`, `npm run check:bundle`, `npm run test:e2e`, with the real file sizes reported.
+`npm test`, `tsc --noEmit` at root, `app/` and `oracle/`, `npm run build -w app`, `npm run check:bundle`, `npm run test:e2e`, with the real raw and gzip sizes of every data and font file reported, followed by the first ten ghosts of level 2 and level 3 in Learning_Order (character, meaning, pinyin, summon-ink class) printed by `npm run report:ghosts` from the generated data.

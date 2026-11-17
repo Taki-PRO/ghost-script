@@ -25,14 +25,14 @@ Judges may not read Chinese, so they cannot spot a wrong character. Correctness 
 - Pinyin and meanings: CC-CEDICT.
 - Cangjie codes: Unicode Unihan `kCangjie` field (Unicode 18.0.0, Unicode License V3). Unihan codes simplified forms directly, so no traditional mapping is needed. The app must say which source its codes follow, because Unihan marks the field provisional and some typists know different codes for some characters.
 - Cangjie history: only these claims may appear in the app, each citing the English Wikipedia articles "Cangjie input method" and "Chu Bong-Foo": developed in the 1970s by Chu Bong-Foo; named after Cangjie, the legendary inventor of Chinese writing; the first Chinese input method to use the standard QWERTY keyboard; released to the public in 1982. Two descriptive claims are also allowed with the "Cangjie input method" citation: Cangjie builds characters from their shapes, with each basic shape (radical) assigned to a key; and each key's radical also covers related auxiliary shapes. Nothing else (no usage statistics, no claims that it is "dying") without a new source.
-- Character selection: HSK 3.0 handwriting characters (书写字), writing level 1 (exactly 300), from `ivankra/hsk30` `hsk30-chars.csv`, column `WritingLevel`.
+- Character selection: HSK 3.0 handwriting characters (书写字), writing levels 1, 2 and 3 (exactly 300, 400 and 500), from `ivankra/hsk30` `hsk30-chars.csv`, column `WritingLevel`.
 
 ## Required tests on the dataset (existing property tests stay; new checks are plain unit tests)
 - Every character in `character-list.txt` exists in the generated dataset, exactly once.
 - Every character has stroke data, at least one pinyin reading and at least one meaning.
 - Every component listed for a character is a valid single character or recognised component.
 - Hint order is consistent with the decomposition (hints never reveal a component that is not part of the character).
-- The expected Cangjie code is always the verbatim Unihan `kCangjie` value; the app never derives or guesses a code. Checked by an exhaustive unit test over all 300 records, not a property test.
+- The expected Cangjie code is always the verbatim Unihan `kCangjie` value; the app never derives or guesses a code. The Cangjie unit test covers every record of every Level_Dataset. It is an exhaustive unit test, not a property test.
 - The dataset build is deterministic: running the pipeline twice produces identical output.
 
 ## Manual review
@@ -43,10 +43,14 @@ Judges may not read Chinese, so they cannot spot a wrong character. Correctness 
 
 ## What is not an answer leak (decided by a human)
 - The Graveyard showing the glyph of a character the player has already met, including one they gave up on: giving up reveals the character, so it is no longer hidden.
+- The level screen shows English example meanings, never a character. The Graveyard shows the glyph of a character with a Review entry at any level.
 - The designed summon reveal: once the code is complete, the character forms, holds and fades before writing starts. The plain-text fallback used when the animation fails follows the same timing and is also allowed.
 - The "How Cangjie works" example, as long as it is chosen from late in the learning order (position 30 or later), not from the first characters a new player meets.
 - The parts of a character drawn as strokes during the Summon step, as each correct key is typed (spec `summon-ink`), approved by the human. Parts appear only as drawn paths, never as text or in an attribute, and the Paper is empty before the Lay-to-rest step.
 - The first-meeting display for a ghost the player meets for the first time (spec `first-meeting`): the faint code letters, the highlight of the next slot and key, and the walkthrough lines. This is teaching, not an answer leak, because the player is being shown how the rite works; approved by the human. The never-reveal rule still holds for returning ghosts. It also still holds on first meeting for the character itself: the faint code shows letters and key shapes, never the target character as text or in an attribute, and `maskTarget` still applies when a key shape equals the target. The walkthrough lines pair each key with its shape from `CANGJIE_KEYS` (the key-to-radical table of the English Wikipedia article "Cangjie input method", https://en.wikipedia.org/wiki/Cangjie_input_method) and take the meaning from the dataset. The summary after the Séance may show every ghost's glyph, because each ghost has been laid to rest or revealed by then; approved by the human.
+
+## Prompts of later levels
+- Level 2 and 3 prompts come from CC-CEDICT by the same rule as level 1 and carry `promptReview`. They are not human-reviewed until an override or approval row says so. The app says so while any is unreviewed.
 
 ## Derived fields
 - A field the pipeline derives from other sourced fields (for example `summonInk`) records no new dataset. Its derivation is named in the type documentation and the README, and it needs no entry in `sources`.
