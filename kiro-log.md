@@ -531,6 +531,25 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 - **My own browser check:** at 1024 × 768 and 375 × 812 neither step scrolls. At 320 × 640 the Summon step is 20 px taller than the screen, which is outside the sizes the fit rule covers.
 - **Next:** step 2, each key inking its own part of the character.
 
+## Nov 17, 2026: summon-ink: each key inks its own part of the character
+
+- **What I did:** Wrote and built the `summon-ink` spec, the main change from the second review: typing a code was guesswork because the keys never visibly built the character.
+- **Kiro features:** spec in one pass with parallel waves; the Cangjie Oracle MCP used during design; one property-based test; the `accuracy-reviewer` agent as a spec task; Playwright e2e.
+- **Result:**
+  - **A rule in the data pipeline** sorts every character by how visible its code is, with no hand-written lists. It compares each key's base shape with the leaves of the character's decomposition and the strokes matched to them. Build summary: "Summon ink: transparent 15, partial 95, opaque 190".
+  - **Transparent:** every key inks its part. For 明 (AB), pressing A draws the four strokes of 日 and B draws the four of 月.
+  - **Partial:** matching keys ink their part, and other keys say "This key's shape is one the game doesn't show yet."
+  - **Opaque:** the character forms at the end as before, with one note: "This code uses shapes the game doesn't show yet."
+  - **Learning order** is now transparent first, then partial, then opaque, fewest strokes first within each. A new player starts with 一 二 人 下 女 instead of 一 七 九 了 二.
+  - **Kiro used the Oracle's `decompose` tool** to spot-check 明 早 天 果 里 本 下 干 before designing. It also found that the rule must read the decomposition tree's leaves, because the stored component list drops repeats such as 林 = 木 木.
+  - **Checked against the library source:** hanzi-writer's `animateStroke` calls cancel each other if they overlap, so strokes are queued one at a time. A test with the real library proves both behaviours.
+  - **The dataset only gained lines:** 1,917 added, none removed. A per-record checksum taken beforehand proved every existing field byte-identical, and was then deleted. The rebuild on Linux matches the Mac's.
+  - **The reviewer agent caught an unsourced claim in the spec itself**, that shapes like 亻 are "variant forms" of 人. It was reworded to what the data shows, and the second run returned "No findings".
+  - **Tests:** about 427 new unit tests (298 are a never-reveal sweep after every correct key) and 9 new e2e tests. **1688 unit and 29 e2e tests pass**; `tsc` clean; bundle 135,450 bytes gzipped.
+- **My own browser check (headless Chrome, production build):** played the first ten ghosts, 一 二 人 下 女 干 从 天 手 本. After each key, the number of visible inked strokes matched the data exactly (本: 4 after D; 天: 1 after M). No console errors.
+- **Still weak:** four of the first ten ghosts (一 人 女 手) have one-key codes, so the first press is still a guess.
+- **Next:** show the code on first meeting, hide it on return, and open with a guided 明.
+
 ---
 
 ## Template for new entries
