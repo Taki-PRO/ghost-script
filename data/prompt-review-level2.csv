@@ -75,7 +75,7 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 复,to go and return,fù,default,human,entry0 (fù): to go and return | to return | to resume | to return to a normal or original state | to repeat | again | to recover | to restore | to turn over | to reply | to answer | to reply to a letter | to retaliate | to carry out ;; entry1 (fù): to repeat | to double | to overlap | complex (not simple) | compound | composite | double | diplo- | duplicate | overlapping | to duplicate ;; entry2 (fù): variant of 復|复[fu4] | to reply to a letter
 改,to change,gǎi,default,,entry0 (gǎi): to change | to alter | to transform | to correct
 感,to feel,gǎn,default,human,entry0 (gǎn): to feel | to move | to touch | to affect | feeling | emotion | (suffix) sense of ~
-刚,(literary) hard; firm; strong,gāng,default,human,entry0 (gāng): (literary) hard; firm; strong | exactly; precisely | barely; only just | just; only a short while ago
+刚,just; only a short while ago,gāng,override,human,entry0 (gāng): (literary) hard; firm; strong | exactly; precisely | barely; only just | just; only a short while ago
 公,public,gōng,default,,"entry0 (gōng): public | collectively owned | common | international (e.g. high seas, metric system, calendar) | make public | fair | just | Duke, highest of five orders of nobility 五等爵位[wu3 deng3 jue2 wei4] | honorable (gentlemen) | father-in-law | male (animal)"
 共,common,gòng,default,,"entry0 (gòng): common | general | to share | together | total | altogether | abbr. for 共產黨|共产党[Gong4 chan3 dang3], Communist party"
 狗,dog,gǒu,default,,"entry0 (gǒu): dog | CL:隻|只[zhi1],條|条[tiao2]"
@@ -270,7 +270,7 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 原,former,yuán,default,human,entry0 (Yuán): surname Yuan | (Japanese surname) Hara ;; entry1 (yuán): former | original | primary | raw | level | cause | source
 愿,wish; hope; desire,yuàn,override,human,entry0 (yuàn): honest and prudent | variant of 願|愿[yuan4] ;; entry1 (yuàn): (bound form) wish; hope; desire | to be willing | to wish (that sth may happen); may ... | vow; pledge
 越,to exceed,yuè,default,,entry0 (Yuè): generic word for peoples or states of south China or south Asia at different historical periods | abbr. for Vietnam 越南 ;; entry1 (yuè): to exceed | to climb over | to surpass | the more... the more
-云,(classical) to say,yún,default,,entry0 (yún): (classical) to say ;; entry1 (Yún): surname Yun | short name for Yunnan 雲南|云南[Yun2 nan2] ;; entry2 (yún): cloud | CL:朵[duo3]
+云,cloud,yún,override,human,entry0 (yún): (classical) to say ;; entry1 (Yún): surname Yun | short name for Yunnan 雲南|云南[Yun2 nan2] ;; entry2 (yún): cloud | CL:朵[duo3]
 运,to move,yùn,default,,entry0 (yùn): to move | to transport | to use | to apply | fortune | luck | fate
 咱,I or me,zán,default,,entry0 (zán): variant of 咱[zan2] ;; entry1 (zá): see 咱[zan2] ;; entry2 (zán): I or me | we (including both the speaker and the person spoken to) ;; entry3 (zán): variant of 咱[zan2]
 脏,viscera,zàng,default,,entry0 (zàng): viscera | (anatomy) organ ;; entry1 (zāng): dirty | filthy | to get (sth) dirty

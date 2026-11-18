@@ -1,4 +1,6 @@
 import type { Level, LevelInfo, LevelManifest } from '../data/types';
+import { GhostFigure } from './GhostFigure';
+import { LevelSample } from './LevelSample';
 
 export interface LevelScreenProps {
   /** null: not loaded or failed. */
@@ -16,6 +18,8 @@ export interface LevelScreenProps {
 }
 
 const LEVEL_ORDER: readonly Level[] = [1, 2, 3];
+
+const LEVEL_LABEL: Record<Level, string> = { 1: 'easy', 2: 'harder', 3: 'hardest' };
 
 const focusRing =
   'focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost focus-visible:ring-offset-2 focus-visible:ring-offset-background';
@@ -56,6 +60,7 @@ export function LevelScreen({
       className="flex w-full flex-col items-center justify-center text-ink"
     >
       <div className="w-full max-w-3xl text-center">
+        <GhostFigure className="mx-auto mb-1 h-10 w-8 text-ghost sm:h-16 sm:w-12" />
         <h1
           id="level-title"
           className="font-display text-3xl font-semibold tracking-wide sm:text-5xl"
@@ -63,22 +68,28 @@ export function LevelScreen({
           Where will you begin?
         </h1>
         <p className="mt-2 text-sm sm:text-base">Choose the level you want to write from.</p>
-        <ul className="mt-4 flex flex-col gap-2">
+        <ul className="mt-2 flex sm:mt-4 flex-col gap-2">
           {LEVEL_ORDER.map((level) => {
             const info = infoFor(level);
             const current = currentLevel === level;
             return (
-              <li key={level}>
+              <li key={level} className="flex items-center gap-1.5 sm:gap-2">
+                {info?.sample ? (
+                  <div className="flex w-11 shrink-0 flex-col sm:w-14 items-center">
+                    <LevelSample level={level} sample={info.sample} className="h-11 w-11" />
+                    <span className="text-[11px] sm:text-xs">{LEVEL_LABEL[level]}</span>
+                  </div>
+                ) : null}
                 <button
                   type="button"
                   disabled={loading}
                   aria-current={current ? 'true' : undefined}
                   onClick={() => onChoose(level)}
-                  className={`slip block min-h-[44px] w-full px-4 py-2 text-left disabled:cursor-not-allowed disabled:opacity-70 ${focusRing}`}
+                  className={`slip block min-h-[44px] w-full min-w-0 flex-1 px-3 py-1.5 sm:px-4 sm:py-2 text-left disabled:cursor-not-allowed disabled:opacity-70 ${focusRing}`}
                 >
                   <span className="block text-base font-medium">Level {level}</span>
                   {current ? <span className="block text-sm">Current level</span> : null}
-                  {info ? <span className="block text-sm">{describeLevel(info)}</span> : null}
+                  {info ? <span className="block text-xs sm:text-sm">{describeLevel(info)}</span> : null}
                 </button>
               </li>
             );

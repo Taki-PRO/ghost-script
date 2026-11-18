@@ -24,7 +24,7 @@ Many people can **read** Chinese but can no longer **write** it by hand, because
 ## Core game loop
 1. A ghost appears showing a character's **meaning** (English) and **pinyin**. The character itself is hidden.
 2. One rite per ghost, in two steps:
-   - **Summon:** type the character's Cangjie code (physical or on-screen keyboard); each key reveals one shape until the character forms, then it fades.
+   - **Summon:** type the character's Cangjie code (physical or on-screen keyboard); each key reveals one shape. On a first meeting the character then forms and fades. On a returning ghost only the shapes the keys inked appear, and writing starts at once.
    - **Lay to rest:** write it from memory, stroke by stroke, each stroke checked live (finger, pencil, mouse or trackpad).
    - Characters without a playable code skip the summon step.
    - The first time a ghost is met, its code is shown to copy (approved by the human); when the ghost returns, the code is hidden.

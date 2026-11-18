@@ -38,6 +38,12 @@ import type {
 
 import { isPlayableInCangjie, isValidCangjieCode } from '../app/src/engine/cangjieRules';
 import { parseUnihanCangjie } from './lib/parse-unihan';
+import { LEGEND_SOURCE } from '../app/src/data/citations';
+import {
+  buildLegendStrokes,
+  legendCharacters,
+  serialiseLegendStrokes,
+} from './lib/legend-strokes';
 import {
   Sha256MismatchError,
   readRecordedSha256,
@@ -47,6 +53,7 @@ import { parseCharacterList } from './lib/parse-character-list';
 import { parseHanziWriterData } from './lib/parse-hanzi-writer-data';
 import { parseMakeMeAHanzi } from './lib/parse-make-me-a-hanzi';
 import { parseCcCedict } from './lib/parse-cc-cedict';
+import { checkClueCorrections } from './lib/clue-corrections';
 import type { CcCedictEntry } from './lib/parse-cc-cedict';
 import { mergeCharacter } from './lib/merge';
 import { serialiseDataset } from './lib/serialise';
@@ -164,6 +171,21 @@ export async function buildDataset(opts: BuildOptions): Promise<BuildResult> {
     opts.promptOverridesPath,
     isLaterLevel,
   );
+  // Exact-match guard for the approved clue corrections; throws before any
+  // file is written (this function never writes).
+  const clueFailures = checkClueCorrections(
+    opts.level ?? 1,
+    new Set(characters),
+    ccCedict,
+    overrides,
+  );
+  if (clueFailures.length > 0) {
+    throw new Error(
+      `clue corrections failed (${clueFailures.length}):\n${clueFailures
+        .map((f) => `  - ${f}`)
+        .join('\n')}`,
+    );
+  }
   // Approvals only matter at level 2 and 3 (absent file means none).
   const approvals = isLaterLevel
     ? await loadApprovals(opts.promptApprovalsPath)
@@ -687,6 +709,8 @@ export interface AllLevelsOutput {
   readmeBlock: string;
   /** Content of data/prompt-rule-changes.csv. */
   ruleChangesCsv: string;
+  /** Content of app/public/data/legend-strokes.json. */
+  legendStrokesJson: string;
 }
 
 export type AllLevelsResult =
@@ -789,6 +813,15 @@ export async function buildAllLevels(
         CharacterRecord
       >,
     })),
+    (character) => {
+      const entry = parseHanziWriterData(opts.hanziWriterDataDir, [
+        character,
+      ]).get(character);
+      if (entry === undefined) {
+        throw new Error(`${character}.json is missing or invalid`);
+      }
+      return entry.strokes;
+    },
   );
   const csvOf = (level: Level): string =>
     (builds.find((b) => b.level === level) as LevelBuild).promptReviewCsv;
@@ -818,6 +851,12 @@ export async function buildAllLevels(
     ruleChangesCsv: renderRuleChangesCsv(
       builds.flatMap((b) => (b.level === 1 ? [] : b.ruleChanges)),
     ),
+    legendStrokesJson: serialiseLegendStrokes(
+      buildLegendStrokes(
+        opts.hanziWriterDataDir,
+        legendCharacters(LEGEND_SOURCE.zh),
+      ),
+    ),
   };
 }
 
@@ -831,6 +870,7 @@ export interface AllLevelsPaths {
   countsModule: string;
   readme: string;
   ruleChanges: string;
+  legendStrokes: string;
 }
 
 /** The generated-file paths inside a repository root. */
@@ -855,6 +895,7 @@ export function defaultPaths(root: string): AllLevelsPaths {
     countsModule: join(root, 'app/src/data/promptCounts.generated.ts'),
     readme: join(root, 'README.md'),
     ruleChanges: join(root, 'data/prompt-rule-changes.csv'),
+    legendStrokes: join(root, 'app/public/data/legend-strokes.json'),
   };
 }
 
@@ -878,6 +919,7 @@ function filesToWrite(
     { path: paths.provenance, content: output.provenanceJson },
     { path: paths.countsModule, content: output.countsModule },
     { path: paths.ruleChanges, content: output.ruleChangesCsv },
+    { path: paths.legendStrokes, content: output.legendStrokesJson },
     {
       path: paths.readme,
       content: replaceReadmeBlock(readmeText, output.readmeBlock),
@@ -962,6 +1004,11 @@ export function formatAllLevelsReport(
     text += line(paths.datasets[b.level], b.count, b.output);
   }
   text += line(paths.manifest, output.manifest.levels.length, output.manifestJson);
+  text += line(
+    paths.legendStrokes,
+    legendCharacters(LEGEND_SOURCE.zh).length,
+    output.legendStrokesJson,
+  );
   const changed = (n: Level): number =>
     output.levels.find((b) => b.level === n)?.ruleChanges.length ?? 0;
   text += `Prompt rule changes: level 2: ${changed(2)}, level 3: ${changed(3)}, total: ${changed(2) + changed(3)}\n`;

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen, within, fireEvent, cleanup } from '@testing-library/react';
-import { LevelScreen, type LevelScreenProps } from './LevelScreen';
+import { LevelScreen, describeLevel, type LevelScreenProps } from './LevelScreen';
 import type { LevelManifest } from '../data/types';
 
 const manifest: LevelManifest = {
@@ -52,6 +52,81 @@ describe('LevelScreen', () => {
     const cjk = /[\u2E80-\u9FFF\uF900-\uFAFF\u{20000}-\u{2FFFF}]/u;
     expect(cjk.test(container.innerHTML)).toBe(false);
     expect(cjk.test(document.title)).toBe(false);
+  });
+
+  describe('samples', () => {
+    const withSamples: LevelManifest = {
+      levels: manifest.levels.map((l) => ({
+        ...l,
+        // `character` is data only; it must never be rendered.
+        sample: { character: '两', strokes: [`M${l.level} 0 L10 10 Z`, 'M5 5 L20 20 Z'] },
+      })),
+    };
+    const cjk = /[\u2E80-\u9FFF\uF900-\uFAFF\u{20000}-\u{2FFFF}]/u;
+
+    it('draws exactly three labelled samples whose paths equal the manifest, with no Han character', () => {
+      const { container } = setup({ manifest: withSamples, onBack: () => {}, currentLevel: 2 });
+      const imgs = container.querySelectorAll('[role="img"]');
+      expect(imgs).toHaveLength(3);
+      withSamples.levels.forEach((info, i) => {
+        const img = imgs[i]!;
+        expect(img.getAttribute('aria-label')).toBe(`sample character of level ${info.level}`);
+        expect(img.getAttribute('viewBox')).toBe('0 0 1024 1024');
+        expect(img.getAttribute('class')).toContain('card-slip');
+        const g = img.querySelector('g')!;
+        expect(g.getAttribute('transform')).toBe('scale(1, -1) translate(0, -900)');
+        expect([...g.querySelectorAll('path')].map((p) => p.getAttribute('d'))).toEqual(info.sample!.strokes);
+      });
+      expect(cjk.test(container.innerHTML)).toBe(false);
+    });
+
+    it('shows easy, harder and hardest and keeps the button names unchanged', () => {
+      setup({ manifest: withSamples });
+      for (const label of ['easy', 'harder', 'hardest']) expect(screen.getByText(label)).toBeTruthy();
+      const buttons = screen.getAllByRole('button');
+      expect(buttons).toHaveLength(3);
+      expect(buttons.map((b) => b.textContent)).toEqual(
+        manifest.levels.map((l) => `Level ${l.level}${describeLevel(l)}`),
+      );
+      for (const b of buttons) expect(b.querySelector('svg')).toBeNull();
+    });
+
+    it('draws one ghost above the heading, hidden from assistive technology', () => {
+      const { container } = setup({ manifest: withSamples });
+      const ghost = container.querySelector('svg[aria-hidden="true"]')!;
+      expect(ghost).toBeTruthy();
+      expect(ghost.querySelector('text')).toBeNull();
+      expect(ghost.compareDocumentPosition(screen.getByRole('heading', { level: 1 }))).toBe(
+        Node.DOCUMENT_POSITION_FOLLOWING,
+      );
+    });
+
+    it('omits the square and label of a level without a sample but keeps its slip', () => {
+      const partial: LevelManifest = {
+        levels: withSamples.levels.map((l) => (l.level === 2 ? { ...l, sample: undefined } : l)),
+      };
+      const { container } = setup({ manifest: partial });
+      const imgs = [...container.querySelectorAll('[role="img"]')].map((e) => e.getAttribute('aria-label'));
+      expect(imgs).toEqual(['sample character of level 1', 'sample character of level 3']);
+      expect(screen.queryByText('harder')).toBeNull();
+      expect(screen.getByText('easy')).toBeTruthy();
+      expect(screen.getByText('hardest')).toBeTruthy();
+      expect(screen.getByRole('button', { name: /^Level 2/ })).toBeTruthy();
+    });
+
+    it('draws no squares and no labels on manifest failure and keeps three slips and the alert', () => {
+      const { container } = setup({ manifest: null, manifestFailed: true });
+      expect(container.querySelectorAll('[role="img"]')).toHaveLength(0);
+      for (const label of ['easy', 'harder', 'hardest']) expect(screen.queryByText(label)).toBeNull();
+      expect(screen.getAllByRole('button')).toHaveLength(3);
+      expect(screen.getByRole('alert')).toBeTruthy();
+    });
+
+    it('keeps three slips, no slip-primary and 44 px by class with samples', () => {
+      const { container } = setup({ manifest: withSamples });
+      expect(container.querySelector('.slip-primary')).toBeNull();
+      for (const b of screen.getAllByRole('button')) expect(b.className).toContain('min-h-[44px]');
+    });
   });
 
   it('calls onChoose with the level', () => {

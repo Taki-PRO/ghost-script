@@ -1,5 +1,15 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
-import { START, findOverflow, regionPixels, seed, seedGraveyard, seedState } from './helpers';
+import {
+  START,
+  findOverflow,
+  levelOrder,
+  regionPixels,
+  seed,
+  seedGraveyard,
+  seedState,
+  seedWithHistory,
+  waitForLegendReveal,
+} from './helpers';
 
 // Slips (spec night-polish, Requirement 6): lift, glow, sink, the masked deckled edge, the focus
 // ring, disabled, reduced motion and touch, on the start menu, the Graveyard and Sources & licences.
@@ -149,6 +159,21 @@ const openIntro = async (page: Page): Promise<void> => {
   await seed(page, seedState({ introSeen: false }));
   await page.goto(START);
   await expect(page.getByRole('button', { name: 'Begin the Séance' })).toBeVisible();
+  await waitForLegendReveal(page);
+};
+
+// A met ghost (it has a history entry, due now): the Summon step shows no code, "Give up" moves on.
+const openWrite = async (page: Page): Promise<void> => {
+  await seed(page, seedWithHistory(levelOrder(1).slice(0, 12), 'struggled'));
+  await page.goto(START);
+  await page.getByRole('button', { name: 'Begin a Nightly Séance' }).click();
+  const summon = page.getByRole('region', { name: 'Summon step' });
+  await expect(summon, 'The Summon step did not appear for the met ghost.').toBeVisible({ timeout: 10_000 });
+  await summon.getByRole('button', { name: 'Give up' }).click();
+  const write = page.getByRole('region', { name: 'Write mode' });
+  await expect(write).toBeVisible({ timeout: 10_000 });
+  await expect(write.getByRole('button', { name: 'Give up' })).toBeEnabled({ timeout: 10_000 });
+  await page.evaluate(() => document.fonts.ready);
 };
 
 // The art direction gives the Graveyard and Sources & licences no Primary_Action.
@@ -156,6 +181,7 @@ const SCREENS: Screen[] = [
   { name: 'start menu', open: openMenu, primaries: 1 },
   { name: 'Graveyard', open: openGraveyard, primaries: 0 },
   { name: 'Sources & licences', open: openSources, primaries: 0 },
+  { name: 'Write step', open: openWrite, primaries: 0 },
 ];
 
 const VIEWPORTS = [

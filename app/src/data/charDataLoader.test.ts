@@ -474,4 +474,34 @@ describe('loadManifest', () => {
     stubFetchBody(out === undefined ? m : out);
     await expect(loadManifest()).resolves.toEqual({ ok: false });
   });
+
+  describe('sample', () => {
+    const withSample = (sample: unknown) => {
+      const m = validManifest();
+      (m.levels[0] as Record<string, unknown>).sample = sample;
+      return m;
+    };
+    it('accepts a valid sample and keeps it', async () => {
+      const m = withSample({ character: 'A', strokes: ['M 1 2 Z', 'M 3 4 Z'] });
+      stubFetchBody(m);
+      await expect(loadManifest()).resolves.toEqual({ ok: true, manifest: m });
+    });
+    it('accepts a level without a sample', async () => {
+      stubFetchBody(validManifest());
+      await expect(loadManifest()).resolves.toMatchObject({ ok: true });
+    });
+    it.each([
+      ['not an object', 'x'],
+      ['character of two code points', { character: 'AB', strokes: ['M 1 2'] }],
+      ['empty character', { character: '', strokes: ['M 1 2'] }],
+      ['no strokes', { character: 'A', strokes: [] }],
+      ['strokes not an array', { character: 'A', strokes: 'M 1 2' }],
+      ['an empty stroke', { character: 'A', strokes: ['M 1 2', ''] }],
+      ['a non-string stroke', { character: 'A', strokes: [1] }],
+      ['null', null],
+    ])('rejects a sample that is %s', async (_name, sample) => {
+      stubFetchBody(withSample(sample));
+      await expect(loadManifest()).resolves.toEqual({ ok: false });
+    });
+  });
 });

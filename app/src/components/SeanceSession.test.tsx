@@ -7,7 +7,12 @@ import type { CharacterDataset } from '../data/charDataLoader';
 import { DEFAULT_CONFIG } from '../engine/config';
 import type { Outcome } from '../engine/scheduler';
 import { learningOrder } from '../engine/learningOrder';
-import { WALKTHROUGH_LINE_PX } from '../engine/surfaceSize';
+import {
+  CROSS_LEVEL_LINE_PX,
+  CROSS_LEVEL_LINE_WRAP_PX,
+  WALKTHROUGH_LINE_PX,
+  crossLevelReserve,
+} from '../engine/surfaceSize';
 import {
   WALKTHROUGH_WRITE_LINE,
   pickWalkthroughGhost,
@@ -94,7 +99,12 @@ const emit = (o: Outcome) => {
   act(() => lastProps().onOutcome(o));
 };
 
-function setup(chars: string[], strict = false, savingWorks = true) {
+function setup(
+  chars: string[],
+  strict = false,
+  savingWorks = true,
+  firstMeeting?: ReadonlySet<string>,
+) {
   const onOutcome = vi.fn();
   const onComplete = vi.fn();
   const onLeave = vi.fn();
@@ -107,6 +117,7 @@ function setup(chars: string[], strict = false, savingWorks = true) {
       onComplete={onComplete}
       onLeave={onLeave}
       savingWorks={savingWorks}
+      firstMeeting={firstMeeting}
     />
   );
   render(strict ? <StrictMode>{ui}</StrictMode> : ui);
@@ -458,12 +469,14 @@ describe('SeanceSession two-step flow', () => {
       await vi.advanceTimersByTimeAsync(SUMMON_FADE_MS);
     });
   };
+  /** Every listed ghost is a first meeting, so the full reveal (hold and fade) is what these tests exercise. */
+  const setupFirst = (chars: string[]) => setup(chars, false, true, new Set(chars));
   const summonShown = () => screen.queryByRole('region', { name: 'Summon step' }) !== null;
   const writeShown = () => screen.queryByTestId('write-stub') !== null;
   const nextShown = () => screen.queryByRole('button', { name: /next ghost|finish the séance/i }) !== null;
 
   it('clean summon then clean write: one clean Outcome, nothing at the end of the Summon step', async () => {
-    const { onOutcome } = setup(['口']);
+    const { onOutcome } = setupFirst(['口']);
     typeCode('R');
     await runFade();
     expect(summonShown()).toBe(false);
@@ -474,8 +487,41 @@ describe('SeanceSession two-step flow', () => {
     expect(onOutcome.mock.calls[0]!.slice(0, 2)).toEqual(['口', 'clean']);
   });
 
+  it('a returning ghost goes to writing at once; a first-meeting ghost waits for hold and fade', async () => {
+    // Returning (empty first-meeting set): no hold, no fade.
+    const first = setup(['口']);
+    typeCode('R');
+    await act(async () => {});
+    await act(async () => {});
+    expect(summonShown()).toBe(false);
+    expect(writeShown()).toBe(true);
+    first.onOutcome.mockClear();
+    cleanup();
+
+    // First meeting: still summoning until the hold has passed.
+    render(
+      <SeanceSession
+        ghosts={[rec('口')]}
+        dataset={dataset}
+        config={DEFAULT_CONFIG}
+        onOutcome={vi.fn()}
+        onComplete={vi.fn()}
+        onLeave={vi.fn()}
+        savingWorks
+        firstMeeting={new Set(['口'])}
+      />,
+    );
+    typeCode('R');
+    await act(async () => {});
+    await act(async () => {});
+    expect(summonShown()).toBe(true);
+    expect(writeShown()).toBe(false);
+    await runFade();
+    expect(summonShown()).toBe(false);
+    expect(writeShown()).toBe(true);
+  });
   it('struggled summon then clean write records struggled', async () => {
-    const { onOutcome } = setup(['口']);
+    const { onOutcome } = setupFirst(['口']);
     ['B', 'B', 'B', 'R'].forEach(press);
     await runFade();
     expect(onOutcome).not.toHaveBeenCalled();
@@ -485,7 +531,7 @@ describe('SeanceSession two-step flow', () => {
   });
 
   it('clean summon then struggled write records struggled', async () => {
-    const { onOutcome } = setup(['口']);
+    const { onOutcome } = setupFirst(['口']);
     typeCode('R');
     await runFade();
     emit('struggled');
@@ -494,7 +540,7 @@ describe('SeanceSession two-step flow', () => {
   });
 
   it('Give up in the Summon step still proceeds to writing and records gave-up', async () => {
-    const { onOutcome } = setup(['口']);
+    const { onOutcome } = setupFirst(['口']);
     fireEvent.click(screen.getByRole('button', { name: 'Give up' }));
     await runFade();
     expect(writeShown()).toBe(true);
@@ -505,7 +551,7 @@ describe('SeanceSession two-step flow', () => {
   });
 
   it('Give up in the Lay-to-rest step records gave-up', async () => {
-    const { onOutcome } = setup(['口']);
+    const { onOutcome } = setupFirst(['口']);
     typeCode('R');
     await runFade();
     emit('gave-up');
@@ -514,7 +560,7 @@ describe('SeanceSession two-step flow', () => {
   });
 
   it('leaving after a finished Summon step calls onOutcome zero times', async () => {
-    const { onOutcome, onLeave } = setup(['口']);
+    const { onOutcome, onLeave } = setupFirst(['口']);
     typeCode('R');
     await runFade();
     expect(writeShown()).toBe(true);
@@ -525,19 +571,19 @@ describe('SeanceSession two-step flow', () => {
   });
 
   it('别 and 错 skip the Summon step; 身 has one', () => {
-    setup(['别', '错']);
+    setupFirst(['别', '错']);
     expect(summonShown()).toBe(false);
     expect(writeShown()).toBe(true);
     expect(screen.getByText('Lay to rest')).toBeTruthy();
     expect(screen.queryByText(/Step \d of 2/)).toBeNull();
     cleanup();
-    setup(['身']);
+    setupFirst(['身']);
     expect(summonShown()).toBe(true);
     expect(writeShown()).toBe(false);
   });
 
   it('别 then 错: each is recorded once from the write step alone', () => {
-    const { onOutcome } = setup(['别', '错']);
+    const { onOutcome } = setupFirst(['别', '错']);
     emit('clean');
     expect(onOutcome.mock.calls[0]!.slice(0, 2)).toEqual(['别', 'clean']);
     fireEvent.click(screen.getByRole('button', { name: 'Next ghost' }));
@@ -547,7 +593,7 @@ describe('SeanceSession two-step flow', () => {
   });
 
   it('the step label changes from Summon to Lay to rest', async () => {
-    setup(['身']);
+    setupFirst(['身']);
     expect(screen.getByText('Step 1 of 2: Summon')).toBeTruthy();
     typeCode('HXH');
     await runFade();
@@ -556,7 +602,7 @@ describe('SeanceSession two-step flow', () => {
   });
 
   it('the target is absent from the DOM from the end of the fade until the write step ends; Next ghost only after', async () => {
-    setup(['身']);
+    setupFirst(['身']);
     typeCode('HXH');
     expect(nextShown()).toBe(false);
     await runFade();
@@ -567,7 +613,7 @@ describe('SeanceSession two-step flow', () => {
   });
 
   it('Next ghost is not shown at the end of the Summon step', async () => {
-    setup(['口', '我']);
+    setupFirst(['口', '我']);
     typeCode('R');
     await runFade();
     expect(nextShown()).toBe(false);
@@ -576,7 +622,7 @@ describe('SeanceSession two-step flow', () => {
   });
 
   it('the last ghost leads to the summary via Finish, with a fresh Summon step per ghost', async () => {
-    const { onOutcome, onComplete } = setup(['口', '别']);
+    const { onOutcome, onComplete } = setupFirst(['口', '别']);
     typeCode('R');
     await runFade();
     emit('clean');
@@ -666,6 +712,108 @@ describe('SeanceSession first meeting and walkthrough', () => {
   });
 });
 
+describe('SeanceSession cross-level line', () => {
+  type SummonProps = { reservedPx?: number };
+  type WriteProps = { reservedPx?: number };
+  const LINE = '3 ghosts from level 1 return first.';
+  const LONG_LINE = '3 ghosts from level 1 and 2 ghosts from level 2 return first.';
+
+  function setupLine(chars: string[], line: string | null | undefined, extra: { walkthroughChar?: string | null } = {}) {
+    render(
+      <SeanceSession
+        ghosts={chars.map(rec)}
+        dataset={dataset}
+        config={DEFAULT_CONFIG}
+        onOutcome={vi.fn()}
+        onComplete={vi.fn()}
+        onLeave={vi.fn()}
+        savingWorks
+        crossLevelLine={line}
+        {...extra}
+      />,
+    );
+  }
+  const line = () => screen.queryByTestId('cross-level-line');
+
+  it('shows the line above the first ghost, in Summon, Write and outcome', () => {
+    setupLine(['我', '口', '爱'], LINE);
+    expect(line()?.textContent).toBe(LINE);
+    expect(line()!.compareDocumentPosition(screen.getByText('Step 1 of 2: Summon')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    finishSummon();
+    expect(line()?.textContent).toBe(LINE);
+    act(() => lastProps().onOutcome('clean'));
+    expect(line()?.textContent).toBe(LINE);
+  });
+
+  it('is gone after "Next ghost" and stays gone for later ghosts', () => {
+    setupLine(['我', '口', '爱'], LINE);
+    emit('clean');
+    fireEvent.click(screen.getByRole('button', { name: 'Next ghost' }));
+    expect(screen.getByText('Ghost 2 of 3')).toBeTruthy();
+    expect(line()).toBeNull();
+    emit('clean');
+    fireEvent.click(screen.getByRole('button', { name: 'Next ghost' }));
+    expect(screen.getByText('Ghost 3 of 3')).toBeTruthy();
+    expect(line()).toBeNull();
+    emit('clean');
+    expect(line()).toBeNull();
+  });
+
+  it('is plain text: no role, not a slip, not a heading, at 12 px or larger (text-sm)', () => {
+    setupLine(['我', '口'], LINE);
+    const el = line()!;
+    expect(el.tagName).toBe('P');
+    expect(el.getAttribute('role')).toBeNull();
+    expect(el.className).not.toMatch(/slip/);
+    expect(el.className).toContain('text-sm');
+    expect(el.className).toContain('text-ink');
+    expect(screen.queryByRole('heading', { name: LINE })).toBeNull();
+  });
+
+  it('adds no primary: none while the first ghost is unresolved, one after an outcome', () => {
+    setupLine(['我', '口'], LINE);
+    expect(document.querySelectorAll('.slip-primary')).toHaveLength(0);
+    emit('clean');
+    expect(document.querySelectorAll('.slip-primary')).toHaveLength(1);
+  });
+
+  it('shows nothing for null or no line, and reserves nothing', () => {
+    setupLine(['口'], null);
+    expect(line()).toBeNull();
+    expect((stub.summon as unknown as SummonProps).reservedPx).toBe(0);
+    finishSummon();
+    expect((lastProps() as unknown as WriteProps).reservedPx).toBe(0);
+  });
+
+  it('reserves the one-line height for the first ghost, then nothing for the next', () => {
+    setupLine(['我', '口'], LINE);
+    expect((stub.summon as unknown as SummonProps).reservedPx).toBe(crossLevelReserve(LINE, window.innerWidth));
+    finishSummon();
+    expect((lastProps() as unknown as WriteProps).reservedPx).toBe(CROSS_LEVEL_LINE_PX);
+    act(() => lastProps().onOutcome('clean'));
+    fireEvent.click(screen.getByRole('button', { name: 'Next ghost' }));
+    expect((stub.summon as unknown as SummonProps).reservedPx).toBe(0);
+  });
+
+  it('reserves the wrapped height for a long line on a narrow window', () => {
+    const original = window.innerWidth;
+    Object.defineProperty(window, 'innerWidth', { configurable: true, value: 320 });
+    try {
+      setupLine(['我', '口'], LONG_LINE);
+      expect((stub.summon as unknown as SummonProps).reservedPx).toBe(CROSS_LEVEL_LINE_WRAP_PX);
+    } finally {
+      Object.defineProperty(window, 'innerWidth', { configurable: true, value: original });
+    }
+  });
+
+  it('the walkthrough ghost keeps its own reserve and no line shows with it', () => {
+    const walkChar = pickWalkthroughGhost(learningOrder(dataset), dataset)!;
+    setupLine([walkChar, '口'], null, { walkthroughChar: walkChar });
+    expect(line()).toBeNull();
+    expect((stub.summon as unknown as SummonProps).reservedPx).toBe(WALKTHROUGH_LINE_PX);
+  });
+});
+
 describe('SeanceSession ink and candlelight wiring', () => {
   const seal = () => screen.queryAllByRole('img').filter((e) => (e.getAttribute('aria-label') ?? '').startsWith('Seal:'));
   const flinchOf = () => screen.getByLabelText("Ghost's clue").getAttribute('data-ghost-flinch');
@@ -742,5 +890,70 @@ describe('SeanceSession ink and candlelight wiring', () => {
     setup(['别']);
     emit('clean');
     expect(screen.getByRole('button', { name: 'Finish the séance' }).className).toContain('slip-primary');
+  });
+});
+
+describe('SeanceSession review mode (proof-pass 10)', () => {
+  type SummonProps = { firstMeeting?: boolean; walkthroughLines?: readonly string[] };
+  const summonProps = () => stub.summon as unknown as SummonProps;
+  function setupReview(chars: string[]) {
+    const onOutcome = vi.fn();
+    const onComplete = vi.fn();
+    render(
+      <SeanceSession
+        mode="review"
+        ghosts={chars.map(rec)}
+        dataset={dataset}
+        config={DEFAULT_CONFIG}
+        onOutcome={onOutcome}
+        onComplete={onComplete}
+        onLeave={vi.fn()}
+        savingWorks
+      />,
+    );
+    return { onOutcome, onComplete };
+  }
+  it('a clean ghost reads "Remembered. It rests after its next séance."', () => {
+    setupReview(['我']);
+    emit('clean');
+    expect(screen.getByText('Remembered. It rests after its next séance.')).toBeTruthy();
+    expect(document.body.textContent).not.toMatch(/laid to rest/i);
+  });
+  it('a struggled ghost has no "laid to rest" text', () => {
+    setupReview(['我']);
+    emit('struggled');
+    expect(screen.getByText('Still restless. It will return soon.')).toBeTruthy();
+    expect(document.body.textContent).not.toMatch(/laid to rest/i);
+  });
+  it('a gave-up ghost keeps its text', () => {
+    setupReview(['我']);
+    emit('gave-up');
+    expect(screen.getByText('The ghost slipped away')).toBeTruthy();
+  });
+  it('the nightly texts are unchanged without a mode', () => {
+    setup(['我', '口']);
+    emit('clean');
+    expect(screen.getByText('Laid to rest')).toBeTruthy();
+  });
+  it('every ghost is a returning ghost: no first meeting, no walkthrough lines, no cross-level line', () => {
+    setupReview(['我', '口']);
+    expect(summonProps().firstMeeting).toBe(false);
+    expect(summonProps().walkthroughLines).toBeUndefined();
+    expect(screen.queryByTestId('cross-level-line')).toBeNull();
+    emit('clean');
+    fireEvent.click(screen.getByRole('button', { name: 'Next ghost' }));
+    expect(summonProps().firstMeeting).toBe(false);
+    expect(summonProps().walkthroughLines).toBeUndefined();
+    expect(screen.queryByTestId('walkthrough-write-line')).toBeNull();
+  });
+  it('completes with laidToRest counting only the clean ghosts', () => {
+    const { onComplete } = setupReview(['我', '口', '爱']);
+    emit('clean');
+    fireEvent.click(screen.getByRole('button', { name: 'Next ghost' }));
+    emit('struggled');
+    fireEvent.click(screen.getByRole('button', { name: 'Next ghost' }));
+    emit('gave-up');
+    fireEvent.click(screen.getByRole('button', { name: 'Finish the séance' }));
+    expect(onComplete).toHaveBeenCalledWith({ total: 3, laidToRest: 1 });
   });
 });

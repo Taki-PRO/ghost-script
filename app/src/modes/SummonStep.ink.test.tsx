@@ -11,6 +11,7 @@ import {
   SUMMON_FADE_MS,
   SUMMON_HOLD_MS,
   SUMMON_INK_SPEED,
+  SUMMON_REDUCED_SPEED,
   SummonStep,
 } from './SummonStep';
 
@@ -27,21 +28,32 @@ interface CreateCall {
 const h = vi.hoisted(() => ({
   creates: [] as unknown[],
   strokes: [] as number[],
+  chars: 0,
   active: 0,
   maxActive: 0,
   manual: false,
   pending: [] as Array<() => void>,
   throwOnCreate: false,
   rejectStroke: false,
+  loadError: false,
 }));
 
 vi.mock('hanzi-writer', () => {
-  const create = (el: HTMLElement, char: string, options: object) => {
+  const create = (
+    el: HTMLElement,
+    char: string,
+    options: { onLoadCharDataError?: (reason?: unknown) => void },
+  ) => {
     if (h.throwOnCreate) throw new Error('boom');
     el.innerHTML = '<svg><path d="M0 0"></path></svg>';
     h.creates.push({ el, char, options });
+    // Like hanzi-writer: the load error arrives after create has returned.
+    if (h.loadError) queueMicrotask(() => options.onLoadCharDataError?.(new Error('no data')));
     return {
-      animateCharacter: () => Promise.resolve(),
+      animateCharacter: () => {
+        h.chars += 1;
+        return Promise.resolve();
+      },
       animateStroke: (n: number) => {
         h.strokes.push(n);
         h.active += 1;
@@ -102,7 +114,7 @@ const wrongLetter = (r: CharacterRecord, i = 0) => (code(r)[i] === 'B' ? 'C' : '
 function setup(record: CharacterRecord) {
   const onDone = vi.fn();
   const utils = render(
-    <SummonStep record={record} dataset={dataset} config={DEFAULT_CONFIG} onDone={onDone} />,
+    <SummonStep record={record} dataset={dataset} config={DEFAULT_CONFIG} onDone={onDone} firstMeeting />,
   );
   return { onDone, ...utils };
 }
@@ -136,12 +148,14 @@ const originalMatchMedia = window.matchMedia;
 beforeEach(() => {
   h.creates.length = 0;
   h.strokes.length = 0;
+  h.chars = 0;
   h.pending.length = 0;
   h.active = 0;
   h.maxActive = 0;
   h.manual = false;
   h.throwOnCreate = false;
   h.rejectStroke = false;
+  h.loadError = false;
   vi.useFakeTimers();
 });
 
@@ -516,7 +530,7 @@ describe('the paper is empty when onDone runs', () => {
         expect(container.el.querySelector('path')).toBeNull();
         expect(container.el.childElementCount).toBe(0);
       });
-      render(<SummonStep record={rec} dataset={dataset} config={DEFAULT_CONFIG} onDone={onDone} />);
+      render(<SummonStep record={rec} dataset={dataset} config={DEFAULT_CONFIG} onDone={onDone} firstMeeting />);
       for (const c of code(rec)) press(c);
       await settle();
       advance(SUMMON_HOLD_MS);
@@ -526,4 +540,149 @@ describe('the paper is empty when onDone runs', () => {
       expect(onDone).toHaveBeenCalledTimes(1);
     });
   }
+});
+
+// ---------------------------------------------------------------------------
+// Returning ghost: only the strokes of the accepted keys, no hold, no fade,
+// no animateCharacter, no plain-text fallback.
+// ---------------------------------------------------------------------------
+describe('returning ghost', () => {
+  /** Timers alive after mount (not ours); the step must add none. */
+  let baseTimers = 0;
+  function setupReturning(record: CharacterRecord) {
+    const onDone = vi.fn();
+    const utils = render(
+      <SummonStep record={record} dataset={dataset} config={DEFAULT_CONFIG} onDone={onDone} />,
+    );
+    baseTimers = vi.getTimerCount();
+    return { onDone, ...utils };
+  }
+  const typeAll = (r: CharacterRecord) => {
+    for (const c of code(r)) press(c);
+  };
+  const noFallback = () => {
+    expect(fallbackEl()).toBeNull();
+    expect(document.querySelector('p[lang="zh"]')).toBeNull();
+  };
+
+  it('finishes once after the queued strokes with no timer and no animateCharacter', async () => {
+    const { onDone } = setupReturning(TRANSPARENT_MULTI);
+    typeAll(TRANSPARENT_MULTI);
+    await settle();
+    expect(onDone).toHaveBeenCalledTimes(1);
+    expect(onDone).toHaveBeenCalledWith('clean');
+    expect(h.chars).toBe(0);
+    expect(vi.getTimerCount()).toBe(baseTimers);
+    noFallback();
+    expect(inkContainer().childElementCount).toBe(0);
+  });
+
+  it('draws only the strokes of the typed keys, in the order the keys were typed', async () => {
+    const rec = PARTIAL;
+    const { onDone } = setupReturning(rec);
+    typeAll(rec);
+    await settle();
+    const expected = [...new Set(keyStrokesOf(rec).flat())];
+    expect(h.strokes).toEqual(expected);
+    expect(h.strokes.length).toBeLessThan(rec.strokeCount);
+    expect(onDone).toHaveBeenCalledTimes(1);
+  });
+
+  it('waits for a stroke that is still drawing before it finishes', async () => {
+    h.manual = true;
+    const { onDone } = setupReturning(TRANSPARENT_MULTI);
+    typeAll(TRANSPARENT_MULTI);
+    await settle();
+    expect(onDone).not.toHaveBeenCalled();
+    await drainManual();
+    expect(onDone).toHaveBeenCalledTimes(1);
+    expect(vi.getTimerCount()).toBe(baseTimers);
+  });
+
+  it('an opaque ghost creates no writer, calls no animation and finishes once', async () => {
+    const { onDone } = setupReturning(OPAQUE);
+    typeAll(OPAQUE);
+    await settle();
+    expect(h.creates).toHaveLength(0);
+    expect(h.chars).toBe(0);
+    expect(h.strokes).toEqual([]);
+    expect(onDone).toHaveBeenCalledTimes(1);
+    expect(onDone).toHaveBeenCalledWith('clean');
+    expect(vi.getTimerCount()).toBe(baseTimers);
+    noFallback();
+  });
+
+  it('create throwing still finishes once, with nothing shown and no fallback', async () => {
+    h.throwOnCreate = true;
+    const { onDone } = setupReturning(TRANSPARENT_MULTI);
+    typeAll(TRANSPARENT_MULTI);
+    await settle();
+    expect(onDone).toHaveBeenCalledTimes(1);
+    expect(h.chars).toBe(0);
+    expect(vi.getTimerCount()).toBe(baseTimers);
+    noFallback();
+  });
+
+  it('onLoadCharDataError still finishes once, with nothing shown and no fallback', async () => {
+    h.loadError = true;
+    const { onDone } = setupReturning(TRANSPARENT_MULTI);
+    typeAll(TRANSPARENT_MULTI);
+    await settle();
+    expect(onDone).toHaveBeenCalledTimes(1);
+    expect(h.chars).toBe(0);
+    expect(vi.getTimerCount()).toBe(baseTimers);
+    noFallback();
+  });
+
+  it('a rejected stroke still finishes once, with nothing shown and no fallback', async () => {
+    h.rejectStroke = true;
+    const { onDone } = setupReturning(TRANSPARENT_MULTI);
+    typeAll(TRANSPARENT_MULTI);
+    await settle();
+    expect(onDone).toHaveBeenCalledTimes(1);
+    expect(h.chars).toBe(0);
+    expect(vi.getTimerCount()).toBe(baseTimers);
+    noFallback();
+  });
+
+  it('Give up with zero keys draws no stroke and finishes with gave-up', async () => {
+    const { onDone } = setupReturning(PARTIAL);
+    fireEvent.click(screen.getByRole('button', { name: 'Give up' }));
+    await settle();
+    expect(h.strokes).toEqual([]);
+    expect(h.chars).toBe(0);
+    expect(onDone).toHaveBeenCalledTimes(1);
+    expect(onDone).toHaveBeenCalledWith('gave-up');
+    expect(vi.getTimerCount()).toBe(baseTimers);
+    noFallback();
+  });
+
+  it('Give up after one key lets that key\'s strokes finish and adds none', async () => {
+    h.manual = true;
+    const rec = TRANSPARENT_MULTI;
+    const first = keyStrokesOf(rec)[0]!;
+    expect(first.length).toBeGreaterThan(0);
+    const { onDone } = setupReturning(rec);
+    press(code(rec)[0]!);
+    await settle();
+    fireEvent.click(screen.getByRole('button', { name: 'Give up' }));
+    await drainManual();
+    expect(h.strokes).toEqual([...new Set(first)]);
+    expect(h.chars).toBe(0);
+    expect(onDone).toHaveBeenCalledTimes(1);
+    expect(onDone).toHaveBeenCalledWith('gave-up');
+    expect(vi.getTimerCount()).toBe(baseTimers);
+    noFallback();
+  });
+
+  it('reduced motion draws at SUMMON_REDUCED_SPEED and starts no timer', async () => {
+    stubReducedMotion();
+    expect(SUMMON_REDUCED_SPEED).toBe(1000);
+    const { onDone } = setupReturning(PARTIAL);
+    typeAll(PARTIAL);
+    await settle();
+    expect(creates()[0]!.options.strokeAnimationSpeed).toBe(SUMMON_REDUCED_SPEED);
+    expect(onDone).toHaveBeenCalledTimes(1);
+    expect(vi.getTimerCount()).toBe(baseTimers);
+  });
 });

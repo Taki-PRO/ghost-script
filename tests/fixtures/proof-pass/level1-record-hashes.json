@@ -1,0 +1,1202 @@
+{
+  "一": {
+    "full": "a43bebcf91e28ee368c4b43d5f47c42a19196ee265229a08d4cad644aaec3003",
+    "noPrompt": "bb98370c2e55e492bf1650cdc9553017e43859016c9f0d5165cb5de107d5a9ed"
+  },
+  "七": {
+    "full": "8418a6c1fbae4bdd994b3238b526dc4f42d7a54a10830da0f7a0089cd8f7df7a",
+    "noPrompt": "2aa957c26d30ccbe2b42bf762cd562455dbfc15e8166b8ad09928c3e077cf81e"
+  },
+  "三": {
+    "full": "fa598555eb6da9bcc271a55437a98ffceb66ecb6ddd958f2002144b2ee81f519",
+    "noPrompt": "d83f9c73cbdd87d492ce4da6895a79649198f3541b198b345b478c66cd144e8e"
+  },
+  "上": {
+    "full": "215782950f83918cbb543e95800d4d98814e6330247ef8ce1a4f98e06e9843ed",
+    "noPrompt": "b343d709f035344be0f1809a496941e3e0fef11512e59f4c7492c774a05f0194"
+  },
+  "下": {
+    "full": "2803fafa611cb6ef9d093c5cd1adae12a6f979832fe78a1685656ef488b91cec",
+    "noPrompt": "053db7dbe499bb996b6e610a92491bf8e63040c68c717e8be9c761394f2ea7c5"
+  },
+  "不": {
+    "full": "12835517f39077d75b560941f898344e420f34b98e3b8f0e0d4a3a1c4b3e31f7",
+    "noPrompt": "cd53557e96c1a8733752a469d2375673db62e3ef7294b48a8dc1f06d278b4d93"
+  },
+  "东": {
+    "full": "6d7a37ca6674e46a1868d38a88527b4542f151397d678d4d8b04309ef857c62e",
+    "noPrompt": "19effb736716ae6f36da10baaf0488be7ede6aed383ac2b2313c85c42da101dd"
+  },
+  "两": {
+    "full": "8ec13f0c501d0f8eb3775658a8a61fb7d56ebf1ad9e997bc60012bed40a45e4e",
+    "noPrompt": "ff0066aa22e99a882a344e56d71f1639ea360e2a9fb6d837cd75d7f3d6a2ffc6"
+  },
+  "个": {
+    "full": "4f1e7f6673f8993d7361335e126bc182e0aaa2b06fd0ef8130047b8779b591fd",
+    "noPrompt": "6f027c153c1d787f3da91419278ab05f1c6c74e6feed647d5d071de85c988e5d"
+  },
+  "中": {
+    "full": "585b00a90d3bcbd927decddcfd7e76884fdd05890f4fea85a1e3fbe7a5874900",
+    "noPrompt": "3679280ef0a0032e2e760cde87461cb1bef62e123c46a315d4d30145c0ed2f3d"
+  },
+  "为": {
+    "full": "8d5bf26505baeb8c834dde3c31c5f0cf1e8fc0708c89db1775f5a52432076859",
+    "noPrompt": "606e739362ddf80d7e45df0cebfdcec9eee123e0313c8e5112297fb0e03f5bbe"
+  },
+  "么": {
+    "full": "021244a6360f8f01ba1f86d597e6b084bdbd6ba2547076b970497404a16440f2",
+    "noPrompt": "91b543af10d9d93708a6e3a02fc0b909fcd81c9ab6995683e2874ccdb27edae0"
+  },
+  "九": {
+    "full": "420d3176d224c99a82f656613b9827d76cf8632272d88545888d88e0e7dbe0f6",
+    "noPrompt": "21bdf70b5640fa4402753f7bde523c6f62bf3318563cb24f806c8bbbf53c3901"
+  },
+  "也": {
+    "full": "e6137f46f29fba53da3941cd10a546da56cb9731bb02a2c105ef66b284278959",
+    "noPrompt": "8500679fc01ba4031e97ae4591d02810d591a3aa364b58f521871dcf1b660b68"
+  },
+  "习": {
+    "full": "7109e6d4063b043229ebaede1bae2d5b8fb294c83ab2c39dc9d80911ebb4e3c0",
+    "noPrompt": "cc9e2622c20867d04a3c48b7312ab13b00e4a75240d0dc11fe960022fe2ff5b0"
+  },
+  "书": {
+    "full": "7586a1f3fb4d94fe6a311c4ca85253f39fc13b46b20da69fb1f2e0078568239d",
+    "noPrompt": "60fdb1a4b3194abeb75def99f466af7d91d9d8993a0642f87bdf1c4ebe9cefb1"
+  },
+  "买": {
+    "full": "70e8b5766cf7809be94ef1adacdd9ee0daffb46084209f783e565ed3abfc1666",
+    "noPrompt": "30b1c8953d61d0f4aeec1f4e885f1e4cecfcb1ad8c7a29fedfba2b28e42ce968"
+  },
+  "了": {
+    "full": "93f14db1180e60d5cdb70c52e851a0092e29a7bf29256f8ca4092684e909e30a",
+    "noPrompt": "8916ac3a6f05c8b15c1369672c1876ad03db8d755e0d9fb0efb42cad553e2b71"
+  },
+  "事": {
+    "full": "f8afbf0f524298dc2393d99c5d7c19f2885b7db3367473125c154b8287f0f145",
+    "noPrompt": "681faeadcdc532ea3fb86a2942b137017852634d8d9ebb3b5cfa726b9008b423"
+  },
+  "二": {
+    "full": "4cb2438dc8c1b9565115ddeca104534b20d3c6a293099885fec213148166644d",
+    "noPrompt": "153a0515bb732e220d0639a69cea5be8d43250f8a8ec7eb4661a4be5dbf1a461"
+  },
+  "五": {
+    "full": "2074c6d695f03be8e652158e4bbfcbe3588c90476879d2a5dbc8d9190a6bee30",
+    "noPrompt": "44ae214a994527fac1a01f5d79546c4dff7051a52fbe1bd6263ea063d260eed1"
+  },
+  "些": {
+    "full": "8efb399c918f6413a7525cdc7afd75eda06360ae80bfb7a852161b43240a9191",
+    "noPrompt": "2029b30306c0d0638e099d87ee0e16e087f074f9e213b53cfc653cee03d7536a"
+  },
+  "人": {
+    "full": "be7c50a3678c979c10371295dff12d6317f9b08d8b946f100e7a43923d172964",
+    "noPrompt": "61c789aa9efac24b33aea6bfedae5325dd0cc9c1cb098944685ee149f7bffbdc"
+  },
+  "什": {
+    "full": "cf89c69b9c4b3df666a0eda61272e2486db66ea9f5632f3bd6c570f4a44c8187",
+    "noPrompt": "265991bdf1f06c2086020defd52836873e059e66ed09436788fd5deb019ce96b"
+  },
+  "今": {
+    "full": "50d737eb022c5d67bbeb1bd05719caa1308c8fdfcf41c213cc86463eabcc1e45",
+    "noPrompt": "9fdc75f75c34d44abf905af6f401621185f685cfa7bf915cf0d0fdb9eacc948e"
+  },
+  "介": {
+    "full": "ca94737fbb4a1a3d3d5d17c820997d3445617e378bb28329ff653267cee15504",
+    "noPrompt": "d83feb4159ca7cfe1782ad0385e3feb28bb419a0f498bed584602b30d8828faf"
+  },
+  "从": {
+    "full": "0f896eafd12826473331024e89d56403b6bc2834ab5db613e58fbcde076ee79e",
+    "noPrompt": "0f9b8edd7bb85b9935feff26191891a35ea27089153e38869a7eb3c90d493f11"
+  },
+  "他": {
+    "full": "61236b1fa5a0464bd14c5d31d79eeb4458b4b2ee2b6245c8666079d1c1a42fe9",
+    "noPrompt": "2d594b929b9c3146a28590246943ebe970983fc28b89e1aef5b56d83db628f17"
+  },
+  "以": {
+    "full": "1c42ffce234d64d30fca71ae4ccce2114f128d67c095bd5beca8c8d39fd2c506",
+    "noPrompt": "008cf02e8945120283668ecdf4fcde5deafbaefa9dc7620a3654fe6c6e1ba579"
+  },
+  "们": {
+    "full": "213cb170e33b8604cc2c99948b8b5fb5b9fa4e6eadb035e76d43a1e3683c9c20",
+    "noPrompt": "7eda5accc614c6d216ee3c81e1178dbe9dd2df5e7fbe8d8c7b2b9f9a15727371"
+  },
+  "休": {
+    "full": "45125879280479b480d5b37beb7e044fbb09e4a9da205dc915c99fd8fec515f7",
+    "noPrompt": "cd95629b8bdca1d5babfc6f568a988251ad83fb21bd075bc9029ab9485c53ed3"
+  },
+  "会": {
+    "full": "4082064ab9cdfd9add35717ffca81d2d6cdbb19d2d845abbda0043a966abcbfa",
+    "noPrompt": "3b1ae8a188d8acb2a0d88b57b7b1340c281905842a26551bff01d952238ecb93"
+  },
+  "但": {
+    "full": "d829ba4675e78c7d6c269ebe266a93b0eeca1698ea6f2a12792341223bf31da1",
+    "noPrompt": "29f357bf21932342a70fed4eb5565641ed5e5996555557b62695a1191b1e55b2"
+  },
+  "住": {
+    "full": "d9628e2825c245fc30554dd1010b3dc95eef057f97f8835922d874060305d4a2",
+    "noPrompt": "a7fc1ac43a4e5e6eb8f7be2bd9c37c790a862436bfada772ed2150a72f771af3"
+  },
+  "体": {
+    "full": "f2f137ca3c3d7ca32f9bf3de61c8ff5f503b47736042f1e2f5000c85ce1eba4a",
+    "noPrompt": "68ca0c62a5dc2b955a3323b817b449fdac640383ef0605dbc8fc837243b67c73"
+  },
+  "作": {
+    "full": "a4691bcb1112f794d6daa91b55fb78b2051f1499d2341276f3390ba98b052b2a",
+    "noPrompt": "2829e2312f0e7bfb15ceba97dd11d58670006a006a23b961edc7211cd5934d8b"
+  },
+  "你": {
+    "full": "258e96b3769d9070ca2e356d57bfc9e8ffb9eac2289055b2fcc2b3ee3adbf546",
+    "noPrompt": "f3c8828b50fc8e48047f4a9bed900b6b18ff07a1fd9e8220376766d09a1307d8"
+  },
+  "候": {
+    "full": "44cf9445f68268abfc57c6e2ea62d0d3e1e126b51da0ca18591e2259eeb475fc",
+    "noPrompt": "b5d137bf6b23177a041cef57819b6897f3971586c26fd2c02ba415809532f284"
+  },
+  "借": {
+    "full": "512b043359f0e4112e32ecefc9840af06d4a61d67b026beea70fb790102e56e6",
+    "noPrompt": "32980c751da98c41072f0b3ca7a977ced7c25a8c7aef2d45374f4ccc47a95a12"
+  },
+  "假": {
+    "full": "c3ec95d8c6aafd1f101dab6bd3ebe0088f845df4f42e4d6b28ef7818f861f227",
+    "noPrompt": "a32512b801eb664f851dcee5791654dd5c7f4be4c7f868354cae44080651bbca"
+  },
+  "做": {
+    "full": "0c787477aaa6c6f1759797ab720957d9f7c43cdc39a0ea03bc3fd88d254c7121",
+    "noPrompt": "029c0430e4ebe788f3fb80e7bf6370799404d4d929ee123672cfc280c086e69a"
+  },
+  "儿": {
+    "full": "99cebded50d9d7b61b8c2d1b775d65efae5cc16e61530da22f22176d38ed7c7b",
+    "noPrompt": "36b0ae016c32b32b541b438a4bf5b8eeb801c26439280584fa045b63340ca983"
+  },
+  "先": {
+    "full": "256a4a9c672e9d816b6b9b29a5831b57cc26ee480f66e27d47fbd3a28756b8a1",
+    "noPrompt": "f4915330fc8d591157fb8766242a433da42f51644c2373d4be3882e01186b8dd"
+  },
+  "八": {
+    "full": "0c66e289d58bb2e4a82cb5a28b857afc4bebaa66b522e9327b3b08b0bea26890",
+    "noPrompt": "016f1ae60e0e34efacd89699ad04d5420c0402ae806f5eff772d428c6d5020ca"
+  },
+  "六": {
+    "full": "1be098357cfdbc56c8d9b635df6406d7b080ddc70a4f2f4364923b7132a2ce66",
+    "noPrompt": "15708a31d4ac7c95f8051d4223f885b51d20b6ec521a028b5d77340041a0ce91"
+  },
+  "关": {
+    "full": "d7d67e1c3d84aa238d0a9eeb9975d41342bc2092d05fa950f9ade77293c4c89b",
+    "noPrompt": "c8dd5123909cac50ff11c28c18ea9ea55023318cc139a53b872fde98ab7bbf10"
+  },
+  "兴": {
+    "full": "d7a6a4e66eade84257fca9059b1f0e679a8c66679c9227e0b961cd61fc0ba79a",
+    "noPrompt": "740c9cc70a2c4ac5cc0c040c1ee860518c8583751418245d4c52752ec87d6cd9"
+  },
+  "再": {
+    "full": "b19157d0c954f2d3346b87bbbbec60c883c32476b9e04a1d88f189ecb81c51c3",
+    "noPrompt": "479350c0c6b7807e65e019ed6d416d93ab241dd9c18f96b413a2218ff7e21808"
+  },
+  "写": {
+    "full": "3d7197dd0338b9c629c59c8f9c13b078f479db01d99bfa8c5087c1ee67f8d7d3",
+    "noPrompt": "b530da221bc051a66b17df95016535bba24e31bc5c0d43d05058928355384ed5"
+  },
+  "冷": {
+    "full": "c2916666aa29551ab986115bcce979eaa58746b1238beccb304d0ca0a0b2edd6",
+    "noPrompt": "0a265e5376bfd377a7aac98beebf972917650d40f634482a7102d611743249cc"
+  },
+  "净": {
+    "full": "8194a98baa6ba849847203ef48632fb4c0d1ddf6ff7db98bdefa565d72ec9e92",
+    "noPrompt": "d7375b637fddcfd4cf09a1d8b9c4d335067f93add2e858ef7e3a7205f62c6f4f"
+  },
+  "准": {
+    "full": "cfe7d830ba62dd1431d97b21146a83d71a213dd6b6608a56ef527e2a8d100477",
+    "noPrompt": "21be4b504f7f8039d21e8060174d8cc95a8fd59d8876346919511797158bc8b4"
+  },
+  "几": {
+    "full": "f4957664fe2927a33fa336523a662653da1b03a785be9e772c807599ba175c4e",
+    "noPrompt": "ea98f3611b4225b4599921174826da1e4ddae5c6b7b1db3684f0bc1efaa9b4ff"
+  },
+  "出": {
+    "full": "c3d9ebaa60b1e25317017ad668061b2b18d1af65e36d1541fdc7b7ceee7bbb2b",
+    "noPrompt": "0ca6a19e35a604df7933b944158c0f13b0cd91a6cfd7fcf31d989705df850359"
+  },
+  "分": {
+    "full": "46dc8ba52056d96fd4245d064cca34cfa11fa712f3eedf89e9f1d79f7de2b637",
+    "noPrompt": "cc09e4a570c8aa726a89c135b11f89af8ae19108c6ac34957d16a1c143d1a2d8"
+  },
+  "别": {
+    "full": "4fdee2cff8ede6b2f034dd75d6a65a2c7cc474213e5c252bea9a6671e384de6e",
+    "noPrompt": "bd47fb06931406396e5bcde4dafa40828f9ef852013b188983afa6bd32010ea1"
+  },
+  "到": {
+    "full": "499a92665811d5d5b2f03be03e0d2ef05783e51e3935fe97da54ff58753a12d9",
+    "noPrompt": "06dce4fe85df60ea8abbe42783c3585cd1a7deafc265a5e500678997089796f8"
+  },
+  "前": {
+    "full": "c68e1bcf86532cfdcad73e34ea7e24971b1dc0482c2c0494c6d64ef63b75d3b2",
+    "noPrompt": "1380fe00a469f77c2be587eb3d3ce437df648b0d7ca0d2895002d858f89b6e79"
+  },
+  "动": {
+    "full": "03df52bbca18e935d19a468c951774ccb376d636c50d18fb93a6e868f9fc4ae1",
+    "noPrompt": "3306709aea13266aa1277778eeddecff861a6f5096f07de07848a737051f7ba6"
+  },
+  "助": {
+    "full": "8cba4b6a79c07c4279b041fb4ab4b96742bf1264d16fc2368747aafccb8d51b2",
+    "noPrompt": "b560fa3675c8691ba79d1e1000695e0aae6d4b44a3bb5e4065835cd9401c16dc"
+  },
+  "包": {
+    "full": "9ff49728dbe6788e779cf2ca5ad9b3c6cb400254d2ae985232121dad798939fb",
+    "noPrompt": "de53021adfbf126f716e3087ca88eccbef6dc8b71f19d842eb3a82e191184587"
+  },
+  "北": {
+    "full": "b6921e1e1b81edfbd4afa0d964a8c9038f927cddb943e7a914d3fa2c4c3313c4",
+    "noPrompt": "cb3dbabd5c3fae2d05a94a032263087f0bb925c56665a6741d8dd999b28cf4ab"
+  },
+  "医": {
+    "full": "bda15d28aac8506dc7be54475ca2b33fa61b288a5cc845428f1a2052b1255251",
+    "noPrompt": "887935a4725bb216aba0968cd43f965d1f1bf230f7c0b3199172b05693163682"
+  },
+  "十": {
+    "full": "ead56cabd2bd952510152cf94de5a27e34bff9c5167f1dfbf98f1b02ecd05c2f",
+    "noPrompt": "851d45a2aaa806e8821247f532732d2cd05162d4fdd77401bb5256a2afdaf11c"
+  },
+  "午": {
+    "full": "5b3c984f9f979e390e224f803d8b9ea687056e3847f23057e1bd6fc294621a1d",
+    "noPrompt": "ca57ef965399bfc39a20c7b9caefa1c38aa1b2e7e4dc9963a9d82959174aeb0f"
+  },
+  "半": {
+    "full": "3f89ab35684a22a82cc228bf42c18bde25334921bb412562406b91185a05813b",
+    "noPrompt": "b77cbd3fab766690d5356e25e079628c00c4314d04b4dae064831e11ba950744"
+  },
+  "南": {
+    "full": "36bc18849ec5dd4b9257be03839e2b902c61893a0b72c38ce95667379dfb9c0c",
+    "noPrompt": "6d53d117903a23c70b009d631d80a334cfe82099ea4f31d63bf533b5d413feb1"
+  },
+  "去": {
+    "full": "b5296652b56943812ad46525968b39ed5c1b39312b7566a2c4ac5a17e3352b93",
+    "noPrompt": "140226f95048da3a7b68be3fb944e220f03356160c5037f5014787403c6bb659"
+  },
+  "又": {
+    "full": "69a598bc8d2c271676b300c7bcc95ae1db281a0c11e77f5419109cb7dc431aed",
+    "noPrompt": "6d0e5c69cd31aa4b5366ecaf148aaa979d5f5d9dea2e171bbdb5c7804ee61fe7"
+  },
+  "友": {
+    "full": "e27cb40fbe1585912dfcb776de31cda0b67ba759cdf2705041d5218b72bb7dca",
+    "noPrompt": "74f5613b7bdca124d40c0911e07fb3e9b877cba8668ad4c43f4ab6c51f5c27e7"
+  },
+  "口": {
+    "full": "43c7d68f5b485fb6971dec71a96c1d3e73065794c4f810a336b1341d09682d2f",
+    "noPrompt": "2fb2d601adeecb7f45dd6d19e6ff7151c9108ad2491927296b0b93c95d943df5"
+  },
+  "叫": {
+    "full": "73c369884b728aa96c133433f52699163089ea5aa01c34aafbf21f4e19e9f0a5",
+    "noPrompt": "4dd7c3b5f4d841423aa395feb4049d949aa4f3ad852dae4052997c3ba85b0a2a"
+  },
+  "可": {
+    "full": "8f5049e1612a7239e7060d6d3119973db184a2f2723e128b2dd15a9b5bfb8c5e",
+    "noPrompt": "09e723067251dba4f08f92faaa33f90ea0b9dfb40d4b5179d38acc7d7b08891f"
+  },
+  "号": {
+    "full": "d610b7836a66e3d482c915e8393e9382917a865d98ea2cc47f78c279bbb67477",
+    "noPrompt": "9fcd7f7045ae0e01e4e56d42393bc533552cba2b3902545f9d9d27b0f6928eb8"
+  },
+  "吃": {
+    "full": "99e7cf5860b5e5e6c788646d4aa4a048f1690f7ba69ab97012db13489a51c61c",
+    "noPrompt": "f79519dfe356938b4cfcbd07d6d6e5645f579af5ef4b0d07556ad7c5a400f755"
+  },
+  "同": {
+    "full": "643bb47de23f4a47e5e7b7215404439cb4318946f409bdd39423f3d4a208dc6f",
+    "noPrompt": "4c09df23d156563ba5d8c912129574d640aeff580298b2287703deec88547054"
+  },
+  "名": {
+    "full": "b7b72913e0e626470b8fb29d54aeff442d51df033d29796ed998576177923051",
+    "noPrompt": "e4069ab8ae5d19c30b7b9c1f3d278c75beb313a4e9454c9b43e3fab1784775a9"
+  },
+  "后": {
+    "full": "855b13095a361a6f0e7bc60cc8b7aa52d4d95a4e136813865fa4519bbcf54c6e",
+    "noPrompt": "2658531dac967971626282a02244bfcaa465466322c5e1a4dfa771376b6a39ba"
+  },
+  "向": {
+    "full": "ce44c106975dbc19b7ce2223e6b353d4056e08d07dd92c82e6667dfa59a09b11",
+    "noPrompt": "7e9007bea8f392be230b3bc481766d24e6febd154380aab0211c823faa80b5dd"
+  },
+  "吗": {
+    "full": "d3f327544f0c617bcbd8d0b6692b5f8871dfa38a90fc294e551b8c74fc6e7f5c",
+    "noPrompt": "babbc4f6513fd579944d7490a44d2af56e6c92726670488151998c5c95c05e94"
+  },
+  "吧": {
+    "full": "9db88857d6b7e6ed49dc4f83ec08ccac87902de50ec6cfd2f768e99463905a8e",
+    "noPrompt": "05ae55609ae9e9583e13ed6ad8fb3f2657db4c30e3bc32852ecb541a6d222a22"
+  },
+  "听": {
+    "full": "724905ef515c3983da4378cf6f4542f9cb1123908c39934ecb18997bfdb6911f",
+    "noPrompt": "24b781bb9b80b133e7ff84711ec401dab089296807ca62853cc6dc5874ff66fd"
+  },
+  "告": {
+    "full": "db49017bce3b8db9ab43bdaaad4224fe3b67401f644e11853c82bb7c7e933cda",
+    "noPrompt": "f0af815406960ee3922a0b28c8eda40f00a4e70d2e82e4ecb20945cd9e79adc1"
+  },
+  "呢": {
+    "full": "1c5c4c6db7390e27b1dcdd2031194ac5ac9b267d2323ba04788de64417e87bce",
+    "noPrompt": "e44015d0bf149eb02677197f52bf9d4fa37f93be5d602df7f054c052bf476b3e"
+  },
+  "和": {
+    "full": "445cc3d8289c7bf074e697eb07ad3cc283ea8467e5d91a3008ce5664595136b4",
+    "noPrompt": "916aa6202feda1bc7e3bdd990f6ed72b8e82a4984e52c9fe542499ee76568029"
+  },
+  "哥": {
+    "full": "4c253cb3320a1bed87f0f71e2fb8f259cb9d618d8f4f5f5b76293e768433dedc",
+    "noPrompt": "c11d1e94d078349f0330257b1c0f02c739567e2c0f3311660389932fbcf50caa"
+  },
+  "哪": {
+    "full": "f292569ea46c23a0e3c7c6a8a6501fbe8f6711d289b7627ed5ded72a0e64567a",
+    "noPrompt": "7da3e80259df725a795405e2aa0ece33f67a584c8c24c18471354fd2c0dcdf90"
+  },
+  "唱": {
+    "full": "fac996d04a4556ed7ac3809611dba19d759d14084c9b413f805d14e8e95b3d7e",
+    "noPrompt": "72b8abb52a8d4128d923d2333f94690b57fdf009a487d5995ea12007d319e8a3"
+  },
+  "喜": {
+    "full": "08853247ee2651a8d05a61857b4eac7f65812647866bc48dec1cff68a0664170",
+    "noPrompt": "f8c55b3557a509d0dadfc6d92b7c2f9060cc8b47f7a9441cae5b1ef8f087d0b4"
+  },
+  "喝": {
+    "full": "e76e657a1bc719bfcf96a5915e8d283ed60eb09ee947490919c8816496449a7f",
+    "noPrompt": "9113ff835022fc98708900bac6cdfe2565fdbf034300147060befc96444b4a80"
+  },
+  "四": {
+    "full": "b1ef5d6e6828caa0aa4ee12a024062b62362979235cafa8e0217a4065dd61756",
+    "noPrompt": "b2341b884eb4b5c6ccb9ceddde300c7a2d5e10792de2c8422c8b99a41f8471f0"
+  },
+  "回": {
+    "full": "d6966a8943548fa89cde8e66d301d9ce050256d92bd2310d1c6fb83fd42684ef",
+    "noPrompt": "f30a3f48009251f6690da0f6ca66ec84861d04274e03e09382a380cd74e280af"
+  },
+  "因": {
+    "full": "dccc278db9cded6a5702e600e897fe65961174daae734a578d036324caf33614",
+    "noPrompt": "b514bdfbe0a694001f74a73fe9d3a26ec59566903b4c92ce5fb38187b0695746"
+  },
+  "国": {
+    "full": "7878d55276b8264bf50b1bcb38cbf7e70bd1d018b473fb923465f953253f3457",
+    "noPrompt": "7c20ef6d73b0a3271c843752696ddaced5934f7e2c9aaa61eb5ae10d0e0909f8"
+  },
+  "在": {
+    "full": "f242fd08d6d93eecf9b51b8343b0f0b6111d8edc8717c05a77fc39fd37008940",
+    "noPrompt": "dc0f35bb1ffbf2148e0cc585dcf52529e5e57a3512ba2984d9e342b18ba5d939"
+  },
+  "地": {
+    "full": "7e2b445ff8eb9113266d0bfe4109677cf54dbdb5894c7ebe01a661fbe20efb5c",
+    "noPrompt": "8e8cca931348ce2b01a93bf760f576f0bc62d73569943fd914dc29538cb2dc7b"
+  },
+  "场": {
+    "full": "4b66bf1eca2e3e6b9f7f9ff7c8d54528b32907573291b091aa8ac19790555ad6",
+    "noPrompt": "fe58aec94928c8a02cd224cd7ac4dbf385703c9669fe99f33f64aace9239988a"
+  },
+  "坏": {
+    "full": "862cfb3c6732632be0657c0767d6e670db8a6fd2fd06fdbce76a1f289d237f24",
+    "noPrompt": "29e579845838493c75765e0e29ecae5d35c70c1012e647f22c3e6aca3ca10d73"
+  },
+  "坐": {
+    "full": "73a0b399c51ffa9a2184331966b1f486771e8d281f9c50cfe025c71ebbafda6f",
+    "noPrompt": "c3b60bffe172ee4b67a5da138cdc2990f0e7e7fc05eca64ef21bef1efd678aee"
+  },
+  "块": {
+    "full": "cff2f6479ffc3e9a8583c1c9e24393cfd10457e6c953538430bff36987b8ebf3",
+    "noPrompt": "d76cccf31a58cba41bf48d38d14cee2af1bcf39054f37e145c4cd37a07ac2488"
+  },
+  "备": {
+    "full": "b6033ee1e87070eed5fcb2024ffa49ee8c9fb59877c203b33f22886cc5126379",
+    "noPrompt": "fe2a3d41e28c12b219ec54f1b24e67ca0ef1c9ba10cca04fab517eb54118edc6"
+  },
+  "外": {
+    "full": "07d18c90bc7adb53a7566ddfb2fb72564ea5292ce78f6cc057a6dab3314e1496",
+    "noPrompt": "512cbcbfe1e777376f7707506f438c3721b4190637b1270b4a529390b31d47d2"
+  },
+  "多": {
+    "full": "2c680eb1b126328f10cd8518457663c7f4ef3c294cf07f115a3f3e953c5d3f10",
+    "noPrompt": "0b6e44eb4ba30900255009086fe19820b92b7ce667fc6c3a39b89c1001105a56"
+  },
+  "大": {
+    "full": "39acb455fa525f64d8fb24115b932ed2ceaac1480444db74cdc2700142c69167",
+    "noPrompt": "1e0f538d084a64b0a20ff16468ec885da08b34e1698f7957338eb5c560f3708a"
+  },
+  "天": {
+    "full": "87c0379eed103a912f99031695e4eff1ab343e49cc1f7633e44d8c3226ed353d",
+    "noPrompt": "76801a5a1f98fa6e9943943b9c921bf383506a8b1f09e88d1187c7dfac0fe559"
+  },
+  "太": {
+    "full": "a3ab8e5fcc9d1ca50520c0c4779db69d32ed4e32368663cd0a4904b98d7c50d1",
+    "noPrompt": "d510b3cb181aad61d6c3eaf1e1534420e3ab3f6e98926bf39b7392dd4fe78a00"
+  },
+  "女": {
+    "full": "4f861b5482798684d3217cedd6ee807ea14177ca2f1f712a0d5803cf58f23296",
+    "noPrompt": "679fa628eebb624b91e1074801cf3397b2542cf6e2c4c69c5047c05f67683393"
+  },
+  "奶": {
+    "full": "2ca7c74bf8cdd0762871fe9bcc70c6c26f15277b2184df5bca64c338259b219b",
+    "noPrompt": "b8c16d729401f194b3989b4053973e3d48ddd54fe876f36861d9de5ab3b71685"
+  },
+  "她": {
+    "full": "1f017f4c3ac258028ec9f88560217bf1c8c7fbd1602936c9fb9b8290f0ed4713",
+    "noPrompt": "8a56133bda57647385f217bc87396b392b07a873806188b3669e2c508e7451cf"
+  },
+  "好": {
+    "full": "9a0b893bf017879441c527017666e51e7718cab2076a605e8abb608b52aeed09",
+    "noPrompt": "abb6cc4dc52a6b5e0172e9e79532c5659d04e004f015bc8346db242a2598fd48"
+  },
+  "妈": {
+    "full": "74275e701bf9761310d2f8b21f25e64e14db2d01cd86f328ec404822de179e83",
+    "noPrompt": "b0761afc396cd180156b9f941d07c7b5d12cd97a5195cae96d72e9fa5ece35b6"
+  },
+  "姐": {
+    "full": "730c29c388a1b814e4255bf548761c7fb81df589b87528316e511dd56cb3b934",
+    "noPrompt": "08fc8e9d7e468f0e1b4c4703108783d2929c6fdbf602454de06dd30934120cad"
+  },
+  "子": {
+    "full": "1ed08d6aaa874c28fffb913b9489be3a9f5f77c1965bb8ac42944fac4c5b4a95",
+    "noPrompt": "94d141b8bc50a9d0eacae7c29be6de040fe7a8375eb7d78c63c32d2900fe03a1"
+  },
+  "字": {
+    "full": "d65ebd72e3ec688c4cfb6a1d240ce3193f371b76e6fce26f18abc934e96f5234",
+    "noPrompt": "16432928624afde3d2a423e1cc8319c2ae9e5a53337e6721b2b65e94dbb294c6"
+  },
+  "学": {
+    "full": "bd3d9ff8139720d0dddfe7d937aa65ee784e60118282b0ea9bd63bd2ab92ea49",
+    "noPrompt": "85d4e31f28d8497c88e819c14ac77b2fd58c5b29293264e8bb4cf63198a8a940"
+  },
+  "孩": {
+    "full": "e5fcce9d49a59f5df7a637b83b068940e5aa210475f6a25323b0d27177e736b5",
+    "noPrompt": "1ceedfd003889b92aa2c25cacede06c1743885dbe43ea9be1037bc46af7c7c18"
+  },
+  "完": {
+    "full": "2cf36b93d4e791a1cd882d91344ee47b959cbc928e394cbebc534626dec2e0aa",
+    "noPrompt": "3ace77eef7c6c1110e8f6cda77b3798f7e84a980f2ae9ea87e2b50722da53d74"
+  },
+  "家": {
+    "full": "e56ea854cb81b81de3cf61f50cf75bc6fcc78f7aa86814cfb76aa6fcda8f3584",
+    "noPrompt": "795c112bc53d04f014b08de892ba62c8c484f86cea7ee30f75b7ea4720ba64e0"
+  },
+  "对": {
+    "full": "c645fb195cbe790d53f786334a60b50944d00dcedf7ac30ff157b27d29891cc7",
+    "noPrompt": "e0ba14863a1eccd8677a310ce42be518dd50c4310e67b7987a886c495e661450"
+  },
+  "小": {
+    "full": "073952836c93ede737bb5ef2a7c98ecf653a83664adac717ca50f2214fa9b24e",
+    "noPrompt": "bb9616b607656aeeb99244ce4ce7a2ce81c23daf41adafe595a49479b1acf1b1"
+  },
+  "少": {
+    "full": "f3074d18d3fd211cbeba4c03ceab596325e5aea95461a99f49d33ee9e909c898",
+    "noPrompt": "6a1b8675fc498c02dcc3cac386e8b07afc031149f044fec1d8e3a6507bd7fd49"
+  },
+  "就": {
+    "full": "7989d03c8d06ec807185254a3019816c3f75cafad687ccc0a3eb895dddae9c24",
+    "noPrompt": "5e178c39f00853d1f0436a81908df8c4b4748ffda0d81c8752e819472ab9f084"
+  },
+  "山": {
+    "full": "1e74836f9cf34a1f6731107041e10a9f087fdc8c28c3937e24d6ab38c09cb32e",
+    "noPrompt": "1ca42941082d870012f7610d7ca9f3b7a66c63e28c85f3ac569ed4529b86fbc6"
+  },
+  "岁": {
+    "full": "e8197a972cd5afc072de8abded9e0dcf0ac9fbe0c4218ec5ad3298e3cae16f23",
+    "noPrompt": "53a8f0e1496c91ab1bbc970e79043d998583e590c72de69fcffc820e49f4ef6f"
+  },
+  "工": {
+    "full": "e80a29fd2ba814d963198cde28726b3ae942dc90fcc1bef5d53d383ad7250f56",
+    "noPrompt": "0f7ec72306b818aae3dbf448ff76d3062705c35c82707330f2cf964c26f1c537"
+  },
+  "差": {
+    "full": "dffee12c137f3ea8bd913899f0d3962140d78d620d1a9827c1e9e8433449d51f",
+    "noPrompt": "34c72499634bcf8c7af71e7cfa135d1f565d60a51d56efef206b269aaf37b375"
+  },
+  "师": {
+    "full": "d188c7eadab17065738689eb941a1d847648cb71de0340cdf916da3e1676493c",
+    "noPrompt": "700f4808c27d616c183b2e4bb75a3ea04c470811a3fb2c9b1e752a6a1ae3da1a"
+  },
+  "帮": {
+    "full": "3a77d26284ad88efb17b80ea21deb918a4a881574f9a07012f8c46ed138db53d",
+    "noPrompt": "c45270f4af0f359385ce3cfb30bdc652e9b800b0490b777cdb3545aa00710e07"
+  },
+  "常": {
+    "full": "b67fa9e1edd5d979cd11afaefb10970951f68ee11bf80d52d36342c5c7159c05",
+    "noPrompt": "7123f242f3896797ebb630a464f5826175893a3c2ac36cfe76a8b77b5945f8da"
+  },
+  "干": {
+    "full": "ce743b7e8b0a869a580f0e7e312d3f9582e190b99faef210eb607a5e34ed4d8e",
+    "noPrompt": "536498afb91da0866ef370cdbabff1ab1629acec1a368c52443b3021e91974a1"
+  },
+  "年": {
+    "full": "f06f085a7a09941fde7d71e6577f01f203e6b918803e999b259eef9545bb254c",
+    "noPrompt": "8ea57b12f59c69561aff1ff116718a939693b1e1d792f789010fa53c40a28bb2"
+  },
+  "应": {
+    "full": "3f29e0d2839ca5483a1a0c00ae733d42058cb0bbb2c6338cbbd5603c2460243d",
+    "noPrompt": "336e3390e005f656fc443ddd9e2e3b8a4cb28097031b9424df83132ad0da3019"
+  },
+  "店": {
+    "full": "df2e5d936afb1f38565857ded7f3cc814bfaeb3c60601869cfd76548ce86257e",
+    "noPrompt": "7980dbdde9eeb9c4c8728abb46a5f1b391055b10c0866503aa73fd08748b0db9"
+  },
+  "开": {
+    "full": "b4e5f71b9490fc2354d31c2f44ba934c89416959bdc0d0cd3c8eb8b039fad343",
+    "noPrompt": "6b731d06c7e597419f3133ccdc002624e7ca5b71b1940374a33a9e162036d712"
+  },
+  "当": {
+    "full": "10da449a205c70c92a48f9d940eee0a83e491fcc17d1d0c10af736d1dd8903de",
+    "noPrompt": "dac04f0c88ee48c4729e2d83930521d5e5813a6e094533c6f52d48a3348311e1"
+  },
+  "很": {
+    "full": "9df32b46e72c1a24fb911ee51ff91c5aa1d690eee017c016b214d5a44e2b88ce",
+    "noPrompt": "6173cb9452840eabd759c15d1d8aed70c51e0aaf14eb87b3c793ea51e1d5e719"
+  },
+  "得": {
+    "full": "a6e3b2e8b2a4fa112583d98aa4f39fcbb7996724f0772d068770c1d20c49ec88",
+    "noPrompt": "825cc12c51ae9e7dd4f4f6a70f7c006179cdee4c6792073098078283df8a9342"
+  },
+  "忘": {
+    "full": "d0ed4fd0b913abe15a8ac6432e8ecfc969f886bbb7eb7c1d06cb79813e37f364",
+    "noPrompt": "a2750a5b0b63d0e3fa4b7b574075ed7a7d504b46006fc6de7f908fe854919158"
+  },
+  "忙": {
+    "full": "59c16e3ca6e2823c3a63c5ec844877cbeb6a5ae0f4ae52425475e958ebc84675",
+    "noPrompt": "d4b6082a51fa1a89453f65f0c749fb2d07b0b666edba114deea355c36e031bc4"
+  },
+  "快": {
+    "full": "029e16a0ff68e951ddda58806242ab4e9d06d8be0c21f72892d88e936e733b2a",
+    "noPrompt": "9677e9c18a8b8f3b41f70e009ead541860a6c56e82b65c87cee7d81959730cd4"
+  },
+  "怎": {
+    "full": "684c1d654652ff8693a54256f359845a24ed2e3e1bdb3a2140641ba8b54ca449",
+    "noPrompt": "032ad3a319ff57fa7b3d0c74264c46d988f0b41e2d0857c50bc4085dd4c334c5"
+  },
+  "怕": {
+    "full": "2327cfd2a8bbd222fe20d466b27b4565477173301b1e98910e714993b4da3eee",
+    "noPrompt": "8108ddab94827425b7b93537366a671596f3a903424807b2424acba33265b4cc"
+  },
+  "息": {
+    "full": "3a4491eb7cdfaa6f031220dd0c79b6fdd391ead4cf7c109ad897ca3275346b8a",
+    "noPrompt": "4368b8bff46f76ad2aaf237865f1751de1a489b5e99aef75eb4853635b9786b2"
+  },
+  "您": {
+    "full": "3f27ade5208ac568d1589a3c88e7d156ce999424b810ae8748f1f1f372a892e7",
+    "noPrompt": "13e82d8ae030a613403e2062cd76235d54f6ca76fd72247b7169b6f653defd3b"
+  },
+  "想": {
+    "full": "5ba378a6ef200816c042072fdc079aab550a34dd54e59edef60d47f5a875baae",
+    "noPrompt": "a0be01907d9591aa99070923f6a99b21000d88a8a75c2f7fbe511b64f75abfd4"
+  },
+  "意": {
+    "full": "080f8e23061ac586fd93a15e59338e9e117ca4e45083b6c0071a751484477ae1",
+    "noPrompt": "56697e83635e268f68029a21c5a309bb18c6d07a34fc6c78b58d6ff0ec4247c2"
+  },
+  "我": {
+    "full": "bd2f06a5313b8d6ab14d1a6428369823fe23b6eceab7da23711d735e5d4d2f3a",
+    "noPrompt": "077d25703443bb07ec1d6cad81eee00e5ecfbab56d83be4520b05ba61986a612"
+  },
+  "房": {
+    "full": "eb1be33994268fc755d86ed153e1241e85644c6b2f29dbcf8eec85e9bf376ee5",
+    "noPrompt": "683d6f67c94a5fbd047057c3b0c7c53c4a2e2ee8e70f9d14e1e1fd9db054fab7"
+  },
+  "所": {
+    "full": "c3a0cd96e83128e1833c3db5d67856b180977356f676be3dd479c24c42fd4ef4",
+    "noPrompt": "c19874d4a99ad8f745f21c50b9c2516db560ea5a8495ddb82f4007355d204d22"
+  },
+  "手": {
+    "full": "33735c87e66837e07afe22fe1d9513e9f68617e10349b99b7ff08a73da4b4105",
+    "noPrompt": "38920c66c227f5017ede9a290095225a67c5e0254f5b84ead2418dce6c137c03"
+  },
+  "才": {
+    "full": "d6fc67574210bd71b7c521b4422b1e1fe74d58047b9bb410230f4ad56aed84ba",
+    "noPrompt": "771012648268b2e32ba6bac5112b7f6ea735a48f0be0796afa948a505bc14895"
+  },
+  "打": {
+    "full": "d21d10afa70a5bd15f8d153994ed09ccdc65cab216bb28ae449e154e3f44e006",
+    "noPrompt": "b14d7003eb296af25e89280dfe436e56555600d79f081f1541912cf654f859c4"
+  },
+  "找": {
+    "full": "19bede294717c513af86c0bf50e4a096667d2ab4903ec45f18f54902eb419ba4",
+    "noPrompt": "97617fb2d7539c6d3d0ba66e7e124a276d31cc8f8ef6cddcee6f09e2d45eaae7"
+  },
+  "把": {
+    "full": "dc5b42b283a9d8beb7987f10cad8c19ee58ad84ec13f7bd85f04656a630e6665",
+    "noPrompt": "f70dc97d1cc60079d2897ce7d87af3c5aed8b01c95d880c4dd126b46f8e0522a"
+  },
+  "拿": {
+    "full": "868b37c038e8508e713ad80684bf4360cfad5a05585e6106550b129eb4ffeeb8",
+    "noPrompt": "13cca50a0201a689d06c32d09e9b219d0091183f7e70a13f492b173858e9c405"
+  },
+  "放": {
+    "full": "93838fbdd0c56ab5ba1b2aa8334c380ce5e7a4cfa365f0bb06c52daf9d54a296",
+    "noPrompt": "21a339349023ce0a6cf7e35ed7b4e4fd0d49501c9df391e5a149461b49e88e7d"
+  },
+  "教": {
+    "full": "79b9b6ef2c939ed3c3d5288a1429bd38488245cff496b375af54890b3c1ff4fc",
+    "noPrompt": "a816a206b1c6932b4194a6703721a5208bbfd4716af81ff15e3f9f20d2592048"
+  },
+  "文": {
+    "full": "4f567be5a4e66ca3784707a8e3f743919c87cc73b71176265d1e5b6918e22de6",
+    "noPrompt": "e66c7968ad5265620af210b663d0f7c599fa360ba8c348c94f95e47c57f0e257"
+  },
+  "新": {
+    "full": "e6baa3440f1c30b134201769aecb16f7cadf6435f3897950900d2140f3ffdd88",
+    "noPrompt": "54af25d0d19232e9c08e5c43fa3611bba619800f1f2b0822a47ddc181d9b299b"
+  },
+  "方": {
+    "full": "ca641260b34ac325f3e8a428581fed0b96bc640e89b8cc2bb39e5911716304d2",
+    "noPrompt": "14d37b4b5bd3fd4e858087966da60219ba83dc539a179aa9282240e6e06127c0"
+  },
+  "旁": {
+    "full": "79bb9e61a518e4a41af7ce7d7d62f3f9c22f42e77afe1b1aa201a1e89d8d6c6d",
+    "noPrompt": "faded648cf588f99fe56b1172b4a6b77abefb22ed959a22d714370da5f975772"
+  },
+  "日": {
+    "full": "2eac7f0d2c8f7cc2136d2b2bb3ea5041d7821fccabff540d97500d5862588e6b",
+    "noPrompt": "3750bf12fdffe66fa08a010fe4e933e81018b89208151c6e70c83b671d562d76"
+  },
+  "早": {
+    "full": "fdedc2dc468e7523e35ad8390b5804a418d1854c515d4bceaffbc4ac9fb7ea7a",
+    "noPrompt": "e21dbf1d2cee288f5735cbabe8a2af988e572e4b3481fc641cbbabe8b213f9e1"
+  },
+  "时": {
+    "full": "2a3a32ced6b3c5e184059b862e4b7a8598dfb952ecf0ec346593352c80374e22",
+    "noPrompt": "a416708df6bb7f9f045b8f32ad92208b7afd24ca96cc6b2591de92f5762750e8"
+  },
+  "明": {
+    "full": "b3ae54b1b7ae1fe96f7561ba5f8a805f7fe6d1aece6388927f3cbb62664a72ad",
+    "noPrompt": "4e5c923d70d88130e39971f89b9272d4eaaf064b5f9b0a70c4a668c03a4827d0"
+  },
+  "星": {
+    "full": "82cc56933cf4427b4fff6a6aaa8f595acd3e103a66a609b340c2351a7597c6b7",
+    "noPrompt": "baf79a93af02def73be9f15bba41b453cce469baef92debf0046d907f4e416ee"
+  },
+  "昨": {
+    "full": "5fee9a0b6283b4e7ce47304b25d8be2b80a36dcb1669c277cf1624b5ddea5069",
+    "noPrompt": "74e54a3ffaff2ac94f27e492820c00c2efbacd477dcb68701832f0317a1f43b6"
+  },
+  "是": {
+    "full": "d1089024f7e2ee6c5b62369a3589c07ab638103623c426eefbe60c761d079677",
+    "noPrompt": "2d8123246a55db8cd640578d7e0c8b0acb8279c291f881e87dfd9accb45af9e1"
+  },
+  "晚": {
+    "full": "48dbfd15f04ade91341b426e243b7eef4de4ce0239b6b346298a98827db1ab3c",
+    "noPrompt": "a3c5e00199c3794f3db06107517a7c1d673d33fdd8d77152cb0081c67954c9ed"
+  },
+  "更": {
+    "full": "f88b08d51ade32085f7cac75ea9801b79fd0daca933fb2155588eb649e4aba2c",
+    "noPrompt": "5854af5c79da4af3537201e58843cea979284dc9120575a22e5428afecf2a514"
+  },
+  "月": {
+    "full": "9bd0f218c3e9f64f6ac5be5a28f94ad1170623abb04c15e35a32bfa247a269c7",
+    "noPrompt": "a8011b1c4d7bdaddafad4f919cc6fb7f1153a1bd56db08a73f9d5e92040a0894"
+  },
+  "有": {
+    "full": "2356323c824aff6f43763141e87d19426db90d2617a8e20cee99878a5a3b1f88",
+    "noPrompt": "bc7fc513946672b0cdf3b9ce0b8f9cd87b02030feec25c23d8fd3fb711d2fb1b"
+  },
+  "朋": {
+    "full": "11b2ce87b9fb3bca2abafd3cb53596f6cda0778e45e44335157295e37e161bbd",
+    "noPrompt": "5b018460750d3e0014287fbe0949dc8f3ed9267527b017007415dacd6f8ea57a"
+  },
+  "服": {
+    "full": "b7d99e5d0d17fbce2c6829df6a87be0cc67e575f637e589e2d0ccdf4f1b5023f",
+    "noPrompt": "bb662a9dc213400e0c73920d384a70fc6ebb3356a2c00d679e54d9eb67caba65"
+  },
+  "期": {
+    "full": "45cf7cc2f44999c5de8cdc3a15666545634d37dad095051987842e91b9d89dd9",
+    "noPrompt": "329433eaa8fb946ea46a995cc3eb0e3a72383bc1666acad22bd14099ec3241ab"
+  },
+  "木": {
+    "full": "f7d3ba9f48dcd5b2200a35a0d1ea66f01c445a1dbfa6d549f93a2ff90f787f31",
+    "noPrompt": "2c56ac4080d9ef1eba943ae0c5692925c7ff2a5e7654fa5f8fd8f85a846bd7dc"
+  },
+  "本": {
+    "full": "ca1e6afdbe479ead1aa11289194af1c1f8329b25bec99d4eccff27eb372e697b",
+    "noPrompt": "ad180ca9bb7c11bcef7e34ae0cf60eb937d5511028d0b98e9f15248d19be6686"
+  },
+  "机": {
+    "full": "7a1378593a24fbeba89e45999f9ae2967d15e24a20646f737ceb9a31f9c5f7e7",
+    "noPrompt": "38d292b9c9f07c0ff93913ec922574c5dc69f68f73408ccf9604a0b4aeaf212d"
+  },
+  "来": {
+    "full": "1fc224731710b9d4d868cc2f3d2d173096cec5f49cd6fad4e69f663ccdd9855c",
+    "noPrompt": "df666ccca3259d276b7419fe1282d686fa2e8aa0d3e62fa5452c1d6f12e2e185"
+  },
+  "果": {
+    "full": "f28646577febe1ecce8194693529d05d32e436c2f5489ee6f9bd42c4c3479c7f",
+    "noPrompt": "5f62caf3141fe2ab2a4eb3f93afc476af18cb7afc3fc7d1c1a5afb78a5cbd147"
+  },
+  "树": {
+    "full": "44c26fc5a3e5735097c06a3487396ba4e59ecf4614ea20e70c10695f532b991b",
+    "noPrompt": "5288f7dd308cae43e9dfcd3521dff74c096c05571fd4b66e6055e5fa53be7d08"
+  },
+  "样": {
+    "full": "5a6196a8526900fa0c13e655f50dd61fa82487fc7f9752a7cda2b238245445fe",
+    "noPrompt": "70fa22e67a0e62d4e827aa718a4675103d760f49d8333514360d3ff69346da4c"
+  },
+  "楼": {
+    "full": "52053839bda55220d50ca38fc72b556ea28c33b9e0cdeb4043c06b6be5345229",
+    "noPrompt": "ab55c118b0d1e51d13d456cf114d8b9b7e705a0a4ece09538e81e46f5d0c7b15"
+  },
+  "次": {
+    "full": "a2d63b2f162a63e0e1a9bf5bde93bbf50f329855c49260b7138486ef3ccfaf40",
+    "noPrompt": "9c13218c84307afd90d588ba1a9d546a239da49740660b733f3213d19e44f797"
+  },
+  "欢": {
+    "full": "e1e070a1396f51e2144da4400962d5f788641f21aa2e64f0b64b6447b109e1c7",
+    "noPrompt": "78393821f19cb041cca595e3d163e3e33ccd4a1b937611d2740394d1deed065a"
+  },
+  "歌": {
+    "full": "e52f09c5dd814cd4164c7e9ebf5382e817e5916d554f966352a2ee7e541ad963",
+    "noPrompt": "ba6a9344b93cbf2537bde372366a5934857ae4a0c9db5058b720b0f908b5798f"
+  },
+  "正": {
+    "full": "9b475982c458356965db1fb123cce21568711df8ebb3e69a59db5204664ce014",
+    "noPrompt": "56825f50b64a58e0a9f773de464d997a4aee24a69bcdfda5dd5fc2240af51da1"
+  },
+  "每": {
+    "full": "261517c6de90bace8e75c9eeb8bd5e9418689a079c0d155a8fe02de9b07468a4",
+    "noPrompt": "7c215b3ef778539f2fecdae5866cea82d4d2f8280688a2bceefdb9e89f4871a3"
+  },
+  "比": {
+    "full": "cd75e21ad853317c8770fbb4562f76c2bfec6a0b774d0c3e0860c16e9bf1f544",
+    "noPrompt": "6ba00663b05c243b7f3d99a2aa40459f75f68ed45e8ab786b5706a8ccb277221"
+  },
+  "气": {
+    "full": "b71b0779a2e88a0dbf94f646b628588e7caabf40eb3ab4c830ec64efc4fb1135",
+    "noPrompt": "d8312c2582502afb6fcb4dc01171d9838dcd1241760e300f648d3679212db66f"
+  },
+  "水": {
+    "full": "c1ca5ed0611601f1e21a3bf12a328a54f9cea6bfc6aadf40113fd2999c8e1453",
+    "noPrompt": "c54d83725c4304183dcc35215911a786266069daee9754076a33e12ec2071e13"
+  },
+  "汉": {
+    "full": "6367308b8397a7c992d3777b5f0dae890190918cf0680345e98f813b0ed50429",
+    "noPrompt": "694639906e8ce74ce0cb90facaab5eaa58c8e3b47e1787474e84cc159d495d56"
+  },
+  "汽": {
+    "full": "c32d71991d1572eda592052a716cc5fb3ecde411ceedd1431a1050ca5ceb8ece",
+    "noPrompt": "63ccae5e9d6b94ffd8aa5f140c55c8bea005c8c3306ffec46217241ee3287128"
+  },
+  "没": {
+    "full": "a737d7c256f09c08996afe34edd04f140e38aa0ffc787a71628b6d16e2694624",
+    "noPrompt": "019deec5e34e8bdadc76dd74d2392e09c64b39d41534d60b6808722e0ad88b49"
+  },
+  "洗": {
+    "full": "596900fa9fa8e6fe269ff438beee2eea7af3f06afebeac7a5c981f4795d47546",
+    "noPrompt": "50a0aa08edfe7c36b011392347c70a0dc5f857d7b112554955513844658fafa1"
+  },
+  "渴": {
+    "full": "481a96f6ad322aca0d258163d41031f7cd50da003fdbfe43b7ccfc9ecfb68f2f",
+    "noPrompt": "04161f9ea72cb20a1211e0cc4903576c2ff654954e513d3ad4072f15f28020fd"
+  },
+  "火": {
+    "full": "3726966c5fb9e159cfedc993c002ee044831d95cefcbc79ef426a13ec5133f5b",
+    "noPrompt": "d5db82a625f405c518d35991b66557a0dbb016c2f0f6a9cf8833e085454f7baf"
+  },
+  "点": {
+    "full": "4134441a8478a75f21e51b86c3648b218b4cad682c30f4b1fc072ec2fd030109",
+    "noPrompt": "0715772640bb3cfea520cd5b4d55de2c64bb09d6ad4500a46e5203175851ee15"
+  },
+  "热": {
+    "full": "d3ed3e4069a24fbb914fd0ad831c26b972d834411ff7f7c5f919945221dc7596",
+    "noPrompt": "ee841532ec7b996d3703e9af82930694aed01393bf3792af8ea091d1064fcb8b"
+  },
+  "然": {
+    "full": "8059235b1f705b9a50636cc73adfc785400003d47f264dfda4d9785206905e9f",
+    "noPrompt": "d8bcc698ee916cfad609a1dca393707f3988a53d1719bb1d1753ab4b23fc0eb6"
+  },
+  "爱": {
+    "full": "68792215bd9fc89211ea52419a1c0321323ce94cad7b00852d93e12a3eea1cd6",
+    "noPrompt": "9ca3377bbe85d6b71068e237899bfc4468c2be9d398618245bd718907a63294e"
+  },
+  "爸": {
+    "full": "84c794a15ab1b10502eb40c48f980cca763f63f5a44e1a1de8e51fa4f72cf158",
+    "noPrompt": "89e0d90637af8468aa1e677ea11de882db243cb881dca08d64f2665ab8ad2b16"
+  },
+  "牛": {
+    "full": "dc6112914ad88b994d03b9092eb22df20f6e267c23a16750ae4f6503678db96e",
+    "noPrompt": "4355b60f1feb25836c3f0b2d24587ef29561fc902837385b865956df9a800af6"
+  },
+  "玩": {
+    "full": "d67248aa9c846821ac5ba48f7ececeb053f37ffab9c3eebfeeca50ea059e5e37",
+    "noPrompt": "6e3ad0dfb01033fc90e4a5f50087976f77757f7572303e8197d83e716dc92771"
+  },
+  "现": {
+    "full": "3e8a18946f983867f1095d4e8066aaaec21af35d7c1dbba4f7ee650d401b2bcd",
+    "noPrompt": "b94bbd4425bd628b9907356496f31bb71beba54e5c3adf3ebfc637a0242ae039"
+  },
+  "球": {
+    "full": "da3f24a437c89e2b9800f95ea77d8a781a45a9050dcf8126a30e35aed6b14e72",
+    "noPrompt": "6a4ce37ede0066a0683fd114397177ae1bf3fceb4785432d87a1f72baa3dbf16"
+  },
+  "生": {
+    "full": "752bef6f64c444a9f0bf61a0531efa9a99c8d69b5fc69a97749f63453e6cc15b",
+    "noPrompt": "00dab940de33752050ff9a844d3dcea6b78f24c88be488493818abd713e045f2"
+  },
+  "用": {
+    "full": "32b06f1bd260b8b7148d826aa7436fdce4d5f05ed62052fd49a7e13d7c7f5303",
+    "noPrompt": "e0ae839c1a488287936e02681132d37472fc7bb263a520812c56b7311b65fdec"
+  },
+  "电": {
+    "full": "6b70e3df6cdbbd02a0a39c208d96149ab21a4bcebe32a79e1b5f73d147147c05",
+    "noPrompt": "77d0172f439c740b82656b22dfbf70a1cfaba6dbc2e793cba97d6313773a97bf"
+  },
+  "男": {
+    "full": "ee55fd9c3f55b0f14c07350f1c3611bd506a153211eaf5d51e1f0e30cce0e181",
+    "noPrompt": "e125d5b556b88219cc12bffd388c3646898aa249656ea2bab1fff3b7beab6f24"
+  },
+  "病": {
+    "full": "d9a80a9202736df37917cc94a9f02007d07cff491dd194949dbd6b9b13869f57",
+    "noPrompt": "cd110e534bfe75a12ebf99abb21e7f5edb0eb99604b6e5f379e529752991ca6a"
+  },
+  "白": {
+    "full": "4d5b42ca8c3a1e19d6ef4d781e9d5c3cd5cc42be32adc7d7827ab732487376f8",
+    "noPrompt": "9a4cb2b4c1d7f4870b126e166a9caf052d2349014511625f3b31a3e1eacc1165"
+  },
+  "百": {
+    "full": "95760b6cc9537204718038f5a632194ec3842d297a074f1b53bb4123204418a3",
+    "noPrompt": "dee8aae841c82411b1730ea91b4999340c445c5731bb34b28679fe206f73fb21"
+  },
+  "的": {
+    "full": "ffea451668c9d66470cdac02a7dcae2096e50620c55b62f3e690367e833e1d37",
+    "noPrompt": "955102ecdf2f055b10d14c88d7d0102f48630ad0a9df99934bb702641bf36745"
+  },
+  "看": {
+    "full": "d3584a9c0d3484c2e4df5a5bd2bf5ff26901c480ff4e1959f0d13c3bb8b27918",
+    "noPrompt": "dcf62a801646fe5dfb53d9d38fa387c8b9cc2ea734999e79b0e33a9fb8f97fca"
+  },
+  "真": {
+    "full": "86780ef4531b11dda862bd5c82ed43d5459bbe5539ad9e854b9980e960202849",
+    "noPrompt": "0425ab92310bbda5b3f99ba43e0f6582582100633d870afe781b29a4aa1777c6"
+  },
+  "着": {
+    "full": "db9f8af3d4b2ddd7b7d537e204bd20f3514bc5f86071d37193bdfc8d4a45c387",
+    "noPrompt": "e1d865645d194cfbc53109a23ea1b461e6efe4c0a6bc198eeedf506a44694b9f"
+  },
+  "睡": {
+    "full": "16cac7a9d7c5ba397b1ad0a1da07ea1bbf638c9d21d03dfaceb9ebcd3c01d15b",
+    "noPrompt": "84e7f901185b605e155df11f5e7788d7431897358cba932ca3d62e213bfc25dd"
+  },
+  "知": {
+    "full": "cc7c16ce5ad3469ff27f73431ec53ba2bb25bc6a18c19f751fbfa8ef5dc18f26",
+    "noPrompt": "8ddfd8d58d3dc81250e81338e143d55dce2900bf8c50fd159bac4b09d682481e"
+  },
+  "票": {
+    "full": "0e4ea32424972475c8210b94f0e157f1cf954cbb1c04c64ed9c66ead722dd42b",
+    "noPrompt": "0c2eea4c1c9eaa296d1a7f80c1638f87e410684e60f5e1eea8ef2b11abb82cbb"
+  },
+  "穿": {
+    "full": "51890cd2b2c37ceaf7387b0e5033e376dd80824e6c312b74354fa0e0968d9608",
+    "noPrompt": "f61bf348e0b47a59de540993c0646791db6ad79160caeab89517a458b131382e"
+  },
+  "站": {
+    "full": "8d206478316042c76bb7c4e12e2d47e1d7ab40766b81998dd369ba058dcb49ef",
+    "noPrompt": "61c27a251fa6d88dfa1e589178a52bae3b21f483fb4bc9f6b77b4670df01c0e3"
+  },
+  "笑": {
+    "full": "2042f672addf3637eec718261872dd4a0ccfb79ae522d6a28f43c8430dfaf220",
+    "noPrompt": "5a823b32712c54d9293a42acd509c3c30ad84699e9272836747e34d4c6296ba9"
+  },
+  "第": {
+    "full": "af9afe4b0f0964596e7c42c2164efca61d3d38a712b5fd44f45ad80337259a99",
+    "noPrompt": "a68ad5e755e39b1411ed436e0fec71a5ab0c5420ef272a550d02e513be9d8212"
+  },
+  "等": {
+    "full": "56d4fffd76c59c6a890d6b0c896435ec8f34da2634b41803c912a84a09a190b1",
+    "noPrompt": "919616216642ba294bd5237aebca18b22262ecb885623b448f99d160d630fcfe"
+  },
+  "答": {
+    "full": "28c21ea48f668936ca74e4329a63c77ab8d389a8729fbdc16c6e0cb6977aec13",
+    "noPrompt": "c662e7062684d085119eef3bb4dcf2bae2da28bbf63a1db1960e135f5d723ca6"
+  },
+  "系": {
+    "full": "31af7c6d0c47bcf9331ca32caeb12e4ed2bfe7d0d68b23978d201613eea35df0",
+    "noPrompt": "48627aa4d2f56922930d4ba23b0374f0be71341c6c428768a6aaab31df573778"
+  },
+  "累": {
+    "full": "9987084da221632ce0e4695e761201cf3c693c70e51e2cabc9f9a60c2b65c76a",
+    "noPrompt": "a75724666ffc0ca1c799723bf5989ee5daf6db23795a0b8c56839c6583fa70a4"
+  },
+  "绍": {
+    "full": "2a96498d27e421926f3f1d83c9670f0bca88b7689cdc6bb9cccf6c9a963faa73",
+    "noPrompt": "4f14e9a635db27ad097ab36d7bfd71bdf62ee8294254f9904ce966fff40df004"
+  },
+  "给": {
+    "full": "9c001a26cf0aa01c1bf4b6de7954abd09ef6e715efcd2255cade469e79ba23ba",
+    "noPrompt": "2e636e33c47bd6a2b4da1e475c7ab2e1a9e20e4875621f54ca80a9179b02e02e"
+  },
+  "网": {
+    "full": "19e7a0e789c499287a7e57fb6faf69f6511ab55f07936333173d476a1c7cde28",
+    "noPrompt": "a2e54ca9dd0ac77114007bf6c41c199f4e83ccb0c597432a30a123b8c7ac4efe"
+  },
+  "老": {
+    "full": "b6a13414035d6983e3f4d71781a9315e32cf99a22fb9ca9cff0d377e3bdf89c7",
+    "noPrompt": "b61f11676eaa2a7a9381818dd73a0febca1805288bef329af54bdb609c9edfd1"
+  },
+  "考": {
+    "full": "b5feb70e3af5bc6f934555bd971d3ffe97cc8da5f4b85b1cff56743589917a5c",
+    "noPrompt": "4a703302376d500686d86d3f0e63ad68ebe8a7447f4dc0bbf6504c98ed8b8d23"
+  },
+  "而": {
+    "full": "09649ce9a98990721f2621982b3e0f7cb0655a360b475bfe12b430e023bde6e2",
+    "noPrompt": "3c4ebee8c5c7268015fa51e539c2a6098f82b842ebffd5cecdb784b72a4401d8"
+  },
+  "肉": {
+    "full": "5c5bf5cb6954d8e91a88c73eb9ddec1d38e9978fbbf716aca99d1bbab15db348",
+    "noPrompt": "047e5d753d7d4c5bd20c44bfed3d8f8cabb0dc997b02fe811f73c341873f2c04"
+  },
+  "能": {
+    "full": "99dd36ea7493e03a7161e7b284eb0298a08f80d12e382846a82f408b12d8671e",
+    "noPrompt": "cb6198a5e90a0099dd6175cbef63a8d07f5e4b3ed26466b17be05b69a06a50d8"
+  },
+  "花": {
+    "full": "2297314f43174e4549d9a3f3349b55420c2308b48c3afc5f5437197ad44dad50",
+    "noPrompt": "f84aac26170e7e458c2092998e9d418364286df6c768d2b5fbd9664b6216b56d"
+  },
+  "茶": {
+    "full": "1127c63c86b778aa3c29e7b5e90ac3350ca9f8a92efa038b11765aae02c43e72",
+    "noPrompt": "decd1d69da1e264939bf121ae4f7762faa38a5b16bf9044104431985c10dfd20"
+  },
+  "菜": {
+    "full": "0bbf455898413387b7b106a8f0b7eb23b365427d91ff633f7b0f8c808da84f30",
+    "noPrompt": "9fe69717ea9921e867c23262d771d09094c3782cdcc7c3461739d793482a7016"
+  },
+  "蛋": {
+    "full": "fdd2c40506651284ac2feffd81c4dc4f62cca7b80c09fbeea94c8daadfa37ee6",
+    "noPrompt": "800a4e10ec7f3ee5802cc3c4f6ec88e278a64d23ff50559c0e838a090c4421fe"
+  },
+  "行": {
+    "full": "53223d888486517688d9f782ee91a2fe6cc13f9ec13de1ab2d8e1dde43190081",
+    "noPrompt": "26fbc6433ffbb517f03d18fc288785b0c598793c17b5b967078e92dc42dd121f"
+  },
+  "衣": {
+    "full": "df483bf20fbee39c002e3689fb72f781a90924b5ab600de6fe1cfb4ae1dc812c",
+    "noPrompt": "bb2211a83d0f918d9567583e17b7d14195c13cb1d0b78f5dc0c4fb17fcb92633"
+  },
+  "西": {
+    "full": "90435d10d07747e58c336f621df2d23ede1cf2940a3a5069651d59df1fbef0b5",
+    "noPrompt": "50027e50ca9175ac9e1822890da504898199cd8313820c8d3311fb4e24e709a9"
+  },
+  "要": {
+    "full": "e29c753b5590d6d23683baa4dd33333bebe1eed139c0502c1f8c92ad1b0a482b",
+    "noPrompt": "520e62e57bc84a3d7de54b38c819ee33f7ee109280912032680177edd51cc119"
+  },
+  "见": {
+    "full": "2e8305fb3d93fd37b77fde221f9d892651abdebc9d675f3484a1cb8e82539c19",
+    "noPrompt": "9e715181dc342a338fb2eef0aef91b8beacf4d645e6f229109fddb1e92b0206f"
+  },
+  "视": {
+    "full": "c2a05ca28ee74a181940ec1173826eaeb551f8037ce7a79e69038b10f3fd88ce",
+    "noPrompt": "4f8c0d99241565425ec87a53530d92c2cc5b6260caab1356bd4a23536aceb411"
+  },
+  "觉": {
+    "full": "5fcca2a2a63f87b401d1ca69912a70da75d7d271df40d7aaf9fdc1455f477f8b",
+    "noPrompt": "9cef01920849f0944e6b4e87a7a89b6e85cec02a3fa893cf90dbeb7eda20cd03"
+  },
+  "认": {
+    "full": "fc602832627a0f83497171771ba59c50c5f9d8a84a53a543dcf24f524b5c9be1",
+    "noPrompt": "a71f1e8fec5de32ea09f8e0ce5ec3dd73697b627aef7cc289c29cdb55bcaac89"
+  },
+  "让": {
+    "full": "47c6305ae824632ab59a885f8515b0a6bec913f412fe6e159d97348ab8d71ff5",
+    "noPrompt": "64f64fad5e5ca04b1f536e21543b99194e241c44e7d9c59eb08d5b8fe3253426"
+  },
+  "记": {
+    "full": "3a2a3fc99076de742f9e46c38b17c35ba5037ca81370fde467a3509781c43752",
+    "noPrompt": "47c1b005f9ad2bf8eea503ccf5111f54d4b7275aa7685f8d605eb425f5e05dae"
+  },
+  "识": {
+    "full": "678c8950fda60aba31275afda243d6c99258943210c50a38ed5d09f3dd508866",
+    "noPrompt": "0d4a051a72f1760f5fe70648fe872e3f2c3675f9948fd32d973dc416134d9052"
+  },
+  "诉": {
+    "full": "5c44c7c6081429405e8000b2485a74c225a74910ea1861728437b1b4f2a68930",
+    "noPrompt": "dfec58a5278fb734300d50dd8ad9e89a1a903236dad12408c7cfa1eefa381383"
+  },
+  "试": {
+    "full": "fefeda0700ceb146c3625544439d02e2e4350335fb8607e8b9bf399f2b95e723",
+    "noPrompt": "74e51a8e0bc95a684dd06d8a985efee9b1f26fc6610582e251b0b7f13673e0a2"
+  },
+  "话": {
+    "full": "aa94defe8fb4fd9a1e1f20a718f5fd4f12790be876ad0a0622d9ce5569b09f94",
+    "noPrompt": "e7c0252caceacffac35f39152979b0c0498158cb3fe58e2ffd1c3cd0f6351be9"
+  },
+  "该": {
+    "full": "2ea79a152be87e189d0567f4f033625a588c794dc863ef92cd7ad5a2303c55dd",
+    "noPrompt": "bcc263148c6cf34c21501a55a3964721893c9eb338d8de39ef74ed4e59325c6e"
+  },
+  "语": {
+    "full": "6ea5ae6bd05d01d27fb19be5b4d593e1a28bfa22760c92bc8f2498672f787f5e",
+    "noPrompt": "b432e28eba312bef67f1763308ae73d2124c918d03dd8a5676a9b7d69d8b3b73"
+  },
+  "说": {
+    "full": "7634eb5ac03bfed7b3dcc19a37c01eaf8ad5300ad8acd8064c2b37eef677a7e9",
+    "noPrompt": "dc36a9583bd8ce1298f79e372bf16dcb0f557dd608ca2d18f2d7364b69044322"
+  },
+  "请": {
+    "full": "8cc7cd5d73e5f9e4280b752ff856940d4393997cc54b60460a45f7ccdc8caf11",
+    "noPrompt": "cb6fe82771d28bd3bd85a77e80fa46c7df765bed89964604cd73c2800f0e149f"
+  },
+  "课": {
+    "full": "b5213ccb0e817eea744a61d6cebf5b29968910291b4f944e7a32cc2a5351beb5",
+    "noPrompt": "1c08521339b00e90b15cc97ca60457e1f19bca9dfca329c5b64807d96d082b4b"
+  },
+  "谁": {
+    "full": "d9e35b5eb3e08257bd10463529137fed917129cbcb9a1adf540aa8faef95672f",
+    "noPrompt": "24ed53d79ee04fcba080418cd3f7792c9c1ea4e526d0ca0c4197eeb47d1b4089"
+  },
+  "谢": {
+    "full": "711e96a5bc6cba211e6e0e9411cdf593be5bc7d5f06bea7d56e05dd841247318",
+    "noPrompt": "41c591c31c4fb5161f46151ec3f049c044e8ba7062db59da3a2f453bdbcff860"
+  },
+  "贵": {
+    "full": "5bcd98b0ef18415987710118e4cba731e11e4a336fce924e3aff38ef1d90acd5",
+    "noPrompt": "03a80a331e9d3d9769d8309f3093f6da49e6e4ef6f595a7bb5f9ca8dff412b50"
+  },
+  "走": {
+    "full": "f54a8c7e1067e2a5f9a37840985cfbc5da120501e7d3a6ad07a514112ac4ed81",
+    "noPrompt": "19a16827a8bc8d615ac64b9b0a930ef3cd19cfa8d6d6f92e11d01239651c0860"
+  },
+  "起": {
+    "full": "4fc2b5881690a820e823fbed8bfcabcd69c798874f38431a2382370e926f1b49",
+    "noPrompt": "4f996dfc615f6b8e1291bb78f6480255b4321593bd22ea67a2801cdeb5c0f7e7"
+  },
+  "跑": {
+    "full": "3954f438330266a60d47bfbf404756941c3f70480a46de21fd69391da61879e0",
+    "noPrompt": "32701dd266c58b1382de736fa81704d875602592b418e280fd8b5f00905ef837"
+  },
+  "跟": {
+    "full": "f56d08eb9aeb402b3e03f0a93444ffab6aa56463d00a44fdee2e2fc4bf46dc9b",
+    "noPrompt": "6b90a1e401c74507aff6e73ec4244f228c7a893c547482badc98780968de47f3"
+  },
+  "路": {
+    "full": "d80636c4ddd4dd2bc197e4bcdf6dcfc09f52f267b80b85f9ef00e4463a152c30",
+    "noPrompt": "a86fc55504e42de28dd849795d01e8792bfbefb9f43a993dc70ef02a1eea675a"
+  },
+  "身": {
+    "full": "7fa98cd52199a7cd47f69ba4765af55d161b0d4b3d03e73252b153260cc182fe",
+    "noPrompt": "ac7af835d1b80aa7d4fd4db305bd6a740c9a14840c9416f02f21dcf510f2ee5b"
+  },
+  "车": {
+    "full": "465f195447747b0e6db6b902b53b03710558b85867af4798150787d3c628a233",
+    "noPrompt": "2be67c9a8a17bb24443032a6dc21f431d53932d80b23e13d4316422525e30bc6"
+  },
+  "边": {
+    "full": "2c06a5275a08803ac2836be0fa0301d9b3ba226fb369deccd4a94891e7e693df",
+    "noPrompt": "8f142cc81c6795d22446128ff5530709f18861d6fd21eedf4ad85c800e4079a0"
+  },
+  "过": {
+    "full": "ec349b2068908fb377f39d0f5a579e0419e7c58305a35e0bbdfa638247892db8",
+    "noPrompt": "1359dc792f69024681079462cd16ae06210908f10f706dbcddbefcfc0c21b9f2"
+  },
+  "还": {
+    "full": "f481c27823293b2e0bf5dd48ab92de4ab9b6fc548c14bb1a50d4011102a0654b",
+    "noPrompt": "bddd220f582d0ac7b5e78a37e043d9ce407f8fe95adce71a16dfa13f4ec35736"
+  },
+  "这": {
+    "full": "7cb92d90429c21449b73c83578f5fd7d73c7b883442f3e19468b89e3a12b9d8d",
+    "noPrompt": "5e352a172d1e2141a208f6e4f58ed8cfcb0021231195086c3667dcaab50871b4"
+  },
+  "进": {
+    "full": "9d3768c4da6c1c4d8415042ed25378e6af3a06cd727ba3414113b100d026e19b",
+    "noPrompt": "79089a658f95c86ebdefe13df31f6a70cdf6aa5b72d6f2080d2557b47c980b45"
+  },
+  "远": {
+    "full": "8fa8c713849bf36e6020c4857fd8d3d1b3c67d1b54557d254b2c6e39780a96ce",
+    "noPrompt": "4e712e8a4185d3be07ead6dd67b90005f7d835407c18220bf64aace6158b7827"
+  },
+  "送": {
+    "full": "aef630aa518961eacce6a019dcb5146df0e60404e7d81c12d91722e398967058",
+    "noPrompt": "7279d51286b0f31b1e00080e375d77a11aed36dd8797917a04f9d403035d127c"
+  },
+  "道": {
+    "full": "ca6aa4774a0b840c98c4ae4fd1f401859a20e0aef05cd86cfbf91fa75c3fbe0c",
+    "noPrompt": "bf5993fe3a7021abb201744549258b8fae713c8bfd7e337379ebfebb20fc6bcf"
+  },
+  "那": {
+    "full": "b551fa6e3f26eb07db74e38ccc7b0e3f6b47c6e790267dee0d7b9b7cae1ec9ed",
+    "noPrompt": "9cb709cb05fb534ae4cccda706d434fa9c53bc27b6a7dc3e26f701083ba5adf3"
+  },
+  "都": {
+    "full": "3afc9a4e2d94a0fe1b4caf30ebdcaa053666062d69b4896afd601322f34644d3",
+    "noPrompt": "8f27da4072737228fd3b6bcec63dc0a7a8add06b76844e10c6e482bce6141deb"
+  },
+  "酒": {
+    "full": "4e046c20a4ca11cccc550c59b8d3885a8480d7f6a6daa65a16045951421eeae2",
+    "noPrompt": "854edb0ab2658f605e8294e7820e008666bb6f7380ccd44ef47336c2a1467e0c"
+  },
+  "里": {
+    "full": "9864807075a424acc30608d207a96868fb12b9ac8fe0b265cda8b3cca76ff44e",
+    "noPrompt": "f0e9527de400eef043fd0320ba577c7771366422a2286d341bcf5bb1508e93a8"
+  },
+  "钱": {
+    "full": "0386f2d4c528b35dd8a5eac67d10fa54b2d75b55ad13aa0329ed145990b4f6b2",
+    "noPrompt": "a7c06e7029943ece1458c406a626d507e06599c85a62e77ebc0a257cf8a4a1dd"
+  },
+  "错": {
+    "full": "3490fef5ed2dd566712a8753705c136730982da519ffcc6cd78b001e95d78218",
+    "noPrompt": "33183980ea9eba91e4b13681ab99a049e1a25e8145ac5ca2ab29ae9b467bfe60"
+  },
+  "长": {
+    "full": "627dd506a5e0c59cc0dd54bf0a88e3cdd1693a2802f439dde9866608e961612a",
+    "noPrompt": "7bd12bb57bb679fa71eae9e51e33b002adfb7f69d4165fee552e769a2ae9c3b4"
+  },
+  "门": {
+    "full": "db1563aa9383720e8958ae86b2981c011ddc756d6653f6585620c324382e8b22",
+    "noPrompt": "bbadf84d8777e482d76974adff68d0fcfa6eee9040ab8eab2578ca000ab93a1f"
+  },
+  "问": {
+    "full": "4ee906311dce7b32cf43b659882c8838b9b06ac065686298201af483632d4f13",
+    "noPrompt": "4cf02834dc8bf725a985e27162bb772077a41d7bb33b165c58deee4435a212b8"
+  },
+  "间": {
+    "full": "14f1204c8700903cbbdd5a7c075ad77a9327c0c0cf16a85128e01f9be1dd3686",
+    "noPrompt": "500a5a53ac16e9d9f803e4ea90aa0556072ee5820b61de4832f29440e115ec59"
+  },
+  "院": {
+    "full": "09cb40bfe77c81986c32d3dfb2c71330315b40f3732683b02e56ee3b4dc874f8",
+    "noPrompt": "be5abb2a9ac3a08ff5c4274ba33f200aae5a9ad8e2cfb9dc6fb3c7e8197e8e15"
+  },
+  "难": {
+    "full": "4970e4df3dd96a5658cc0ceb68b90d9ba90bce0e9ac754067e2270ffff6ed831",
+    "noPrompt": "550d8c499dbdf60414132884db11c8eddc20c1301a2eafcd5280f30b86e78802"
+  },
+  "雨": {
+    "full": "f449aa956b8e9d861aa8c5a1a17f17be49e5908c9d5a48c519882a389821a9db",
+    "noPrompt": "b18b692b62c0f87bb2adc6522610199fceed5a50c176ece444c50936b3fb8c98"
+  },
+  "零": {
+    "full": "e23bf7bfc18a0f8f376ae63ef11e208c8ae3173bcd755532fb4d432d632b830e",
+    "noPrompt": "6b51e6c66c37e2bb8f9c5107392e6805002fb0289bcfd30afcd5a2b464e3a32d"
+  },
+  "非": {
+    "full": "e4ea67daad2e51045aed4c84bf842c47e0685843e8f4a306cea7515767fbf789",
+    "noPrompt": "b8b5771ffc4ae7fbf963b236d81adfea28fc39cf64c2cc58588490b39c2511e7"
+  },
+  "面": {
+    "full": "39ef81f155eadd9a59229b8722748e2c547e64e8c53172a142f18e593cf6e381",
+    "noPrompt": "041e8eba54e4bdb6486fbeb73be1415bfa9bf312bd8f628207dd50a4cef2223a"
+  },
+  "飞": {
+    "full": "0dcaaafb845be1e13c4b5dc729a2c2ea2e12ada234ce38aea9e810f8a361ec63",
+    "noPrompt": "d0db257f8074e84a5b8890f181f2fbfce55f18e432f868e6c09d009edaa5fd91"
+  },
+  "饭": {
+    "full": "d7501788a97ca3f22a3a702d3e7062812645b6222f48a00ad9c7f27bc1df912a",
+    "noPrompt": "a76de8d9b67971a91a3f87a69eb2121bce3fac4c11237ce65ff042a48d5932a5"
+  },
+  "饿": {
+    "full": "c55ce6c08785382ba01a7f27af78564cfdaeb2528a13d76c78277c7ca8e55fb3",
+    "noPrompt": "cc3c820b76128db12503354c343a8aac8674f12f4d90da7302c1ba23666b2bab"
+  },
+  "马": {
+    "full": "743acba69ded2f56dd780f3d8d6221c7fa85c6c15b9321b2f05b4b0142dba09a",
+    "noPrompt": "a763f5e7b3dadc8b8764995c94e6d29f1e414e5e35d1f3cf31b58416b0a9edcf"
+  },
+  "高": {
+    "full": "5794279ed58b0636e655ce215a4e8e47eec8c29d23c4f1074cc8ff508eeb222b",
+    "noPrompt": "a52965b87e40f7c88cfa0a6650178b9b9f9a1cb324ece09a75efb4bc5f740bac"
+  },
+  "鸡": {
+    "full": "7eaaee20d510c5ce3b934382bebf1db13dd1ee790aafe5520d1ae30079aabbf1",
+    "noPrompt": "6192ab0e172f1760361f20ac568ac8392f7f0d2a904d44cbb4be7f4ba05ff928"
+  },
+  "黑": {
+    "full": "a421fc26fcc22ee14a4b1f6bda57628e3e6346536a7c5b16862cd79182ab37e7",
+    "noPrompt": "3fae6612fd303ac98c1c69127a87e74983978a224bf7aecd08553f7e420487c6"
+  }
+}

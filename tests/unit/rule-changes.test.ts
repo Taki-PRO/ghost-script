@@ -22,6 +22,8 @@ import {
   writeAllLevels,
 } from '../../scripts/build-data';
 import type { AllLevelsOptions, AllLevelsPaths } from '../../scripts/build-data';
+import { LEGEND_SOURCE } from '../../app/src/data/citations';
+import { legendCharacters } from '../../scripts/lib/legend-strokes';
 import { README_END_MARKER, README_START_MARKER } from '../../scripts/lib/prompt-counts';
 import { RULE_CHANGES_HEADER, renderRuleChangesCsv } from '../../scripts/lib/rule-changes';
 import { sha256Hex } from '../../scripts/lib/verify-sha256';
@@ -35,7 +37,7 @@ afterEach(() => {
 function chars(start: number, count: number): string[] {
   return Array.from({ length: count }, (_, i) => String.fromCodePoint(start + i));
 }
-const L1 = chars(0x4e00, 4);
+const L1 = chars(0x4e00, 32);
 const L2 = chars(0x4f00, 52);
 const L3 = chars(0x5000, 55);
 
@@ -56,6 +58,14 @@ function makeFixture(withTw: boolean): Fixture {
   const hanziWriterDataDir = join(dir, 'hanzi-writer-data');
   mkdirSync(hanziWriterDataDir);
   for (const c of all) {
+    writeFileSync(
+      join(hanziWriterDataDir, `${c}.json`),
+      JSON.stringify({ strokes: ['M 1 2 L 3 4'], medians: [[[1, 2], [3, 4]]], radStrokes: [] }),
+    );
+  }
+  // The legend line's strokes are built by every all-levels build.
+  for (const c of legendCharacters(LEGEND_SOURCE.zh)) {
+    if (all.includes(c)) continue;
     writeFileSync(
       join(hanziWriterDataDir, `${c}.json`),
       JSON.stringify({ strokes: ['M 1 2 L 3 4'], medians: [[[1, 2], [3, 4]]], radStrokes: [] }),

@@ -41,4 +41,24 @@ describe('SealStamp', () => {
     expect(seal.style.pointerEvents).toBe('none');
     expect(seal.className).toContain('absolute');
   });
+  it('with placement "flow" and a size, sits in the flow at that size with a 0.75 glyph', () => {
+    render(<SealStamp character={CHAR} placement="flow" size={40} />);
+    const seal = screen.getByRole('img', { name: `Seal: ${CHAR}` });
+    expect(seal.className).toContain('relative');
+    expect(seal.className).not.toContain('absolute');
+    expect(seal.style.width).toBe('40px');
+    expect(seal.style.height).toBe('40px');
+    expect(seal.style.bottom).toBe('');
+    expect(seal.style.right).toBe('');
+    expect(seal.style.pointerEvents).toBe('none');
+    expect(seal.querySelector('span')!.style.fontSize).toBe('30px');
+    expect(seal.textContent).toBe(CHAR);
+  });
+  it('with explicit defaults renders the same markup as with no props', () => {
+    const a = render(<SealStamp character={CHAR} />);
+    const plain = a.container.innerHTML.replace(/seal-rough-\w+/g, 'F');
+    cleanup();
+    const b = render(<SealStamp character={CHAR} placement="corner" size={SEAL_SIZE_PX} />);
+    expect(b.container.innerHTML.replace(/seal-rough-\w+/g, 'F')).toBe(plain);
+  });
 });

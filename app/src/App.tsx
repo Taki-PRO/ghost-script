@@ -17,6 +17,8 @@ import {
 import { firstMeetingSet, isBrandNewPlayer } from './engine/firstMeeting';
 import { composeFirstSession, pickWalkthroughGhost } from './engine/walkthrough';
 import { buildReturnRows } from './engine/formatReturn';
+import { planReview, recordReview, restlessCount } from './engine/review';
+import { crossLevelLine, isDueAt, type PlannedGhost } from './engine/crossLevel';
 import {
   LEVELS,
   isLevelFinished,
@@ -72,6 +74,8 @@ export interface SeancePlan {
   readonly ghosts: CharacterRecord[];
   readonly firstMeeting: ReadonlySet<string>;
   readonly walkthroughChar: string | null;
+  /** Level (null without a scope) and due-at-planning flag of each planned ghost, in session order. */
+  readonly report: readonly PlannedGhost[];
 }
 
 /** Where a séance draws from when levels are in play. `dataset` of planSeance is the merged lookup. */
@@ -82,6 +86,10 @@ export interface SeanceScope {
   readonly otherOrders: readonly (readonly string[])[];
   /** The level 1 order and dataset, for the Walkthrough_Ghost. */
   readonly walkthrough: { readonly order: readonly string[]; readonly dataset: CharacterDataset };
+  /** The level the player chose. */
+  readonly chosenLevel: Level;
+  /** The level each character belongs to. */
+  readonly levelOf: ReadonlyMap<string, Level>;
 }
 
 /** Pure: buildSession, then the walkthrough composition for a brand-new player. */
@@ -120,6 +128,11 @@ export function planSeance(
       ghosts.map((g) => g.character),
     ),
     walkthroughChar,
+    report: ghosts.map((g) => ({
+      character: g.character,
+      level: scope?.levelOf.get(g.character) ?? null,
+      due: isDueAt(Object.prototype.hasOwnProperty.call(history, g.character) ? history[g.character] : undefined, now),
+    })),
   };
 }
 
@@ -146,7 +159,12 @@ type View =
     }
   | { screen: 'credits'; origin: 'menu' | 'intro' }
   | { screen: 'cangjie-guide' }
-  | ({ screen: 'seance'; sessionId: number } & SeancePlan)
+  | ({
+      screen: 'seance';
+      sessionId: number;
+      mode: 'nightly' | 'review';
+      crossLevelLine: string | null;
+    } & SeancePlan)
   | { screen: 'summary'; results: SessionResults };
 
 function Shell({
@@ -159,7 +177,7 @@ function Shell({
   tight?: boolean;
 }) {
   const sizing = compact
-    ? 'no-moon-room min-h-[100dvh] px-2 py-2'
+    ? 'no-moon-room min-h-[100dvh] px-2 py-1'
     : tight
       ? 'min-h-screen px-4 py-2'
       : 'min-h-screen px-4 py-6';
@@ -184,6 +202,9 @@ function AppScreens() {
   const [sessionCounter, setSessionCounter] = useState(0);
   const [savingWorks, setSavingWorks] = useState(() => isSavingWorking());
   const returnsRef = useRef(new Map<string, ReviewEntry>());
+  const outcomesRef = useRef(new Map<string, Outcome>());
+  const modeRef = useRef<'nightly' | 'review'>('nightly');
+  const [reviewError, setReviewError] = useState(false);
 
   const levelsRef = useRef<LevelMap>({});
   const [levels, setLevels] = useState<LevelMap>({});
@@ -221,28 +242,39 @@ function AppScreens() {
     return merged;
   }, [levels]);
 
-  useEffect(() => {
-    let active = true;
-    void (async () => {
-      const state = loadState();
-      const loaded = new Set<Level>();
+  /**
+   * Loads level 1, the chosen level and every level that holds a history key no
+   * loaded level has. Writes only `levelsRef`; returns false when a load fails.
+   */
+  const ensureHistoryLevels = useCallback(
+    async (history: ReviewHistory, chosen: Level): Promise<boolean> => {
       for (;;) {
+        const loaded = new Set<Level>(LEVELS.filter((l) => levelsRef.current[l] !== undefined));
         const unplaced = unplacedHistoryKeys(
-          state.history,
+          history,
           LEVELS.filter((l) => loaded.has(l)).map(
             (l) => new Set(levelsRef.current[l]?.keys() ?? []),
           ),
         );
-        const next = nextLevelToLoad(state.level, loaded, unplaced);
-        if (next === null) break;
+        const next = nextLevelToLoad(chosen, loaded, unplaced);
+        if (next === null) return true;
         const result = await loadLevel(next);
-        if (!active) return;
-        if (!result.ok) {
-          setView({ screen: 'error' });
-          return;
-        }
+        if (!result.ok) return false;
         levelsRef.current = { ...levelsRef.current, [next]: result.dataset };
-        loaded.add(next);
+      }
+    },
+    [],
+  );
+
+  useEffect(() => {
+    let active = true;
+    void (async () => {
+      const state = loadState();
+      const ok = await ensureHistoryLevels(state.history, state.level);
+      if (!active) return;
+      if (!ok) {
+        setView({ screen: 'error' });
+        return;
       }
       setLevels(levelsRef.current);
       setView({ screen: getIntroSeen() ? 'menu' : 'intro' });
@@ -250,7 +282,7 @@ function AppScreens() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [ensureHistoryLevels]);
 
   const screenName = view.screen;
   useLayoutEffect(() => {
@@ -288,6 +320,10 @@ function AppScreens() {
           learningOrder(map[l]!),
         ),
         walkthrough: { order: learningOrder(level1), dataset: level1 },
+        chosenLevel: level,
+        levelOf: new Map(
+          LEVELS.flatMap((l) => [...(map[l]?.keys() ?? [])].map((c): [string, Level] => [c, l])),
+        ),
       };
       const merged = new Map<string, CharacterRecord>();
       for (const l of LEVELS) {
@@ -296,12 +332,64 @@ function AppScreens() {
       }
       const plan = planSeance(merged, loadState().history, now, DEFAULT_CONFIG, scope);
       returnsRef.current = new Map();
+      outcomesRef.current = new Map();
+      modeRef.current = 'nightly';
+      setReviewError(false);
       setSavingWorks(isSavingWorking());
       setSessionCounter((n) => n + 1);
-      setView({ screen: 'seance', sessionId: sessionCounter + 1, ...plan });
+      const line = crossLevelLine(plan.report, level, plan.walkthroughChar !== null, false);
+      setView({
+        screen: 'seance',
+        sessionId: sessionCounter + 1,
+        mode: 'nightly',
+        crossLevelLine: line,
+        ...plan,
+      });
     },
     [chosenLevel, sessionCounter],
   );
+
+  /** Start a Review_Run over the restless ghosts of every level (Req 10.10 to 10.14, 10.28). */
+  const startReview = useCallback(async () => {
+    setReviewError(false);
+    const ok = await ensureHistoryLevels(loadState().history, chosenLevel);
+    if (!ok) {
+      setReviewError(true);
+      return;
+    }
+    setLevels(levelsRef.current);
+    const map = levelsRef.current;
+    const loadedLevels = LEVELS.filter((l) => map[l] !== undefined);
+    const merged = new Map<string, CharacterRecord>();
+    for (const l of loadedLevels) for (const [k, v] of map[l]!) merged.set(k, v);
+    const ids = planReview(
+      loadedLevels.map((l) => learningOrder(map[l]!)),
+      loadState().history,
+      Date.now(),
+      DEFAULT_CONFIG,
+    );
+    const ghosts: CharacterRecord[] = [];
+    for (const id of ids) {
+      const record = merged.get(id);
+      if (record !== undefined) ghosts.push(record);
+    }
+    if (ghosts.length === 0) return;
+    returnsRef.current = new Map();
+    outcomesRef.current = new Map();
+    modeRef.current = 'review';
+    setSavingWorks(isSavingWorking());
+    setSessionCounter((n) => n + 1);
+    setView({
+      screen: 'seance',
+      sessionId: sessionCounter + 1,
+      mode: 'review',
+      ghosts,
+      firstMeeting: new Set<string>(),
+      walkthroughChar: null,
+      report: [],
+      crossLevelLine: null,
+    });
+  }, [ensureHistoryLevels, chosenLevel, sessionCounter]);
 
   /** A tap on the Level_Screen: load, save, then start (first run) or return to the menu. */
   const chooseLevel = useCallback(
@@ -345,9 +433,15 @@ function AppScreens() {
 
   const handleOutcome = useCallback((char: string, outcome: Outcome, now: number) => {
     const prior = priorEntry(loadState().history, char);
-    const entry = applyReview(prior, outcome, now, DEFAULT_CONFIG);
-    recordOutcome(char, entry);
-    returnsRef.current.set(char, entry);
+    // A clean review stores nothing; the summary then shows the entry as it is stored.
+    const entry =
+      modeRef.current === 'review'
+        ? recordReview(prior, outcome, now, DEFAULT_CONFIG)
+        : applyReview(prior, outcome, now, DEFAULT_CONFIG);
+    if (entry !== null) recordOutcome(char, entry);
+    const stored = entry ?? prior;
+    if (stored !== undefined) returnsRef.current.set(char, stored);
+    outcomesRef.current.set(char, outcome);
     setSavingWorks(isSavingWorking());
   }, []);
 
@@ -426,15 +520,16 @@ function AppScreens() {
             onStartSeance={() => startSeance()}
             onReviewLegend={() => setView({ screen: 'intro' })}
             onReviewCangjieGuide={() => setView({ screen: 'cangjie-guide' })}
-            onOpenGraveyard={() =>
+            onOpenGraveyard={() => {
+              setReviewError(false);
               setView({
                 screen: 'graveyard',
                 history: loadState().history,
                 now: Date.now(),
                 level: chosenLevel,
                 status: { kind: 'idle' },
-              })
-            }
+              });
+            }}
             onOpenCredits={() => setView({ screen: 'credits', origin: 'menu' })}
             level={chosenLevel}
             onChooseLevel={() => {
@@ -442,6 +537,9 @@ function AppScreens() {
               setView({ screen: 'level', origin: 'menu' });
             }}
             finishedNotice={finishedNotice}
+            restlessCount={restlessCount(loadState().history, Date.now(), new Set(lookup.keys()))}
+            onReviewRestless={() => void startReview()}
+            reviewError={reviewError}
           />
         </Shell>
       );
@@ -458,7 +556,13 @@ function AppScreens() {
             now={now}
             status={status}
             onChangeLevel={(l) => void changeGraveyardLevel(l)}
-            onBack={() => setView({ screen: 'menu' })}
+            onBack={() => {
+              setReviewError(false);
+              setView({ screen: 'menu' });
+            }}
+            restlessCount={restlessCount(history, now, new Set(lookup.keys()))}
+            onReviewRestless={() => void startReview()}
+            reviewError={reviewError}
           />
         </Shell>
       );
@@ -491,11 +595,19 @@ function AppScreens() {
       );
     }
     case 'seance': {
-      const { ghosts, sessionId, firstMeeting, walkthroughChar } = view;
+      const {
+        ghosts,
+        sessionId,
+        mode,
+        firstMeeting,
+        walkthroughChar,
+        crossLevelLine: seanceLine,
+      } = view;
       return (
         <Shell compact>
           <SeanceSession
             key={sessionId}
+            mode={mode}
             ghosts={ghosts}
             dataset={lookup}
             config={DEFAULT_CONFIG}
@@ -503,13 +615,15 @@ function AppScreens() {
             savingWorks={savingWorks}
             firstMeeting={firstMeeting}
             walkthroughChar={walkthroughChar}
+            crossLevelLine={seanceLine}
             onLeave={() => setView({ screen: 'menu' })}
             onComplete={(results) =>
               setView({
                 screen: 'summary',
                 results: {
                   ...results,
-                  returns: buildReturnRows(ghosts, returnsRef.current),
+                  mode,
+                  returns: buildReturnRows(ghosts, returnsRef.current, outcomesRef.current),
                   finishedAt: Date.now(),
                 },
               })

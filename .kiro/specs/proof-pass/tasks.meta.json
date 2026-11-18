@@ -1,0 +1,830 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 HUMAN TASK: Human answers the open questions and decides the amendments and corrections": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795015389166
+      }
+    ],
+    "1. Gate: the human answers the open questions and approves or rejects each steering amendment": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795015389203
+      }
+    ],
+    "2.1 Update `requirements.md`, `design.md` and this `tasks.md` to the recorded answers": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795015394548
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795016202422
+      }
+    ],
+    "2. Amend the spec to the human's answers": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795016202463
+      }
+    ],
+    "3.1 Amendment 1: `content-accuracy.md`, the summon reveal bullet": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795016208130
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795016264893
+      }
+    ],
+    "3.2 Amendment 2: `product.md`, core loop step 2": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795016209091
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795016266096
+      }
+    ],
+    "3.3 Amendment 3: `art-direction.md`, rite-timing exemption": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795016210018
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795016266968
+      }
+    ],
+    "3.4 Amendment 4: `content-accuracy.md`, the level screen bullet, and the harder-ghosts spec": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795016272792
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795016334544
+      }
+    ],
+    "3.5 Amendment 5: `art-direction.md`, ambient list and legend-ink exemption": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795016273652
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795016335497
+      }
+    ],
+    "3. Steering edits for approved amendments only": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795016335524
+      }
+    ],
+    "4.1 Add the returning branch to the Summon step": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795016340638
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795016645407
+      }
+    ],
+    "4.3 Extend the never-reveal suite": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795016650867
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795016874922
+      }
+    ],
+    "4.2 Keep the first-meeting tests and add the returning tests": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795016652004
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795016873943
+      }
+    ],
+    "4.4 Write the returning-ghost e2e test": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795016880237
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795017028491
+      }
+    ],
+    "4. Item 1: returning ghosts show no formed character (gated on amendments 1 to 3)": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795017028525
+      }
+    ],
+    "5.1 Capture all fixtures before any override edit": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795017034792
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795017101324
+      }
+    ],
+    "5.2 Add the exact-match guard and the override rows": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795017107020
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795017303920
+      }
+    ],
+    "5.3 Rebuild and update the pins": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795017305000
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795017467310
+      }
+    ],
+    "5.4 Write the data tests and run the fixture comparisons": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795017473677
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795017641789
+      }
+    ],
+    "5.5 Add the display rule to the clue cleanup": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795017647887
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795017756857
+      }
+    ],
+    "5.6 Test the displayed clues of every record and report the change counts": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795017762571
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795017844848
+      }
+    ],
+    "5. Item 2: five corrected clues and a display rule for traditional|simplified pairs": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795017844886
+      }
+    ],
+    "6.1 Change `summonPaperSize`": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795017850463
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795017904848
+      }
+    ],
+    "6.2 Compact the Summon step to the budget": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795017911136
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795018049316
+      }
+    ],
+    "6.3 Extend the fit tests": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795018055711
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795018710780
+      }
+    ],
+    "6. Item 3: a bigger Summon paper": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795018710923
+      }
+    ],
+    "7.1 Carry the outcome of each ghost to the summary": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795018716532
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795018811997
+      }
+    ],
+    "7.2 Add placement and size to `SealStamp`": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795018818607
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795018884286
+      }
+    ],
+    "7.3 Rebuild `SessionSummary` as tiles": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795018890133
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795018972454
+      }
+    ],
+    "7.4 Add the summary fit tests": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795018978802
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795019600891
+      }
+    ],
+    "7.5 Add the summary screenshots": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795019606468
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795019782977
+      }
+    ],
+    "7. Item 4: the summary as a reward": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795019783112
+      }
+    ],
+    "8.1 Write the pure line builder": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795019788490
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795019907943
+      }
+    ],
+    "8.2 Report the plan and show the line": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795019915801
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795021180090
+      }
+    ],
+    "8.3 Write the cross-level e2e test": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795021185419
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795021245880
+      }
+    ],
+    "8. Item 5: a line when due ghosts from another level come first": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795021245917
+      }
+    ],
+    "9.1 Write the display reorder": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795021252007
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795021321492
+      }
+    ],
+    "9.2 Use it in the Graveyard": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795021328246
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795021488998
+      }
+    ],
+    "9. Item 6: Graveyard order says what is true": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795021489040
+      }
+    ],
+    "10.1 Name every data file on the Sources screen": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795021495469
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795021589005
+      }
+    ],
+    "10.2 Print the real first load": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795021595053
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795021657920
+      }
+    ],
+    "10.3 State the first load in the README": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795021664107
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795021745782
+      }
+    ],
+    "10.4 Write the fresh-profile font-request e2e test, and fix if it fails": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795021752433
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795021832704
+      }
+    ],
+    "10. Item 7: complete data credits, an honest first load, no unneeded font": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795021832806
+      }
+    ],
+    "11.1 Restyle the Write step Give up": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795021838222
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795021887657
+      }
+    ],
+    "11.2 Add the Write step to the slip e2e test": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795021893745
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795022035009
+      }
+    ],
+    "11. Item 8: Give up is a paper slip": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795022035049
+      }
+    ],
+    "12.1 Remove the nested full-height box and tighten the menu": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795022041059
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795022208932
+      }
+    ],
+    "12.2 Add the plain fit test": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795022214092
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795022355084
+      }
+    ],
+    "12. Item 9: the start menu fits one screen": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795022355120
+      }
+    ],
+    "13.1 Write the pure review engine": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795022372479
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795022481673
+      }
+    ],
+    "13.2 Wire the Review_Run in `App` and `SeanceSession`": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795022486768
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795022732033
+      }
+    ],
+    "13.3 Add the review slip to the Start menu and the Graveyard": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795022736429
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795022858792
+      }
+    ],
+    "13.4 Show the review summary": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795022869193
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795022989596
+      }
+    ],
+    "13.5 Write the review e2e test and the Start menu worst case": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795022990183
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795023304608
+      }
+    ],
+    "13. Item 10: review restless ghosts outside the nightly schedule": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795023304651
+      }
+    ],
+    "14.1 Choose the samples in the pipeline": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795023309248
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795023632683
+      }
+    ],
+    "14.2 Show the ghost and the samples on the Level screen": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795023637119
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795024052919
+      }
+    ],
+    "14.3 Update the Level screen e2e test": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795024058057
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795024115733
+      }
+    ],
+    "14. Item 11: the level screen shows the ghost and one sample per level (gated on amendment 4)": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795024115766
+      }
+    ],
+    "15.1 Write the visible-row functions": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795024120442
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795024183711
+      }
+    ],
+    "15.2 Double the grass pattern": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795024192283
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795024283249
+      }
+    ],
+    "15.3 Show only the rows that matter": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795024283598
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795024455234
+      }
+    ],
+    "15.4 Update the Graveyard e2e tests": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795024455973
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795025037766
+      }
+    ],
+    "15. Item 12: a shorter Graveyard with more grass": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795025037804
+      }
+    ],
+    "16.1 Build the legend strokes file": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795025042717
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795025223680
+      }
+    ],
+    "16.2 Write the loader": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795025228394
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795025309182
+      }
+    ],
+    "16.3 Write the timing and grain engines": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795025313993
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795025424937
+      }
+    ],
+    "16.4 Ink the legend line in the intro": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795025429743
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795025707221
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795025719555
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795025859768
+      }
+    ],
+    "16.5 Wait for the legend in the e2e helpers and specs": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795025860000
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795026067191
+      }
+    ],
+    "16.6 Write the legend e2e test": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795026067312
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795026298631
+      }
+    ],
+    "16.7 Credit the legend file and recount the first load": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795026299222
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795026379050
+      }
+    ],
+    "16.8 Capture the screenshots for review": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795026379165
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795026591351
+      }
+    ],
+    "16. Item 13: the legend line inks itself in (gated on amendment 5)": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795026591474
+      }
+    ],
+    "17. Final checkpoint": [
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795026596181
+      },
+      {
+        "executionId": "bc6ed78c-9cb9-43bf-91a1-13a98f6a5c9b",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795027057105
+      }
+    ]
+  }
+}

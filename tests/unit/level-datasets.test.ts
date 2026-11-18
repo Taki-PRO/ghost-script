@@ -187,6 +187,7 @@ describe('the three levels together', () => {
         order: lists[level],
         records: new Map(Object.entries(datasets[level])),
       })),
+      (c) => JSON.parse(read(`data/raw/hanzi-writer-data/${c}.json`)).strokes,
     );
     expect(read('app/public/data/levels.json')).toBe(serialiseManifest(manifest));
   });

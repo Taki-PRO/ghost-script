@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { maskTarget } from './mask';
 import { cleanupMeaning } from './promptCleanup';
 
 // Meanings are hard-coded from app/public/data/characters.json (source char noted).
@@ -18,8 +19,8 @@ describe('cleanupMeaning (Req 4.2, 4.4)', () => {
 
   it('removes [pin1 yin1] bracket references — 么', () => {
     expect(
-      cleanupMeaning('suffix, used to form interrogative 什麼|什么[shen2 me5], what?, indefinite 這麼|这么[zhe4 me5] thus, etc'),
-    ).toBe('suffix, used to form interrogative 什麼|什么, what?, indefinite 這麼|这么 thus, etc');
+      cleanupMeaning('suffix, used to form interrogative 什么[shen2 me5], what?, indefinite 这么[zhe4 me5] thus, etc'),
+    ).toBe('suffix, used to form interrogative 什么, what?, indefinite 这么 thus, etc');
   });
 
   it('removes a bracket reference inside a kept parenthetical — 你', () => {
@@ -82,5 +83,54 @@ describe('cleanupMeaning (Req 4.2, 4.4)', () => {
     expect(cleanupMeaning(raw)).toBe(first);
     expect(cleanupMeaning(first)).toBe(first);
     expect(raw).toBe('song (CL:首[shou3],支[zhi1])');
+  });
+  describe('traditional|simplified pairs (display rule)', () => {
+    const ME = 'suffix, used to form interrogative 什麼|什么[shen2 me5], what?, indefinite 這麼|这么[zhe4 me5] thus, etc';
+    const HAO = '(after a numeral) number designation (e.g. 237號房間|237号房间[er4 san1 qi1 hao4 fang2 jian1] "Room 237")';
+
+    it('drops the traditional half, then masks the target — 么', () => {
+      const cleaned = cleanupMeaning(ME);
+      expect(cleaned).toBe('suffix, used to form interrogative 什么, what?, indefinite 这么 thus, etc');
+      expect(maskTarget(cleaned, '么')).toBe('suffix, used to form interrogative 什～, what?, indefinite 这～ thus, etc');
+    });
+
+    it('leaves the 号 meaning cleaned as before (digit after the pipe)', () => {
+      expect(cleanupMeaning(HAO)).toBe('(after a numeral) number designation');
+    });
+
+    it('still cleans the (CL:條|条[tiao2]) note — 路, 道', () => {
+      expect(cleanupMeaning('road (CL:條|条[tiao2])')).toBe('road');
+      expect(cleanupMeaning('road; path (CL:條|条[tiao2],股[gu3])')).toBe('road; path');
+    });
+
+    it('drops the half outside a note', () => {
+      expect(cleanupMeaning('road 條|条 here')).toBe('road 条 here');
+    });
+
+    it('leaves a pipe between non-Han characters, at the start or at the end', () => {
+      expect(cleanupMeaning('a|b')).toBe('a|b');
+      expect(cleanupMeaning('|条 x')).toBe('|条 x');
+      expect(cleanupMeaning('x 條|')).toBe('x 條|');
+      expect(cleanupMeaning('x 條|2')).toBe('x 條|2');
+    });
+
+    it('removes several pairs left to right', () => {
+      expect(cleanupMeaning('x 條|条 and 這麼|这么 y')).toBe('x 条 and 这么 y');
+    });
+
+    it('keeps the last run of a chain', () => {
+      expect(cleanupMeaning('x 一二|三四|五六 y')).toBe('x 五六 y');
+    });
+
+    it('is idempotent on each example', () => {
+      for (const t of [ME, HAO, 'road (CL:條|条[tiao2])', 'a|b', '|条 x', 'x 條|', 'x 條|条 and 這麼|这么 y', 'x 一二|三四|五六 y']) {
+        const once = cleanupMeaning(t);
+        expect(cleanupMeaning(once)).toBe(once);
+      }
+    });
+
+    it('leaves a meaning without a pipe unchanged', () => {
+      expect(cleanupMeaning('three')).toBe('three');
+    });
   });
 });

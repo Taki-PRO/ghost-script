@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   BUNDLE_BUDGET_BYTES,
+  firstLoad,
   isLazy,
   lazyFiles,
   summariseBundle,
@@ -92,5 +93,39 @@ describe('summariseBundle', () => {
 
   it('handles an empty list', () => {
     expect(summariseBundle([])).toEqual({ total: 0, ok: true, largest: [] });
+  });
+});
+
+describe('firstLoad', () => {
+  it('adds the level 1 dataset to the counted bundle', () => {
+    const r = firstLoad([f('a.js', 100), f('b.css', 20), f('data/characters.json', 500)]);
+    expect(r).toEqual({ counted: 120, level1: 500, total: 620 });
+  });
+
+  it('does not count the other lazy files in any figure', () => {
+    const r = firstLoad([
+      f('a.js', 10),
+      f('data/characters.json', 50),
+      f('data/characters-level2.json', 900),
+      f('assets/lxgw-wenkai-subset-level3-x.woff2', 400),
+    ]);
+    expect(r).toEqual({ counted: 10, level1: 50, total: 60 });
+  });
+
+  it('counts the legend strokes file (it is not lazy)', () => {
+    expect(isLazy('data/legend-strokes.json')).toBe(false);
+    const r = firstLoad([f('a.js', 10), f('data/legend-strokes.json', 6_350), f('data/characters.json', 7)]);
+    expect(r).toEqual({ counted: 6_360, level1: 7, total: 6_367 });
+  });
+
+  it('gives zero level 1 bytes when the dataset is absent, and zero for no files', () => {
+    expect(firstLoad([f('a.js', 3)])).toEqual({ counted: 3, level1: 0, total: 3 });
+    expect(firstLoad([])).toEqual({ counted: 0, level1: 0, total: 0 });
+  });
+
+  it('keeps the budget on the counted part only', () => {
+    const files = [f('a.js', 250_000), f('data/characters.json', 361_679)];
+    expect(summariseBundle(files).ok).toBe(true);
+    expect(firstLoad(files).total).toBeGreaterThan(BUNDLE_BUDGET_BYTES);
   });
 });

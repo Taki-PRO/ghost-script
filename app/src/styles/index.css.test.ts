@@ -58,7 +58,7 @@ describe('index.css', () => {
     expect(outside).not.toMatch(/(^|[\s;{])transition(-[a-z-]+)?\s*:/);
     for (const name of [
       'ghost-float', 'ghost-smoke', 'ghost-linger', 'ghost-slip', 'ghost-flinch',
-      'seal-stamp', 'ink-reveal', 'tablet-glow', 'wisp-rise', 'mist-drift-a', 'mist-drift-b',
+      'seal-stamp', 'ink-reveal', 'tablet-glow', 'wisp-rise', 'mist-drift-a', 'mist-drift-b', 'grain-fall',
     ]) {
       expect(media.body).toContain(`@keyframes ${name}`);
     }
@@ -87,7 +87,7 @@ describe('index.css', () => {
   });
 
   describe('motion durations', () => {
-    const AMBIENT = ['ghost-float', 'mist-drift-a', 'mist-drift-b', 'tablet-glow', 'wisp-rise'];
+    const AMBIENT = ['ghost-float', 'mist-drift-a', 'mist-drift-b', 'tablet-glow', 'wisp-rise', 'grain-fall'];
     const toMs = (v: string): number => (v.endsWith('ms') ? parseFloat(v) : parseFloat(v) * 1000);
     /** Every animation of the CSS as { name, ms, infinite }. */
     const animations = (): Array<{ name: string; ms: number; infinite: boolean }> => {
@@ -95,7 +95,7 @@ describe('index.css', () => {
       for (const m of css.matchAll(/(?:^|[\s;{])animation\s*:\s*([^;}]+)[;}]/g)) {
         for (const part of m[1].split(',')) {
           const time = part.match(/(?:^|\s)(\d*\.?\d+(?:ms|s))(?=\s|$)/);
-          const name = part.match(/(?:^|\s)((?:ghost|seal|ink|tablet|wisp|mist)-[a-z-]+)/);
+          const name = part.match(/(?:^|\s)((?:ghost|seal|ink|tablet|wisp|mist|grain)-[a-z-]+)/);
           expect(time && name, part).toBeTruthy();
           out.push({ name: name![1], ms: toMs(time![1]), infinite: /\binfinite\b/.test(part) });
         }
@@ -194,6 +194,17 @@ describe('index.css', () => {
     expect(media.body).toMatch(/\.ink-reveal\s*\{[^}]*ink-reveal 600ms/);
     expect(media.body).toMatch(/\.seal-stamp\s*\{[^}]*seal-stamp 300ms/);
     expect(outside).not.toMatch(/\.ink-reveal|\.seal-stamp/);
+  });
+
+  it('keeps the legend ink-in transitions in the motion block and its inked end state static', () => {
+    expect(media.body).toMatch(/\.legend-text\s*\{[^}]*transition:\s*color 200ms/);
+    expect(media.body).toMatch(/\.legend-ink\s*\{[^}]*transition:\s*opacity 200ms/);
+    expect(media.body).toMatch(
+      /\[data-legend-phase='loading'\] \.legend-text,\s*\[data-legend-phase='ink'\] \.legend-text\s*\{[^}]*color:\s*transparent/,
+    );
+    expect(outside).not.toMatch(/\.legend-text/);
+    expect(outside).not.toMatch(/data-legend-phase/);
+    expect(outside).toMatch(/\[data-legend-state='inked'\] \.legend-ink\s*\{[^}]*opacity:\s*0/);
   });
 
   it('plays the Flinch for a nonzero count only while the ghost haunts', () => {

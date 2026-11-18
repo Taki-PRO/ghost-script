@@ -186,7 +186,7 @@ export function WriteMode({ record, dataset, config, onOutcome, reservedPx = 0, 
           type="button"
           onClick={handleGiveUp}
           disabled={loading}
-          className="min-h-[44px] rounded-md border border-muted px-4 py-2 text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost disabled:opacity-50"
+          className="slip min-h-[44px] px-4 py-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost disabled:opacity-50"
         >
           Give up
         </button>

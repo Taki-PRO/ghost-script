@@ -1,15 +1,27 @@
-import { useMemo } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import type { RefObject } from 'react';
 import type { CharacterDataset } from '../data/charDataLoader';
 import type { Level } from '../data/types';
 import { buildGraveyard } from '../engine/graveyard';
 import type { Grave, GraveState } from '../engine/graveyard';
+import { graveyardExplanation, graveyardOrder } from '../engine/graveyardOrder';
 import { learningOrder } from '../engine/learningOrder';
 import { LEVELS } from '../engine/levels';
 import type { ReviewHistory } from '../engine/scheduler';
 import { tabletTiltIndex } from '../engine/tabletTilt';
+import { pickWalkthroughGhost } from '../engine/walkthrough';
 import { theme } from '../styles/theme';
 import { GrassTuft } from './GrassTuft';
-import { FAR_RIDGE_PATH, HILL_REM_PER_UNIT, HILL_TUFTS, tabletTuft } from '../engine/grassPattern';
+import {
+  FAR_RIDGE_PATH,
+  HILL_REM_PER_UNIT,
+  HILL_TUFTS,
+  NEAR_RIDGE_PATH,
+  TABLET_TUFT_SCALE,
+  TUFT_WIDTH,
+  tabletTufts,
+} from '../engine/grassPattern';
+import { columnCount, notYetMetText, visibleGraveCount } from '../engine/graveyardRows';
 
 /** Height of the Hillside svg: three rows of tablets at 4 rem (`h-48`). */
 const HILL_HEIGHT_REM = 12;
@@ -32,6 +44,12 @@ export interface GraveyardProps {
   status: GraveyardStatus;
   onChangeLevel: (level: Level) => void;
   onBack: () => void;
+  /** Restless ghosts over all levels; the review slip shows only while this is at least 1. */
+  restlessCount?: number;
+  /** Starts a Review_Run. */
+  onReviewRestless?: () => void;
+  /** True after a Review_Run could not start (Req 10.28). */
+  reviewError?: boolean;
 }
 
 const focusRing =
@@ -56,6 +74,28 @@ const LEGEND: readonly { state: GraveState; label: string }[] = [
   { state: 'at-rest', label: 'At rest' },
 ];
 
+/**
+ * Grid column count of the wrapper, measured before paint and kept current by a
+ * ResizeObserver (window resize where there is none). `active` says the wrapper is mounted.
+ */
+function useGridColumns(ref: RefObject<HTMLElement | null>, active: boolean): number {
+  const [columns, setColumns] = useState(() => columnCount(0));
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!active || !el) return;
+    const measure = () => setColumns(columnCount(el.clientWidth));
+    measure();
+    if (typeof ResizeObserver !== 'undefined') {
+      const observer = new ResizeObserver(measure);
+      observer.observe(el);
+      return () => observer.disconnect();
+    }
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [ref, active]);
+  return columns;
+}
+
 function graveLabel(grave: Grave, total: number): string {
   if (grave.state === 'unmet') return `Ghost ${grave.position} of ${total}, never met`;
   if (grave.state === 'restless') {
@@ -79,14 +119,32 @@ export function Graveyard({
   status,
   onChangeLevel,
   onBack,
+  restlessCount = 0,
+  onReviewRestless,
+  reviewError = false,
 }: GraveyardProps) {
-  const model = useMemo(
-    () => (dataset ? buildGraveyard(learningOrder(dataset), history, now) : null),
-    [dataset, history, now],
-  );
+  const { model, hasGuided } = useMemo(() => {
+    if (!dataset) return { model: null, hasGuided: false };
+    const order = learningOrder(dataset);
+    return {
+      model: buildGraveyard(graveyardOrder(level, order, dataset), history, now),
+      hasGuided: level === 1 && pickWalkthroughGhost(order, dataset) !== null,
+    };
+  }, [dataset, level, history, now]);
   const total = model ? model.graves.length : 0;
   const noneMet = model !== null && model.counts.unmet === total;
   const loading = status.kind === 'loading';
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const columns = useGridColumns(wrapperRef, model !== null);
+  const shown = useMemo(() => {
+    if (!model) return 0;
+    let lastMetIndex = -1;
+    model.graves.forEach((g, i) => {
+      if (g.state !== 'unmet') lastMetIndex = i;
+    });
+    return visibleGraveCount(model.graves.length, columns, lastMetIndex);
+  }, [model, columns]);
+  const collapsedText = notYetMetText(total - shown);
 
   return (
     <main className="min-h-screen px-4 pb-8 text-ink">
@@ -124,6 +182,20 @@ export function Graveyard({
           })}
         </div>
         <p className="text-sm text-ink">{`Your séances draw new ghosts from level ${chosenLevel}.`}</p>
+        {restlessCount >= 1 && onReviewRestless && (
+          <button
+            type="button"
+            onClick={onReviewRestless}
+            className={`slip min-h-[44px] self-start px-6 py-2 text-base ${focusRing}`}
+          >
+            Review restless ghosts ({restlessCount})
+          </button>
+        )}
+        {reviewError && (
+          <p role="alert" className="text-base text-ink">
+            The review could not start. Check your connection and try again.
+          </p>
+        )}
         {status.kind === 'loading' && (
           <p role="status" className="text-base text-ink">
             {`Loading level ${status.level}…`}
@@ -135,7 +207,7 @@ export function Graveyard({
           </p>
         )}
         <p className="text-base text-ink">
-          {`These graves are the ghosts of level ${level}, in the order you will meet them. A ghost you have not met stays hidden.`}
+          {graveyardExplanation(level, hasGuided)}
         </p>
         {model && (
           <>
@@ -158,6 +230,7 @@ export function Graveyard({
               </p>
             )}
             <div
+              ref={wrapperRef}
               className="relative isolate overflow-hidden rounded-md"
               style={{
                 backgroundImage: `linear-gradient(to bottom, transparent ${HILL_HEIGHT_REM}rem, ${theme.hillNear} ${HILL_HEIGHT_REM}rem)`,
@@ -172,7 +245,7 @@ export function Graveyard({
                 data-testid="hillside"
               >
                 <path d={FAR_RIDGE_PATH} fill={theme.hillFar} />
-                <path d="M0 36 C20 28 36 34 54 28 C74 22 88 32 100 26 L100 48 L0 48 Z" fill={theme.hillNear} />
+                <path d={NEAR_RIDGE_PATH} fill={theme.hillNear} />
               </svg>
               {HILL_TUFTS.map((t, slot) => (
                 <span
@@ -194,20 +267,26 @@ export function Graveyard({
                 className="relative grid gap-2 p-3"
                 style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(48px, 1fr))' }}
               >
-                {model.graves.map((grave) => (
+                {model.graves.slice(0, shown).map((grave) => (
                   <li
                     key={grave.position}
                     aria-label={graveLabel(grave, total)}
                     className={`${SHAPE[grave.state]} ${OUTLINE[grave.state]} tablet-tilt-${tabletTiltIndex(grave.position)} relative flex min-h-[56px] flex-col items-center justify-center text-ink`}
                   >
-                    <span
-                      aria-hidden="true"
-                      data-grass="tablet"
-                      className="pointer-events-none absolute bottom-0 -z-10"
-                      style={{ left: '50%', marginLeft: `${tabletTuft(grave.position).dx - 12}px` }}
-                    >
-                      <GrassTuft shape={tabletTuft(grave.position).shape} />
-                    </span>
+                    {tabletTufts(grave.position).map((tuft, k) => (
+                      <span
+                        key={k}
+                        aria-hidden="true"
+                        data-grass="tablet"
+                        className="pointer-events-none absolute bottom-0 -z-10"
+                        style={{
+                          left: '50%',
+                          marginLeft: `${tuft.dx - (TUFT_WIDTH * TABLET_TUFT_SCALE) / 2}px`,
+                        }}
+                      >
+                        <GrassTuft shape={tuft.shape} scale={TABLET_TUFT_SCALE} />
+                      </span>
+                    ))}
                     {grave.state !== 'unmet' && (
                       <span lang="zh" className="text-xl leading-none">
                         {grave.char}
@@ -223,6 +302,7 @@ export function Graveyard({
                 ))}
               </ul>
             </div>
+            {collapsedText && <p className="text-sm text-ink">{collapsedText}</p>}
           </>
         )}
       </div>

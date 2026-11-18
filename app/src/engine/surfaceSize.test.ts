@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { WALKTHROUGH_LINE_PX, summonPaperSize, writeSurfaceSize } from './surfaceSize';
+import {
+  CROSS_LEVEL_LINE_PX,
+  CROSS_LEVEL_LINE_WRAP_PX,
+  WALKTHROUGH_LINE_PX,
+  crossLevelReserve,
+  summonPaperSize,
+  writeSurfaceSize,
+} from './surfaceSize';
 
 const VIEWPORTS: Array<[number, number]> = [
   [1024, 768],
@@ -10,15 +17,23 @@ const VIEWPORTS: Array<[number, number]> = [
 
 describe('summonPaperSize', () => {
   it('gives the budgeted size at the four viewports', () => {
-    expect(VIEWPORTS.map(([w, h]) => summonPaperSize(w, h))).toEqual([160, 150, 96, 160]);
+    expect(VIEWPORTS.map(([w, h]) => summonPaperSize(w, h))).toEqual([284, 328, 156, 416]);
+  });
+
+  it('gives the approved values with and without a reserved line', () => {
+    expect(summonPaperSize(1024, 768, 0)).toBe(284);
+    expect(summonPaperSize(1024, 768, 24)).toBe(260);
+    expect(summonPaperSize(375, 812)).toBe(328);
+    expect(summonPaperSize(320, 640)).toBe(156);
+    expect(summonPaperSize(320, 500)).toBe(96);
   });
 
   it('keeps the 96 floor on a short screen', () => {
     expect(summonPaperSize(1024, 300)).toBe(96);
   });
 
-  it('caps at 160', () => {
-    expect(summonPaperSize(4000, 4000)).toBe(160);
+  it('caps at 560', () => {
+    expect(summonPaperSize(4000, 4000)).toBe(560);
   });
 
   it('returns integers', () => {
@@ -52,13 +67,13 @@ describe('reserved height', () => {
   });
 
   it('keeps today\'s values when reservedPx is 0', () => {
-    expect(VIEWPORTS.map(([w, h]) => summonPaperSize(w, h, 0))).toEqual([160, 150, 96, 160]);
+    expect(VIEWPORTS.map(([w, h]) => summonPaperSize(w, h, 0))).toEqual([284, 328, 156, 416]);
     expect(VIEWPORTS.map(([w, h]) => writeSurfaceSize(w, h, 0))).toEqual([368, 300, 240, 420]);
   });
 
   it('takes the reserved height from the Summon paper', () => {
-    expect(summonPaperSize(1024, 768, WALKTHROUGH_LINE_PX)).toBe(144);
-    expect(summonPaperSize(375, 812, WALKTHROUGH_LINE_PX)).toBe(150);
+    expect(summonPaperSize(1024, 768, WALKTHROUGH_LINE_PX)).toBe(260);
+    expect(summonPaperSize(375, 812, WALKTHROUGH_LINE_PX)).toBe(304);
   });
 
   it('takes the reserved height from the Write surface', () => {
@@ -69,5 +84,40 @@ describe('reserved height', () => {
   it('keeps the floors with a reserved height', () => {
     expect(summonPaperSize(1024, 300, WALKTHROUGH_LINE_PX)).toBe(96);
     expect(writeSurfaceSize(1024, 300, WALKTHROUGH_LINE_PX)).toBe(200);
+  });
+});
+
+describe('crossLevelReserve', () => {
+  const short = 'x'.repeat(40);
+  const long = 'x'.repeat(41);
+
+  it('exports the two line heights', () => {
+    expect(CROSS_LEVEL_LINE_PX).toBe(24);
+    expect(CROSS_LEVEL_LINE_WRAP_PX).toBe(44);
+  });
+
+  it('reserves one line for a short text at any width', () => {
+    expect(crossLevelReserve(short, 320)).toBe(24);
+    expect(crossLevelReserve('', 320)).toBe(24);
+  });
+
+  it('reserves one line for a long text in a container of 600 px or more', () => {
+    expect(crossLevelReserve(long, 600)).toBe(24);
+    expect(crossLevelReserve(long, 1024)).toBe(24);
+  });
+
+  it('reserves two lines for a long text in a container under 600 px', () => {
+    expect(crossLevelReserve(long, 599)).toBe(44);
+    expect(crossLevelReserve(long, 375)).toBe(44);
+  });
+
+  it('gives the design paper sizes with the reserve inside reservedPx', () => {
+    expect(summonPaperSize(1024, 768, crossLevelReserve(long, 1024))).toBe(260);
+    expect(summonPaperSize(375, 812, crossLevelReserve(long, 375))).toBe(284);
+    expect(summonPaperSize(320, 640, crossLevelReserve(long, 320))).toBe(112);
+  });
+
+  it('keeps the 96 floor with a two-line reserve on a short screen', () => {
+    expect(summonPaperSize(375, 400, CROSS_LEVEL_LINE_WRAP_PX)).toBe(96);
   });
 });

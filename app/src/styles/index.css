@@ -477,10 +477,31 @@ body::after {
   }
 }
 
+/* The legend line's end state: the ink overlay is gone and the WenKai text shows. */
+[data-legend-state='inked'] .legend-ink {
+  opacity: 0;
+}
+
+/* Grain_Fall: a few grains of aged paper fall behind the legend line. Static layout only;
+   the fall itself is in the motion block. Reduced motion renders no grain at all. */
+.legend-grain {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.grain {
+  position: absolute;
+  top: -8px;
+  border-radius: 9999px;
+}
+
 /* All motion lives here. Reduced-motion users get the static end states above.
    Causal motions run 200 to 600 ms. Ambient motions have no cause and are the
    only slow ones (art-direction.md names them): mist-drift-a, mist-drift-b,
-   ghost-float, tablet-glow and wisp-rise. The rite timings (SUMMON_HOLD_MS,
+   ghost-float, tablet-glow, wisp-rise and grain-fall. The legend line's ink-in is
+   driven by script (hanzi-writer) and by the transitions below. The rite timings (SUMMON_HOLD_MS,
    SUMMON_FADE_MS, SUMMON_INK_SPEED) live in SummonStep.tsx and are unchanged. */
 @media (prefers-reduced-motion: no-preference) {
   .slip,
@@ -561,6 +582,17 @@ body::after {
   .seal-stamp {
     animation: seal-stamp 300ms ease-out both;
   }
+  /* The legend line's text and ink overlay swap with a 200 ms fade. */
+  .legend-text {
+    transition: color 200ms ease-out;
+  }
+  .legend-ink {
+    transition: opacity 200ms ease-out;
+  }
+  [data-legend-phase='loading'] .legend-text,
+  [data-legend-phase='ink'] .legend-text {
+    color: transparent;
+  }
   /* The legend line is written left to right by a soft mask wipe. */
   .ink-reveal {
     mask-image: linear-gradient(90deg, #000 0, #000 36%, transparent 44%, transparent 100%);
@@ -568,6 +600,13 @@ body::after {
     mask-repeat: no-repeat;
     mask-position: 0% 0;
     animation: ink-reveal 600ms ease-out both;
+  }
+  .grain-a { animation: grain-fall 14s linear infinite; }
+  .grain-b { animation: grain-fall 17s linear infinite; }
+  .grain-c { animation: grain-fall 20s linear infinite; }
+  @keyframes grain-fall {
+    from { transform: translateY(0); }
+    to { transform: translateY(110vh); }
   }
   .tablet-rest::before {
     animation: tablet-glow 3s ease-in-out infinite alternate;

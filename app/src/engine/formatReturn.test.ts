@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { CharacterRecord } from '../data/types';
 import { buildReturnRows, formatReturn } from './formatReturn';
-import type { ReviewEntry } from './scheduler';
+import type { Outcome, ReviewEntry } from './scheduler';
 
 // Every timestamp is built from local calendar fields, so the tests pass in any time zone.
 const at = (y: number, mo: number, d: number, h = 0, mi = 0, s = 0, ms = 0): number =>
@@ -101,7 +101,13 @@ describe('buildReturnRows', () => {
     const rows = buildReturnRows([a, b, c], entries);
     expect(rows.map((r) => r.character)).toEqual(['一', '二', '三']);
     expect(rows.map((r) => r.nextDue)).toEqual([1, 2, 3]);
-    expect(rows[0]).toEqual({ character: '一', pinyin: 'yī', meaning: 'one', nextDue: 1 });
+    expect(rows[0]).toEqual({
+      character: '一',
+      pinyin: 'yī',
+      meaning: 'one',
+      nextDue: 1,
+      outcome: 'clean',
+    });
   });
 
   it('skips ghosts without an entry', () => {
@@ -118,6 +124,34 @@ describe('buildReturnRows', () => {
     const rows = buildReturnRows([b, d], entries);
     expect(rows[0]?.meaning).toBe('two');
     expect(rows[1]?.meaning).toBe('four; the number 四');
+  });
+
+  it('4.8: defaults the outcome to entry.lastOutcome', () => {
+    const entries = new Map<string, ReviewEntry>([
+      ['一', { step: 0, lastOutcome: 'gave-up', nextDue: 1 }],
+      ['二', { step: 1, lastOutcome: 'struggled', nextDue: 2 }],
+      ['三', entry(3)],
+    ]);
+    expect(buildReturnRows([a, b, c], entries).map((r) => r.outcome)).toEqual([
+      'gave-up',
+      'struggled',
+      'clean',
+    ]);
+  });
+
+  it('4.8: a given outcomes map wins; ghosts missing from it fall back to lastOutcome', () => {
+    const entries = new Map<string, ReviewEntry>([
+      ['一', { step: 0, lastOutcome: 'gave-up', nextDue: 1 }],
+      ['二', { step: 1, lastOutcome: 'struggled', nextDue: 2 }],
+      ['三', entry(3)],
+    ]);
+    const outcomes = new Map<string, Outcome>([
+      ['一', 'clean'],
+      ['三', 'struggled'],
+    ]);
+    const rows = buildReturnRows([a, b, c], entries, outcomes);
+    expect(rows.map((r) => r.outcome)).toEqual(['clean', 'struggled', 'struggled']);
+    expect(rows.map((r) => r.nextDue)).toEqual([1, 2, 3]);
   });
 
   it('returns no rows for no ghosts or an empty map', () => {

@@ -131,6 +131,18 @@ const LEVEL_FILE_NAMES: Readonly<Record<Level, string>> = {
 
 const MANIFEST_FILE_NAME = 'levels.json';
 
+/** One code point and a non-empty array of non-empty path strings. */
+function isLevelSample(v: unknown): boolean {
+  if (!isPlainObject(v)) return false;
+  return (
+    typeof v.character === 'string' &&
+    [...v.character].length === 1 &&
+    Array.isArray(v.strokes) &&
+    v.strokes.length > 0 &&
+    v.strokes.every(isNonEmptyString)
+  );
+}
+
 function isLevelInfo(v: unknown, level: Level): v is LevelInfo {
   if (!isPlainObject(v)) return false;
   return (
@@ -144,7 +156,8 @@ function isLevelInfo(v: unknown, level: Level): v is LevelInfo {
     v.averageStrokes > 0 &&
     Array.isArray(v.exampleMeanings) &&
     v.exampleMeanings.length === 3 &&
-    v.exampleMeanings.every(isNonEmptyString)
+    v.exampleMeanings.every(isNonEmptyString) &&
+    (v.sample === undefined || isLevelSample(v.sample))
   );
 }
 

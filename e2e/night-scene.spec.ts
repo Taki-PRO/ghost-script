@@ -7,7 +7,7 @@ import {
   seed,
   seedGraveyard,
   seedState,
-  waitForInkReveal,
+  waitForLegendReveal,
   type Rgb,
 } from './helpers';
 
@@ -33,7 +33,8 @@ const SCREENS: ReadonlyArray<{ name: string; open: Opener }> = [
   {
     name: 'Graveyard',
     open: async (page) => {
-      await seedGraveyard(page);
+      // A restless ghost at index 120 of the learning order keeps the shown rows as tall as the test needs.
+      await seedGraveyard(page, { farMetIndex: 120 });
     },
   },
   {
@@ -145,7 +146,7 @@ for (const vp of VIEWPORTS) {
       await seed(page, seedState({ introSeen: false }));
       await page.goto(START);
       await expect(page.getByRole('button', { name: 'Begin the Séance' })).toBeVisible();
-      await waitForInkReveal(page);
+      await waitForLegendReveal(page);
       await page.evaluate(() => document.fonts.ready);
 
       const disc = await moonDisc(page);

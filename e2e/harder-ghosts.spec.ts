@@ -1,7 +1,13 @@
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { expect, test, type Page } from '@playwright/test';
+import { isPlayableInCangjie } from '../app/src/engine/cangjieRules';
+import { graveyardOrder } from '../app/src/engine/graveyardOrder';
+import { learningOrder } from '../app/src/engine/learningOrder';
 import {
   STORAGE_KEY,
   START,
+  expectInside,
   expectNoVerticalScroll,
   findOverflow,
   levelDatasetMap,
@@ -88,6 +94,39 @@ for (const vp of VIEWPORTS) {
       expect(CHINESE.test(html), 'a Chinese character is on the Level_Screen').toBe(false);
     });
 
+    test('draws three labelled samples from levels.json, none among the first 30 of its level', async ({ page }) => {
+      const fontRequests: string[] = [];
+      page.on('request', (req) => {
+        if (/lxgw-wenkai-subset-level[23]/.test(req.url())) fontRequests.push(req.url());
+      });
+      await openLevelScreenFirstRun(page);
+      const manifest = JSON.parse(
+        readFileSync(fileURLToPath(new URL('../app/public/data/levels.json', import.meta.url)), 'utf8'),
+      ) as { levels: { level: 1 | 2 | 3; sample: { character: string; strokes: string[] } }[] };
+      const imgs = page.locator('main [role="img"]');
+      await expect(imgs).toHaveCount(3);
+      for (const [i, info] of manifest.levels.entries()) {
+        const img = imgs.nth(i);
+        await expect(img).toHaveAttribute('aria-label', `sample character of level ${info.level}`);
+        await expectInside(page, `sample ${info.level}`, img);
+        const paths = await img.locator('path').evaluateAll((els) => els.map((e) => e.getAttribute('d')));
+        expect(paths).toEqual(info.sample.strokes);
+        expect(levelOrder(info.level).slice(0, 30), `level ${info.level} sample is in the first 30`).not.toContain(
+          info.sample.character,
+        );
+        const box = await img.boundingBox();
+        expect(box!.width).toBeGreaterThanOrEqual(40);
+      }
+      for (const label of ['easy', 'harder', 'hardest']) {
+        await expectInside(page, label, page.getByText(label, { exact: true }));
+      }
+      const html = await page.evaluate(() => document.body.outerHTML);
+      expect(CHINESE.test(html), 'a Chinese character is on the Level_Screen').toBe(false);
+      expect(fontRequests, 'a level 2 or 3 font subset was fetched on the Level_Screen').toEqual([]);
+      await expectNoVerticalScroll(page);
+      expect(await findOverflow(page, vp.width)).toEqual([]);
+    });
+
     test('opened from the menu it also fits and shows no Chinese character', async ({ page }) => {
       await seed(page, seedState());
       await page.goto(START);
@@ -168,7 +207,21 @@ test.describe('harder ghosts: Graveyard level switch', () => {
       expect(resting).toBe(atRest);
       expect(unmet + restless + resting, `level ${level} counts do not add up`).toBe(records.size);
       expect(unmet).toBe(records.size - met.length);
-      await expect(page.getByRole('list', { name: 'Graves' }).getByRole('listitem')).toHaveCount(records.size);
+      // Only the shown rows are rendered: through the row of the last met grave, plus one row
+      // (one blank row when none is met). The rest collapse into a paragraph.
+      const cols = await page
+        .getByRole('list', { name: 'Graves' })
+        .evaluate((ul) => getComputedStyle(ul).gridTemplateColumns.split(' ').length);
+      const displayed = graveyardOrder(level, learningOrder(records), records);
+      const lastMet = displayed.reduce((last, c, i) => (met.includes(c) ? i : last), -1);
+      const shown = Math.min(
+        records.size,
+        lastMet < 0 ? cols : (Math.floor(lastMet / cols) + 2) * cols,
+      );
+      await expect(page.getByRole('list', { name: 'Graves' }).getByRole('listitem')).toHaveCount(shown);
+      if (shown < records.size) {
+        await expect(page.getByText(`${records.size - shown} ghosts not yet met`, { exact: true })).toBeVisible();
+      }
       // Never-met graves carry only their position; no character of the level that is unmet is drawn.
       const gravesText = await page.getByRole('list', { name: 'Graves' }).evaluate((el) => el.textContent ?? '');
       const labels = await page
@@ -176,7 +229,7 @@ test.describe('harder ghosts: Graveyard level switch', () => {
         .getByRole('listitem')
         .evaluateAll((els) => els.map((e) => e.getAttribute('aria-label') ?? ''));
       const unmetLabels = labels.filter((l) => /never met$/.test(l));
-      expect(unmetLabels.length).toBe(unmet);
+      expect(unmetLabels.length).toBe(shown - met.length);
       for (const l of unmetLabels) {
         expect(l).toMatch(new RegExp(`^Ghost \\d+ of ${records.size}, never met$`));
       }
@@ -224,3 +277,86 @@ test.describe('harder ghosts: version 2 save', () => {
     expect(save.history).toEqual(history);
   });
 });
+
+// A line when due ghosts from another level come first (proof-pass Requirement 5,
+// criteria 5, 6, 12 to 15 and 17). Three due level 1 ghosts, level 2 chosen.
+const CROSS_LINE = '3 ghosts from level 1 return first.';
+
+for (const vp of VIEWPORTS) {
+  test.describe(`harder ghosts: cross-level line at ${vp.width} x ${vp.height}`, () => {
+    test.use({ viewport: vp });
+
+    test('shows above the first ghost, Summon and Write fit, gone after "Next ghost"', async ({ page }) => {
+      const level1 = levelDatasetMap(1);
+      const due = levelOrder(1)
+        .filter((c) => c !== walkthroughRecord().character && isPlayableInCangjie(level1.get(c)?.cangjie ?? null))
+        .slice(0, 3);
+      expect(due).toHaveLength(3);
+      const history = Object.fromEntries(due.map((c) => [c, { step: 0, lastOutcome: 'struggled', nextDue: 0 }]));
+      await seed(page, seedState({ history, level: 2 }));
+      await page.goto(START);
+      await page.getByRole('button', { name: 'Begin a Nightly Séance' }).click();
+      const summon = page.getByRole('region', { name: 'Summon step' });
+      await expect(summon).toBeVisible({ timeout: 15_000 });
+      await page.evaluate(() => document.fonts.ready);
+      await expect(page.getByText('Ghost 1 of 10')).toBeVisible();
+
+      const line = page.getByTestId('cross-level-line');
+      await expect(line).toHaveText(CROSS_LINE);
+      await expect(page.getByRole('status').filter({ hasText: CROSS_LINE })).toHaveCount(0);
+      const facts = await line.evaluate((el) => {
+        const clue = document.querySelector('[aria-label="Ghost\'s clue"]') as HTMLElement | null;
+        const cs = getComputedStyle(el);
+        return {
+          role: el.getAttribute('role'),
+          className: el.className,
+          fontSize: Number.parseFloat(cs.fontSize),
+          lineBottom: el.getBoundingClientRect().bottom,
+          clueTop: clue ? clue.getBoundingClientRect().top : Number.NaN,
+        };
+      });
+      expect(facts.role).toBeNull();
+      expect(facts.className).not.toMatch(/slip/);
+      expect(facts.fontSize).toBeGreaterThanOrEqual(12);
+      expect(facts.lineBottom, 'the line is not above the clue').toBeLessThanOrEqual(facts.clueTop + 0.5);
+      await expect(page.locator('.slip-primary')).toHaveCount(0);
+
+      // Summon fits with the line.
+      await expectInside(page, 'cross-level line', line);
+      await expectInside(page, 'Leave séance', page.getByRole('button', { name: 'Leave séance' }));
+      await expectInside(page, "Ghost's clue", page.getByRole('region', { name: "Ghost's clue" }));
+      await expectInside(page, 'ink-surface', page.getByTestId('ink-surface'));
+      const keys = summon.locator('[data-row="2"] button');
+      const count = await keys.count();
+      expect(count, 'no buttons in [data-row="2"]').toBeGreaterThan(0);
+      for (let i = 0; i < count; i++) await expectInside(page, `row 2 key ${i}`, keys.nth(i));
+      await expectInside(page, 'Summon Give up', summon.getByRole('button', { name: 'Give up' }));
+      await expectNoVerticalScroll(page);
+      expect(await findOverflow(page, vp.width)).toEqual([]);
+
+      // Write fits with the line.
+      await summon.getByRole('button', { name: 'Give up' }).click();
+      const write = page.getByRole('region', { name: 'Write mode' });
+      await expect(write).toBeVisible({ timeout: 10_000 });
+      await expect(line).toHaveText(CROSS_LINE);
+      await expectInside(page, 'cross-level line', line);
+      await expectInside(page, 'write ink-surface', page.getByTestId('ink-surface'));
+      const giveUp = write.getByRole('button', { name: 'Give up' });
+      await expectInside(page, 'Write Give up', giveUp);
+      await expectNoVerticalScroll(page);
+      expect(await findOverflow(page, vp.width)).toEqual([]);
+
+      // Outcome: still shown, one primary; then gone after "Next ghost".
+      await expect(giveUp).toBeEnabled({ timeout: 10_000 });
+      await giveUp.click();
+      const next = page.getByRole('button', { name: 'Next ghost' });
+      await expect(next).toBeVisible();
+      await expect(line).toHaveText(CROSS_LINE);
+      await expect(page.locator('.slip-primary')).toHaveCount(1);
+      await next.click();
+      await expect(page.getByText('Ghost 2 of 10')).toBeVisible();
+      await expect(line).toHaveCount(0);
+      await expect(page.getByText(CROSS_LINE)).toHaveCount(0);
+    });
+  });
+}

@@ -11,6 +11,24 @@ import { START, datasetMap, findOverflow, luminance, luminanceRatio, pixelsAt, r
 const FAR_FUTURE = 32_503_680_000_000;
 const WIDTHS = [320, 375, 1024, 1440] as const;
 
+/** Number of tracks the browser lays out for the Graves grid. */
+async function gridColumns(page: Page): Promise<number> {
+  return page
+    .getByRole('list', { name: 'Graves' })
+    .evaluate((ul) => getComputedStyle(ul).gridTemplateColumns.split(' ').length);
+}
+
+async function openGraveyardWith(
+  page: Page,
+  history: Record<string, { step: number; lastOutcome: string; nextDue: number }>,
+): Promise<void> {
+  await seed(page, seedState({ history }));
+  await page.goto(START);
+  await page.getByRole('button', { name: 'Graveyard' }).click();
+  await expect(page.getByRole('heading', { level: 1, name: 'Graveyard' })).toBeVisible();
+  await page.evaluate(() => document.fonts.ready);
+}
+
 async function openGraveyard(page: Page): Promise<{ at: string; restless: string; gaveUp: string; total: number }> {
   const keys = learningOrder(datasetMap());
   const [a, b, c] = keys;
@@ -86,7 +104,9 @@ test.describe('graveyard content', () => {
   test('never-met tablets are blank with no glyph and no border', async ({ page }) => {
     const { total } = await openGraveyard(page);
     const unmet = page.getByRole('listitem', { name: /, never met$/ });
-    await expect(unmet).toHaveCount(total - 3);
+    // Only the shown graves are rendered: two rows, as the last met grave (grave 4) is in the first.
+    const shown = 2 * (await gridColumns(page));
+    await expect(unmet).toHaveCount(shown - 3);
     const info = await unmet.evaluateAll((els) =>
       els.map((el) => ({
         text: (el.textContent ?? '').trim(),
@@ -101,7 +121,9 @@ test.describe('graveyard content', () => {
       expect(t.lang).toBe(false);
     }
     const names = await unmet.evaluateAll((els) => els.map((el) => el.getAttribute('aria-label')));
-    expect(names[0]).toBe(`Ghost 4 of ${total}, never met`);
+    // Grave 1 is the unmet Guided_Ghost (graveyardOrder); the three seeded ghosts are graves 2 to 4.
+    expect(names[0]).toBe(`Ghost 1 of ${total}, never met`);
+    expect(names[1]).toBe(`Ghost 5 of ${total}, never met`);
   });
 
   test('markers, counts and accessible names hold', async ({ page }) => {
@@ -299,12 +321,12 @@ for (const vp of [
         });
         const tabletRows = rows.filter((r) => r.kind === 'tablet');
         const hillRows = rows.filter((r) => r.kind === 'hill');
-        expect(hillRows.length, 'hill tufts').toBe(12);
+        expect(hillRows.length, 'hill tufts').toBe(24);
         expect(tabletRows.length, 'tablet tufts').toBeGreaterThan(0);
         const median = (xs: number[]): number => [...xs].sort((p, q) => p - q)[Math.floor(xs.length / 2)]!;
         const summary = (rs: typeof rows): string =>
           `pixels min ${Math.min(...rs.map((r) => r.changed))} median ${median(rs.map((r) => r.changed))}; best ratio min ${Math.min(...rs.map((r) => r.best)).toFixed(3)} median ${median(rs.map((r) => r.best)).toFixed(3)}`;
-        const line = `GRASS ${vp.width}x${vp.height} tablet(${tabletRows.length}): ${summary(tabletRows)} | hill(12): ${summary(hillRows)} | hill per slot: ${hillRows.map((r) => `${r.position}:${r.changed}/${r.best.toFixed(2)}`).join(' ')}`;
+        const line = `GRASS ${vp.width}x${vp.height} tablet(${tabletRows.length}): ${summary(tabletRows)} | hill(24): ${summary(hillRows)} | hill per slot: ${hillRows.map((r) => `${r.position}:${r.changed}/${r.best.toFixed(2)}`).join(' ')}`;
         console.log(line);
         const weakTablets = tabletRows.filter((r) => r.changed < 8);
         expect(
@@ -316,13 +338,102 @@ for (const vp of [
         const passingHill = hillRows.filter((r) => r.changed >= 8);
         expect(
           passingHill.length,
-          `${vp.width} x ${vp.height}: only ${passingHill.length} of 12 hill tufts reach 8 pixels at 1.3:1: ${hillRows
+          `${vp.width} x ${vp.height}: only ${passingHill.length} of 24 hill tufts reach 8 pixels at 1.3:1: ${hillRows
             .map((r) => `slot ${r.position} (${r.changed} px, best ${r.best.toFixed(3)})`)
             .join(', ')}`,
         ).toBeGreaterThanOrEqual(6);
       } finally {
         await context.close();
       }
+    });
+  });
+}
+
+// Shorter Graveyard (proof-pass Requirement 12.17): the rows after the last Met_Ghost's row plus
+// one collapse into a paragraph; with no Met_Ghost one blank row shows; Met_Ghosts across
+// several rows show every row up to the one after the last.
+for (const vp of [
+  { width: 1024, height: 768 },
+  { width: 375, height: 812 },
+] as const) {
+  test.describe(`graveyard rows at ${vp.width} x ${vp.height}`, () => {
+    test.use({ viewport: vp });
+
+    const total = (): number => learningOrder(datasetMap()).length;
+    const notMet = (n: number): string => (n === 1 ? '1 ghost not yet met' : `${n} ghosts not yet met`);
+
+    test('collapsed paragraph after the list, with no collapsed grave rendered', async ({ page }) => {
+      await openGraveyard(page);
+      const cols = await gridColumns(page);
+      const shown = 2 * cols; // grave 4 is the last met one, in row 1; one row more
+      const items = page.getByRole('list', { name: 'Graves' }).getByRole('listitem');
+      await expect(items).toHaveCount(shown);
+      const paragraph = page.getByText(notMet(total() - shown), { exact: true });
+      await expect(paragraph).toBeVisible();
+      const place = await page.evaluate(() => {
+        const ul = document.querySelector('[aria-label="Graves"]');
+        const p = Array.from(document.querySelectorAll('p')).find((e) => /not yet met$/.test(e.textContent ?? ''));
+        if (!ul || !p) throw new Error('grid or paragraph missing');
+        return {
+          inside: ul.contains(p),
+          after: Boolean(ul.compareDocumentPosition(p) & Node.DOCUMENT_POSITION_FOLLOWING),
+          below: p.getBoundingClientRect().top >= ul.getBoundingClientRect().bottom - 0.5,
+          glyphs: ul.querySelectorAll('[lang="zh"]').length,
+        };
+      });
+      expect(place.inside, 'the paragraph is inside the list').toBe(false);
+      expect(place.after, 'the paragraph is not after the list').toBe(true);
+      expect(place.below, 'the paragraph is not below the list').toBe(true);
+      expect(place.glyphs, 'only the three met ghosts draw a glyph').toBe(3);
+      // The legend still counts every grave.
+      await expect(page.getByRole('list', { name: 'Legend' })).toContainText(`Never met: ${total() - 3}`);
+      await expect(page.getByRole('listitem', { name: `Ghost ${shown} of ${total()}, never met` })).toHaveCount(1);
+      await expect(page.getByRole('listitem', { name: `Ghost ${shown + 1} of ${total()}, never met` })).toHaveCount(0);
+    });
+
+    test('with no Met_Ghost one blank row shows', async ({ page }) => {
+      await openGraveyardWith(page, {});
+      const cols = await gridColumns(page);
+      const items = page.getByRole('list', { name: 'Graves' }).getByRole('listitem');
+      await expect(items).toHaveCount(cols);
+      const info = await items.evaluateAll((els) => {
+        const tops = new Set(els.map((el) => Math.round((el as HTMLElement).offsetTop)));
+        return {
+          rows: tops.size,
+          names: els.map((el) => el.getAttribute('aria-label') ?? ''),
+          glyphs: els.filter((el) => el.querySelector('[lang="zh"]') !== null).length,
+        };
+      });
+      expect(info.rows, 'one row').toBe(1);
+      expect(info.glyphs, 'no glyph').toBe(0);
+      expect(info.names.every((n) => /, never met$/.test(n))).toBe(true);
+      await expect(page.getByText(notMet(total() - cols), { exact: true })).toBeVisible();
+      await expect(page.getByText('No ghost has been met yet.', { exact: false })).toBeVisible();
+    });
+
+    test('Met_Ghosts across several rows show every row up to one past the last', async ({ page }) => {
+      const order = learningOrder(datasetMap());
+      // Display positions (0-based): the guided ghost is first on level 1, so a met index of
+      // 40 or more in the learning order is at display index 40 or more as well.
+      const met = [order[1]!, order[20]!, order[40]!];
+      await openGraveyardWith(
+        page,
+        Object.fromEntries(met.map((c) => [c, { step: 0, lastOutcome: 'struggled', nextDue: 0 }])),
+      );
+      const cols = await gridColumns(page);
+      const items = page.getByRole('list', { name: 'Graves' }).getByRole('listitem');
+      const lastMetDisplayIndex = await items.evaluateAll((els) =>
+        els.reduce((last, el, i) => (el.querySelector('[lang="zh"]') !== null ? i : last), -1),
+      );
+      expect(lastMetDisplayIndex, 'the last Met_Ghost is at index 40').toBe(40);
+      const shown = (Math.floor(40 / cols) + 2) * cols;
+      await expect(items).toHaveCount(shown);
+      const rows = await items.evaluateAll((els) => new Set(els.map((el) => Math.round((el as HTMLElement).offsetTop))).size);
+      expect(rows, 'several rows').toBeGreaterThan(2);
+      expect(rows).toBe(Math.floor(40 / cols) + 2);
+      const glyphs = await items.evaluateAll((els) => els.filter((el) => el.querySelector('[lang="zh"]') !== null).length);
+      expect(glyphs).toBe(3);
+      await expect(page.getByText(notMet(total() - shown), { exact: true })).toBeVisible();
     });
   });
 }

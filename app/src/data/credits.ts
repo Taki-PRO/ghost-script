@@ -48,6 +48,55 @@ export const DATA_SOURCES: readonly DataSourceCredit[] = [
   },
 ];
 
+export interface DataFileCredit {
+  readonly path: string;
+  readonly holds: string;
+  readonly sources: string;
+}
+
+const LEVEL_FILE_SOURCES =
+  'hanzi-writer-data (Arphic Public License); Make Me a Hanzi (dictionary.txt) (GNU LGPL v3.0-or-later); CC-CEDICT (CC BY-SA 4.0); Unihan (Unicode License V3 (SPDX Unicode-3.0)); Character list — HSK 3.0 writing levels 1 to 3 (MIT)';
+
+/**
+ * The data files the app ships and what each holds, with the sources and licences of its fields.
+ * Names and licences are copied from DATA_SOURCES; no new licence claim. The rows of the README
+ * "Data files shipped" table, same wording (Markdown backticks removed).
+ */
+export const DATA_FILES: readonly DataFileCredit[] = [
+  {
+    path: 'characters.json',
+    holds: 'the 300 level 1 records: pinyin, meanings, strokes, decompositions, Cangjie codes',
+    sources: LEVEL_FILE_SOURCES,
+  },
+  {
+    path: 'characters-level2.json',
+    holds: 'the 400 level 2 records: pinyin, meanings, strokes, decompositions, Cangjie codes',
+    sources: LEVEL_FILE_SOURCES,
+  },
+  {
+    path: 'characters-level3.json',
+    holds: 'the 500 level 3 records: pinyin, meanings, strokes, decompositions, Cangjie codes',
+    sources: LEVEL_FILE_SOURCES,
+  },
+  {
+    path: 'levels.json',
+    holds:
+      'per level: record count, average strokes, three English example meanings, one sample character with its stroke outlines',
+    sources:
+      'derived from the level files (CC-CEDICT (CC BY-SA 4.0); Character list — HSK 3.0 writing levels 1 to 3 (MIT)) and the stroke outlines of three characters from hanzi-writer-data (Arphic Public License), with the terms of those sources',
+  },
+  {
+    path: 'legend-strokes.json',
+    holds: "the stroke outlines of the six characters of the intro's legend line",
+    sources: 'hanzi-writer-data (Arphic Public License)',
+  },
+  {
+    path: 'oracle/power/data/oracle-data.json',
+    holds: 'a copy of the three level files with the Cangjie code and decomposition fields, for the Kiro Power',
+    sources: 'Unihan (Unicode License V3 (SPDX Unicode-3.0)); Make Me a Hanzi (dictionary.txt) (GNU LGPL v3.0-or-later)',
+  },
+];
+
 /** Combined-work statement, from the README "Licensing summary". */
 export const COMBINED_WORK_NOTE =
   'characters.json is a combined work. It incorporates CC BY-SA 4.0 data (CC-CEDICT), LGPL-3.0-or-later data (Make Me a Hanzi dictionary.txt), Arphic Public License data (hanzi-writer-data) and Unicode License V3 data (Unihan kCangjie Cangjie codes). It carries the licence terms of each source for its fields.';

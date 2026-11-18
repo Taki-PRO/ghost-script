@@ -10,7 +10,7 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 包,to cover,bāo,default,,"entry0 (Bāo): surname Bao ;; entry1 (bāo): to cover | to wrap | to hold | to include | to take charge of | to contract (to or for) | package | wrapper | container | bag | to hold or embrace | bundle | packet | CL:個|个[ge4],隻|只[zhi1]"
 北,north,běi,default,,entry0 (běi): north | (classical) to be defeated
 备,to prepare; to equip,bèi,default,,entry0 (bèi): variant of 備|备[bei4] ;; entry1 (bèi): (bound form) to prepare; to equip | (literary) fully; completely
-本,"classifier for books, periodicals, files etc",běn,override,human-approved,"entry0 (běn): (bound form) root; stem | (bound form) origin; source | (bound form) one's own; this | (bound form) this; the current (year etc) | (bound form) original | (bound form) inherent | originally; initially | capital; principal | classifier for books, periodicals, files etc"
+本,root; stem,běn,override,human,"entry0 (běn): (bound form) root; stem | (bound form) origin; source | (bound form) one's own; this | (bound form) this; the current (year etc) | (bound form) original | (bound form) inherent | originally; initially | capital; principal | classifier for books, periodicals, files etc"
 比,to compare,bǐ,override,human-approved,entry0 (Bǐ): Belgium | Belgian | abbr. for 比利時|比利时[Bi3 li4 shi2] ;; entry1 (bī): euphemistic variant of 屄[bi1] ;; entry2 (bǐ): to compare | (followed by a noun and adjective) more {adj.} than {noun} | ratio | to gesture | (Taiwan pr. [bi4] in some compounds derived from Classical Chinese)
 边,side,biān,default,,entry0 (biān): side | edge | margin | border | boundary | CL:個|个[ge4] | simultaneously ;; entry1 (bian): suffix of a noun of locality
 别,to leave; to part (from),bié,default,,"entry0 (Bié): surname Bie ;; entry1 (bié): to leave; to part (from) | (literary) to differentiate; to distinguish | (dialect) to turn away; to turn aside; to avert (one's face, gaze etc) | (bound form) other; another; different | don't ...! | to fasten with a pin or clip | to stick in; to insert (in order to hinder movement) | (noun suffix) category (as in 性別|性别[xing4 bie2], 派別|派别[pai4 bie2]) ;; entry2 (biè): to make sb change their ways, opinions etc"
@@ -203,7 +203,7 @@ character,chosenMeaning,chosenPinyin,source,reviewedBy,alternatives
 她,she,tā,default,,entry0 (tā): she
 太,too (much),tài,override,human-approved,entry0 (tài): highest | greatest | too (much) | very | extremely
 体,body,tǐ,default,,entry0 (tī): used in 體己|体己[ti1 ji5] | Taiwan pr. [ti3] ;; entry1 (tǐ): body | form | style | system | substance | to experience | aspect (linguistics)
-天,day,tiān,default,,entry0 (tiān): day | sky | heaven
+天,sky,tiān,override,human,entry0 (tiān): day | sky | heaven
 听,to listen to; to hear,tīng,override,human-approved,"entry0 (yǐn): smile (archaic) ;; entry1 (tīng): to listen to; to hear | to heed; to obey | a can (loanword from English ""tin"") | classifier for canned beverages | to let be; to allow (Taiwan pr. [ting4]) | (literary) to administer; to deal with (Taiwan pr. [ting4])"
 同,same,tóng,override,human-approved,entry0 (tóng): like | same | similar | together | alike | with ;; entry1 (tòng): used in 胡同[hu2 tong4] ;; entry2 (tòng): used in 衚衕|胡同[hu2 tong4]
 外,outside,wài,default,,entry0 (wài): outside | in addition | foreign | external

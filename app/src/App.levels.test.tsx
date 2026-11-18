@@ -5,6 +5,7 @@ import type { CharacterRecord } from './data/types';
 import type { CharacterDataset } from './data/charDataLoader';
 import { DEFAULT_CONFIG } from './engine/config';
 import { learningOrder } from './engine/learningOrder';
+import { crossLevelLine } from './engine/crossLevel';
 import type { Outcome, ReviewHistory } from './engine/scheduler';
 import { loadState, STORAGE_KEY } from './storage/storage';
 import level1Raw from '../public/data/characters.json';
@@ -142,6 +143,39 @@ describe('App levels', () => {
     });
   }
 
+  it('level 2 with three due level 1 ghosts: the line shows above ghost 1 only, not on the summary', async () => {
+    const dueChars = [...data[1].keys()].filter((c) => c !== '明').slice(0, 3);
+    seedV3({
+      level: 2,
+      history: Object.fromEntries(dueChars.map((c) => [c, { step: 0, nextDue: T - 1, lastOutcome: 'struggled' as const }])),
+    });
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(await screen.findByRole('button', { name: /^begin a nightly séance$/i }));
+    expect(await screen.findByText('Ghost 1 of 10')).toBeTruthy();
+    const line = () => screen.queryByTestId('cross-level-line');
+    expect(line()?.textContent).toBe('3 ghosts from level 1 return first.');
+    finishSummon();
+    act(() => stub.props[stub.props.length - 1]!.onOutcome('clean'));
+    expect(line()?.textContent).toBe('3 ghosts from level 1 return first.');
+    await user.click(await screen.findByRole('button', { name: /next ghost/i }));
+    expect(await screen.findByText('Ghost 2 of 10')).toBeTruthy();
+    expect(line()).toBeNull();
+    await play(user, 9);
+    expect(await screen.findByRole('button', { name: /begin another séance/i })).toBeTruthy();
+    expect(line()).toBeNull();
+    expect(screen.queryByText(/return first\./)).toBeNull();
+  });
+
+  it('a brand-new player at level 2 starts with the guided ghost and sees no line', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(await screen.findByRole('button', { name: /^begin the séance$/i }));
+    await user.click(await screen.findByRole('button', { name: /^level 2/i }));
+    expect(await screen.findByText('Ghost 1 of 10')).toBeTruthy();
+    expect(screen.queryByTestId('cross-level-line')).toBeNull();
+  });
+
   it('loads a saved level 2 at start-up and shows it on the menu', async () => {
     seedV3({ level: 2 });
     render(<App />);
@@ -226,6 +260,8 @@ describe('planSeance with a scope', () => {
     chosenOrder: learningOrder(data[level]),
     otherOrders: ([1, 2, 3] as const).filter((l) => l !== level).map((l) => learningOrder(data[l])),
     walkthrough: { order: learningOrder(data[1]), dataset: data[1] },
+    chosenLevel: level,
+    levelOf: new Map(([1, 2, 3] as const).flatMap((l) => [...data[l].keys()].map((c): [string, 1 | 2 | 3] => [c, l]))),
   });
 
   it('level 1 brand-new player gets the same session as without a scope', () => {
@@ -242,5 +278,35 @@ describe('planSeance with a scope', () => {
     const chars = plan.ghosts.map((g) => g.character);
     expect(chars).toContain(dueChar);
     for (const c of chars.filter((c) => c !== dueChar)) expect(data[2].has(c)).toBe(true);
+  });
+
+  it('reports the level and due flag of each planned ghost: three due level 1 entries, level 2 chosen', () => {
+    const dueChars = [...data[1].keys()].filter((c) => c !== '明').slice(0, 3);
+    const history: ReviewHistory = Object.fromEntries(
+      dueChars.map((c) => [c, { step: 0, nextDue: T - 1, lastOutcome: 'struggled' as const }]),
+    );
+    const plan = planSeance(merged, history, T, DEFAULT_CONFIG, scopeFor(2));
+    expect(plan.report.map((p) => p.character)).toEqual(plan.ghosts.map((g) => g.character));
+    for (const p of plan.report) {
+      expect(p.level).toBe(data[1].has(p.character) ? 1 : 2);
+      expect(p.due).toBe(dueChars.includes(p.character));
+    }
+    expect(plan.report.filter((p) => p.level === 1 && p.due).map((p) => p.character).sort()).toEqual([...dueChars].sort());
+    expect(crossLevelLine(plan.report, 2, plan.walkthroughChar !== null, false)).toBe('3 ghosts from level 1 return first.');
+  });
+
+  it('a not-yet-due entry is reported as not due and makes no line', () => {
+    const c = [...data[1].keys()].find((k) => k !== '明')!;
+    const history: ReviewHistory = { [c]: { step: 1, nextDue: T + 86_400_000, lastOutcome: 'clean' } };
+    const plan = planSeance(merged, history, T, DEFAULT_CONFIG, scopeFor(2));
+    for (const p of plan.report) expect(p.due).toBe(false);
+    expect(crossLevelLine(plan.report, 2, false, false)).toBeNull();
+  });
+
+  it('without a scope every level is null and no line follows', () => {
+    const plan = planSeance(data[1], {}, T, DEFAULT_CONFIG);
+    expect(plan.report.length).toBe(plan.ghosts.length);
+    for (const p of plan.report) expect(p.level).toBeNull();
+    expect(crossLevelLine(plan.report, 1, plan.walkthroughChar !== null, false)).toBeNull();
   });
 });

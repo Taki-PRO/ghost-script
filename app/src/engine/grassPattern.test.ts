@@ -7,12 +7,16 @@ import {
   HILL_REM_PER_UNIT,
   HILL_SLOTS,
   HILL_TUFTS,
+  NEAR_RIDGE_PATH,
+  TABLET_TUFTS_SECOND,
+  TABLET_TUFT_SCALE,
   TABLET_TUFTS,
   TUFT_HEIGHT,
   TUFT_SHAPES,
   TUFT_WIDTH,
   hillTuft,
   tabletTuft,
+  tabletTufts,
 } from './grassPattern';
 
 type Pt = readonly [number, number];
@@ -24,9 +28,9 @@ function bezier(p0: Pt, p1: Pt, p2: Pt, p3: Pt, t: number): Pt {
   return [f(0), f(1)];
 }
 
-/** Ridge height at x, from the two Bezier segments of FAR_RIDGE_PATH. */
-function ridgeY(x: number): number {
-  const nums = (FAR_RIDGE_PATH.match(/-?\d+(?:\.\d+)?/g) ?? []).map(Number);
+/** Ridge height at x, from the two Bezier segments of a ridge path. */
+function ridgeY(x: number, path: string = FAR_RIDGE_PATH): number {
+  const nums = (path.match(/-?\d+(?:\.\d+)?/g) ?? []).map(Number);
   const m: Pt = [nums[0], nums[1]];
   const seg1: Pt[] = [m, [nums[2], nums[3]], [nums[4], nums[5]], [nums[6], nums[7]]];
   const seg2: Pt[] = [seg1[3], [nums[8], nums[9]], [nums[10], nums[11]], [nums[12], nums[13]]];
@@ -69,13 +73,66 @@ describe('tabletTuft', () => {
   });
 });
 
-describe('hillTuft', () => {
-  it('has 12 slots', () => {
-    expect(HILL_SLOTS).toBe(12);
-    expect(HILL_TUFTS).toHaveLength(12);
+describe('tabletTufts', () => {
+  const extent = (shape: number): [number, number] => {
+    const nums = (TUFT_SHAPES[shape].match(/-?\d+(?:\.\d+)?/g) ?? []).map(Number);
+    const xs = nums.filter((_, i) => i % 2 === 0);
+    return [Math.min(...xs), Math.max(...xs)];
+  };
+  /** Horizontal extent of a tuft from the tablet centre, px. */
+  const span = (t: { shape: number; dx: number }): [number, number] => {
+    const [lo, hi] = extent(t.shape);
+    const left = t.dx - (TUFT_WIDTH * TABLET_TUFT_SCALE) / 2;
+    return [left + lo * TABLET_TUFT_SCALE, left + hi * TABLET_TUFT_SCALE];
+  };
+
+  it('scales tablet tufts by 0.8 and has five second tufts', () => {
+    expect(TABLET_TUFT_SCALE).toBe(0.8);
+    expect(TABLET_TUFTS_SECOND).toHaveLength(5);
   });
 
-  it('is deterministic and defined for every slot, wrapping past 11', () => {
+  it('returns the first and second tuft by position mod 5, for negatives too', () => {
+    for (let p = -5; p <= 20; p++) {
+      const [a, b] = tabletTufts(p);
+      expect(a).toBe(tabletTuft(p));
+      expect(b).toBe(TABLET_TUFTS_SECOND[((p % 5) + 5) % 5]);
+    }
+  });
+
+  it('gives a pair that differs in shape and sits on opposite sides (right when the first is centred)', () => {
+    for (let p = 0; p < 5; p++) {
+      const [a, b] = tabletTufts(p);
+      expect(b.shape).not.toBe(a.shape);
+      if (a.dx === 0) expect(b.dx).toBeGreaterThan(0);
+      else expect(Math.sign(b.dx)).toBe(-Math.sign(a.dx));
+    }
+  });
+
+  it('keeps the blade extents of a pair disjoint', () => {
+    for (let p = 0; p < 5; p++) {
+      const [a, b] = tabletTufts(p);
+      const [a0, a1] = span(a);
+      const [b0, b1] = span(b);
+      expect(a1 < b0 || b1 < a0).toBe(true);
+    }
+  });
+
+  it('keeps each tuft box inside the 48 px minimum tablet', () => {
+    const half = (TUFT_WIDTH * TABLET_TUFT_SCALE) / 2;
+    for (let p = 0; p < 5; p++) {
+      for (const t of tabletTufts(p)) expect(Math.abs(t.dx) + half).toBeLessThanOrEqual(24);
+      expect(TUFT_HEIGHT * TABLET_TUFT_SCALE).toBeLessThanOrEqual(16);
+    }
+  });
+});
+
+describe('hillTuft', () => {
+  it('has 24 slots', () => {
+    expect(HILL_SLOTS).toBe(24);
+    expect(HILL_TUFTS).toHaveLength(24);
+  });
+
+  it('is deterministic and defined for every slot, wrapping past 23', () => {
     for (let s = 0; s < HILL_SLOTS; s++) {
       const t = hillTuft(s);
       expect(t).toEqual(hillTuft(s));
@@ -87,13 +144,38 @@ describe('hillTuft', () => {
       expect(t.xPercent).toBeGreaterThan(0);
       expect(t.xPercent).toBeLessThan(100);
     }
-    expect(hillTuft(12)).toBe(HILL_TUFTS[0]);
-    expect(hillTuft(-1)).toBe(HILL_TUFTS[11]);
+    expect(hillTuft(24)).toBe(HILL_TUFTS[0]);
+    expect(hillTuft(-1)).toBe(HILL_TUFTS[23]);
   });
 
-  it('has crestY within 0.05 of the evaluated far ridge', () => {
-    for (const t of HILL_TUFTS) {
-      expect(Math.abs(t.crestY - ridgeY(t.xPercent))).toBeLessThanOrEqual(0.05);
+  it('has crestY within 0.05 of the evaluated ridge of its slot (far 0 to 11, near 12 to 23)', () => {
+    HILL_TUFTS.forEach((t, i) => {
+      const path = i < 12 ? FAR_RIDGE_PATH : NEAR_RIDGE_PATH;
+      expect(Math.abs(t.crestY - ridgeY(t.xPercent, path))).toBeLessThanOrEqual(0.05);
+    });
+  });
+
+  it('keeps slots 0 to 11 equal to the old table', () => {
+    expect(HILL_TUFTS.slice(0, 12)).toEqual([
+      { shape: 2, xPercent: 7, crestY: 19.61, scale: 1.4 },
+      { shape: 0, xPercent: 14, crestY: 18.45, scale: 1.2 },
+      { shape: 4, xPercent: 22, crestY: 18.17, scale: 1.5 },
+      { shape: 1, xPercent: 30, crestY: 18.37, scale: 1.3 },
+      { shape: 3, xPercent: 38, crestY: 18.38, scale: 1.6 },
+      { shape: 0, xPercent: 46, crestY: 17.54, scale: 1.2 },
+      { shape: 2, xPercent: 54, crestY: 15.44, scale: 1.4 },
+      { shape: 4, xPercent: 62, crestY: 14.01, scale: 1.3 },
+      { shape: 1, xPercent: 70, crestY: 13.69, scale: 1.5 },
+      { shape: 0, xPercent: 78, crestY: 14.16, scale: 1.2 },
+      { shape: 3, xPercent: 86, crestY: 14.91, scale: 1.4 },
+      { shape: 2, xPercent: 93, crestY: 15.15, scale: 1.3 },
+    ]);
+  });
+
+  it('puts slots 12 to 23 on the near ridge with scale 1.2 to 1.4', () => {
+    for (const t of HILL_TUFTS.slice(12)) {
+      expect(t.scale).toBeGreaterThanOrEqual(1.2);
+      expect(t.scale).toBeLessThanOrEqual(1.4);
     }
   });
 

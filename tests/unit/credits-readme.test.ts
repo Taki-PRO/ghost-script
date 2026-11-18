@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { DATA_SOURCES, FONTS } from '../../app/src/data/credits';
+import { DATA_FILES, DATA_SOURCES, FONTS } from '../../app/src/data/credits';
 import { LEGEND_SOURCE } from '../../app/src/data/citations';
 
 const root = resolve(__dirname, '../..');
@@ -24,7 +24,22 @@ function readmeTableRows(): string[][] {
   return rows;
 }
 
+function readmeFileRows(): string[][] {
+  const start = readme.indexOf('| File | Holds |');
+  expect(start).toBeGreaterThan(-1);
+  const rows: string[][] = [];
+  for (const line of readme.slice(start).split('\n').slice(2)) {
+    if (!line.startsWith('|')) break;
+    rows.push(line.split(/\s\|\s/).map((c) => plain(c.replace(/^\|\s*|\s*\|$/g, '').trim())));
+  }
+  return rows;
+}
+
 describe('README credits match app/src/data', () => {
+  it('Data files shipped table rows equal DATA_FILES', () => {
+    expect(readmeFileRows()).toEqual(DATA_FILES.map((f) => [f.path, f.holds, f.sources]));
+  });
+
   it('table rows equal DATA_SOURCES', () => {
     const rows = readmeTableRows();
     expect(rows).toEqual(

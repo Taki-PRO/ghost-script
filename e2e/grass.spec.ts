@@ -20,35 +20,41 @@ test.describe('tablet tufts', () => {
     const rows = await page.evaluate(() => {
       const items = Array.from(document.querySelectorAll('[aria-label="Graves"] > li'));
       return items.map((li, index) => {
-        const tufts = li.querySelectorAll('[data-grass="tablet"]');
-        const t = tufts[0]?.getBoundingClientRect();
+        const tufts = Array.from(li.querySelectorAll('[data-grass="tablet"]'));
         const l = li.getBoundingClientRect();
-        const w = tufts[0] as HTMLElement | undefined;
         return {
           index,
           count: tufts.length,
-          // Layout frame (before the tablet's tilt): the tuft's bottom edge against the tablet's
-          // padding box. The tilt turns the li box into a larger axis-aligned box, so the
-          // bottom edge is measured here and the containment check stays on the painted boxes.
-          foot: w ? (li as HTMLElement).clientHeight - (w.offsetTop + w.offsetHeight) : null,
-          layoutHeight: w ? w.offsetHeight : null,
           li: { left: l.left, top: l.top, right: l.right, bottom: l.bottom },
-          tuft: t ? { left: t.left, top: t.top, right: t.right, bottom: t.bottom } : null,
+          tufts: tufts.map((el) => {
+            const t = el.getBoundingClientRect();
+            const w = el as HTMLElement;
+            return {
+              // Layout frame (before the tablet's tilt): the tuft's bottom edge against the tablet's
+              // padding box. The tilt turns the li box into a larger axis-aligned box, so the
+              // bottom edge is measured here and the containment check stays on the painted boxes.
+              foot: (li as HTMLElement).clientHeight - (w.offsetTop + w.offsetHeight),
+              layoutHeight: w.offsetHeight,
+              box: { left: t.left, top: t.top, right: t.right, bottom: t.bottom },
+            };
+          }),
         };
       });
     });
     expect(rows.length).toBeGreaterThan(0);
     for (const row of rows) {
       const detail = `tablet position ${row.index + 1}: ${JSON.stringify(row)}`;
-      expect(row.count, detail).toBe(1);
-      const t = row.tuft as Rect;
-      expect(t.left, detail).toBeGreaterThanOrEqual(row.li.left - 0.5);
-      expect(t.right, detail).toBeLessThanOrEqual(row.li.right + 0.5);
-      expect(t.top, detail).toBeGreaterThanOrEqual(row.li.top - 0.5);
-      expect(t.bottom, detail).toBeLessThanOrEqual(row.li.bottom + 0.5);
-      expect(Math.abs(row.foot as number), detail).toBeLessThanOrEqual(2);
-      expect(row.layoutHeight as number, detail).toBeLessThanOrEqual(16);
-      expect(t.bottom - t.top, detail).toBeLessThanOrEqual(16);
+      expect(row.count, detail).toBe(2);
+      for (const tuft of row.tufts) {
+        const t = tuft.box as Rect;
+        expect(t.left, detail).toBeGreaterThanOrEqual(row.li.left - 0.5);
+        expect(t.right, detail).toBeLessThanOrEqual(row.li.right + 0.5);
+        expect(t.top, detail).toBeGreaterThanOrEqual(row.li.top - 0.5);
+        expect(t.bottom, detail).toBeLessThanOrEqual(row.li.bottom + 0.5);
+        expect(Math.abs(tuft.foot), detail).toBeLessThanOrEqual(2);
+        expect(tuft.layoutHeight, detail).toBeLessThanOrEqual(16);
+        expect(t.bottom - t.top, detail).toBeLessThanOrEqual(16);
+      }
     }
   });
 
@@ -74,16 +80,16 @@ test.describe('tablet tufts', () => {
           document.querySelectorAll('[aria-label="Graves"] > li > span[aria-hidden="true"]:not([data-grass])'),
         ).concat(Array.from(document.querySelectorAll('[aria-label="Graves"] [lang="zh"]')));
         items.forEach((li, index) => {
-          const tuft = li.querySelector('[data-grass="tablet"]');
-          if (!tuft) return;
-          const t = box(tuft);
-          for (const o of others) {
-            if (meet(t, box(o))) {
-              const kind = o.getAttribute('lang') === 'zh' ? 'glyph' : 'Marker';
-              const owner = o.closest('li') === li ? 'its own' : 'another tablet\'s';
-              out.push(
-                `viewport ${innerWidth} x ${innerHeight}, tablet position ${index + 1}: tuft ${JSON.stringify(t)} meets ${owner} ${kind} ${JSON.stringify(box(o))}`,
-              );
+          for (const tuft of Array.from(li.querySelectorAll('[data-grass="tablet"]'))) {
+            const t = box(tuft);
+            for (const o of others) {
+              if (meet(t, box(o))) {
+                const kind = o.getAttribute('lang') === 'zh' ? 'glyph' : 'Marker';
+                const owner = o.closest('li') === li ? 'its own' : 'another tablet\'s';
+                out.push(
+                  `viewport ${innerWidth} x ${innerHeight}, tablet position ${index + 1}: tuft ${JSON.stringify(t)} meets ${owner} ${kind} ${JSON.stringify(box(o))}`,
+                );
+              }
             }
           }
         });
@@ -133,7 +139,7 @@ test.describe('hill tufts', () => {
         zIndexed: hill.filter((h) => getComputedStyle(h).zIndex !== 'auto' || (h as HTMLElement).style.zIndex !== '').length,
       };
     });
-    expect(r.count, 'hill tuft count').toBe(12);
+    expect(r.count, 'hill tuft count').toBe(24);
     expect(r.afterGrid, 'hill tufts that come after the grid').toBe(0);
     expect(r.zIndexed, 'hill tufts with a z-index').toBe(0);
   });

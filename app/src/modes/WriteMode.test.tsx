@@ -236,6 +236,43 @@ describe('WriteMode setup (Req 5.1, 5.2)', () => {
   });
 });
 
+describe('WriteMode Give up is a paper slip (proof-pass Req 8)', () => {
+  it('uses the slip classes, drops the old border classes and is not a primary slip', () => {
+    setup();
+    const btn = screen.getByRole('button', { name: 'Give up' });
+    const tokens = btn.className.split(/\s+/);
+    for (const c of [
+      'slip',
+      'min-h-[44px]',
+      'px-4',
+      'py-2',
+      'focus:outline-none',
+      'focus-visible:ring-2',
+      'focus-visible:ring-ghost',
+      'disabled:opacity-50',
+    ]) {
+      expect(tokens).toContain(c);
+    }
+    for (const c of ['rounded-md', 'border', 'border-muted', 'text-ink', 'slip-primary']) {
+      expect(tokens).not.toContain(c);
+    }
+  });
+
+  it('is disabled while loading, enabled after, reports gave-up once, and is gone once resolved', async () => {
+    let finishLoading!: () => void;
+    h.quizImpl = () => new Promise<void>((r) => (finishLoading = r));
+    const user = userEvent.setup();
+    const { onOutcome } = setup();
+    expect(screen.getByRole('button', { name: 'Give up' })).toBeDisabled();
+    await act(async () => finishLoading());
+    const btn = screen.getByRole('button', { name: 'Give up' });
+    expect(btn).toBeEnabled();
+    await user.click(btn);
+    expectOnce(onOutcome, 'gave-up');
+    expect(screen.queryByRole('button', { name: 'Give up' })).toBeNull();
+  });
+});
+
 describe('WriteMode seal (Req 13)', () => {
   const sealQuery = () => screen.queryByRole('img', { name: /^Seal:/ });
   it('has no seal while writing, and none after any outcome unless sealed is passed', () => {

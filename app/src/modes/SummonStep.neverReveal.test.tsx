@@ -1,5 +1,5 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import realDataJson from '../../public/data/characters.json';
 import { GhostPrompt } from '../components/GhostPrompt';
 import type { CharacterDataset } from '../data/charDataLoader';
@@ -8,17 +8,38 @@ import { isPlayableInCangjie } from '../engine/cangjieRules';
 import { DEFAULT_CONFIG } from '../engine/config';
 import { SummonStep } from './SummonStep';
 
-// hanzi-writer is mocked: no instance should render anything before the code is complete.
+// hanzi-writer is mocked with spies: no instance should render anything before the code is complete.
+const mocks = vi.hoisted(() => ({
+  animateCharacter: vi.fn(),
+  animateStroke: vi.fn(),
+  flags: { createThrows: false, loadError: false },
+}));
+
 vi.mock('hanzi-writer', () => {
-  const create = () => ({
-    animateCharacter: vi.fn(() => new Promise<void>(() => undefined)),
-    animateStroke: vi.fn(() => Promise.resolve()),
-    cancelQuiz: vi.fn(),
-    quiz: vi.fn(() => Promise.resolve()),
-    showCharacter: vi.fn(() => Promise.resolve()),
-    hideCharacter: vi.fn(() => Promise.resolve()),
-  });
+  const create = (
+    _container: unknown,
+    _char: string,
+    opts?: { onLoadCharDataError?: (reason?: unknown) => void },
+  ) => {
+    if (mocks.flags.createThrows) throw new Error('create failed');
+    if (mocks.flags.loadError) opts?.onLoadCharDataError?.(new Error('load failed'));
+    return {
+      animateCharacter: mocks.animateCharacter,
+      animateStroke: mocks.animateStroke,
+      cancelQuiz: vi.fn(),
+      quiz: vi.fn(() => Promise.resolve()),
+      showCharacter: vi.fn(() => Promise.resolve()),
+      hideCharacter: vi.fn(() => Promise.resolve()),
+    };
+  };
   return { default: { create } };
+});
+
+beforeEach(() => {
+  mocks.animateCharacter.mockReset().mockImplementation(() => new Promise<void>(() => undefined));
+  mocks.animateStroke.mockReset().mockImplementation(() => Promise.resolve());
+  mocks.flags.createThrows = false;
+  mocks.flags.loadError = false;
 });
 
 const data = realDataJson as unknown as Record<string, CharacterRecord>;
@@ -67,6 +88,7 @@ const VARIANTS: readonly Variant[] = [
 ];
 
 function mount(record: CharacterRecord, v: Variant = VARIANTS[0]!) {
+  const onDone = vi.fn();
   const lines = v.withLines
     ? record.cangjie!.split('').map((_, i) => `Walkthrough line ${i + 1}`)
     : undefined;
@@ -77,12 +99,13 @@ function mount(record: CharacterRecord, v: Variant = VARIANTS[0]!) {
         record={record}
         dataset={dataset}
         config={DEFAULT_CONFIG}
-        onDone={vi.fn()}
+        onDone={onDone}
         firstMeeting={v.firstMeeting}
         walkthroughLines={lines}
       />
     </>,
   );
+  return onDone;
 }
 
 describe('SummonStep + GhostPrompt never reveal the target before the code is complete', () => {
@@ -119,5 +142,98 @@ describe('SummonStep + GhostPrompt never reveal the target before the code is co
         }
       },
     );
+  });
+});
+
+const RETURNING = VARIANTS.filter((v) => !v.firstMeeting);
+const FIRST_MEETING = VARIANTS.filter((v) => v.firstMeeting);
+const CASES = playable.map((r) => [r.character, r] as const);
+
+async function advance(ms: number) {
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(ms);
+  });
+}
+
+function typeWholeCode(record: CharacterRecord) {
+  for (const ch of record.cangjie!.toUpperCase()) fireEvent.keyDown(window, { key: ch });
+}
+
+function allowedStrokes(record: CharacterRecord): Set<number> {
+  const ink = record.summonInk;
+  return new Set(ink.class === 'opaque' ? [] : ink.keyStrokes.flat());
+}
+
+const SCENARIOS = [
+  { name: 'normal', createThrows: false, loadError: false },
+  { name: 'HanziWriter.create throws', createThrows: true, loadError: false },
+  { name: 'onLoadCharDataError fires', createThrows: false, loadError: true },
+] as const;
+
+describe('returning ghost: full code typed, then 3000 ms', () => {
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => {
+    cleanup();
+    vi.useRealTimers();
+  });
+
+  describe.each(RETURNING)('$name', (variant) => {
+    describe.each(SCENARIOS)('$name', (scenario) => {
+      it.each(CASES)('%s', async (_char, record) => {
+        mocks.flags.createThrows = scenario.createThrows;
+        mocks.flags.loadError = scenario.loadError;
+        const onDone = mount(record, variant);
+        typeWholeCode(record);
+        await advance(3000);
+
+        expect(findLeaks(record.character)).toEqual([]);
+        expect(document.querySelector('p[lang="zh"]')).toBeNull();
+        expect(onDone).toHaveBeenCalledTimes(1);
+        expect(mocks.animateCharacter).not.toHaveBeenCalled();
+        const allowed = allowedStrokes(record);
+        for (const call of mocks.animateStroke.mock.calls) {
+          expect(allowed.has(call[0] as number)).toBe(true);
+        }
+        expect(vi.getTimerCount()).toBe(0);
+      });
+    });
+  });
+});
+
+describe('first meeting: the plain-text fallback keeps a 1500 ms hold and a 1500 ms fade', () => {
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => {
+    cleanup();
+    vi.useRealTimers();
+  });
+
+  describe.each(FIRST_MEETING)('$name', (variant) => {
+    describe.each(SCENARIOS.filter((s) => s.name !== 'normal'))('$name', (scenario) => {
+      it.each(CASES)('%s', async (_char, record) => {
+        mocks.flags.createThrows = scenario.createThrows;
+        mocks.flags.loadError = scenario.loadError;
+        const onDone = mount(record, variant);
+        typeWholeCode(record);
+        await advance(0);
+
+        const fallback = () => document.querySelector<HTMLElement>('p.text-6xl');
+        expect(fallback()?.textContent).toBe(record.character);
+        expect(fallback()?.style.opacity).toBe('1');
+
+        await advance(1499);
+        expect(fallback()?.style.opacity).toBe('1');
+        expect(onDone).not.toHaveBeenCalled();
+
+        await advance(1);
+        expect(fallback()?.style.opacity).toBe('0');
+        expect(onDone).not.toHaveBeenCalled();
+
+        await advance(1499);
+        expect(onDone).not.toHaveBeenCalled();
+        await advance(1);
+        expect(onDone).toHaveBeenCalledTimes(1);
+        expect(fallback()).toBeNull();
+      });
+    });
   });
 });

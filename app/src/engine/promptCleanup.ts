@@ -72,9 +72,21 @@ function collapseWhitespace(s: string): string {
   return s.replace(/\s+/gu, (run) => run.charAt(0));
 }
 
+/**
+ * A Han_Pair: a maximal run of Han characters, "|", then at least one Han
+ * character (looked ahead, not consumed). Only the run and the "|" go.
+ */
+const HAN_PAIR = /\p{Script=Han}+\|(?=\p{Script=Han})/gu;
+
+/** Drop the traditional half of every "traditional|simplified" pair. Deletion only. */
+function removeTraditionalHalves(s: string): string {
+  return s.replace(HAN_PAIR, '');
+}
+
 /** One full pass: remove notes, then tidy. Only ever deletes characters. */
 function step(s: string): string {
-  let out = removeParentheticals(s);
+  let out = removeTraditionalHalves(s);
+  out = removeParentheticals(out);
   out = removeBareClassifiers(out);
   out = out.replace(PR_NOTE, '').replace(BRACKET_REF, '').replace(/\(\s*\)/gu, '');
   out = collapseWhitespace(out);

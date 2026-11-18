@@ -60,6 +60,13 @@ function build(
 const words = (n: number): string[] =>
   Array.from({ length: n }, (_, i) => `word ${String.fromCharCode(97 + i)}`);
 
+/** Letters-only meanings, also for more than 26 records ("word aa", "word ab", ...). */
+const manyWords = (n: number): string[] =>
+  Array.from(
+    { length: n },
+    (_, i) =>
+      `word ${String.fromCharCode(97 + Math.floor(i / 26))}${String.fromCharCode(97 + (i % 26))}`,
+  );
 describe('LEVEL_FILES', () => {
   it('names the three files', () => {
     expect(LEVEL_FILES).toEqual({
@@ -157,42 +164,50 @@ describe('exampleMeanings', () => {
 });
 
 describe('buildManifest and serialiseManifest', () => {
+  // 40 + level records, so that every level has a sample candidate (position 31+).
   const inputs = [3, 1, 2].map((level) => ({
     level: level as 1 | 2 | 3,
-    ...build(words(8 + level), () => level + 5),
+    ...build(manyWords(40 + level), () => level + 5),
   }));
+  const strokesOf = (c: string): string[] => [`M 0 0 ${c}`, 'M 1 1'];
 
-  it('lists levels in order with file, count, average and meanings', () => {
-    const manifest = buildManifest(inputs);
+  it('lists levels in order with file, count, average, meanings and sample', () => {
+    const manifest = buildManifest(inputs, strokesOf);
     expect(manifest.levels.map((l) => l.level)).toEqual([1, 2, 3]);
-    expect(manifest.levels[1]).toEqual({
+    // All records have the same stroke count, so the learning order is by code
+    // point and the lowest candidate position (31) wins.
+    const sampleChar = [...inputs[2].order].sort()[30];
+    const level2 = manifest.levels[1];
+    expect(level2).toMatchObject({
       level: 2,
       file: 'characters-level2.json',
-      count: 10,
+      count: 42,
       averageStrokes: 7,
-      exampleMeanings: ['word c', 'word f', 'word h'],
+      sample: { character: sampleChar, strokes: strokesOf(sampleChar) },
     });
+    expect(level2.exampleMeanings).toHaveLength(3);
   });
 
   it('throws when a level has fewer than three usable records', () => {
     const bad = build(['1', '2', '3', '4', '5', '6', '7', '8']);
     expect(() =>
-      buildManifest([inputs[1], inputs[2], { level: 3, ...bad }]),
+      buildManifest([inputs[1], inputs[2], { level: 3, ...bad }], strokesOf),
     ).toThrow(/level 3/);
   });
 
   it('throws when a level is missing', () => {
-    expect(() => buildManifest([inputs[1]])).toThrow(/level 2/);
+    expect(() => buildManifest([inputs[1]], strokesOf)).toThrow(/level 2/);
   });
 
   it('serialises with 2 spaces and one trailing newline, deterministically', () => {
-    const a = serialiseManifest(buildManifest(inputs));
-    const b = serialiseManifest(buildManifest([...inputs].reverse()));
+    const a = serialiseManifest(buildManifest(inputs, strokesOf));
+    const b = serialiseManifest(buildManifest([...inputs].reverse(), strokesOf));
+    expect(a.indexOf('"sample"')).toBeGreaterThan(a.indexOf('"exampleMeanings"'));
     expect(a).toBe(b);
     expect(a.startsWith('{\n  "levels": [\n    {\n      "level": 1,')).toBe(true);
     expect(a.endsWith('}\n')).toBe(true);
     expect(a.endsWith('\n\n')).toBe(false);
-    expect(JSON.parse(a)).toEqual(buildManifest(inputs));
+    expect(JSON.parse(a)).toEqual(buildManifest(inputs, strokesOf));
   });
 });
 

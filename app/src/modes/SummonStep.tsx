@@ -17,6 +17,7 @@ import {
   type SummonState,
 } from '../engine/cangjie';
 import { maskTarget } from '../engine/mask';
+import { prefersReducedMotion } from '../engine/motion';
 import { WALKTHROUGH_LINE_PX, summonPaperSize } from '../engine/surfaceSize';
 import { InkSurface } from '../components/InkSurface';
 import { theme } from '../styles/theme';
@@ -28,7 +29,7 @@ export const SUMMON_FADE_MS = 1500;
 /** hanzi-writer strokeAnimationSpeed while ink strokes are drawn (about half the default drawing time). */
 export const SUMMON_INK_SPEED = 2;
 /** Reduced motion: a stroke finishes within one animation frame. */
-const SUMMON_REDUCED_SPEED = 1000;
+export const SUMMON_REDUCED_SPEED = 1000;
 
 /** Status-line text for a correct key whose shape the game does not ink (partial characters only). */
 export const INKLESS_KEY_TEXT = "This key's shape is one the game doesn't show yet.";
@@ -47,6 +48,8 @@ export interface SummonStepProps {
   walkthroughLines?: readonly string[];
   /** Called once for each wrong key that the engine counts as a miss, and for no other event. */
   onWrongKey?: () => void;
+  /** Height in px reserved above the step for a line shown by the session; overrides the walkthrough default. */
+  reservedPx?: number;
 }
 
 type Phase = 'typing' | 'forming' | 'fading';
@@ -65,14 +68,6 @@ function isEditableTarget(target: EventTarget | null): boolean {
   return attr !== null && attr !== 'false';
 }
 
-function prefersReducedMotion(): boolean {
-  return (
-    typeof window !== 'undefined' &&
-    typeof window.matchMedia === 'function' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  );
-}
-
 /**
  * Summon step: the player types the ghost's Cangjie code; once the code is
  * complete (or the player gives up) the character forms in ink, is held,
@@ -86,8 +81,10 @@ export function SummonStep({
   firstMeeting = false,
   walkthroughLines,
   onWrongKey,
+  reservedPx,
 }: SummonStepProps) {
   const code = record.cangjie ?? '';
+  const returning = !firstMeeting;
   const lettersOnly = KEY_FACE_CHARACTERS.has(record.character);
 
   const stateRef = useRef<SummonState>(startSummon(code));
@@ -101,7 +98,7 @@ export function SummonStep({
     summonPaperSize(
       window.innerWidth,
       window.innerHeight,
-      walkthroughLines ? WALKTHROUGH_LINE_PX : 0,
+      reservedPx ?? (walkthroughLines ? WALKTHROUGH_LINE_PX : 0),
     ),
   );
 
@@ -279,6 +276,22 @@ export function SummonStep({
       holdAndFade();
     };
 
+    if (returning) {
+      // Returning ghost: only the strokes queued by accepted keys are shown. No
+      // hold, no fade, no animateCharacter, no plain-text fallback.
+      if (inks) {
+        chainRef.current.then(() => {
+          if (!disposed) finish();
+        });
+      } else {
+        finish();
+      }
+      return () => {
+        disposed = true;
+        container.replaceChildren();
+      };
+    }
+
     if (inks) {
       // Draw every stroke not yet inked, in ascending order, then hold and fade.
       if (writerRef.current === null || brokenRef.current) {
@@ -317,7 +330,7 @@ export function SummonStep({
       if (!inks) writerRef.current = null;
       container.replaceChildren();
     };
-  }, [started, inks, strokeCount, enqueueInk, record.character, dataset, side]);
+  }, [started, returning, inks, strokeCount, enqueueInk, record.character, dataset, side]);
 
   const hintVisible = isKeyHintVisible(state, config);
   const hintKey = hintVisible ? nextExpectedKey(state) : null;
@@ -334,7 +347,9 @@ export function SummonStep({
   const walkthroughLine =
     phase === 'typing' && walkthroughLines ? walkthroughLines[state.filled] ?? '' : '';
 
-  const shapeFor = (shape: string) => (finished ? shape : maskTarget(shape, record.character));
+  // A returning ghost never shows the target, even as a key shape once the code is complete.
+  const shapeFor = (shape: string) =>
+    finished && firstMeeting ? shape : maskTarget(shape, record.character);
 
   const slots = Array.from({ length: code.length }, (_, i) => {
     const letter = code[i] as CangjieKey;
@@ -350,16 +365,16 @@ export function SummonStep({
           filled ? undefined : faint ? `Slot ${i + 1}, type ${letter}` : `Slot ${i + 1}, empty`
         }
         aria-current={isNext ? 'true' : undefined}
-        className={`flex h-12 w-11 flex-col items-center justify-center rounded-md border text-ink ${
+        className={`flex h-10 w-11 flex-col items-center justify-center rounded-md border text-ink ${
           isHint || isNext ? 'border-ghost ring-2 ring-ghost' : 'border-muted'
         } ${faint && !isNext ? 'border-dashed' : ''} bg-surface`}
       >
         {filled ? (
           <>
-            <span className="text-xs text-muted">
+            <span className="text-xs leading-none text-muted">
               {letter}
             </span>
-            <span lang="zh" className="text-xl">
+            <span lang="zh" className="text-lg leading-none">
               {shapeFor(shape)}
             </span>
           </>
@@ -376,7 +391,7 @@ export function SummonStep({
   const reduced = prefersReducedMotion();
 
   return (
-    <section aria-label="Summon step" className="flex flex-col items-center gap-2 text-ink">
+    <section aria-label="Summon step" className="flex flex-col items-center gap-1 text-ink">
       {walkthroughLines ? (
         <p
           data-testid="walkthrough-line"
@@ -390,13 +405,15 @@ export function SummonStep({
         {slots}
       </ol>
 
-      {record.summonInk.class === 'opaque' && phase === 'typing' ? (
-        <p data-testid="opaque-note" className="text-center text-sm text-muted">
-          {OPAQUE_NOTE}
-        </p>
-      ) : null}
-
       <div className="relative">
+        {record.summonInk.class === 'opaque' && phase === 'typing' ? (
+          <p
+            data-testid="opaque-note"
+            className="absolute inset-0 z-10 flex items-center justify-center px-3 text-center text-sm text-muted"
+          >
+            {OPAQUE_NOTE}
+          </p>
+        ) : null}
         <InkSurface
           size={`${side}px`}
           containerRef={containerRef}
@@ -471,7 +488,7 @@ export function SummonStep({
         ))}
       </div>
 
-      <p className="text-center text-sm text-muted">
+      <p className="text-center text-xs text-muted">
         If typed letters do not appear, turn off your system Chinese input method.
       </p>
       <p className="text-center text-xs text-muted">Codes: Unicode Unihan kCangjie</p>

@@ -67,8 +67,9 @@ One original ink-wash ghost: a brushed silhouette with bleeding edges, one inlin
 
 ## Motion
 - Motion that follows a player action or game event runs 200 to 600 ms and shows cause and effect.
-- Ambient exemption (approved by the human, Q2): the two mist bands, the idle ghost float, the idle candle glow and the wisp of a restless tablet. They have no cause and may be slow. They are named here and nowhere else.
-- Rite-timing exemption (approved by the human, Q12): `SUMMON_HOLD_MS`, `SUMMON_FADE_MS` and `SUMMON_INK_SPEED` stay as they are.
+- Ambient exemption (approved by the human, Q2): the two mist bands, the idle ghost float, the idle candle glow, the wisp of a restless tablet and the intro's Grain_Fall. They have no cause and may be slow. They are named here and nowhere else.
+- Rite-timing exemption (approved by the human, Q12): `SUMMON_HOLD_MS`, `SUMMON_FADE_MS` and `SUMMON_INK_SPEED` stay as they are. They apply to a first meeting; a returning ghost has no hold and no fade.
+- Legend-ink exemption: the Ink_In of the intro's legend line draws the six Han characters one at a time, in at most 6 s in total, at most 900 ms per character and under 200 ms per stroke. It runs once when the intro opens, never blocks a control, and reduced motion shows the finished line.
 - Outcome motions take 600 ms: clean dissolves upward like ink smoke, struggled lingers at the edge, gave-up slips away. The result text and the primary action do not wait for them.
 - Every animation and transition sits inside the one `prefers-reduced-motion: no-preference` block. Reduced motion shows the static end state.
 

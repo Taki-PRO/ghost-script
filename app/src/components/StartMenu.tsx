@@ -13,6 +13,12 @@ export interface StartMenuProps {
   onChooseLevel: () => void;
   /** Set while the Chosen_Level is a Finished_Level; `moveOn` is absent at level 3. */
   finishedNotice: { text: string; moveOn?: { label: string; onClick: () => void } } | null;
+  /** Restless ghosts over all levels; the review slip shows only while this is at least 1. */
+  restlessCount?: number;
+  /** Starts a Review_Run. */
+  onReviewRestless?: () => void;
+  /** True after a Review_Run could not start (Req 10.28). */
+  reviewError?: boolean;
 }
 
 const focusRing =
@@ -32,30 +38,47 @@ export function StartMenu({
   level,
   onChooseLevel,
   finishedNotice,
+  restlessCount = 0,
+  onReviewRestless,
+  reviewError = false,
 }: StartMenuProps) {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center px-4 py-8 text-ink">
-      <div className="moon-glow mb-8 flex flex-col items-center">
-        <GhostFigure className="menu-figure mb-4 h-24 w-20 text-ghost" />
+    <main className="flex flex-col items-center justify-center px-4 py-4 text-ink">
+      <div className="moon-glow mb-4 flex sm:mb-6 flex-col items-center">
+        <GhostFigure className="menu-figure mb-2 h-14 w-12 text-ghost sm:h-20 sm:w-16" />
         <h1 className="text-center font-display text-5xl font-semibold tracking-wide sm:text-7xl">
           Ghost Script
         </h1>
       </div>
-      <div className="flex w-full max-w-sm flex-col gap-4">
+      <div className="flex w-full max-w-sm flex-col gap-2">
         <button
           type="button"
           onClick={onStartSeance}
-          className={`slip-primary min-h-[44px] px-6 py-3 text-base font-medium ${focusRing}`}
+          className={`slip-primary min-h-[44px] px-6 py-2 text-base font-medium ${focusRing}`}
         >
           Begin a Nightly Séance
         </button>
         <button
           type="button"
           onClick={onChooseLevel}
-          className={`slip min-h-[44px] px-6 py-3 text-base ${focusRing}`}
+          className={`slip min-h-[44px] px-6 py-2 text-base ${focusRing}`}
         >
           Starting level: {level}
         </button>
+        {restlessCount >= 1 && onReviewRestless && (
+          <button
+            type="button"
+            onClick={onReviewRestless}
+            className={`slip min-h-[44px] px-6 py-2 text-base ${focusRing}`}
+          >
+            Review restless ghosts ({restlessCount})
+          </button>
+        )}
+        {reviewError && (
+          <p role="alert" className="text-center text-sm text-ink">
+            The review could not start. Check your connection and try again.
+          </p>
+        )}
         {finishedNotice && (
           <div className="flex flex-col gap-2">
             <p className="text-center text-sm text-ghost">{finishedNotice.text}</p>
@@ -63,7 +86,7 @@ export function StartMenu({
               <button
                 type="button"
                 onClick={finishedNotice.moveOn.onClick}
-                className={`slip min-h-[44px] px-6 py-3 text-base ${focusRing}`}
+                className={`slip min-h-[44px] px-6 py-2 text-base ${focusRing}`}
               >
                 {finishedNotice.moveOn.label}
               </button>
@@ -73,21 +96,21 @@ export function StartMenu({
         <button
           type="button"
           onClick={onReviewLegend}
-          className={`slip min-h-[44px] px-6 py-3 text-base ${focusRing}`}
+          className={`slip min-h-[44px] px-6 py-2 text-base ${focusRing}`}
         >
           Read the legend again
         </button>
         <button
           type="button"
           onClick={onReviewCangjieGuide}
-          className={`slip min-h-[44px] px-6 py-3 text-base ${focusRing}`}
+          className={`slip min-h-[44px] px-6 py-2 text-base ${focusRing}`}
         >
           How Cangjie works
         </button>
         <button
           type="button"
           onClick={onOpenGraveyard}
-          className={`slip min-h-[44px] px-6 py-3 text-base ${focusRing}`}
+          className={`slip min-h-[44px] px-6 py-2 text-base ${focusRing}`}
         >
           Graveyard
         </button>
@@ -96,7 +119,7 @@ export function StartMenu({
             type="button"
             onClick={onOpenCredits}
             aria-describedby="menu-sources-hint"
-            className={`slip min-h-[44px] px-6 py-3 text-base ${focusRing}`}
+            className={`slip min-h-[44px] px-6 py-2 text-base ${focusRing}`}
           >
             Sources &amp; licences
           </button>

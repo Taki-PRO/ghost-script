@@ -139,6 +139,81 @@ test('an opaque character shows a static note and no per-key message', async ({ 
   await expect(note).toHaveText(OPAQUE_NOTE_TEXT);
 });
 
+/** First record of the learning order, partial or transparent, whose last key inks one to three strokes. */
+function returningCandidate(): CharacterRecord {
+  const map = datasetMap();
+  for (const char of learningOrder(map)) {
+    const record = map.get(char);
+    if (!record || record.cangjie === null) continue;
+    if (record.summonInk.class === 'opaque') continue;
+    const last = record.summonInk.keyStrokes[record.summonInk.keyStrokes.length - 1];
+    if (last && last.length >= 1 && last.length <= 3) return record;
+  }
+  throw new Error('no transparent or partial record whose last key inks one to three strokes');
+}
+
+test('a returning ghost goes to Write after the last key and the target never appears', async ({ page }) => {
+  const record = returningCandidate();
+  const target = record.character;
+  const letters = code(record);
+  // One met ghost, due now, so the séance's first ghost is returning.
+  await seed(page, {
+    schemaVersion: 3,
+    introSeen: true,
+    cangjieIntroSeen: true,
+    history: { [target]: { step: 0, lastOutcome: 'clean', nextDue: 0 } },
+    level: 1,
+    levelChosen: true,
+  });
+  await page.goto(START);
+  await page.getByRole('button', { name: 'Begin a Nightly Séance' }).click();
+  const summon = page.getByRole('region', { name: 'Summon step' });
+  await expect(summon).toBeVisible({ timeout: 10_000 });
+  await expect(page.getByRole('region', { name: "Ghost's clue" })).toContainText(record.prompt.pinyin);
+  await expect(summon.getByRole('listitem', { name: /type / })).toHaveCount(0);
+
+  for (let i = 0; i < letters.length - 1; i++) await pressKey(summon, letters[i]!);
+
+  await page.evaluate((needle) => {
+    const w = window as unknown as { __seen: string[] };
+    w.__seen = [];
+    const hit = (s: string | null | undefined): boolean => (s ?? '').includes(needle);
+    const scan = (n: Node): void => {
+      if (n.nodeType === 3 && hit(n.textContent)) w.__seen.push(`text: ${n.textContent}`);
+      if (n.nodeType === 1) {
+        const el = n as Element;
+        for (const a of Array.from(el.attributes)) if (hit(a.value)) w.__seen.push(`attr ${a.name} on ${el.tagName}`);
+        for (const c of Array.from(el.childNodes)) scan(c);
+      }
+    };
+    new MutationObserver((records) => {
+      for (const r of records) {
+        if (r.type === 'childList') r.addedNodes.forEach(scan);
+        else if (r.type === 'characterData') {
+          if (hit(r.target.textContent)) w.__seen.push(`text change: ${r.target.textContent}`);
+        } else if (r.type === 'attributes' && r.target instanceof Element) {
+          if (hit(r.target.getAttribute(r.attributeName ?? ''))) w.__seen.push(`attr ${r.attributeName}`);
+        }
+      }
+    }).observe(document, { subtree: true, childList: true, characterData: true, attributes: true });
+  }, target);
+
+  await pressKey(summon, letters[letters.length - 1]!);
+  await expect(page.getByRole('region', { name: 'Write mode' })).toBeVisible({ timeout: 1000 });
+  const seen = await page.evaluate(() => (window as unknown as { __seen: string[] }).__seen);
+  expect(seen, `the character ${target} appeared in the page`).toEqual([]);
+});
+
+test('a first meeting still forms the character after the last key', async ({ page }) => {
+  const record = datasetRecord('明');
+  const summon = await beginSeance(page, record);
+  const letters = code(record);
+  for (const letter of letters) await pressKey(summon, letter);
+  // The reveal holds the formed character before Write; Write is not visible at once.
+  await expect(page.getByRole('region', { name: 'Write mode' })).toHaveCount(0);
+  await expect(page.getByRole('region', { name: 'Write mode' })).toBeVisible({ timeout: 15_000 });
+});
+
 for (const vp of VIEWPORTS) {
   test.describe(`summon-ink fit at ${vp.width} x ${vp.height}`, () => {
     test.use({ viewport: vp });

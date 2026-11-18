@@ -257,3 +257,121 @@ describe('StartMenu level slip and finished notice (Req 7.1, 7.5, 8.6, 8.7)', ()
     expect(document.querySelectorAll('.slip-primary')).toHaveLength(1);
   });
 });
+
+describe('StartMenu fits one screen (proof-pass Req 9)', () => {
+  it('has no min-h-screen on the root and uses py-4', () => {
+    setup();
+    const main = document.querySelector('main')!;
+    expect(main.className).not.toContain('min-h-screen');
+    expect(main.className).toContain('py-4');
+  });
+
+  it('uses the smaller figure, py-2 slips and a gap-2 column', () => {
+    setup();
+    const svg = document.querySelector('svg.menu-figure')!;
+    expect(svg.getAttribute('class')).toContain('h-14');
+    expect(svg.getAttribute('class')).toContain('w-12');
+    for (const b of screen.getAllByRole('button')) {
+      expect(b.className).toContain('py-2');
+      expect(b.className).not.toContain('py-3');
+      expect(b.className).toContain('min-h-[44px]');
+    }
+    expect(screen.getByRole('button', { name: BEGIN }).parentElement?.className).toContain('gap-2');
+  });
+
+  it('keeps one slip-primary and the sources hint with the notice shown', () => {
+    setup({
+      finishedNotice: {
+        text: 'You have met every ghost of level 1.',
+        moveOn: { label: 'Move on to level 2', onClick: vi.fn() },
+      },
+    });
+    expect(document.querySelectorAll('.slip-primary')).toHaveLength(1);
+    expect(document.getElementById('menu-sources-hint')?.textContent).toBe(CAPTION);
+    expect(document.getElementById('menu-sources-hint')?.className).toContain('text-sm');
+  });
+});
+
+describe('StartMenu review slip (proof-pass Req 10.2 to 10.9, 10.32, 10.33)', () => {
+  const REVIEW = 'Review restless ghosts (3)';
+  const renderMenu = (extra: Partial<React.ComponentProps<typeof StartMenu>> = {}) => {
+    const onReviewRestless = vi.fn();
+    render(
+      <StartMenu
+        onStartSeance={vi.fn()}
+        onReviewLegend={vi.fn()}
+        onReviewCangjieGuide={vi.fn()}
+        onOpenGraveyard={vi.fn()}
+        onOpenCredits={vi.fn()}
+        level={1}
+        onChooseLevel={vi.fn()}
+        finishedNotice={null}
+        restlessCount={3}
+        onReviewRestless={onReviewRestless}
+        {...extra}
+      />,
+    );
+    return { onReviewRestless, user: userEvent.setup() };
+  };
+
+  it('shows the slip with the count and calls onReviewRestless', async () => {
+    const m = renderMenu();
+    await m.user.click(screen.getByRole('button', { name: REVIEW }));
+    expect(m.onReviewRestless).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows a 4-digit count as a decimal integer', () => {
+    renderMenu({ restlessCount: 1234 });
+    expect(screen.getByRole('button', { name: 'Review restless ghosts (1234)' })).toBeTruthy();
+  });
+
+  it('is absent when the count is 0 or no handler is given', () => {
+    renderMenu({ restlessCount: 0 });
+    expect(screen.queryByRole('button', { name: /Review restless ghosts/ })).toBeNull();
+    cleanup();
+    renderMenu({ restlessCount: undefined });
+    expect(screen.queryByRole('button', { name: /Review restless ghosts/ })).toBeNull();
+  });
+
+  it('sits right after "Starting level" and before the Move on slip in tab order', async () => {
+    const m = renderMenu({
+      finishedNotice: {
+        text: 'You have met every ghost of level 1.',
+        moveOn: { label: 'Move on to level 2', onClick: vi.fn() },
+      },
+    });
+    expect(screen.getAllByRole('button').map((b) => b.textContent)).toEqual([
+      BEGIN,
+      'Starting level: 1',
+      REVIEW,
+      'Move on to level 2',
+      LEGEND,
+      GUIDE,
+      GRAVEYARD,
+      CREDITS,
+    ]);
+    const level = screen.getByRole('button', { name: 'Starting level: 1' });
+    expect(level.nextElementSibling).toBe(screen.getByRole('button', { name: REVIEW }));
+    await m.user.tab();
+    await m.user.tab();
+    await m.user.tab();
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: REVIEW }));
+  });
+
+  it('is a slip, not a slip-primary, at least 44 px, and Begin stays the only slip-primary', () => {
+    renderMenu();
+    const slip = screen.getByRole('button', { name: REVIEW });
+    expect(slip.classList.contains('slip')).toBe(true);
+    expect(slip.className).not.toContain('slip-primary');
+    expect(slip.className).toContain('min-h-[44px]');
+    expect(document.querySelectorAll('.slip-primary')).toHaveLength(1);
+    expect(screen.getByRole('button', { name: BEGIN }).classList.contains('slip-primary')).toBe(true);
+  });
+
+  it('shows the alert text after a failed start', () => {
+    renderMenu({ reviewError: true });
+    expect(screen.getByRole('alert').textContent).toBe(
+      'The review could not start. Check your connection and try again.',
+    );
+  });
+});

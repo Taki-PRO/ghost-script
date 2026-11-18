@@ -1,5 +1,5 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
-import { START, datasetRecord, seed, seedBefore, seedGraveyard, seedState } from './helpers';
+import { START, datasetRecord, seed, seedBefore, seedGraveyard, seedState, waitForLegendReveal } from './helpers';
 
 // Cursors (spec night-polish, Requirements 2 and 3): a ghost cursor on fine pointers, a brush-tip
 // cursor on the Write paper only, and no image cursor on touch devices. The same selectors and
@@ -50,6 +50,7 @@ async function openIntro(page: Page): Promise<void> {
   await seed(page, seedState({ introSeen: false }));
   await page.goto(START);
   await expect(page.getByRole('button', { name: 'Begin the Séance' })).toBeVisible();
+  await waitForLegendReveal(page);
 }
 
 async function openMenu(page: Page): Promise<void> {

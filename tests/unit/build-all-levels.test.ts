@@ -1,7 +1,7 @@
 // Unit tests for buildAllLevels / writeAllLevels (harder-ghosts task 5.3).
 //
 // Fixtures are generated into temp directories: three small levels (level 1
-// has 4 characters, levels 2 and 3 have 52 and 55 so a 50-row Review_Sample
+// has 32 characters, so a sample exists at position 31 or later; levels 2 and 3 have 52 and 55 so a 50-row Review_Sample
 // exists). Nothing here touches the real data files.
 //
 // Requirements: 3.1 to 3.8, 3.12, 3.13, 4.1 to 4.6, 4.10, 4.13, 5.1, 5.2
@@ -27,6 +27,8 @@ import {
   writeAllLevels,
 } from '../../scripts/build-data';
 import type { AllLevelsOptions, AllLevelsPaths } from '../../scripts/build-data';
+import { LEGEND_SOURCE } from '../../app/src/data/citations';
+import { legendCharacters } from '../../scripts/lib/legend-strokes';
 import { README_END_MARKER, README_START_MARKER } from '../../scripts/lib/prompt-counts';
 import { sha256Hex } from '../../scripts/lib/verify-sha256';
 import type { CharacterRecord } from '../../app/src/data/types';
@@ -40,7 +42,7 @@ afterEach(() => {
 function chars(start: number, count: number): string[] {
   return Array.from({ length: count }, (_, i) => String.fromCodePoint(start + i));
 }
-const L1 = chars(0x4e00, 4);
+const L1 = chars(0x4e00, 32);
 const L2 = chars(0x4f00, 52);
 const L3 = chars(0x5000, 55);
 
@@ -61,6 +63,14 @@ function makeFixture(extra: { overrides2?: string; approvals?: string; skipStrok
   mkdirSync(hanziWriterDataDir);
   for (const c of all) {
     if (extra.skipStrokes?.includes(c)) continue;
+    writeFileSync(
+      join(hanziWriterDataDir, `${c}.json`),
+      JSON.stringify({ strokes: ['M 1 2 L 3 4'], medians: [[[1, 2], [3, 4]]], radStrokes: [] }),
+    );
+  }
+  // The legend line's strokes are built by every all-levels build.
+  for (const c of legendCharacters(LEGEND_SOURCE.zh)) {
+    if (all.includes(c)) continue;
     writeFileSync(
       join(hanziWriterDataDir, `${c}.json`),
       JSON.stringify({ strokes: ['M 1 2 L 3 4'], medians: [[[1, 2], [3, 4]]], radStrokes: [] }),
@@ -137,7 +147,7 @@ describe('buildAllLevels promptReview', () => {
     const r1 = JSON.parse(b1.output) as Record<string, CharacterRecord>;
     const r2 = JSON.parse(b2.output) as Record<string, CharacterRecord>;
     const r3 = JSON.parse(b3.output) as Record<string, CharacterRecord>;
-    expect(Object.keys(r1)).toHaveLength(4);
+    expect(Object.keys(r1)).toHaveLength(32);
     expect(Object.keys(r2)).toHaveLength(52);
     expect(Object.keys(r3)).toHaveLength(55);
     expect(Object.values(r1).every((r) => !('promptReview' in r))).toBe(true);
@@ -212,7 +222,7 @@ describe('buildAllLevels output', () => {
   it('builds the manifest: three levels in order, counts, files, three example meanings each', async () => {
     const result = await buildOk(makeFixture());
     expect(result.manifest.levels.map((l) => [l.level, l.file, l.count])).toEqual([
-      [1, 'characters.json', 4],
+      [1, 'characters.json', 32],
       [2, 'characters-level2.json', 52],
       [3, 'characters-level3.json', 55],
     ]);
@@ -315,13 +325,14 @@ describe('writeAllLevels and the report', () => {
     expect(report.match(/^Cangjie code: /gm)).toHaveLength(3);
     expect(report.match(/^Summon ink: /gm)).toHaveLength(3);
     const fileLines = report.split('\n').filter((l) => / bytes gzip$/.test(l));
-    expect(fileLines).toHaveLength(4);
+    expect(fileLines).toHaveLength(5);
     expect(fileLines[0]).toBe(
-      `app/public/data/characters.json  4 records  ${Buffer.byteLength(result.levels[0].output)} bytes  ` +
+      `app/public/data/characters.json  32 records  ${Buffer.byteLength(result.levels[0].output)} bytes  ` +
         `${/\d+(?= bytes gzip$)/.exec(fileLines[0])?.[0]} bytes gzip`,
     );
     expect(fileLines[1]).toMatch(/^app\/public\/data\/characters-level2\.json {2}52 records {2}\d+ bytes {2}\d+ bytes gzip$/);
     expect(fileLines[2]).toMatch(/^app\/public\/data\/characters-level3\.json {2}55 records /);
     expect(fileLines[3]).toMatch(/^app\/public\/data\/levels\.json {2}3 records /);
+    expect(fileLines[4]).toMatch(/^app\/public\/data\/legend-strokes\.json {2}6 records {2}\d+ bytes {2}\d+ bytes gzip$/);
   });
 });

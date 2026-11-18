@@ -116,6 +116,16 @@ export type Level = 1 | 2 | 3;
 /** Whether a human has reviewed the record's ghost clue. */
 export type PromptReview = 'reviewed' | 'unreviewed';
 
+/**
+ * The sample character of a level, drawn on the level screen from stroke data
+ * (never as text). `strokes` are the unchanged SVG path data of
+ * hanzi-writer-data, in source order, without medians.
+ */
+export interface LevelSample {
+  character: string;
+  strokes: string[];
+}
+
 /** One entry of the Level_Manifest (app/public/data/levels.json). */
 export interface LevelInfo {
   level: Level;
@@ -127,6 +137,8 @@ export interface LevelInfo {
   averageStrokes: number;
   /** English example meanings, never a character. */
   exampleMeanings: string[];
+  /** One drawn sample; absent in a manifest without samples. */
+  sample?: LevelSample;
 }
 
 /** The Level_Manifest: one LevelInfo per level, in level order. */

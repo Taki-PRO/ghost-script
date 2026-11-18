@@ -10,12 +10,14 @@ import {
   expectMoonInside,
   expectNoVerticalScroll,
   layToRestClean,
+  reachFullSummary,
   reachSummary,
   seed,
   seedBefore,
+  seedGraveyard,
   seedState,
   visibleInkPaths,
-  waitForInkReveal,
+  waitForLegendReveal,
   type SeedState,
 } from './helpers';
 
@@ -87,7 +89,7 @@ for (const vp of VIEWPORTS) {
       await seed(page, seedState({ introSeen: false }));
       await page.goto(START);
       await expect(page.getByRole('button', { name: 'Begin the Séance' })).toBeVisible();
-      await waitForInkReveal(page);
+      await waitForLegendReveal(page);
       await expectMoonInside(page, 'intro');
       await save(page, 'intro');
     });
@@ -128,6 +130,62 @@ for (const vp of VIEWPORTS) {
   });
 }
 
+// Full 10-ghost summary at both Rite_Viewports (reduced motion: the seals are in their end state).
+for (const vp of VIEWPORTS) {
+  test.describe(`summary screenshot at ${vp.width} x ${vp.height}`, () => {
+    test.use({ viewport: vp, reducedMotion: 'reduce' });
+
+    test('summary', async ({ page }) => {
+      test.setTimeout(480_000);
+      await reachFullSummary(page);
+      await expectMoonInside(page, 'summary');
+      await save(page, 'summary');
+    });
+  });
+}
+
+// Proof-pass review captures (task 16.8): Level screen, Graveyard with met ghosts, intro mid-ink.
+test.describe('level screenshot at 375 x 812', () => {
+  test.use({ viewport: { width: 375, height: 812 } });
+
+  test('level', async ({ page }) => {
+    await seed(page, seedState());
+    await page.goto(START);
+    await page.getByRole('button', { name: /^Starting level: 1/ }).click();
+    await expect(page.getByRole('heading', { level: 1, name: 'Where will you begin?' })).toBeVisible();
+    await page.evaluate(() => document.fonts.ready);
+    await expectMoonInside(page, 'level');
+    await save(page, 'level');
+  });
+});
+
+for (const vp of VIEWPORTS) {
+  test.describe(`graveyard with met ghosts at ${vp.width} x ${vp.height}`, () => {
+    test.use({ viewport: vp });
+
+    test('graveyard-met', async ({ page }) => {
+      // A restless ghost at index 40 of the learning order shows a few rows of graves.
+      await seedGraveyard(page, { farMetIndex: 40 });
+      await expectMoonInside(page, 'graveyard met');
+      await save(page, 'graveyard-met');
+    });
+  });
+}
+
+// Intro during the ink-in: no reduced motion, so the legend line is part-drawn.
+test.describe('intro mid-ink at 375 x 812', () => {
+  test.use({ viewport: { width: 375, height: 812 } });
+
+  test('intro-inking', async ({ page }) => {
+    await seed(page, seedState({ introSeen: false }));
+    await page.goto(START);
+    await expect(page.getByRole('button', { name: 'Begin the Séance' })).toBeVisible();
+    await page.waitForTimeout(2000);
+    await expectMoonInside(page, 'intro inking');
+    await save(page, 'intro-inking');
+  });
+});
+
 // Intro at 1440 x 900 for the human's Moon review (approved by the human).
 test.describe('screenshots at 1440 x 900', () => {
   test.use({ viewport: { width: 1440, height: 900 } });
@@ -136,7 +194,7 @@ test.describe('screenshots at 1440 x 900', () => {
     await seed(page, seedState({ introSeen: false }));
     await page.goto(START);
     await expect(page.getByRole('button', { name: 'Begin the Séance' })).toBeVisible();
-    await waitForInkReveal(page);
+    await waitForLegendReveal(page);
     await expectMoonInside(page, 'intro 1440');
     await save(page, 'intro');
   });
@@ -187,7 +245,7 @@ test.describe('moon at 320 x 640', () => {
     await seed(page, seedState({ introSeen: false }));
     await page.goto(START);
     await expect(page.getByRole('button', { name: 'Begin the Séance' })).toBeVisible();
-    await waitForInkReveal(page);
+    await waitForLegendReveal(page);
     await expectMoonInside(page, 'intro 320');
   });
 

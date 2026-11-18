@@ -2,8 +2,9 @@
 //
 // Level 2 and 3 files accept exactly `human` (or empty on an unreviewed row).
 // The two level 1 files are left as they are: prompt-review.csv accepts exactly
-// `human-approved` and empty; prompt-overrides.csv pins its existing rows and
-// accepts a new row only with `human`. This test never rewrites any file.
+// `human-approved` and empty; prompt-overrides.csv pins all of its rows. The
+// value `human` is accepted only on the 本 and 天 rows of the two level 1 files
+// (proof-pass, Requirement 2). This test never rewrites any file.
 //
 // Requirements: 4.16
 import { createHash } from 'node:crypto';
@@ -18,10 +19,16 @@ import { parseCsv } from '../helpers/csv';
 const ROOT = resolve(__dirname, '..', '..');
 const read = (rel: string): string => readFileSync(resolve(ROOT, rel), 'utf8');
 
-/** SHA-256 of the 48 existing `human-approved` rows of data/prompt-overrides.csv, one per line. */
+/**
+ * SHA-256 of all 49 rows of data/prompt-overrides.csv (header excluded), each followed by a newline:
+ * the 47 earlier `human-approved` rows unchanged, `本,0,0,human` in place of the old 本 row, and
+ * `天,0,1,human`.
+ */
 const LEVEL1_OVERRIDE_ROWS_SHA256 =
-  '7e35baf6b30a1c86709f0755c4b232bb8a06cbce43a32510be434d77d29cb17b';
-const LEVEL1_OVERRIDE_ROW_COUNT = 48;
+  '16791638c2f63078ed88ae993431fb0e5dec9e878645a5577bfd771b7b2f980d';
+const LEVEL1_OVERRIDE_ROW_COUNT = 49;
+/** The only level 1 rows whose reviewedBy may be `human` (proof-pass, Requirement 2). */
+const LEVEL1_HUMAN_ROWS: readonly string[] = ['本', '天'];
 
 export type ReviewFileKind =
   | 'review-new' // level 2/3 Review_Files and both Review_Samples: `human` or empty
@@ -41,11 +48,17 @@ export function checkReviewedBy(kind: ReviewFileKind, csv: string): string[] {
     'review-new': ['human', ''],
     approvals: ['human'],
     'overrides-new': ['human'],
-    'overrides-level1': ['human-approved', 'human'],
+    'overrides-level1': ['human-approved'],
     'review-level1': ['human-approved', ''],
   };
   rows.slice(1).forEach((row, i) => {
     const value = row[col] ?? '';
+    if ((kind === 'overrides-level1' || kind === 'review-level1') && value === 'human') {
+      if (!LEVEL1_HUMAN_ROWS.includes(row[0])) {
+        problems.push(`row ${i + 2} (${row[0]}): reviewedBy "human" is accepted only on 本 and 天`);
+      }
+      return;
+    }
     if (!accepted[kind].includes(value)) {
       problems.push(`row ${i + 2} (${row[0]}): reviewedBy "${value}" is not accepted`);
     }
@@ -53,11 +66,12 @@ export function checkReviewedBy(kind: ReviewFileKind, csv: string): string[] {
   if (kind === 'overrides-level1') {
     const pinned = csv
       .split('\n')
-      .filter((line) => line.endsWith(',human-approved'))
+      .slice(1)
+      .filter((line) => line !== '')
       .map((line) => `${line}\n`);
     const hash = createHash('sha256').update(pinned.join('')).digest('hex');
     if (pinned.length !== LEVEL1_OVERRIDE_ROW_COUNT || hash !== LEVEL1_OVERRIDE_ROWS_SHA256) {
-      problems.push('the existing human-approved rows differ from the pinned rows');
+      problems.push('the level 1 override rows differ from the pinned rows');
     }
   }
   return problems;
@@ -125,17 +139,35 @@ describe('checkReviewedBy rejects bad values', () => {
     expect(checkReviewedBy('review-new', 'character,other\n人,x\n')).toHaveLength(1);
   });
 
-  it('level 1 review file accepts exactly human-approved and empty', () => {
+  it('level 1 review file accepts human-approved and empty, and human only on 本 and 天', () => {
     expect(checkReviewedBy('review-level1', 'character,reviewedBy\n人,human-approved\n大,\n')).toEqual([]);
     expect(checkReviewedBy('review-level1', 'character,reviewedBy\n人,human\n')).toHaveLength(1);
+    expect(checkReviewedBy('review-level1', 'character,reviewedBy\n本,human\n天,human\n')).toEqual([]);
+    expect(checkReviewedBy('review-level1', 'character,reviewedBy\n本,someone\n')).toHaveLength(1);
   });
 
-  it('level 1 overrides: an altered or added human-approved row fails the pin, a human row passes', () => {
+  it('level 1 overrides: the 49 pinned rows pass; any other row or value fails', () => {
     const real = read('data/prompt-overrides.csv');
+    const more = (row: string): string => `${real.endsWith('\n') ? real : `${real}\n`}${row}\n`;
     expect(checkReviewedBy('overrides-level1', real)).toEqual([]);
-    expect(checkReviewedBy('overrides-level1', `${real}人,0,0,human\n`)).toEqual([]);
-    expect(checkReviewedBy('overrides-level1', `${real}人,0,0,human-approved\n`)).toHaveLength(1);
-    expect(checkReviewedBy('overrides-level1', real.replace('比,2,0', '比,1,0'))).toHaveLength(1);
-    expect(checkReviewedBy('overrides-level1', `${real}人,0,0,someone\n`)).toHaveLength(1);
+    expect(checkReviewedBy('overrides-level1', more('人,0,0,human'))).not.toEqual([]);
+    expect(checkReviewedBy('overrides-level1', more('人,0,0,human-approved'))).not.toEqual([]);
+    expect(checkReviewedBy('overrides-level1', more('人,0,0,someone'))).not.toEqual([]);
+    expect(checkReviewedBy('overrides-level1', real.replace('比,2,0', '比,1,0'))).not.toEqual([]);
+    expect(checkReviewedBy('overrides-level1', real.replace('本,0,0,human', '本,0,8,human'))).not.toEqual([]);
+    expect(checkReviewedBy('overrides-level1', real.replace('天,0,1,human', '天,0,2,human'))).not.toEqual([]);
+  });
+
+  it('the old 48-row pin is proved: reverting 本 and dropping 天 gives the old rows', () => {
+    const old = read('data/prompt-overrides.csv')
+      .replace('本,0,0,human', '本,0,8,human-approved')
+      .split('\n')
+      .slice(1)
+      .filter((line) => line !== '' && !line.startsWith('天,'))
+      .map((line) => `${line}\n`)
+      .join('');
+    expect(createHash('sha256').update(old).digest('hex')).toBe(
+      '7e35baf6b30a1c86709f0755c4b232bb8a06cbce43a32510be434d77d29cb17b',
+    );
   });
 });

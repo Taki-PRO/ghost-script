@@ -8,7 +8,9 @@ import type {
   Level,
   LevelInfo,
   LevelManifest,
+  LevelSample,
 } from '../../app/src/data/types';
+import { learningOrder } from '../../app/src/engine/learningOrder';
 import { cleanupMeaning } from '../../app/src/engine/promptCleanup';
 
 /** File name of each Level_Dataset inside app/public/data/. */
@@ -73,6 +75,41 @@ export function exampleMeanings(
   return meanings;
 }
 
+/** Learning positions before this one (1-based) are never a sample. */
+export const SAMPLE_FIRST_POSITION = 31;
+
+/**
+ * The sample of a level (proof-pass Requirement 11.6): among the characters at
+ * learning position 31 or later (counted from 1), the one whose stroke count is
+ * closest to `average`; a tie goes to the lowest position. Returns null when
+ * the order has no such character. A character without a stroke count is
+ * never closer than one with a count.
+ */
+export function chooseSample(
+  order: readonly string[],
+  strokeCount: ReadonlyMap<string, number>,
+  average: number,
+): { character: string; position: number } | null {
+  let best: { character: string; position: number; diff: number } | null = null;
+  for (let i = SAMPLE_FIRST_POSITION - 1; i < order.length; i += 1) {
+    const count = strokeCount.get(order[i]);
+    if (count === undefined) continue;
+    const diff = Math.abs(count - average);
+    if (best === null || diff < best.diff) {
+      best = { character: order[i], position: i + 1, diff };
+    }
+  }
+  return best === null
+    ? null
+    : { character: best.character, position: best.position };
+}
+
+/**
+ * Reads the stroke paths (the `strokes` array of hanzi-writer-data, no medians)
+ * of a character. Throws when the file is missing or invalid.
+ */
+export type StrokesOf = (character: string) => string[];
+
 /** What `buildManifest` needs for one level. */
 export interface ManifestLevelInput {
   level: Level;
@@ -83,11 +120,14 @@ export interface ManifestLevelInput {
 
 /**
  * Builds the Level_Manifest: one entry per level, in level order, whatever the
- * order of `inputs`. Throws when a level is missing or has fewer than three
- * Example_Meanings.
+ * order of `inputs`. Throws, naming the level, when a level is missing, has
+ * fewer than three Example_Meanings, has no sample candidate (fewer than 31
+ * records), or the stroke file of its sample is missing or invalid. The sample
+ * is chosen from the level's own dataset by `chooseSample`.
  */
 export function buildManifest(
   inputs: readonly ManifestLevelInput[],
+  strokesOf: StrokesOf,
 ): LevelManifest {
   const levels: LevelInfo[] = LEVELS.map((level) => {
     const input = inputs.find((candidate) => candidate.level === level);
@@ -100,12 +140,43 @@ export function buildManifest(
         `Level_Manifest: level ${level} has ${meanings.length} usable example meanings, need 3.`,
       );
     }
+    const average = averageStrokes(input.records);
+    const counts = new Map<string, number>();
+    for (const [character, record] of input.records) {
+      counts.set(character, record.strokeCount);
+    }
+    const chosen = chooseSample(learningOrder(input.records), counts, average);
+    if (chosen === null) {
+      throw new Error(
+        `Level_Manifest: level ${level} has ${input.records.size} records, need at least ${SAMPLE_FIRST_POSITION} for a sample.`,
+      );
+    }
+    let strokes: string[];
+    try {
+      strokes = strokesOf(chosen.character);
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : String(error);
+      throw new Error(
+        `Level_Manifest: level ${level} sample ${chosen.character} has no usable stroke file (${reason}).`,
+      );
+    }
+    if (
+      !Array.isArray(strokes) ||
+      strokes.length === 0 ||
+      !strokes.every((d) => typeof d === 'string' && d.length > 0)
+    ) {
+      throw new Error(
+        `Level_Manifest: level ${level} sample ${chosen.character} has no usable stroke file (empty or invalid strokes).`,
+      );
+    }
+    const sample: LevelSample = { character: chosen.character, strokes };
     return {
       level,
       file: LEVEL_FILES[level],
       count: input.records.size,
-      averageStrokes: averageStrokes(input.records),
+      averageStrokes: average,
       exampleMeanings: meanings,
+      sample,
     };
   });
   return { levels };

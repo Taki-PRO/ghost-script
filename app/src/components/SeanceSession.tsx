@@ -5,8 +5,9 @@ import type { EngineConfig } from '../engine/config';
 import type { Outcome } from '../engine/scheduler';
 import { isPlayableInCangjie } from '../engine/cangjieRules';
 import { combineOutcomes } from '../engine/outcome';
-import { WALKTHROUGH_LINE_PX } from '../engine/surfaceSize';
+import { WALKTHROUGH_LINE_PX, crossLevelReserve } from '../engine/surfaceSize';
 import { WALKTHROUGH_WRITE_LINE, walkthroughSummonLines } from '../engine/walkthrough';
+import { REVIEW_RESULT_TEXT } from '../engine/review';
 import { SummonStep } from '../modes/SummonStep';
 import { WriteMode } from '../modes/WriteMode';
 import { GhostPrompt } from './GhostPrompt';
@@ -29,6 +30,13 @@ export interface SeanceSessionProps {
   firstMeeting?: ReadonlySet<string>;
   /** The guided first ghost, or null. Default: null. */
   walkthroughChar?: string | null;
+  /** Line shown once above the first ghost when due ghosts of another level come first. Default: none. */
+  crossLevelLine?: string | null;
+  /**
+   * 'review' for a Review_Run (every ghost is a returning ghost, review result
+   * texts, and `laidToRest` of the results counts the clean ghosts). Default 'nightly'.
+   */
+  mode?: 'nightly' | 'review';
 }
 
 const NO_FIRST_MEETING: ReadonlySet<string> = new Set<string>();
@@ -80,6 +88,8 @@ export function SeanceSession({
   savingWorks,
   firstMeeting = NO_FIRST_MEETING,
   walkthroughChar = null,
+  crossLevelLine = null,
+  mode = 'nightly',
 }: SeanceSessionProps) {
   const list = useMemo(() => dedupeGhosts(ghosts), [ghosts]);
   const total = list.length;
@@ -111,6 +121,11 @@ export function SeanceSession({
 
   const record = list[index];
   const isWalkthrough = record !== undefined && walkthroughChar !== null && record.character === walkthroughChar;
+  // The line belongs to the first ghost only; it is gone once `index` moves on (R5.5, R5.6).
+  const shownLine = index === 0 ? crossLevelLine : null;
+  // Fixed at the first render of the session so the paper size never changes under the player.
+  const [lineReserve] = useState(() => (crossLevelLine ? crossLevelReserve(crossLevelLine, window.innerWidth) : 0));
+  const reservedPx = isWalkthrough ? WALKTHROUGH_LINE_PX : shownLine ? lineReserve : 0;
   const walkthroughLines = useMemo(
     () => (isWalkthrough && record ? walkthroughSummonLines(record, dataset) : undefined),
     [isWalkthrough, record, dataset],
@@ -137,11 +152,11 @@ export function SeanceSession({
     (outcome: Outcome) => {
       if (!record || resolvedRef.current || leftRef.current) return;
       resolvedRef.current = true;
-      if (outcome !== 'gave-up') laidToRestRef.current += 1;
+      if (mode === 'review' ? outcome === 'clean' : outcome !== 'gave-up') laidToRestRef.current += 1;
       setResult(outcome);
       onOutcomeRef.current(record.character, outcome, Date.now());
     },
-    [record],
+    [record, mode],
   );
 
   const handleAdvance = useCallback(() => {
@@ -197,7 +212,7 @@ export function SeanceSession({
       : 'Step 2 of 2: Lay to rest';
 
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-col items-center gap-2 p-2">
+    <div className="mx-auto flex w-full max-w-xl flex-col items-center gap-1 px-2 py-1">
       <div className="flex w-full items-center justify-between gap-3 pr-[4.5rem]">
         <button
           ref={leaveBtnRef}
@@ -205,11 +220,11 @@ export function SeanceSession({
           aria-expanded={confirmingLeave}
           aria-controls="leave-prompt"
           onClick={openLeave}
-          className={BTN}
+          className={`${BTN} max-[359px]:px-3 max-[359px]:text-sm`}
         >
           Leave séance
         </button>
-        <h2 className="text-lg text-ink">
+        <h2 className="text-lg text-ink max-[359px]:whitespace-nowrap max-[359px]:text-sm">
           Ghost {index + 1} of {total}
         </h2>
       </div>
@@ -236,8 +251,15 @@ export function SeanceSession({
           </div>
         </div>
       )}
-      <GhostPrompt record={record} outcome={result} compact flinch={flinch} />
-      <p className="text-sm text-muted">{stepLabel}</p>
+      {shownLine !== null && (
+        <p data-testid="cross-level-line" className="min-h-6 text-center text-sm text-ink">
+          {shownLine}
+        </p>
+      )}
+      <div className="flex items-center justify-center gap-3">
+        <GhostPrompt record={record} outcome={result} compact flinch={flinch} />
+        <p className="text-xs text-muted sm:text-sm">{stepLabel}</p>
+      </div>
       {step === 'summon' ? (
         <SummonStep
           key={record.character}
@@ -248,6 +270,7 @@ export function SeanceSession({
           onWrongKey={handleWrongKey}
           firstMeeting={firstMeeting.has(record.character)}
           walkthroughLines={walkthroughLines}
+          reservedPx={reservedPx}
         />
       ) : (
         <>
@@ -261,14 +284,14 @@ export function SeanceSession({
             dataset={dataset}
             config={config}
             onOutcome={handleWriteOutcome}
-            reservedPx={isWalkthrough ? WALKTHROUGH_LINE_PX : 0}
+            reservedPx={reservedPx}
             sealed={result === 'clean'}
           />
         </>
       )}
       {result !== null && (
         <div className="flex flex-col items-center gap-3">
-          <p className="text-ink">{RESULT_TEXT[result]}</p>
+          <p className="text-ink">{(mode === 'review' ? REVIEW_RESULT_TEXT : RESULT_TEXT)[result]}</p>
           <button
             ref={nextRef}
             type="button"

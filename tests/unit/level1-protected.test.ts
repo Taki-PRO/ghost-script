@@ -10,8 +10,8 @@ import { describe, expect, it } from 'vitest';
 const ROOT = resolve(__dirname, '..', '..');
 
 export const LEVEL1_SHA256: Readonly<Record<string, string>> = {
-  'app/public/data/characters.json': 'c7207b9b5ff4a7f951ef0b5ca84c7e7129d316feba2d4a248e5cf9687345736e',
-  'data/prompt-review.csv': '2a11a5906b16ddb3e47fa8397974f9be040a656cdafbdd5ff98ca729d5aa1573',
+  'app/public/data/characters.json': 'ade20f90b0e01dbc2b2a3a4a540dab2bd04157b99b5b68effa46d9f58e04d5d9',
+  'data/prompt-review.csv': 'c4baeb0fcb8b035f3d9627c253d70c9e36e5bd5d6ddf4c1a50a2d8bd7fa28ef0',
   'data/character-list.txt': '531ecd05c2e998f11e7f0e9f1b7c17427cf789f7acf8ecd96f8b125b5a79bc3c',
 };
 

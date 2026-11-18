@@ -1,3 +1,5 @@
+import { readdirSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen, within, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -5,6 +7,7 @@ import { Credits } from './Credits';
 import {
   CODE_LICENCE,
   COMBINED_WORK_NOTE,
+  DATA_FILES,
   DATA_SOURCES,
   FONTS,
   KEYBOARD_LIMITATION,
@@ -203,10 +206,10 @@ describe('Credits', () => {
     it('lets every table cell, card value, the legend citation and each Cangjie citation wrap anywhere', () => {
       const { container } = render(<Credits onBack={() => {}} backTo="menu" />);
       const cells = container.querySelectorAll('tbody th, tbody td');
-      expect(cells).toHaveLength(DATA_SOURCES.length * 5 + SOFTWARE_CREDITS.length * 3);
+      expect(cells).toHaveLength(DATA_SOURCES.length * 5 + DATA_FILES.length * 3 + SOFTWARE_CREDITS.length * 3);
       for (const c of cells) expect(c.className).toContain(WRAP);
       const dds = container.querySelectorAll('dd');
-      expect(dds).toHaveLength(DATA_SOURCES.length * 5 + SOFTWARE_CREDITS.length * 3);
+      expect(dds).toHaveLength(DATA_SOURCES.length * 5 + DATA_FILES.length * 3 + SOFTWARE_CREDITS.length * 3);
       for (const d of dds) expect(d.className).toContain(WRAP);
 
       const legend = screen.getByText(LEGEND_SOURCE.citation, { exact: false });
@@ -214,6 +217,56 @@ describe('Credits', () => {
       for (const c of CANGJIE_CITATIONS) {
         const li = screen.getByText(c.url, { exact: false }).closest('li') as HTMLElement;
         expect(li.className).toContain(WRAP);
+      }
+    });
+  });
+
+  describe('Data files section (proof-pass Requirement 7)', () => {
+    const repoRoot = resolve(__dirname, '../../..');
+    const jsonIn = (dir: string): string[] =>
+      readdirSync(resolve(repoRoot, dir)).filter((n) => n.endsWith('.json'));
+
+    it('names every .json file in app/public/data on the screen', () => {
+      render(<Credits onBack={() => {}} backTo="menu" />);
+      const names = jsonIn('app/public/data');
+      expect(names.length).toBeGreaterThan(0);
+      for (const n of names) expect(text(), `${n} missing from the screen`).toContain(n);
+    });
+
+    it('names every .json file in oracle/power/data on the screen', () => {
+      render(<Credits onBack={() => {}} backTo="menu" />);
+      const names = jsonIn('oracle/power/data');
+      expect(names.length).toBeGreaterThan(0);
+      for (const n of names) expect(text(), `${n} missing from the screen`).toContain(n);
+    });
+
+    it('shows each file as a table row with what it holds and its sources and licences', () => {
+      const { container } = render(<Credits onBack={() => {}} backTo="menu" />);
+      const table = container.querySelector('table[aria-labelledby="credits-files"]') as HTMLElement;
+      expect(screen.getByRole('heading', { name: 'Data files' })).toBeInTheDocument();
+      for (const f of DATA_FILES) {
+        const row = within(table).getByRole('rowheader', { name: f.path }).closest('tr') as HTMLElement;
+        expect(Array.from(row.querySelectorAll('th,td')).map((c) => c.textContent)).toEqual([
+          f.path,
+          f.holds,
+          f.sources,
+        ]);
+      }
+    });
+
+    it('names the Arphic Public License for the stroke outlines held by levels.json', () => {
+      const levels = DATA_FILES.find((f) => f.path === 'levels.json');
+      expect(levels?.sources).toContain('hanzi-writer-data (Arphic Public License)');
+      expect(levels?.holds).toContain('stroke outlines');
+    });
+
+    it('uses only licence names that DATA_SOURCES already states, and no Han glyph', () => {
+      const known = new Set(DATA_SOURCES.map((s) => s.licence));
+      for (const f of DATA_FILES) {
+        expect(f.path + f.holds + f.sources).not.toMatch(/\p{Script=Han}/u);
+        for (const l of ['Arphic Public License', 'GNU LGPL v3.0-or-later', 'CC BY-SA 4.0', 'MIT']) {
+          if (f.sources.includes(l)) expect(Array.from(known).some((k) => k.startsWith(l))).toBe(true);
+        }
       }
     });
   });

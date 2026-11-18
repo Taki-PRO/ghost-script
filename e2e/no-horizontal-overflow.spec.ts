@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { START, datasetKeys, findOverflow, seed, seedState } from './helpers';
+import { START, datasetKeys, findOverflow, openStartMenuWorstCase, reachFullSummary, seed, seedState } from './helpers';
 
 // Width_Check at 375 x 812 and 320 x 640 on five screens (Requirements 24.7 to 24.10, 29.1, 29.2).
 // Helpers live in `e2e/helpers.ts`.
@@ -105,6 +105,14 @@ for (const vp of VIEWPORTS) {
       expect(problems, problems.join('\n')).toEqual([]);
     });
 
+    test('Summary (10 ghosts)', async ({ page }) => {
+      test.setTimeout(480_000);
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await reachFullSummary(page);
+      expectViewport(page);
+      const problems = await findOverflow(page, vp.width);
+      expect(problems, problems.join('\n')).toEqual([]);
+    });
     test('guard: an appended 600 px div is reported', async ({ page }) => {
       expectViewport(page);
       await seed(page, seedState());
@@ -121,6 +129,23 @@ for (const vp of VIEWPORTS) {
       const problems = await findOverflow(page, vp.width);
       expect(problems.length).toBeGreaterThan(0);
       expect(problems.join('\n')).toContain('div#overflow-guard');
+    });
+  });
+}
+// The Start menu worst case at both sizes of the fit spec (proof-pass Requirement 9.12).
+for (const vp of [
+  { width: 375, height: 812 },
+  { width: 1024, height: 768 },
+] as const) {
+  test.describe(`no horizontal overflow of the worst-case Start menu at ${vp.width} px`, () => {
+    test.use({ viewport: vp });
+    test('Start menu worst case', async ({ page }) => {
+      expect(page.viewportSize()).toEqual(vp);
+      await openStartMenuWorstCase(page);
+      const problems = await findOverflow(page, vp.width);
+      expect(problems, problems.join('\n')).toEqual([]);
+      const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+      expect(scrollWidth).toBeLessThanOrEqual(vp.width);
     });
   });
 }

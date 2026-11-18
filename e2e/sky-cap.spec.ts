@@ -6,6 +6,8 @@ import {
   findOverflow,
   luminance,
   moonDisc,
+  openStartMenuWorstCase,
+  reachFullSummary,
   reachSummary,
   seed,
   seedGraveyard,
@@ -39,6 +41,8 @@ interface Screen {
   readonly hasHeader: boolean;
   readonly fallback: boolean;
   readonly slow: boolean;
+  /** Widths to test; every width when absent. */
+  readonly widths?: readonly number[];
 }
 
 const openSources: Opener = async (page) => {
@@ -53,7 +57,8 @@ const SCREENS: readonly Screen[] = [
   {
     name: 'Graveyard',
     open: async (page) => {
-      await seedGraveyard(page);
+      // A restless ghost at index 120 of the learning order keeps the shown rows as tall as the test needs.
+      await seedGraveyard(page, { farMetIndex: 120 });
     },
     hasHeader: true,
     fallback: false,
@@ -61,6 +66,7 @@ const SCREENS: readonly Screen[] = [
   },
   { name: 'Sources & licences', open: openSources, hasHeader: true, fallback: false, slow: false },
   { name: 'Summary', open: reachSummary, hasHeader: false, fallback: true, slow: true },
+  { name: 'Summary (10 ghosts)', open: reachFullSummary, hasHeader: false, fallback: true, slow: true },
   {
     name: 'Level screen',
     open: async (page) => {
@@ -74,6 +80,8 @@ const SCREENS: readonly Screen[] = [
     fallback: true,
     slow: false,
   },
+  // Proof-pass Requirement 9.13: the Start menu in its worst case (tested at 375 x 812 only, see below).
+  { name: 'Start menu worst case', open: openStartMenuWorstCase, hasHeader: false, fallback: true, slow: false, widths: [375] },
 ];
 
 const VIEWPORTS = [
@@ -141,9 +149,9 @@ for (const vp of VIEWPORTS) {
   test.describe(`sky cap at ${vp.width} x ${vp.height}`, () => {
     test.use({ viewport: vp });
 
-    for (const screen of SCREENS) {
+    for (const screen of SCREENS.filter((s) => s.widths === undefined || s.widths.includes(vp.width))) {
       test(`${screen.name}: the band holds the night sky and the Moon at every offset`, async ({ page }) => {
-        test.setTimeout(screen.slow ? 300_000 : 90_000);
+        test.setTimeout(screen.slow ? 480_000 : 90_000);
         await screen.open(page);
 
         let viewport: { width: number; height: number } = { width: vp.width, height: vp.height };

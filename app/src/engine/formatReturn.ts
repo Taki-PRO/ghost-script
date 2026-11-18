@@ -1,6 +1,6 @@
 import type { CharacterRecord } from '../data/types';
 import { cleanupMeaning } from './promptCleanup';
-import type { ReviewEntry } from './scheduler';
+import type { Outcome, ReviewEntry } from './scheduler';
 
 const MINUTE_MS = 60_000;
 const HOUR_MS = 3_600_000;
@@ -38,12 +38,18 @@ export interface ReturnRow {
   readonly meaning: string;
   /** nextDue of the saved entry. */
   readonly nextDue: number;
+  /** How this ghost ended: the session's outcome, else the entry's lastOutcome. */
+  readonly outcome: Outcome;
 }
 
-/** One row per ghost, in the order given, skipping ghosts without an entry. */
+/**
+ * One row per ghost, in the order given, skipping ghosts without an entry.
+ * `outcomes` (this session's results) wins over `entry.lastOutcome`.
+ */
 export function buildReturnRows(
   ghosts: readonly CharacterRecord[],
   entries: ReadonlyMap<string, ReviewEntry>,
+  outcomes?: ReadonlyMap<string, Outcome>,
 ): ReturnRow[] {
   const rows: ReturnRow[] = [];
   for (const ghost of ghosts) {
@@ -54,6 +60,7 @@ export function buildReturnRows(
       pinyin: ghost.prompt.pinyin,
       meaning: cleanupMeaning(ghost.prompt.meaning),
       nextDue: entry.nextDue,
+      outcome: outcomes?.get(ghost.character) ?? entry.lastOutcome,
     });
   }
   return rows;

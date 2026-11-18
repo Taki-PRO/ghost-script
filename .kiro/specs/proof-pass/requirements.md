@@ -2,11 +2,11 @@
 
 ## Introduction
 
-Proof Pass answers the third outside review of Ghost Script. It contains thirteen items in the human's priority order: four must-do items (a memory fix for returning ghosts, six corrected clues, a bigger Summon paper, a summary that works as a reward) and nine small fixes (a cross-level notice, Graveyard order, data-file credits and first-load honesty, a Give up slip, a start menu that fits, a restless-ghost review, a level screen with samples, a collapsed Graveyard with more grass, and an animated legend line).
+Proof Pass answers the third outside review of Ghost Script. It contains thirteen items in the human's priority order: four must-do items (a memory fix for returning ghosts, five corrected clues and a display rule for traditional|simplified pairs, a bigger Summon paper, a summary that works as a reward) and nine small fixes (a cross-level notice, Graveyard order, data-file credits and first-load honesty, a Give up slip, a start menu that fits, a restless-ghost review, a level screen with samples, a collapsed Graveyard with more grass, and an animated legend line).
 
-This phase produces requirements only. Design and tasks follow in later phases, and nothing is implemented now. The requirement order below is the human's priority order. Requirement 14 collects the constraints that apply to all of them.
+This document states the requirements as amended to the human's answers (task 2.1); it implements nothing. The requirement order below is the human's priority order. Requirement 14 collects the constraints that apply to all of them.
 
-Three items conflict with current steering text and need approval before implementation: item 1 (content-accuracy and product), item 11 (content-accuracy and the harder-ghosts spec), and item 13 (art-direction). The list is at the end of this document, under "Steering amendments needing approval".
+Three items conflict with current steering text: item 1 (content-accuracy and product), item 11 (content-accuracy and the harder-ghosts spec), and item 13 (art-direction). The human approved the five amendments that resolve the conflicts. They are listed at the end of this document, under "Steering amendments (approved by the human)", and are written into the steering files by tasks 3.1 to 3.5 before the items they gate.
 
 ### Investigation findings (read-only, cited)
 
@@ -16,7 +16,8 @@ Three items conflict with current steering text and need approval before impleme
 - `app/src/engine/scheduler.ts`: `applyReview` (clean advances the ladder; a miss sets step 0 and `nextDue = now + relearnDelayMs`) and `selectSession` (due ghosts most overdue first, then new ones, then not-yet-due ones soonest first). Neither needs to change for item 10.
 - `app/src/App.tsx`: `planSeance` and `SeanceScope` build the pool with `sessionCharacterList` (chosen level first, then other levels' ghosts that have a history entry). `firstMeetingSet` marks ghosts with no history entry. Only a brand-new player gets the walkthrough ghost, picked by `pickWalkthroughGhost` from the level 1 order. Storage is at `CURRENT_SCHEMA_VERSION = 3` (`app/src/storage/storage.ts`). Item 10 needs no schema change.
 - Learning order (computed read-only from `app/public/data/*.json` with the rule in `learningOrder.ts`): the walkthrough ghost is 明, at level 1 position 13 (transparent, 8 strokes). It is level 1 data and is not in the level 2 or 3 datasets. Level 1 has 15 transparent, 95 partial and 190 opaque ghosts.
-- `data/prompt-overrides.csv` (level 1) already has `么,2,0,human-approved` and `本,0,8,human-approved`, and no row for 天. `data/prompt-approvals.csv` has `刚,human`. CC-CEDICT lines (`data/raw/cc-cedict/cedict_ts.u8`) show each of the six requested texts in exactly one (entry, meaning) of its character: 么 entry 1 meaning 0 (reading ma5), 本 entry 0 meaning 0 (with the "(bound form) " prefix, stripped), 天 entry 0 meaning 1, 云 entry 2 meaning 0, 刚 entry 0 meaning 3, 获 entry 1 meaning 0 (with the prefix, stripped). Note that the new 么 entry has the reading ma, while the current clue shows me.
+- `data/prompt-overrides.csv` (level 1) already has `么,2,0,human-approved` and `本,0,8,human-approved`, and no row for 天. `data/prompt-approvals.csv` has `刚,human`. CC-CEDICT lines (`data/raw/cc-cedict/cedict_ts.u8`) show each of the five requested texts in exactly one (entry, meaning) of its character: 本 entry 0 meaning 0 (with the "(bound form) " prefix, stripped), 天 entry 0 meaning 1, 云 entry 2 meaning 0, 刚 entry 0 meaning 3, 获 entry 1 meaning 0 (with the prefix, stripped). The request for 么 is withdrawn by the human: the existing row `么,2,0,human-approved` stays, so the stored clue of 么 and its review line stay byte-identical, and the display rule of Requirement 2 (criteria 23 to 34) handles its traditional|simplified pairs.
+- Pairs in clues (computed read-only over the three datasets): `prompt.meaning` contains "|" in 4 level 1 records (么, 号, 路, 道), 7 level 2 records and 2 level 3 records. The Han-run, "|", Han-run pattern of Requirement 2 criterion 23 changes the displayed clue of exactly one record, 么 (level 1); the other records either have their pair inside a note that the existing cleanup removes anyway (the "(CL:條|条[tiao2])" notes), or have a digit after the "|" (号).
 - `tests/unit/level1-protected.test.ts` pins SHA-256 of `app/public/data/characters.json`, `data/prompt-review.csv` and `data/character-list.txt`. Level 2 and 3 override files use `reviewedBy` = `human` (the level 2 and 3 parsers require it); the level 1 file uses `human-approved`.
 - `app/src/styles/fonts.css` has three `@font-face` subsets with disjoint `unicode-range`s. All seven code points of the legend line (天 U+5929, 雨 U+96E8, 粟 U+7C9F, ， U+FF0C, 鬼 U+9B3C, 夜 U+591C, 哭 U+54ED) are in the level 1 range. Of the Han characters, 天 and 雨 are level 1 data. 夜 and 哭 are level 2 data, 鬼 is level 3 data, and 粟 is in no level list. `data/raw/hanzi-writer-data` has stroke files for all six Han characters and none for ，.
 - `README.md` (lines 112 to 127): "First load, counted against a budget of 300,000 bytes gzip: 214,206 bytes". The level 1 dataset (361,679 gzip) is fetched at start but is exempt from the count, so the real first load is about 575,885 bytes gzip. `scripts/check-bundle-size.ts` skips `data/characters*.json` and `assets/lxgw-wenkai-subset-level*` as lazy files.
@@ -37,7 +38,10 @@ Three items conflict with current steering text and need approval before impleme
 - **Clue**: the English meaning and pinyin shown for a ghost (`record.prompt`).
 - **Level_Dataset**: one of `characters.json` (level 1), `characters-level2.json`, `characters-level3.json`.
 - **Level_1_Pin**: the pinned fingerprint of the level 1 dataset in `tests/unit/level1-protected.test.ts` and its fixtures.
-- **Level_1_Review_Value**: the `reviewedBy` value written in the three level 1 override rows of Requirement 2, chosen under Item 2 Q1 (recommended: `human`).
+- **Level_1_Review_Value**: the `reviewedBy` value `human`, written in the two level 1 override rows of Requirement 2 (本 and 天), approved by the human.
+- **Clue_Cleanup**: the display function `cleanupMeaning` in `app/src/engine/promptCleanup.ts`, which runs before `maskTarget` in every place that shows a Clue.
+- **Han_Pair**: in a Clue meaning, a maximal run of one or more Han characters (Unicode script Han), immediately followed by "|", immediately followed by at least one Han character, as in "什麼|什么[shen2 me5]".
+- **Traditional_Half**: the run of Han characters and the "|" that precede the simplified half of a Han_Pair.
 - **Summary_Screen**: the `SessionSummary` screen shown after a séance.
 - **Ghost_Tile**: one ghost on the Summary_Screen: a small paper square with its Seal_Stamp (clean ghost), or a faint ghost (any other ghost), with the return text beneath.
 - **Return_Text**: the text of `formatReturn`, for example "returns tomorrow" or "returns in 10 minutes".
@@ -53,9 +57,9 @@ Three items conflict with current steering text and need approval before impleme
 - **Restless_Ghost**: a ghost whose `classifyEntry` result is `restless` at the current time.
 - **Review_Run**: a run of the rite over Restless_Ghosts started from the "Review restless ghosts" slip.
 - **Level_Screen**: the `LevelScreen` screen.
-- **Level_Sample**: the one character shown on a paper square on the Level_Screen for a level.
-- **Level_Manifest**: `app/public/data/levels.json`, generated by the data pipeline.
-- **Level_1_Font_Range**: the `unicode-range` of the level 1 `@font-face` in `app/src/styles/fonts.css`.
+- **Level_Sample**: the one character drawn on a paper square on the Level_Screen for a level, as an SVG of its stroke paths from `data/raw/hanzi-writer-data` and never as text.
+- **Level_Manifest**: `app/public/data/levels.json`, generated by the data pipeline; it carries, for each level, the Level_Sample character and its stroke paths.
+- **Level_1_Font_Range**: the `unicode-range` of the level 1 `@font-face` in `app/src/styles/fonts.css` (used by the Legend_Line only).
 - **Legend_Line**: the intro line 天雨粟，鬼夜哭.
 - **Legend_Strokes_File**: a new file `app/public/data/legend-strokes.json`, built by `scripts/` from `data/raw/hanzi-writer-data`.
 - **Ink_In**: the character-by-character inking of the Legend_Line.
@@ -74,7 +78,7 @@ Three items conflict with current steering text and need approval before impleme
 
 #### Acceptance Criteria
 
-1. IF steering amendments 1 to 3 are not approved, THEN THE Summon_Step SHALL keep today's reveal for every ghost, and the work SHALL NOT merge criteria 2 to 12 and 18 to 28 of this requirement.
+1. THE work SHALL implement criteria 2 to 28 of this requirement only after steering amendments 1 to 3 (approved by the human) are written into `content-accuracy.md`, `product.md` and `art-direction.md` by tasks 3.1 to 3.3.
 2. WHEN the code of a Returning_Ghost with a transparent or partial `summonInk` class is complete, THE Summon_Step SHALL call `onDone` exactly once, after all strokes queued by the accepted keys have finished animating.
 3. WHEN the code of a Returning_Ghost with an opaque `summonInk` class is complete, THE Summon_Step SHALL call `onDone` once, without waiting for any animation.
 4. WHEN the code of a Returning_Ghost with an opaque `summonInk` class is complete, THE Summon_Step SHALL call neither `animateCharacter` nor `animateStroke`.
@@ -83,7 +87,7 @@ Three items conflict with current steering text and need approval before impleme
 7. WHEN the code of a Returning_Ghost is complete, THE Summon_Step SHALL start the Write_Step with a hold of 0 ms and a fade of 0 ms, without starting a `SUMMON_HOLD_MS` timer or a `SUMMON_FADE_MS` timer.
 8. IF the animation fails for a Returning_Ghost because `HanziWriter.create` throws or `onLoadCharDataError` fires, THEN THE Summon_Step SHALL call `onDone` exactly once with a hold of 0 ms and a fade of 0 ms.
 9. IF the animation fails for a Returning_Ghost, THEN THE Summon_Step SHALL render no Plain_Text_Fallback node.
-10. WHEN the player gives up the Summon_Step of a Returning_Ghost, THE Summon_Step SHALL draw no stroke and SHALL call neither `animateCharacter` nor `animateStroke`.
+10. WHEN the player gives up the Summon_Step of a Returning_Ghost, THE Summon_Step SHALL request no stroke after the give-up, SHALL let the strokes that accepted keys already requested finish, and SHALL NOT call `animateCharacter`.
 11. WHEN the player gives up the Summon_Step of a Returning_Ghost, THE Summon_Step SHALL render no Plain_Text_Fallback node.
 12. WHEN the player gives up the Summon_Step of a Returning_Ghost, THE Summon_Step SHALL start the Write_Step with the outcome `gave-up`.
 13. WHEN the code of a First_Meeting_Ghost is complete, THE Summon_Step SHALL draw the strokes not yet inked, or call `animateCharacter` for an opaque ghost, as it does today.
@@ -103,36 +107,46 @@ Three items conflict with current steering text and need approval before impleme
 27. THE `e2e/summon-ink.spec.ts` suite SHALL assert that the Write_Step of a Returning_Ghost appears within 1000 ms after the last key.
 28. THE `e2e/summon-ink.spec.ts` suite SHALL assert, with a MutationObserver, that no text node containing the target character exists after the last key of a Returning_Ghost.
 
-### Requirement 2: Six corrected clues
+### Requirement 2: Corrected clues
 
-**User Story:** As a player, I want the six clues the review found misleading to show the right sense of each character, so that the ghost I meet matches the character I must write.
+**User Story:** As a player, I want clues that show the right sense of each character and no duplicate traditional forms, so that the ghost I meet matches the character I must write.
 
 #### Acceptance Criteria
 
-1. THE Pipeline SHALL set the Clue meaning to the following texts, each taken from the character's own CC-CEDICT entries: 么 "interrogative final particle", 本 "root; stem", 天 "sky", 云 "cloud", 刚 "just; only a short while ago", 获 "to reap; to harvest".
-2. THE Pipeline SHALL apply an override row for one of the six characters only IF `stripBoundForm(meaning)` of the selected (entry, meaning) pair equals the requested text and no other pair of that character does.
-3. IF an override row of the six characters does not satisfy criterion 2, THEN THE Pipeline SHALL exit with a failure that names the character, the text and the number of matching pairs, and SHALL leave every generated file unchanged.
-4. THE `data/prompt-overrides.csv` file SHALL replace, in place, the row `么,2,0,human-approved` with `么,1,0,<Level_1_Review_Value>`.
-5. THE `data/prompt-overrides.csv` file SHALL replace, in place, the row `本,0,8,human-approved` with `本,0,0,<Level_1_Review_Value>`.
-6. THE `data/prompt-overrides.csv` file SHALL gain exactly the row `天,0,1,<Level_1_Review_Value>`, with no other row added or removed.
-7. THE `data/prompt-overrides-level2.csv` file SHALL gain exactly the rows `云,2,0,human` and `刚,0,3,human`.
-8. THE `data/prompt-overrides-level3.csv` file SHALL gain exactly the row `获,1,0,human`.
-9. THE Pipeline SHALL leave the Clues of 第, 视, 奋 and 居 unchanged.
-10. WHERE the human accepts Item 2 Q2, THE Pipeline SHALL take the 么 reading from CC-CEDICT entry 1 (ma5), so that the Clue pinyin of 么 is "ma".
-11. WHEN the Pipeline runs twice on the same inputs, THE Pipeline SHALL produce byte-identical output for the three Level_Datasets, the Level_Manifest, the three review files and `app/src/data/promptCounts.generated.ts`.
-12. THE Level_1_Pin SHALL change only in the SHA-256 of `app/public/data/characters.json` and the SHA-256 of `data/prompt-review.csv`.
-13. THE Level_1_Pin SHALL keep the SHA-256 of `data/character-list.txt` unchanged.
-14. THE test suite SHALL include a fixture of per-record SHA-256 values for all 300 level 1 records (one hash of the whole record and one hash of the record without its `prompt` field), committed before the first edit to `data/prompt-overrides.csv`.
-15. THE test suite SHALL assert that the hash of the record without `prompt` matches the fixture for all 300 level 1 records.
-16. THE test suite SHALL assert that the whole-record hash matches the fixture for exactly 297 level 1 records and differs for exactly 么, 本 and 天.
-17. THE test suite SHALL assert that the new Clue of each of 么, 本 and 天 equals the requested text plus the reading of the selected entry.
-18. THE test suite SHALL assert, against a per-line hash fixture captured before the edit, that every line of `data/prompt-review.csv` except the lines of 么, 本 and 天 is identical.
-19. THE test suite SHALL assert that the three changed lines of `data/prompt-review.csv` show the new meaning and the Level_1_Review_Value.
-20. THE test suite SHALL assert, with per-record fixtures, that the level 2 dataset differs only in 云 and 刚 and the level 3 dataset differs only in 获.
-21. THE regenerated `promptCounts.generated.ts` SHALL change only by one fewer unreviewed level 2 prompt (云) and one fewer unreviewed level 3 prompt (获), because 刚 is already approved, and the existing credits tests SHALL pass.
-22. THE `data/prompt-review-level2.csv` and `data/prompt-review-level3.csv` files SHALL show `reviewedBy` = `human` for 云, 刚 and 获 after the build.
-23. THE 50-row review sample files SHALL keep the same characters at the same positions, and only the `reviewedBy` cell of a sampled 云, 刚 or 获 MAY change.
-24. THE design SHALL check whether the example meanings in `levels.json` use the meanings of 么, 本 or 天, and SHALL record the result.
+1. THE Pipeline SHALL set the Clue meaning of five characters to the following texts, each taken from the character's own CC-CEDICT entries: 本 "root; stem", 天 "sky", 云 "cloud", 刚 "just; only a short while ago", 获 "to reap; to harvest".
+2. THE Pipeline SHALL apply an override row for one of the five characters only IF `stripBoundForm(meaning)` of the selected (entry, meaning) pair equals the requested text and no other pair of that character does.
+3. IF an override row of the five characters does not satisfy criterion 2, THEN THE Pipeline SHALL exit with a failure that names the character, the text and the number of matching pairs, and SHALL leave every generated file unchanged.
+4. THE `data/prompt-overrides.csv` file SHALL replace, in place, the row `本,0,8,human-approved` with `本,0,0,human`.
+5. THE `data/prompt-overrides.csv` file SHALL gain exactly the row `天,0,1,human`, SHALL keep the row `么,2,0,human-approved` exactly as it is, and SHALL have no other row added, removed or changed.
+6. THE `data/prompt-overrides-level2.csv` file SHALL gain exactly the rows `云,2,0,human` and `刚,0,3,human`, and `data/prompt-approvals.csv` SHALL keep its row `刚,human`.
+7. THE `data/prompt-overrides-level3.csv` file SHALL gain exactly the row `获,1,0,human`.
+8. THE Pipeline SHALL leave the stored Clues of 么, 第, 视, 奋 and 居 unchanged.
+9. WHEN the Pipeline runs twice on the same inputs, THE Pipeline SHALL produce byte-identical output for the three Level_Datasets, the Level_Manifest, the three review files and `app/src/data/promptCounts.generated.ts`.
+10. THE Level_1_Pin SHALL change only in the SHA-256 of `app/public/data/characters.json` and the SHA-256 of `data/prompt-review.csv`.
+11. THE Level_1_Pin SHALL keep the SHA-256 of `data/character-list.txt` unchanged.
+12. THE test suite SHALL include a fixture of per-record SHA-256 values for all 300 level 1 records (one hash of the whole record and one hash of the record without its `prompt` field), committed before the first edit to `data/prompt-overrides.csv`.
+13. THE test suite SHALL assert that the hash of the record without `prompt` matches the fixture for all 300 level 1 records.
+14. THE test suite SHALL assert that the whole-record hash matches the fixture for exactly 298 level 1 records and differs for exactly 本 and 天, so that 么 stays byte-identical.
+15. THE test suite SHALL assert that the new Clue of each of 本 and 天 equals the requested text plus the reading of the selected entry.
+16. THE test suite SHALL assert, against a per-line hash fixture captured before the edit, that every line of `data/prompt-review.csv` except the lines of 本 and 天 is identical, including the line of 么.
+17. THE test suite SHALL assert that the two changed lines of `data/prompt-review.csv` show the new meaning and the Level_1_Review_Value.
+18. THE test suite SHALL assert, with per-record fixtures, that the level 2 dataset differs only in 云 and 刚 and the level 3 dataset differs only in 获.
+19. THE regenerated `promptCounts.generated.ts` SHALL change only by one fewer unreviewed level 2 prompt (云) and one fewer unreviewed level 3 prompt (获), because 刚 is already approved and level 1 has no count; THE `prompt-counts` block of `README.md` SHALL be regenerated to the same counts (level 2: 53 reviewed and 347 not; level 3: 60 reviewed and 440 not); and the existing credits tests SHALL pass.
+20. THE `data/prompt-review-level2.csv` and `data/prompt-review-level3.csv` files SHALL show `reviewedBy` = `human` for 云, 刚 and 获 after the build.
+21. THE 50-row review sample files SHALL keep the same characters at the same positions; the `reviewedBy` cell of a sampled 云 or 获 MAY change, and the sampled 刚 row MAY change its `chosenMeaning`, `source` and `reviewedBy` cells.
+22. THE design SHALL check whether the example meanings in `levels.json` use the meanings of 本 or 天, and SHALL record the result.
+23. THE Clue_Cleanup SHALL, as its first operation in every pass, remove the Traditional_Half of every Han_Pair in the Clue meaning, so that "什麼|什么[shen2 me5]" becomes "什么[shen2 me5]".
+24. WHEN a Clue meaning holds several Han_Pairs, THE Clue_Cleanup SHALL remove the Traditional_Half of each one independently, from left to right; in a chain "AB|CD|EF" of Han runs it SHALL remove "AB|" and "CD|" and keep "EF".
+25. THE Clue_Cleanup SHALL leave every "|" that is not between two Han characters untouched, including a "|" followed by a digit or a letter, as in "237號房間|237号房间".
+26. THE Clue_Cleanup SHALL apply its operations in this order: remove the Traditional_Halves, then the existing removal of notes, bracketed pinyin and separators (repeated to a fixpoint as today), and THE caller SHALL then apply `maskTarget`.
+27. THE displayed Clue of 么 SHALL be "suffix, used to form interrogative 什～, what?, indefinite 这～ thus, etc", while the stored meaning of 么 in `characters.json` stays unchanged.
+28. THE Clue_Cleanup change SHALL apply to every level and to every place that calls `cleanupMeaning` (`GhostPrompt` and the walkthrough lines).
+29. THE Clue_Cleanup SHALL stay a function that only deletes characters from its input and is idempotent, and THE work SHALL change no stored data for it.
+30. THE test suite SHALL assert, for every record of the three Level_Datasets, that the displayed Clue (`maskTarget(cleanupMeaning(meaning), character)`) contains the target character nowhere.
+31. THE test suite SHALL assert, for every record of levels 2 and 3, that the displayed Clue contains no Han character, so that the Chinese-character-free rule of the `harder-ghosts` spec (its Requirement 18) and the existing displayed-meaning test stay passing.
+32. THE unit tests of the Clue_Cleanup SHALL cover: 么 with its exact stored meaning and the exact displayed text of criterion 27; a "(CL:條|条[tiao2])" note; the digit case of 号; a non-Han "|" such as "a|b"; a chain of two Han_Pairs; two separate Han_Pairs in one meaning; a "|" at the start or end of the text; idempotence on each example; and an unchanged meaning without "|".
+33. THE test suite SHALL compute, over the real Level_Datasets, how many displayed Clues change at each level because of the new step, SHALL print the three numbers, and SHALL assert them as 1 for level 1, 0 for level 2 and 0 for level 3; the checkpoint task SHALL report them.
+34. THE Level 1 Clues that contain Han characters after cleanup (你, 您, 第 and 么) SHALL stay allowed, because the Chinese-character-free rule applies to levels 2 and 3 only.
 
 ### Requirement 3: A bigger Summon paper
 
@@ -143,10 +157,10 @@ Three items conflict with current steering text and need approval before impleme
 1. WHEN the viewport is 1024 × 768, THE Summon_Step SHALL draw the Summon_Paper with a side of at least 260 px for a Returning_Ghost and for a non-guided First_Meeting_Ghost, with `reservedPx` 0.
 2. WHEN the viewport is 1024 × 768, THE Summon_Step SHALL draw the Summon_Paper of the Guided_Ghost with a side of at least 260 px, with `reservedPx` equal to `WALKTHROUGH_LINE_PX` (24).
 3. WHEN the viewport is 375 × 812, THE Summon_Step SHALL draw the Summon_Paper with a side of at least 240 px.
-4. THE `summonPaperSize` function SHALL return the floor of the smaller of (width − 32) and (height − `reservedPx` − 484), where 484 px is the height of all other Summon content except the Summon_Paper and the walkthrough line, and SHALL no longer apply the limit of 0.4 × width or the cap of 160.
+4. THE `summonPaperSize` function SHALL return the floor of the smaller of (width − 32) and (height − `reservedPx` − 484), where 484 px is the target height of all other Summon content except the Summon_Paper and the walkthrough line (measured today: 544 px at 1024 × 768, 564 px at 375 × 812, 586 px at 320 × 640, so the design compacts the content to reach it), limited to a ceiling of 560 px, and SHALL no longer apply the limit of 0.4 × width or the cap of 160.
 5. THE `summonPaperSize` function SHALL return at least 96.
 6. THE Summon_Step SHALL set the hint text, the status line, the system-input note and the Unihan note at 12 px or larger, reduced only as far as criterion 7 needs.
-7. WHEN the viewport is 1024 × 768 and `reservedPx` is 0, THE Summon_Step SHALL keep the other Summon content within 484 px of height.
+7. WHEN the viewport is 1024 × 768 and `reservedPx` is 0, THE Summon_Step SHALL keep the other Summon content within 484 px of height (a target that the compaction in the design achieves; the design measures 456 to 472 px).
 8. THE Summon_Step SHALL keep text, including the reduced text, at a contrast of at least 4.5:1.
 9. THE Summon_Step SHALL fit one screen, with no vertical scrolling and no horizontal overflow, at 1024 × 768, 375 × 812 and 320 × 640, for a Returning_Ghost, a First_Meeting_Ghost and the Guided_Ghost.
 10. THE Summon_Step SHALL keep every control at least 44 px high.
@@ -155,6 +169,7 @@ Three items conflict with current steering text and need approval before impleme
 13. THE Fit_Tests SHALL add 320 × 640 to the Summon fit check.
 14. THE unit tests of `summonPaperSize` SHALL assert exactly: 1024 × 768 with `reservedPx` 0 gives 284; 1024 × 768 with `reservedPx` 24 gives 260; 375 × 812 gives 328; 320 × 640 gives 156; 320 × 500 gives 96.
 15. THE design SHALL confirm the 32 px page padding and SHALL reconcile this requirement with Requirement 5 criterion 15 (the height of the cross-level line).
+16. THE unit tests of `summonPaperSize` SHALL assert that 4000 × 4000 gives the ceiling 560, and that every result is an integer of at least 96.
 
 ### Requirement 4: The summary as a reward
 
@@ -234,7 +249,7 @@ Three items conflict with current steering text and need approval before impleme
 
 1. THE Sources_Screen SHALL name `characters.json` (level 1), `characters-level2.json`, `characters-level3.json`, `levels.json` and the Legend_Strokes_File.
 2. THE Sources_Screen SHALL name the Power's derived file `oracle/power/data/oracle-data.json`.
-3. THE Sources_Screen SHALL state, for each file of criteria 1 and 2, what it holds and which sources and licences its fields carry, reusing the wording of `credits.ts` and adding no new licence claim.
+3. THE Sources_Screen SHALL state, for each file of criteria 1 and 2, what it holds and which sources and licences its fields carry, reusing the wording of `credits.ts` and adding no new licence claim; for `levels.json` it SHALL name the hanzi-writer-data stroke outlines of the three Level_Samples under the Arphic Public License.
 4. THE Sources_Screen test SHALL list every `.json` file in `app/public/data` at test time and fail if any file name is missing from the screen.
 5. THE Sources_Screen test SHALL list every `.json` file in `oracle/power/data` at test time and fail if any file name is missing from the screen.
 6. THE README SHALL state the real first load in gzip bytes, next to the 300,000-byte budget, as the counted bundle plus the level 1 dataset (currently 214,206 + 361,679 = 575,885), with figures copied from the `check:bundle` output.
@@ -298,7 +313,7 @@ Three items conflict with current steering text and need approval before impleme
 2. WHILE at least one Restless_Ghost exists, THE Start_Menu SHALL show one Slip "Review restless ghosts" with the count of Restless_Ghosts over all levels as a decimal integer.
 3. THE Start_Menu SHALL place the "Review restless ghosts" Slip right after "Starting level" in tab order and reading order, before any "Move on" Slip.
 4. WHILE at least one Restless_Ghost exists, THE Graveyard SHALL show one Slip "Review restless ghosts" with a count.
-5. WHERE Item 10 Q5 is approved, THE Graveyard count SHALL equal the Start_Menu count over all levels.
+5. THE Graveyard count SHALL equal the Start_Menu count over all levels.
 6. WHILE no Restless_Ghost exists, THE Start_Menu SHALL NOT render the "Review restless ghosts" Slip.
 7. WHILE no Restless_Ghost exists, THE Graveyard SHALL NOT render the "Review restless ghosts" Slip.
 8. THE "Review restless ghosts" Slip SHALL be a `slip` and not a `slip-primary` on both screens.
@@ -308,27 +323,27 @@ Three items conflict with current steering text and need approval before impleme
 12. THE Review_Run SHALL treat every ghost as a Returning_Ghost, with no faint code, no first-meeting display and no walkthrough line.
 13. THE Requirement 1 criteria for a Returning_Ghost (2 to 12, 18 and 19, and the never-reveal checks of 20 to 28) SHALL apply to every ghost of a Review_Run.
 14. THE Review_Run SHALL show no cross-level line from Requirement 5.
-15. WHERE Item 10 Q1 and Q2 are approved, WHEN a ghost of a Review_Run ends `clean`, THE App SHALL leave its stored entry byte-for-byte unchanged.
-16. WHERE Item 10 Q1 is approved, WHEN a ghost of a Review_Run ends `struggled` or `gave-up`, THE App SHALL store `applyReview(prior, outcome, now, DEFAULT_CONFIG)` for that ghost.
+15. WHEN a ghost of a Review_Run ends `clean`, THE App SHALL leave its stored entry byte-for-byte unchanged.
+16. WHEN a ghost of a Review_Run ends `struggled` or `gave-up`, THE App SHALL store `applyReview(prior, outcome, now, DEFAULT_CONFIG)` for that ghost.
 17. THE `scheduler.ts` module and its tests SHALL stay unchanged.
 18. THE recording rule of criteria 15 and 16 SHALL live in a new pure engine function, not in a component.
-19. WHERE Item 10 Q3 is approved, THE result text of a clean ghost in a Review_Run SHALL be "Remembered. It rests after its next séance."
-20. WHERE Item 10 Q3 is approved, THE result text of a struggled ghost in a Review_Run SHALL contain neither "laid to rest" nor "Laid to rest", and the gave-up text SHALL stay unchanged.
-21. WHERE Item 10 Q3 is approved, THE Summary_Screen of a Review_Run SHALL show the count line "N of M ghosts remembered" (with "1 of 1 ghost remembered" when M = 1), with N the number of clean ghosts, and no text SHALL say "laid to rest".
-22. WHERE Item 10 Q3 is approved, THE Summary_Screen of a Review_Run SHALL show the Ghost_Tile of a clean ghost with the `SealStamp` as Requirement 4 criterion 4 defines.
+19. THE result text of a clean ghost in a Review_Run SHALL be "Remembered. It rests after its next séance."
+20. THE result text of a struggled ghost in a Review_Run SHALL contain neither "laid to rest" nor "Laid to rest", and the gave-up text SHALL stay unchanged.
+21. THE Summary_Screen of a Review_Run SHALL show the count line "N of M ghosts remembered" (with "1 of 1 ghost remembered" when M = 1), with N the number of clean ghosts, and no text SHALL say "laid to rest".
+22. THE Summary_Screen of a Review_Run SHALL show the Ghost_Tile of a clean ghost with the `SealStamp` as Requirement 4 criterion 4 defines.
 23. THE Summary_Screen of a Review_Run SHALL show for each ghost the Return_Text computed from its stored entry after the run.
-24. WHERE Item 10 Q6 is approved, THE Summary_Screen of a Review_Run SHALL show "Begin another Séance" as its only `slip-primary`, and activating it SHALL start a nightly séance.
+24. THE Summary_Screen of a Review_Run SHALL show "Begin another Séance" as its only `slip-primary`, and activating it SHALL start a nightly séance.
 25. WHEN a Review_Run has ended, THE Graveyard counts SHALL equal `buildGraveyard` over the stored history.
 26. THE Graveyard SHALL keep the format of its grave accessible names.
 27. WHEN the player leaves a Review_Run during a ghost, THE App SHALL store nothing for the current ghost and SHALL keep the entries of earlier ghosts.
 28. IF a Level_Dataset needed by the Review_Run fails to load when the player activates the Slip, THEN THE App SHALL stay on the screen, show a text message that the review could not start, and leave the history unchanged.
 29. THE unit tests SHALL cover the restless definition for a missed ghost, a clean ghost that is due, a clean ghost that is not due, and a ghost with no entry.
 30. THE unit tests SHALL cover the pool order across levels, the `selectSession` order, and the cap of 10 with a pool of 11.
-31. THE unit tests SHALL cover the recording decision for clean, struggled and gave-up, according to the approved answers.
+31. THE unit tests SHALL cover the recording decision for clean, struggled and gave-up.
 32. THE component tests SHALL cover the presence and absence of the Slip on the Start_Menu and the Graveyard.
 33. THE component tests SHALL cover the position of the Slip among three Start_Menu controls and that it is not a `slip-primary`.
 34. THE e2e suite SHALL seed three Restless_Ghosts, run a Review_Run with one clean and two missed ghosts, and assert the stored history and the Graveyard counts.
-35. WHERE Item 10 Q1 and Q2 are approved, THE e2e test SHALL assert that the clean entry equals its seed and that each missed entry has step 0 and `nextDue` equal to the recording time plus `relearnDelayMs`.
+35. THE e2e test SHALL assert that the clean entry equals its seed and that each missed entry has step 0 and `nextDue` equal to the recording time plus `relearnDelayMs`.
 
 ### Requirement 11: The level screen shows the ghost and one sample character per level
 
@@ -338,23 +353,24 @@ Three items conflict with current steering text and need approval before impleme
 
 1. THE Level_Screen SHALL show one `GhostFigure` above its heading, with `aria-hidden` and no text.
 2. THE Level_Screen SHALL show one small paper square for each of levels 1, 2 and 3, in that order, each holding the Level_Sample of its level.
-3. THE Level_Screen SHALL render each Level_Sample as one character in LXGW WenKai with `lang="zh"`.
+3. THE Level_Screen SHALL draw each Level_Sample as an inline SVG of the stroke paths in the Level_Manifest, with `role="img"` and an English `aria-label` of the form "sample character of level N", and SHALL render no Han character in any text node or attribute of the screen.
 4. THE Level_Screen SHALL show the visible labels "easy", "harder" and "hardest" next to the level numbers 1, 2 and 3.
 5. THE Level_Screen SHALL keep the English example meanings of `describeLevel` unchanged.
-6. WHERE the recommended answer of Item 11 Q1 is approved, THE Pipeline SHALL write into the Level_Manifest, for each level, the first character at learning position 31 or later (counting from 1) whose code point lies in the Level_1_Font_Range.
-7. IF the Pipeline finds no such character for a level, THEN THE Pipeline SHALL stop with an error that names the level and SHALL leave the Level_Manifest unchanged.
-8. WHEN the Pipeline runs twice on the same inputs, THE Pipeline SHALL write identical Level_Samples.
-9. THE Pipeline SHALL take each Level_Sample from the Level_Dataset of its own level.
-10. WHILE the Level_Screen is shown and no level is chosen, THE App SHALL request neither the level 2 font subset nor the level 3 font subset, and every Level_Sample SHALL use a glyph of the level 1 subset.
-11. IF the Level_Manifest has no sample for a level, THEN THE Level_Screen SHALL omit that square and its label, keep that level's Slip and show the other squares.
-12. IF the Level_Manifest fails to load, THEN THE Level_Screen SHALL show no squares, keep the three Slips with their numbers, show the existing alert and keep the level choice working.
-13. THE Level_Screen SHALL show three level Slips, no `slip-primary`, and every control, including Back, at least 44 px high.
-14. THE Level_Screen SHALL fit one screen at every viewport that `harder-ghosts.spec.ts` tests today, including 375 × 812 and 1024 × 768.
-15. THE Level_Screen SHALL show each Level_Sample at a contrast of at least 4.5:1 on its square, and each label at a contrast of at least 4.5:1.
-16. THE Level_Screen unit and component tests SHALL replace "no Chinese character" with assertions that exactly three Han characters appear, one per square, each equal to the manifest sample and none among the first 30 characters of its level.
-17. THE `e2e/harder-ghosts.spec.ts` suite SHALL replace "no Chinese character" in the same way and SHALL add the check that no sample is among the first 30 characters of its level.
-18. THE Pipeline unit test SHALL assert, with real data, the position rule, the font-range rule, the determinism and the own-dataset rule.
-19. IF steering amendment 4 is not approved, THEN THE Level_Screen SHALL keep showing no Han character, and the work for criteria 2, 3, 4, 6 to 12 and 15 to 18 SHALL NOT start.
+6. THE Pipeline SHALL write into the Level_Manifest, for each level, the character at learning position 31 or later (counting from 1) of that level's own Level_Dataset whose stroke count is closest to the `averageStrokes` of that level as written in the Level_Manifest, and WHEN several such characters are equally close, THE Pipeline SHALL take the one with the lowest learning position.
+7. THE Pipeline SHALL write, next to each sample character, the `strokes` array of its file in `data/raw/hanzi-writer-data` unchanged and in stroke order, and no other field of that file.
+8. IF a level has fewer than 31 records, or the stroke file of the chosen character is missing or invalid, THEN THE Pipeline SHALL stop with an error that names the level and SHALL leave the Level_Manifest unchanged.
+9. WHEN the Pipeline runs twice on the same inputs, THE Pipeline SHALL write identical Level_Samples.
+10. THE Pipeline SHALL take each Level_Sample from the Level_Dataset of its own level.
+11. WHILE the Level_Screen is shown and no level is chosen, THE App SHALL request neither the level 2 font subset nor the level 3 font subset, and THE Level_Screen SHALL use no font for any Level_Sample.
+12. IF the Level_Manifest has no sample for a level, THEN THE Level_Screen SHALL omit that square and its label, keep that level's Slip and show the other squares.
+13. IF the Level_Manifest fails to load, THEN THE Level_Screen SHALL show no squares, keep the three Slips with their numbers, show the existing alert and keep the level choice working.
+14. THE Level_Screen SHALL show three level Slips, no `slip-primary`, and every control, including Back, at least 44 px high.
+15. THE Level_Screen SHALL fit one screen at every viewport that `harder-ghosts.spec.ts` tests today, including 375 × 812 and 1024 × 768.
+16. THE Level_Screen SHALL draw each Level_Sample at a contrast of at least 3:1 against its square (a graphic that carries meaning), and SHALL show each label at a contrast of at least 4.5:1.
+17. THE Level_Screen unit and component tests SHALL keep the assertion that no Chinese character appears in any text node or attribute, and SHALL add assertions that exactly three `role="img"` samples appear, each with an English label without Han characters and each with path data equal to the Level_Manifest.
+18. THE `e2e/harder-ghosts.spec.ts` suite SHALL keep its "no Chinese character" assertion and SHALL add the same three-sample check.
+19. THE Pipeline unit test SHALL assert, with real data, the position rule (learning position 31 or later), the stroke-count rule with its tie-break, that the paths equal the source file, the determinism and the own-dataset rule, and the data test SHALL assert that no sample is among the first 30 characters of its level.
+20. THE work SHALL implement criteria 2, 3, 4, 6 to 13 and 15 to 19 only after steering amendment 4 (approved by the human) is written into `content-accuracy.md` and the `harder-ghosts` spec by task 3.4.
 
 ### Requirement 12: A shorter Graveyard with more grass
 
@@ -382,6 +398,7 @@ Three items conflict with current steering text and need approval before impleme
 18. THE `grass.spec` suite SHALL assert 24 hill tufts and two tufts per shown tablet, and SHALL keep its existing assertions.
 19. THE Graveyard SHALL compute the number of graves to show with a pure function of the total number of graves, the column count and the index of the last Met_Ghost grave (−1 if none).
 20. THE unit tests of that function SHALL cover: no Met_Ghost; a Met_Ghost in the first row; a Met_Ghost in the last row; a last row that is not full; one column; and fewer graves than one row.
+21. THE Graveyard SHALL keep the two tufts of one tablet, the tufts of different hill rows, and every tablet tuft and every Marker or glyph free of overlap, and tufts within one hill row MAY overlap.
 
 ### Requirement 13: The legend line inks itself in
 
@@ -395,17 +412,17 @@ Three items conflict with current steering text and need approval before impleme
 4. THE Sources_Screen SHALL list the Legend_Strokes_File with the Arphic Public License.
 5. THE README SHALL list the Legend_Strokes_File with the Arphic Public License, consistently with Requirement 7 criterion 1.
 6. WHEN the intro opens and the Legend_Strokes_File has loaded, THE intro SHALL ink the six Han characters one at a time, in order, with the strokes in stroke-data order.
-7. WHEN the Ink_In reaches ， or a character without an entry, THE intro SHALL reveal it with a left-to-right brush wipe.
-8. WHERE steering amendment 5 is approved, THE intro SHALL ink each Han character in at most 900 ms.
-9. WHERE steering amendment 5 is approved, THE intro SHALL set `data-legend-state="inked"` within 6000 ms of the intro opening, including the wipe of ，.
-10. WHERE steering amendment 5 is approved, THE intro SHALL draw each stroke in less than 200 ms.
+7. WHEN the Ink_In reaches ， or a character without an entry, THE intro SHALL reveal it with the existing 600 ms `ink-reveal` left-to-right brush wipe.
+8. THE intro SHALL ink each Han character in at most 900 ms.
+9. THE intro SHALL set `data-legend-state="inked"` within 6000 ms of the intro opening, including the wipe of ，.
+10. THE intro SHALL draw each stroke in less than 200 ms.
 11. WHILE the Ink_In runs, THE intro SHALL expose the whole line 天雨粟，鬼夜哭 to assistive technology as one text string and the strokes as nothing.
 12. WHILE the Ink_In runs, THE intro SHALL keep "Begin the Séance" and "Sources" focusable and activatable without delay.
 13. IF the Legend_Strokes_File fails to load (network failure, non-ok response, invalid JSON, or no entries for the six characters), THEN THE intro SHALL use the existing `ink-reveal` wipe, reach `data-legend-state="inked"` and show no error message.
 14. WHEN the Ink_In ends, THE intro SHALL show the Legend_Line as WenKai text and SHALL keep `data-legend-state="inked"` on the legend figure with no other value afterwards.
 15. THE code points 天 U+5929, 雨 U+96E8, 粟 U+7C9F, ， U+FF0C, 鬼 U+9B3C, 夜 U+591C and 哭 U+54ED SHALL lie in the Level_1_Font_Range.
 16. THE intro SHALL show a Grain_Fall of at most 24 pale grains, each drawn with the `ink` token at an alpha of at most 0.35 and `aria-hidden`.
-17. WHERE steering amendment 5 is approved, THE Grain_Fall SHALL make each grain fall for at least 12 s per pass.
+17. THE Grain_Fall SHALL make each grain fall for at least 12 s per pass.
 18. THE Grain_Fall SHALL lie behind the Legend_Line, with `pointer-events: none` and no change to the layout.
 19. THE Legend_Line text SHALL keep a contrast of at least 4.5:1 with a grain at maximum alpha behind it.
 20. THE Ink_In and the Grain_Fall SHALL run only inside the single `prefers-reduced-motion: no-preference` block.
@@ -441,109 +458,29 @@ Three items conflict with current steering text and need approval before impleme
 12. THE work SHALL add no mutation testing.
 13. THE existing property tests, including the summon-ink property test, SHALL stay unchanged and passing.
 14. THE work SHALL NOT edit `kiro-log.md`.
-15. THE work SHALL NOT edit a steering file until the human approves its amendment.
+15. THE work SHALL edit a steering file only for an amendment approved by the human, and only in tasks 3.1 to 3.5.
 16. THE work SHALL change data files only through the Pipeline and the CSV override files, and SHALL NOT edit a generated file by hand.
-17. WHILE a steering amendment is not approved, THE work SHALL NOT implement its item: item 1 for amendments 1 to 3, item 11 for amendment 4, and item 13 for amendment 5.
+17. WHILE a steering amendment is not yet written into its steering file by tasks 3.1 to 3.5, THE work SHALL NOT implement its item: item 1 for amendments 1 to 3, item 11 for amendment 4, and item 13 for amendment 5.
 18. THE work SHALL write no personal name in any repo file and SHALL say "the human" instead, except author and historical names in citations.
 
-## Open questions (with recommended answers)
+## Decisions approved by the human
 
-### Item 1: Memory fix
+- Every open question takes the design's recommended answer, including the new ones (1.6: strokes already requested finish and none is added; 3.5: a 560 px ceiling; 12.4: the no-overlap scope of criterion 12.21; 13.6: the comma reuses the 600 ms ink-reveal wipe), with the two changes below.
+- Item 2, 么: no override for 么. Its row `么,2,0,human-approved` and its stored clue stay as they are. A display rule drops the traditional half of every traditional|simplified pair (criteria 2.23 to 2.34). 刚 keeps both its override row and its approval row.
+- Item 11: the three Level_Samples are drawn from their stroke data, not from a font, at learning position 31 or later, with a stroke count closest to the level's average (ties: lowest position). The samples are SVG drawings with `role="img"` and an English label; no Han character appears as text.
+- Item 10 (recommended answers): a clean review stores nothing, a miss counts as a miss, a clean review shows the seal with the text "Remembered", the Graveyard count is over all levels, and the review summary keeps "Begin another Séance" as its only primary action.
+- Item 13 (recommended answers): at most 6 s in total, 900 ms per character and under 200 ms per stroke; the intro does not wait; the strokes come from a counted `legend-strokes.json` with the wipe as fallback; no grain under reduced motion; grain in the `ink` token at low alpha.
+- Steering amendments 1 to 5 are approved (amendment 4 as reworded below). `tech.md` and `structure.md` need no amendment.
+- The six corrections to this document that the design proposed are approved and applied: criteria 2.19 and 2.21, 3.4 and 3.7, 11.6, 1.10, and 12.21.
+- `kiro-log.md` is written by the human, never by this work.
+- The final checkpoint also retakes the screenshots and adds the new summary at 1024 × 768 and 375 × 812; the human screenshot review stays last and human-only.
 
-1. **For a transparent returning ghost the inked parts are the whole character. Should it hold briefly or fade?** Recommended: no hold and no fade (Requirement 1.7). The strokes finish animating, and the Write_Step starts. This adds no new timing and no new exemption.
-2. **Should giving up the Summon step of a returning ghost reveal anything?** Recommended: no. Show nothing, outcome `gave-up`, go to writing (Requirement 1.10–1.12). The reveal then comes only from the Write_Step's Give up, as before.
-3. **Should the opaque note ("This code uses shapes the game doesn't show yet.") stay for returning ghosts?** Recommended: yes, unchanged. It is typing-phase text and shows no character.
-4. **Do first meetings keep the full hold and fade?** Recommended: yes, as asked. The walkthrough ghost is always a first meeting.
-5. **Does `SUMMON_REDUCED_SPEED` exist?** Recommended: confirm in the design; if not, use the existing reduced-motion path.
+## Steering amendments (approved by the human)
 
-### Item 2: Clues
-
-1. **Which `reviewedBy` value for the three level 1 rows?** The level 1 file uses `human-approved` today; the request says `human`. Recommended: `human` for all six rows as requested (the level 1 parser accepts any non-empty value; levels 2 and 3 require `human`). The level 1 file then mixes both values, which is harmless.
-2. **The 么 clue pinyin changes from me to ma, because the requested sense is entry 1 (ma5). Accept?** Recommended: yes. It is the source reading of that sense, and the clue text and pinyin then agree.
-3. **刚 has an approval row (`刚,human`) and now also gets an override.** Recommended: keep the approval row; approvals never change the prompt. If the build rejects a character that has both, remove the approval row for 刚 and record it.
-4. **How to prove level 1 is otherwise unchanged?** Recommended: the per-record hash fixture in Requirements 2.14–2.20. The fixture must be captured before the first change to the overrides file.
-
-### Item 3: Summon paper
-
-1. **Is 240 px at 375 × 812 the right floor?** Recommended: yes for now (the width limit is about 343 px and the height budget at 812 leaves room above 300). Adjust it to the measured value in the design.
-2. **What is the floor at 320 × 640?** Recommended: keep the 96 px floor and require the fit; the design should aim for 150 px or more.
-3. **The 260 px target with the 24 px walkthrough line leaves 484 px for other content at 768 px high.** Recommended: accept; the code slots, key rows and hint shrink, and the system-input note and Unihan note move to 12 px.
-4. **Is the page padding 32 px, and does the Requirement 5 line change the paper size?** Recommended: confirm in the design; reserve the Requirement 5 line inside `reservedPx` so the 260 and 240 floors still hold.
-
-### Item 4: Summary
-
-1. **Which ghosts are "faint ghosts with a return line"?** Recommended: clean ghosts are paper squares with seals, and struggled and gave-up ghosts are faint ghosts. Every tile also shows its Return_Text, because every ghost has a next due time. If the human meant that only the faint ghosts show a Return_Text, say so and Requirement 4.3 will change.
-2. **Does a struggled ghost count as "laid to rest" on the count line?** Recommended: keep today's rule (clean and struggled count; gave-up does not), but show a seal only for clean.
-3. **Is a visible meaning needed on the tile?** Recommended: no. Show glyph, pinyin and Return_Text, and keep the meaning in the accessible name, to fit one screen.
-4. **Faint ghosts use `GhostFigure` (with its filter) up to 10 times. Is that allowed?** Recommended: yes; `art-direction.md` does not limit the number of `GhostFigure` uses, and flat copies are reserved for the favicon and cursors.
-
-### Item 5: Cross-level line
-
-1. **Show the line only when other-level ghosts fill the séance, or whenever there is at least one?** Recommended: whenever N ≥ 1, because due ghosts come first (band a of `selectSession`) and any level 1 ghost in a level 2 séance is equally unexpected.
-2. **Where does it sit?** Recommended: above the first ghost's prompt, on the séance screen, so there is no extra screen and no extra primary action.
-3. **A Review_Run?** Recommended: no line (it has no chosen level).
-
-### Item 6: Graveyard order
-
-1. **Move the Guided_Ghost to grave 1 on level 1, or change the wording only?** Recommended: both (Requirements 6.1 and 6.7). The move makes the order true for all brand-new players (cases a to c). The wording names the guided ghost for the one case (d) where it does not hold.
-2. **Should an unmet Guided_Ghost's blank first stone be a leak?** Recommended: no. Position alone reveals nothing, and the accessible name stays "never met".
-
-### Item 7: Credits, README, fonts
-
-1. **Does the Level_Manifest count as a "data file" to credit?** Recommended: yes, name it too (it holds only counts, averages, English meanings and now one sample character per level).
-2. **If the e2e check finds the level 3 font on a fresh level 1 load, who fixes it?** The implementer, in this spec (Requirement 7.11). No finding is expected from the static reading.
-3. **Should the README figure be hand-maintained?** Recommended: no. Print it from `check:bundle` (Requirement 7.8) and copy it.
-
-### Item 8: Give up slip
-
-1. **Any open question?** None. Treat as decided.
-
-### Item 9: Start menu fit
-
-1. **Should 320 × 640 also be required?** Recommended: no, only the two viewports asked for; add 320 × 640 later if the human wants it.
-2. **How to make room?** Recommended: a smaller ghost figure, tighter gaps, and a two-column grid for the four small Slips below 640 px wide. The design decides.
-3. **Keep the 12 px text floor and the 4-digit count in the worst case?** Recommended: yes.
-
-### Item 10: Restless review
-
-1. **A clean review does not move a ghost to rest early, and a miss counts as a miss. Agree?** Recommended: agree. A clean review that advanced the ladder would let a player push a ghost to long intervals by self-selected reviews, which defeats the spacing. The cost is that a restless ghost leaves "restless" only through a nightly séance when it is due.
-2. **Should a clean review be recorded in the ghost's history?** Recommended: no. It changes nothing in storage, so streaks and counts stay exactly as the scheduler left them.
-3. **Seal on a clean review?** Recommended: yes, because `art-direction.md` stamps the seal after a clean outcome. The text says "Remembered", not "Laid to rest", so the screen stays true.
-4. **Restless includes ghosts that are already due and so would also appear tonight.** Recommended: keep that; it is the existing graveyard definition and the review is explicitly outside the schedule.
-5. **Graveyard Slip count: all levels or the shown level?** Recommended: all levels, the same number as on the Start_Menu.
-6. **Review summary primary action?** Recommended: the same "Begin another Séance" (a nightly séance), since the table in `art-direction.md` has one rule for the Summary.
-
-### Item 11: Level screen
-
-1. **Level_Sample font: the level's own subset, or the level 1 subset?** Using levels 2 and 3's own subsets would make the Level_Screen download about 90 kB and 116 kB of font (raw) before the player picks a level. Recommended: choose from characters whose glyph is already in the Level_1_Font_Range (Requirement 11.6). With today's data that gives a level 1 character at position 31, 哭 for level 2 (position 107) and 鬼 for level 3 (position 370). The alternative is to add the two samples to the level 1 subset; that costs only a few glyphs, and the human can choose it instead.
-2. **N for "tested on first"?** Recommended: the first 30, the same number as the "How Cangjie works" rule (position 30 or later). The first séance introduces at most 10 new ghosts.
-3. **The two later-level samples are also legend-line characters.** Recommended: accept; it is a side effect of the font rule, not a design choice.
-4. **"Easy, harder, hardest" labels.** Recommended: use those words exactly, next to the level number.
-
-### Item 12: Graveyard
-
-1. **"More grass": how much?** Recommended: 24 hill tufts (double) and two tufts per tablet (double). If hill tufts at 24 slots look crowded at 375 px, the design may keep 18.
-2. **Rows between met ghosts.** Recommended: show every row from the first to the last row that holds a met ghost, even if a middle row is all blank, so the order stays visible.
-3. **Wording of the collapsed line.** Recommended: "N ghosts not yet met" and "1 ghost not yet met".
-
-### Item 13: Intro legend
-
-1. **Total time.** The six Han characters have 51 strokes. Recommended: total at most 6 s and at most 900 ms per character, which needs a per-stroke time below the 200 ms floor in `art-direction.md`. This needs an amendment (below). The alternative is 200 ms per stroke, which takes about 10 s and delays the mood too long.
-2. **Does the intro wait for the ink?** Recommended: no. The buttons work throughout.
-3. **Where do the strokes of 粟 come from?** It is in no level, so a new Pipeline-built Legend_Strokes_File is needed (stroke files for all six Han characters exist in `data/raw/hanzi-writer-data`). Recommended: a lazy file fetched by the intro, with the existing wipe as the fallback.
-4. **Grain under reduced motion.** Recommended: no grain at all.
-5. **Grain colour.** Recommended: the `ink` token at low alpha, never `seal`, never `candle` as a fill.
-
-### Item 14: Constraints
-
-1. **Does the `kiro-log.md` ban cover only this spec's work?** Recommended: yes; the human writes the log.
-
-## Steering amendments needing approval
-
-1. **`content-accuracy.md`, "What is not an answer leak" (item 1).** Narrow the bullet "The designed summon reveal …" so that the full reveal (form, hold, fade, and the Plain_Text_Fallback) is allowed for a first meeting only. For a returning ghost, only the parts that the typed keys inked are shown, and the Plain_Text_Fallback is not allowed.
-2. **`product.md`, core loop step 2 (item 1).** Say that the character forms after the code on a first meeting, and that a returning ghost shows only the parts the keys inked.
-3. **`art-direction.md`, Rite-timing exemption Q12 (item 1).** Add that `SUMMON_HOLD_MS`, `SUMMON_FADE_MS` and `SUMMON_INK_SPEED` apply to first meetings; a returning ghost has no hold and no fade.
-4. **`content-accuracy.md`, "What is not an answer leak", second bullet (item 11).** Replace "The level screen shows English example meanings, never a character" with: the Level_Screen shows English example meanings and one sample character per level, taken from the Level_Manifest, at position 31 or later of the level's learning order. Also amend the `harder-ghosts` spec's requirement and the tests that state "no Chinese character on the Level_Screen".
-5. **`art-direction.md`, Motion, ambient exemption list (item 13).** Add "the intro's Grain_Fall" to the named ambient motions, and add a named rite-timing exemption for the Ink_In of the Legend_Line (at most 6 s in total, at most 900 ms per character, per-stroke time below 200 ms).
-6. **`tech.md`, Testing rules.** No amendment. The no-new-property-test decision of Nov 15 stays as it is.
-7. **`structure.md`.** No amendment. The Legend_Strokes_File is a generated file under `app/public/data/`, produced only by `scripts/`.
+1. **`content-accuracy.md`, "What is not an answer leak" (item 1), approved by the human.** The full summon reveal (form, hold, fade, and the Plain_Text_Fallback) is allowed for a first meeting only. For a returning ghost, only the parts that the typed keys inked are shown, and the Plain_Text_Fallback is not allowed.
+2. **`product.md`, core loop step 2 (item 1), approved by the human.** The character forms after the code on a first meeting; a returning ghost shows only the parts the keys inked.
+3. **`art-direction.md`, rite-timing exemption Q12 (item 1), approved by the human.** The three summon timing constants apply to first meetings; a returning ghost has no hold and no fade.
+4. **`content-accuracy.md`, "What is not an answer leak", second bullet (item 11), approved by the human, reworded.** The level screen shows English example meanings and may draw one sample character per level from its stroke data, at position 31 or later of the level's learning order, chosen by the stroke-count rule; no Han character appears as text. The `harder-ghosts` requirement and design text that say "no Chinese character on the Level_Screen" are amended with the same clarification.
+5. **`art-direction.md`, Motion (item 13), approved by the human.** Add "the intro's Grain_Fall" to the ambient exemption list, and add the named legend-ink exemption (at most 6 s in total, at most 900 ms per character, under 200 ms per stroke).
+6. **`tech.md`, Testing rules.** No amendment.
+7. **`structure.md`.** No amendment.

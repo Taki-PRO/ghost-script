@@ -61,6 +61,30 @@ export function summariseBundle(
   return { total, ok: total <= budget, largest };
 }
 
+/** The level 1 dataset, fetched at start but not counted against the budget. */
+export const LEVEL1_DATASET_PATH = 'data/characters.json';
+
+export interface FirstLoad {
+  /** Gzip bytes of the counted bundle (the part the budget applies to). */
+  readonly counted: number;
+  /** Gzip bytes of the level 1 dataset. */
+  readonly level1: number;
+  /** counted + level1. */
+  readonly total: number;
+}
+
+/**
+ * Pure: the real first load. `counted` is the budgeted total, `level1` is the gzip size of the
+ * level 1 dataset (0 when absent), `total` is their sum. The Legend_Strokes_File is not lazy, so it is in `counted`.
+ */
+export function firstLoad(files: readonly SizedFile[]): FirstLoad {
+  const counted = summariseBundle(files).total;
+  const level1 = files
+    .filter((f) => normalise(f.path) === LEVEL1_DATASET_PATH)
+    .reduce((sum, f) => sum + f.gzipBytes, 0);
+  return { counted, level1, total: counted + level1 };
+}
+
 function walk(dir: string): string[] {
   const out: string[] = [];
   for (const name of readdirSync(dir).sort()) {
@@ -97,7 +121,9 @@ function main(): void {
   const lazy = lazyFiles(files)
     .map((f) => `  raw ${String(f.rawBytes ?? 0).padStart(8)}  gzip ${String(f.gzipBytes).padStart(8)}  ${f.path}\n`)
     .join('');
-  const out = line + 'Largest files:\n' + detail + 'Lazy files (not counted):\n' + lazy;
+  const fl = firstLoad(files);
+  const firstLine = `First load: ${fl.counted} bytes counted + ${fl.level1} bytes level 1 dataset = ${fl.total} bytes gzip\n`;
+  const out = line + 'Largest files:\n' + detail + 'Lazy files (not counted):\n' + lazy + firstLine;
   if (report.ok) {
     process.stdout.write(out);
   } else {

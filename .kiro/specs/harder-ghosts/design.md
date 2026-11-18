@@ -439,7 +439,7 @@ These are the steering edits (Requirement 15), approved by the human as worded h
 
 - `content-accuracy.md`, "Sources to use", Character selection: "HSK 3.0 handwriting characters (书写字), writing levels 1, 2 and 3 (exactly 300, 400 and 500), from `ivankra/hsk30` `hsk30-chars.csv`, column `WritingLevel`."
 - `content-accuracy.md`, "Required tests": "The Cangjie unit test covers every record of every Level_Dataset."
-- `content-accuracy.md`, "Not an answer leak": "The level screen shows English example meanings, never a character. The Graveyard shows the glyph of a character with a Review entry at any level."
+- `content-accuracy.md`, "Not an answer leak": "The level screen shows English example meanings, never a character. The Graveyard shows the glyph of a character with a Review entry at any level." Amended (approved by the human): see proof-pass Requirement 11. No Han character appears as text; a sample drawn from stroke data is allowed.
 - `content-accuracy.md`, new "Prompts of later levels": "Level 2 and 3 prompts come from CC-CEDICT by the same rule as level 1 and carry `promptReview`. They are not human-reviewed until an override or approval row says so. The app says so while any is unreviewed."
 - `art-direction.md`, Primary action table: add `| Level screen | none |`.
 - `product.md`, Must-have: "about 1,200 checked characters in three levels; the Nightly Séance draws new ghosts from the chosen level".

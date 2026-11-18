@@ -1,5 +1,5 @@
 /**
- * Fixed Grass pattern of the Graveyard: tufts by tablet position mod 5 and 12 hill-crest slots.
+ * Fixed Grass pattern of the Graveyard: tufts by tablet position mod 5 and 24 hill-crest slots.
  * Pure tables, no randomness and no clock, so every render draws the same grass.
  */
 
@@ -42,7 +42,20 @@ export const TABLET_TUFTS: readonly Tuft[] = [
   { shape: 2, dx: 5 },
 ];
 
-export const HILL_SLOTS = 12;
+/** Second tuft of each tablet: another shape, on the other side of the centre from the first. */
+export const TABLET_TUFTS_SECOND: readonly Tuft[] = [
+  { shape: 1, dx: 10 },
+  { shape: 1, dx: -9 },
+  { shape: 3, dx: 13 },
+  { shape: 1, dx: 13 },
+  { shape: 1, dx: -11 },
+];
+
+/** Tablet tufts are drawn at this scale: 19.2 x 7.2 px. */
+export const TABLET_TUFT_SCALE = 0.8;
+
+/** Slots 0 to 11 sit on the far ridge, slots 12 to 23 on the near ridge. */
+export const HILL_SLOTS = 24;
 
 /** Hill-crest tufts by slot, left to right. */
 export const HILL_TUFTS: readonly HillTuft[] = [
@@ -58,10 +71,25 @@ export const HILL_TUFTS: readonly HillTuft[] = [
   { shape: 0, xPercent: 78, crestY: 14.16, scale: 1.2 },
   { shape: 3, xPercent: 86, crestY: 14.91, scale: 1.4 },
   { shape: 2, xPercent: 93, crestY: 15.15, scale: 1.3 },
+  { shape: 1, xPercent: 5, crestY: 34.25, scale: 1.2 },
+  { shape: 3, xPercent: 10.5, crestY: 32.88, scale: 1.2 },
+  { shape: 0, xPercent: 18, crestY: 31.78, scale: 1.4 },
+  { shape: 4, xPercent: 26, crestY: 31.3, scale: 1.2 },
+  { shape: 2, xPercent: 34, crestY: 31.07, scale: 1.3 },
+  { shape: 1, xPercent: 42, crestY: 30.53, scale: 1.4 },
+  { shape: 3, xPercent: 50, crestY: 29.15, scale: 1.2 },
+  { shape: 0, xPercent: 58, crestY: 26.99, scale: 1.3 },
+  { shape: 4, xPercent: 66, crestY: 26.03, scale: 1.4 },
+  { shape: 2, xPercent: 74, crestY: 26.3, scale: 1.2 },
+  { shape: 1, xPercent: 82, crestY: 27.27, scale: 1.3 },
+  { shape: 3, xPercent: 89.5, crestY: 27.98, scale: 1.4 },
 ];
 
 /** The far-ridge outline of the hillside (viewBox 0 0 100 48), shared with Graveyard.tsx. */
 export const FAR_RIDGE_PATH = 'M0 22 C18 14 34 22 52 16 C72 10 88 18 100 14 L100 48 L0 48 Z';
+
+/** The near-ridge outline of the hillside (viewBox 0 0 100 48), shared with Graveyard.tsx. */
+export const NEAR_RIDGE_PATH = 'M0 36 C20 28 36 34 54 28 C74 22 88 32 100 26 L100 48 L0 48 Z';
 
 /** The hillside is 12 rem tall over 48 viewBox units. */
 export const HILL_REM_PER_UNIT = 0.25;
@@ -73,6 +101,12 @@ function mod(n: number, m: number): number {
 /** Tuft of the tablet at a position. Defined for every integer. */
 export function tabletTuft(position: number): Tuft {
   return TABLET_TUFTS[mod(position, TABLET_TUFTS.length)];
+}
+
+/** The two tufts of the tablet at a position, first then second. */
+export function tabletTufts(position: number): readonly [Tuft, Tuft] {
+  const i = mod(position, TABLET_TUFTS.length);
+  return [TABLET_TUFTS[i], TABLET_TUFTS_SECOND[i]];
 }
 
 /** Hill tuft of a slot. Defined for every integer. */

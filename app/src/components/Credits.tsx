@@ -1,6 +1,7 @@
 import {
   CODE_LICENCE,
   COMBINED_WORK_NOTE,
+  DATA_FILES,
   DATA_SOURCES,
   FONTS,
   KEYBOARD_LIMITATION,
@@ -88,6 +89,43 @@ export function Credits({ onBack, backTo }: CreditsProps) {
                   <div><dt className={DT}>Use</dt><dd className={DD}>{s.use}</dd></div>
                   <div><dt className={DT}>Licence</dt><dd className={DD}>{s.licence}</dd></div>
                   <div><dt className={DT}>URL</dt><dd className={DD}>{s.url}</dd></div>
+                </dl>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section aria-labelledby="credits-files" className="mt-8">
+          <h2 id="credits-files" className={H2}>
+            Data files
+          </h2>
+          <div className="mt-3 overflow-x-auto">
+            <table aria-labelledby="credits-files" className="hidden w-full border-collapse sm:table">
+              <thead>
+                <tr className="border-b border-muted">
+                  <th scope="col" className={TH}>File</th>
+                  <th scope="col" className={TH}>Holds</th>
+                  <th scope="col" className={TH}>Sources and licences</th>
+                </tr>
+              </thead>
+              <tbody>
+                {DATA_FILES.map((f) => (
+                  <tr key={f.path} className="border-b border-muted/40">
+                    <th scope="row" className={`${TD} text-left font-medium`}>{f.path}</th>
+                    <td className={TD}>{f.holds}</td>
+                    <td className={TD}>{f.sources}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <ul aria-labelledby="credits-files" className="mt-3 flex flex-col gap-3 sm:hidden">
+            {DATA_FILES.map((f) => (
+              <li key={f.path} className="rounded-md border border-muted/40 bg-surface p-3">
+                <dl className="flex flex-col gap-2">
+                  <div><dt className={DT}>File</dt><dd className={`${DD} font-medium`}>{f.path}</dd></div>
+                  <div><dt className={DT}>Holds</dt><dd className={DD}>{f.holds}</dd></div>
+                  <div><dt className={DT}>Sources and licences</dt><dd className={DD}>{f.sources}</dd></div>
                 </dl>
               </li>
             ))}

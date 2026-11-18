@@ -5,13 +5,15 @@ import type { CharacterRecord } from './data/types';
 import type { CharacterDataset } from './data/charDataLoader';
 import { DEFAULT_CONFIG } from './engine/config';
 import { learningOrder } from './engine/learningOrder';
+import { formatReturn } from './engine/formatReturn';
 import { pickWalkthroughGhost } from './engine/walkthrough';
 import { applyReview, type Outcome, type ReviewHistory } from './engine/scheduler';
-import { getIntroSeen, loadState, STORAGE_KEY } from './storage/storage';
+import { getIntroSeen, loadState, recordOutcome, STORAGE_KEY } from './storage/storage';
 import raw from '../public/data/characters.json';
 
 const stub = vi.hoisted(() => ({
   props: [] as Array<{ record: { character: string; strokeCount: number }; onOutcome: (o: Outcome) => void }>,
+  results: [] as Array<import('./components/SessionSummary').SessionResults>,
   summon: null as null | {
     record: { character: string };
     onDone: (o: Outcome) => void;
@@ -53,6 +55,18 @@ vi.mock('./modes/SummonStep', async () => {
   };
 });
 
+vi.mock('./components/SessionSummary', async (importOriginal) => {
+  const React = await import('react');
+  const original = await importOriginal<typeof import('./components/SessionSummary')>();
+  return {
+    ...original,
+    SessionSummary: (props: React.ComponentProps<typeof original.SessionSummary>) => {
+      stub.results.push(props.results);
+      return React.createElement(original.SessionSummary, props);
+    },
+  };
+});
+
 import App, { buildSession } from './App';
 
 const all = raw as unknown as Record<string, CharacterRecord>;
@@ -60,6 +74,7 @@ const dataset: CharacterDataset = new Map(Object.entries(all));
 const T = 1_700_000_000_000;
 const MIN = 60 * 1000;
 
+const REVIEW_SLIP = /^Review restless ghosts \(\d+\)$/;
 const lastProps = () => stub.props[stub.props.length - 1]!;
 /** End the stubbed Summon step if one is showing. */
 const finishSummon = (o: Outcome = 'clean') => {
@@ -495,6 +510,8 @@ describe('App integration', () => {
       const first = stub.summon!.record.character;
       emit('clean');
       cleanup();
+      // One row wide enough for every grave, so all 300 show (the Graveyard shows only the rows that matter).
+      const widthSpy = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(56 * 300 + 16);
       await openApp();
       await user.click(await screen.findByRole('button', { name: /^graveyard$/i }));
       const graves = screen.getByRole('list', { name: 'Graves' });
@@ -502,6 +519,7 @@ describe('App integration', () => {
       expect(glyphs).toHaveLength(1);
       expect(glyphs[0]!.textContent).toBe(first);
       expect(graves.querySelectorAll('li')).toHaveLength(dataset.size);
+      widthSpy.mockRestore();
     });
   });
 });
@@ -655,5 +673,152 @@ describe('first meeting: walkthrough, first-meeting set and return rows', () => 
     expect(Array.from(rows).map((li) => li.querySelector('[lang="zh"]')?.textContent)).toEqual(presented);
     expect(rows[3]!.textContent).toMatch(/returns in 10 minutes/);
     for (const li of rows) expect(li.textContent).toMatch(/returns/);
+  });
+
+  it('4.8: the summary results carry each ghost\'s outcome in play order', async () => {
+    home();
+    stub.results.length = 0;
+    const user = await openApp();
+    await user.click(await screen.findByRole('button', { name: /begin a nightly séance/i }));
+    const outcomes: Outcome[] = [
+      'clean', 'struggled', 'gave-up', 'clean', 'clean',
+      'clean', 'clean', 'clean', 'struggled', 'gave-up',
+    ];
+    const presented = await playSeance(user, outcomes);
+    await screen.findByRole('list', { name: 'Ghosts that will return' });
+    const results = stub.results[stub.results.length - 1]!;
+    expect(results.returns!.map((r) => r.character)).toEqual(presented);
+    expect(results.returns!.map((r) => r.outcome)).toEqual(outcomes);
+  });
+});
+
+describe('Review_Run wiring (proof-pass 10)', () => {
+  const order = learningOrder(dataset);
+  const seeds = () => ({
+    [order[0]!]: { step: 1, nextDue: T - 3 * MIN, lastOutcome: 'struggled' as const },
+    [order[1]!]: { step: 2, nextDue: T - 2 * MIN, lastOutcome: 'clean' as const },
+    [order[2]!]: { step: 1, nextDue: T - 1 * MIN, lastOutcome: 'gave-up' as const },
+  });
+  const startReview = async (user: ReturnType<typeof userEvent.setup>) => {
+    await user.click(await screen.findByRole('button', { name: REVIEW_SLIP }));
+    await screen.findByText(/^Ghost 1 of /);
+  };
+
+  it('plays restless ghosts as returning ghosts and stores only the misses', async () => {
+    const history: ReviewHistory = seeds();
+    seed({ introSeen: true, cangjieIntroSeen: true, history });
+    stub.results.length = 0;
+    const user = await openApp();
+    await startReview(user);
+    expect(screen.getByText('Ghost 1 of 3')).toBeTruthy();
+    expect(screen.queryByTestId('cross-level-line')).toBeNull();
+    expect(stub.summon!.firstMeeting).toBe(false);
+    expect(stub.summon!.walkthroughLines).toBeUndefined();
+    const presented = await playSeance(user, ['clean', 'struggled', 'gave-up']);
+    expect([...presented].sort()).toEqual(Object.keys(history).sort());
+    const stored = loadState().history;
+    const [cleanCh, struggledCh, gaveUpCh] = presented as [string, string, string];
+    expect(JSON.stringify(stored[cleanCh])).toBe(JSON.stringify(history[cleanCh]));
+    expect(stored[struggledCh]).toEqual(applyReview(history[struggledCh], 'struggled', T, DEFAULT_CONFIG));
+    expect(stored[gaveUpCh]).toEqual(applyReview(history[gaveUpCh], 'gave-up', T, DEFAULT_CONFIG));
+    const results = stub.results[stub.results.length - 1]!;
+    expect(results.mode).toBe('review');
+    expect(results.laidToRest).toBe(1);
+    expect(results.returns!.map((r) => r.outcome)).toEqual(['clean', 'struggled', 'gave-up']);
+    expect(screen.getByRole('status').textContent).toBe('1 of 3 ghosts remembered');
+    expect(document.body.textContent).not.toMatch(/laid to rest/i);
+  });
+
+  it('the review summary shows each Return_Text from the stored entry, the seal on the clean tile and one primary', async () => {
+    seed({ introSeen: true, cangjieIntroSeen: true, history: seeds() });
+    stub.results.length = 0;
+    const user = await openApp();
+    await startReview(user);
+    const presented = await playSeance(user, ['clean', 'struggled', 'gave-up']);
+    const stored = loadState().history;
+    const finishedAt = stub.results[stub.results.length - 1]!.finishedAt!;
+    const tiles = screen.getAllByRole('listitem');
+    expect(tiles).toHaveLength(3);
+    presented.forEach((ch, i) => {
+      expect(tiles[i]!.textContent).toContain(formatReturn(stored[ch]!.nextDue, finishedAt));
+    });
+    expect(tiles[0]!.querySelector('[data-testid="seal-stamp"]')).not.toBeNull();
+    expect(tiles[1]!.querySelector('[data-testid="seal-stamp"]')).toBeNull();
+    expect(tiles[2]!.querySelector('[data-testid="seal-stamp"]')).toBeNull();
+    expect(document.querySelectorAll('.slip-primary')).toHaveLength(1);
+  });
+
+  it('the summary primary starts a nightly séance', async () => {
+    seed({ introSeen: true, cangjieIntroSeen: true, history: seeds() });
+    const user = await openApp();
+    await startReview(user);
+    await playSeance(user, ['clean', 'clean', 'clean']);
+    await user.click(await screen.findByRole('button', { name: 'Begin another Séance' }));
+    expect(await screen.findByText('Ghost 1 of 10')).toBeTruthy();
+    emit('clean');
+    expect(screen.getByText('Laid to rest')).toBeTruthy();
+  });
+
+  it('a failed level load keeps the menu, shows the alert and leaves history unchanged', async () => {
+    seed({ introSeen: true, cangjieIntroSeen: true, history: seeds() });
+    const user = await openApp();
+    await screen.findByRole('button', { name: REVIEW_SLIP });
+    // A history key that no loaded level holds, then a failing level 2 file.
+    recordOutcome('X', { step: 1, nextDue: T - MIN, lastOutcome: 'struggled' });
+    const before = JSON.stringify(loadState().history);
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => ({ ok: false, text: async () => '' })),
+    );
+    await user.click(screen.getByRole('button', { name: REVIEW_SLIP }));
+    const alert = await screen.findByRole('alert');
+    expect(alert.textContent).toBe('The review could not start. Check your connection and try again.');
+    expect(screen.getByRole('button', { name: /begin a nightly séance/i })).toBeTruthy();
+    expect(screen.queryByText(/^Ghost 1 of /)).toBeNull();
+    expect(JSON.stringify(loadState().history)).toBe(before);
+  });
+
+  it('leaving mid-ghost stores nothing for the current ghost and keeps earlier entries', async () => {
+    const history: ReviewHistory = seeds();
+    seed({ introSeen: true, cangjieIntroSeen: true, history });
+    const user = await openApp();
+    await startReview(user);
+    const first = stub.summon!.record.character;
+    emit('struggled');
+    await user.click(await screen.findByRole('button', { name: /next ghost/i }));
+    const second = stub.summon!.record.character;
+    finishSummon();
+    await user.click(screen.getByRole('button', { name: /leave séance/i }));
+    await user.click(screen.getByRole('button', { name: /^leave$/i }));
+    expect(screen.getByRole('button', { name: /begin a nightly séance/i })).toBeTruthy();
+    const stored = loadState().history;
+    expect(stored[first]).toEqual(applyReview(history[first], 'struggled', T, DEFAULT_CONFIG));
+    expect(JSON.stringify(stored[second])).toBe(JSON.stringify(history[second]));
+  });
+});
+
+describe('review slip counts (proof-pass 10.2, 10.5)', () => {
+  it('the Start menu and the Graveyard show the same all-level count, none when no ghost is restless', async () => {
+    const order = learningOrder(dataset);
+    seed({
+      introSeen: true,
+      cangjieIntroSeen: true,
+      history: {
+        [order[0]!]: { step: 1, nextDue: T - MIN, lastOutcome: 'struggled' },
+        [order[1]!]: { step: 2, nextDue: T - MIN, lastOutcome: 'clean' },
+        [order[2]!]: { step: 2, nextDue: T + 60 * MIN, lastOutcome: 'clean' },
+      },
+    });
+    const user = await openApp();
+    await screen.findByRole('button', { name: 'Review restless ghosts (2)' });
+    await user.click(screen.getByRole('button', { name: 'Graveyard' }));
+    expect(await screen.findByRole('button', { name: 'Review restless ghosts (2)' })).toBeTruthy();
+  });
+
+  it('shows no slip with an empty history', async () => {
+    seed({ introSeen: true, cangjieIntroSeen: true, history: {} });
+    await openApp();
+    await screen.findByRole('button', { name: /begin a nightly séance/i });
+    expect(screen.queryByRole('button', { name: /Review restless ghosts/ })).toBeNull();
   });
 });

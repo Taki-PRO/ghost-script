@@ -142,6 +142,27 @@ export function slotName(index: number, letter: string): string {
   return `Slot ${index}, type ${letter}`;
 }
 
+/**
+ * Height in CSS px of all Summon content other than the paper (proof-pass
+ * design, "Measurement method"): the session height (`main > div > div`) plus
+ * the Shell's vertical padding, minus the `ink-surface` height and minus the
+ * line block (the walkthrough line and its 4 px flex gap, when shown).
+ */
+export async function summonOtherHeight(page: Page): Promise<number> {
+  await page.evaluate(() => document.fonts.ready);
+  return page.evaluate(() => {
+    const session = document.querySelector('main > div > div');
+    const ink = document.querySelector('[data-testid="ink-surface"]');
+    if (!session || !ink) throw new Error('no session or ink-surface on the screen');
+    const main = document.querySelector('main') as HTMLElement;
+    const cs = getComputedStyle(main);
+    const padding = Number.parseFloat(cs.paddingTop) + Number.parseFloat(cs.paddingBottom);
+    const line = document.querySelector('[data-testid="walkthrough-line"]');
+    const lineBlock = line ? line.getBoundingClientRect().height + 4 : 0;
+    return session.getBoundingClientRect().height + padding - ink.getBoundingClientRect().height - lineBlock;
+  });
+}
+
 /** Lines describing every overflow found on the current screen; empty when it fits. */
 export async function findOverflow(page: Page, width: number): Promise<string[]> {
   await page.evaluate(() => document.fonts.ready);
@@ -391,11 +412,22 @@ export function boxGap(a: Box, b: Box): number {
  * mapping is the library's own. Waits for the Seal_Stamp, which only a clean
  * outcome produces. Uses real mouse input; no App hook is involved.
  */
-export async function layToRestClean(page: Page, character: string): Promise<void> {
+export async function layToRestClean(
+  page: Page,
+  character: string,
+  options: { readonly expectSeal?: boolean; readonly wrongKeyFirst?: boolean } = {},
+): Promise<void> {
   const record = datasetRecord(character);
   if (record.cangjie === null) throw new Error(`${character} has no Cangjie code`);
   const summon = page.getByRole('region', { name: 'Summon step' });
   await expect(summon).toBeVisible({ timeout: 10_000 });
+  if (options.wrongKeyFirst === true) {
+    // Three keys that are not the next letter: more mistakes than the clean threshold (2), so the outcome is struggled.
+    const wrong = record.cangjie[0]?.toUpperCase() === 'A' ? 'B' : 'A';
+    for (let i = 0; i < 3; i++) {
+      await summon.getByRole('button', { name: new RegExp(`^Key ${wrong}(,|$)`) }).click();
+    }
+  }
   for (const letter of record.cangjie.toUpperCase()) {
     await summon.getByRole('button', { name: new RegExp(`^Key ${letter}(,|$)`) }).click();
   }
@@ -422,7 +454,9 @@ export async function layToRestClean(page: Page, character: string): Promise<voi
     await page.mouse.up();
     await page.waitForTimeout(150);
   }
-  await expect(page.getByRole('img', { name: `Seal: ${character}` })).toBeVisible({ timeout: 15_000 });
+  if (options.expectSeal !== false) {
+    await expect(page.getByRole('img', { name: `Seal: ${character}` })).toBeVisible({ timeout: 15_000 });
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -444,6 +478,17 @@ export async function waitForInkReveal(page: Page): Promise<void> {
     Array.from(document.querySelector('blockquote.ink-reveal')?.getAnimations() ?? []).map((a) => a.playState),
   );
   expect(states.every((s) => s === 'finished'), `animation states: ${states.join(', ')}`).toBe(true);
+}
+
+/**
+ * Waits until the intro's legend figure reports `data-legend-state="inked"`, up to 15 s (the ink
+ * takes about 5.5 s, the safety timer 6 s). Resolves at once in reduced motion, where the figure
+ * is inked at first render. Fails when there is no legend figure or the state is never reached.
+ */
+export async function waitForLegendReveal(page: Page): Promise<void> {
+  await expect(page.locator('figure[data-legend-state]')).toHaveAttribute('data-legend-state', 'inked', {
+    timeout: 15_000,
+  });
 }
 
 /**
@@ -533,21 +578,25 @@ export async function regionPixels(
  */
 export async function seedGraveyard(
   page: Page,
+  options: { readonly farMetIndex?: number } = {},
 ): Promise<{ at: string; restless: string; gaveUp: string; total: number }> {
   const farFuture = 32_503_680_000_000;
   const keys = learningOrder(datasetMap());
   const [a, b, c] = keys;
   expect(c, 'characters.json has fewer than three characters').toBeDefined();
-  await seed(
-    page,
-    seedState({
-      history: {
-        [a as string]: { step: 3, lastOutcome: 'clean', nextDue: farFuture },
-        [b as string]: { step: 0, lastOutcome: 'struggled', nextDue: 0 },
-        [c as string]: { step: 0, lastOutcome: 'gave-up', nextDue: 0 },
-      },
-    }),
-  );
+  const history: SeedHistory = {
+    [a as string]: { step: 3, lastOutcome: 'clean', nextDue: farFuture },
+    [b as string]: { step: 0, lastOutcome: 'struggled', nextDue: 0 },
+    [c as string]: { step: 0, lastOutcome: 'gave-up', nextDue: 0 },
+  };
+  // The Graveyard shows only the rows through the last Met_Ghost's row plus one. A restless ghost
+  // far down the learning order makes the shown list long enough for the tests that scroll.
+  if (options.farMetIndex !== undefined) {
+    const far = keys[options.farMetIndex];
+    expect(far, `the learning order has no index ${options.farMetIndex}`).toBeDefined();
+    history[far as string] = { step: 0, lastOutcome: 'struggled', nextDue: 0 };
+  }
+  await seed(page, seedState({ history }));
   await page.goto(START);
   await page.getByRole('button', { name: 'Graveyard' }).click();
   await expect(page.getByRole('heading', { level: 1, name: 'Graveyard' })).toBeVisible();
@@ -632,5 +681,89 @@ export async function reachSummary(page: Page): Promise<void> {
     else if ((await writeGiveUp.isVisible()) && (await writeGiveUp.isEnabled())) await writeGiveUp.click();
     else await page.waitForTimeout(100);
   }
+  await page.evaluate(() => document.fonts.ready);
+}
+
+/** The kinds of ending `reachFullSummary` plays, by ghost position; later ghosts give up. */
+const FULL_SUMMARY_PLAN = ['clean', 'struggled', 'gave-up', 'clean', 'struggled'] as const;
+
+/**
+ * Plays a full Nightly Séance of ten ghosts to the Summary screen with a mix of outcomes:
+ * clean, struggled and gave-up (see FULL_SUMMARY_PLAN; the rest give up). Seeds a fresh save,
+ * so every ghost is a first meeting and its faint code identifies it in the dataset.
+ * Callers set a generous test timeout and `reducedMotion`.
+ */
+export async function reachFullSummary(page: Page): Promise<void> {
+  await seed(page, seedState());
+  await page.goto(START);
+  await page.getByRole('button', { name: 'Begin a Nightly Séance' }).click();
+  const dataset = datasetMap();
+  const summary = page.getByRole('heading', { name: 'The séance is over' });
+  const next = page.getByRole('button', { name: /^(Next ghost|Finish the séance)$/ });
+  const summon = page.getByRole('region', { name: 'Summon step' });
+  const writeGiveUp = page.getByRole('region', { name: 'Write mode' }).getByRole('button', { name: 'Give up' });
+  const deadline = Date.now() + 400_000;
+  const heading = page.getByRole('heading', { name: /^Ghost \d+ of \d+$/ });
+  let handled = 0;
+  while (!(await summary.isVisible())) {
+    if (Date.now() > deadline) throw new Error('the Séance did not reach the summary');
+    if (await next.isVisible()) {
+      await next.click();
+    } else if (await summon.isVisible()) {
+      // The Summon step stays on screen for a moment after "Give up"; act once per ghost number.
+      const number = Number.parseInt(((await heading.textContent()) ?? '').replace(/\D+(\d+).*/, '$1'), 10);
+      if (number <= handled) {
+        await page.waitForTimeout(100);
+        continue;
+      }
+      handled = number;
+      const kind = FULL_SUMMARY_PLAN[number - 1] ?? 'gave-up';
+      if (kind === 'gave-up') {
+        await summon.getByRole('button', { name: 'Give up' }).click();
+        continue;
+      }
+      const clue = (await page.getByRole('region', { name: "Ghost's clue" }).textContent()) ?? '';
+      const slots = await summon.getByRole('listitem', { name: /^Slot \d+, type [A-Y]$/ }).evaluateAll((els) =>
+        els.map((el) => el.getAttribute('aria-label') ?? ''),
+      );
+      const code = slots.map((label) => label.slice(-1)).join('');
+      const record = Array.from(dataset.values()).find(
+        (r) => (r.cangjie ?? '').toUpperCase() === code && clue.includes(r.prompt.pinyin),
+      );
+      if (!record) throw new Error(`no dataset record for code "${code}" and clue "${clue}"`);
+      await layToRestClean(page, record.character, {
+        expectSeal: kind === 'clean',
+        wrongKeyFirst: kind === 'struggled',
+      });
+    } else if ((await writeGiveUp.isVisible()) && (await writeGiveUp.isEnabled())) {
+      await writeGiveUp.click();
+    } else {
+      await page.waitForTimeout(100);
+    }
+  }
+  await page.evaluate(() => document.fonts.ready);
+}
+/**
+ * The Start menu worst case (proof-pass Requirements 9.3, 9.4): every ghost of all three levels
+ * (1,200 in total) is in the history as `struggled`, so level 1 is a Finished_Level (the notice
+ * and the "Move on to level 2" slip show) and the review slip counts 1200, a 4-digit number.
+ */
+export function seedStartMenuWorstCase(): SeedState {
+  const history: SeedHistory = {};
+  for (const level of [1, 2, 3] as const) {
+    for (const char of levelDatasetMap(level).keys()) {
+      history[char] = { step: 0, lastOutcome: 'struggled', nextDue: 0 };
+    }
+  }
+  return seedState({ history });
+}
+/** Opens the worst-case Start menu and checks that its notice, both slips and the 4-digit count are shown. */
+export async function openStartMenuWorstCase(page: Page): Promise<void> {
+  await seed(page, seedStartMenuWorstCase());
+  await page.goto(START);
+  await expect(page.getByRole('button', { name: 'Begin a Nightly Séance' })).toBeVisible();
+  await expect(page.getByText('You have met every ghost of level 1.')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Move on to level 2' })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Review restless ghosts \(\d{4}\)$/ })).toBeVisible();
   await page.evaluate(() => document.fonts.ready);
 }

@@ -49,10 +49,16 @@ const WO = data['我']!; // HQI
 const KOU = data['口']!; // R
 const dataset: CharacterDataset = new Map(Object.entries(data));
 
-function setup(record: CharacterRecord) {
+function setup(record: CharacterRecord, firstMeeting = false) {
   const onDone = vi.fn();
   const utils = render(
-    <SummonStep record={record} dataset={dataset} config={DEFAULT_CONFIG} onDone={onDone} />,
+    <SummonStep
+      record={record}
+      dataset={dataset}
+      config={DEFAULT_CONFIG}
+      onDone={onDone}
+      firstMeeting={firstMeeting}
+    />,
   );
   return { onDone, ...utils };
 }
@@ -196,7 +202,7 @@ describe('SummonStep Key hint', () => {
 
 describe('SummonStep results', () => {
   it('clean code gives onDone("clean") once after form, hold and fade', async () => {
-    const { onDone } = setup(WO);
+    const { onDone } = setup(WO, true);
     // 我 is a partial character: its writer exists from mount (summon-ink).
     expect(calls()).toHaveLength(1);
     typeCode(WO.cangjie!);
@@ -234,7 +240,7 @@ describe('SummonStep results', () => {
   });
 
   it('a struggled code (hint shown) gives "struggled"', async () => {
-    const { onDone } = setup(WO);
+    const { onDone } = setup(WO, true);
     press('B');
     press('B');
     press('B');
@@ -247,7 +253,7 @@ describe('SummonStep results', () => {
   });
 
   it('Give up shows the full code and gives "gave-up"', async () => {
-    const { onDone } = setup(WO);
+    const { onDone } = setup(WO, true);
     fireEvent.click(screen.getByRole('button', { name: 'Give up' }));
     expect(filledCount()).toBe(WO.cangjie!.length);
     const text = slots()[0]!.textContent!;
@@ -262,7 +268,7 @@ describe('SummonStep results', () => {
   });
 
   it('17.6: Give up is present while typing and absent in the forming and fading phases', async () => {
-    setup(KOU);
+    setup(KOU, true);
     expect(screen.getByRole('button', { name: 'Give up' })).toBeInTheDocument();
     typeCode(KOU.cangjie!);
     expect(screen.queryByRole('button', { name: 'Give up' })).toBeNull();
@@ -276,13 +282,13 @@ describe('SummonStep results', () => {
     });
   });
   it('17.6: Give up removes itself after use and the on-screen keys are disabled', () => {
-    setup(WO);
+    setup(WO, true);
     fireEvent.click(screen.getByRole('button', { name: 'Give up' }));
     expect(screen.queryByRole('button', { name: 'Give up' })).toBeNull();
     expect(screen.getByRole('button', { name: /^Key Q/ })).toBeDisabled();
   });
   it('ignores later keys once the step has ended', async () => {
-    const { onDone } = setup(KOU);
+    const { onDone } = setup(KOU, true);
     typeCode(KOU.cangjie!);
     press('B');
     clickKey('B');
@@ -298,7 +304,7 @@ describe('SummonStep results', () => {
 
   it('shows a plain-text fallback when hanzi-writer throws, and still calls onDone', async () => {
     h.throwOnCreate = true;
-    const { onDone } = setup(KOU);
+    const { onDone } = setup(KOU, true);
     typeCode(KOU.cangjie!);
     await flush();
     expect(fallbackEl()?.textContent).toBe(KOU.character);
@@ -311,7 +317,7 @@ describe('SummonStep results', () => {
 
   it('shows the fallback when the animation rejects, and still calls onDone', async () => {
     h.rejectAnimate = true;
-    const { onDone } = setup(KOU);
+    const { onDone } = setup(KOU, true);
     typeCode(KOU.cangjie!);
     await flush();
     expect(fallbackEl()?.textContent).toBe(KOU.character);
@@ -401,7 +407,7 @@ describe('SummonStep layout', () => {
   });
 
   it('keeps the surface size in every phase and never uses the hidden class', async () => {
-    setup(KOU);
+    setup(KOU, true);
     const expected = `${summonPaperSize(window.innerWidth, window.innerHeight)}px`;
     const size = () => surface().style.width;
     expect(size()).toBe(expected);
@@ -431,7 +437,7 @@ describe('SummonStep layout', () => {
         window.innerWidth = w;
         window.innerHeight = hgt;
         const side = summonPaperSize(w, hgt);
-        setup(KOU);
+        setup(KOU, true);
         expect(surface().style.width).toBe(`${side}px`);
         typeCode(KOU.cangjie!);
         await flush();
@@ -456,7 +462,7 @@ describe('SummonStep layout', () => {
 
   it('puts the fallback character inside the surface wrapper', async () => {
     h.throwOnCreate = true;
-    setup(KOU);
+    setup(KOU, true);
     typeCode(KOU.cangjie!);
     await flush();
     expect(surface().parentElement!.contains(fallbackEl())).toBe(true);

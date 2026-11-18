@@ -125,4 +125,25 @@ describe('art-direction steering file', () => {
     expect(text).toMatch(/Ambient exemption/);
     expect(text).toMatch(/Rite-timing exemption/);
   });
+  it('names the Grain_Fall in the ambient exemption (proof-pass amendment 5, approved by the human)', () => {
+    const line =
+      "- Ambient exemption (approved by the human, Q2): the two mist bands, the idle ghost float, the idle candle glow, the wisp of a restless tablet and the intro's Grain_Fall. They have no cause and may be slow. They are named here and nowhere else.";
+    expect(text).toContain(line + '\n');
+    expect(text.split('Ambient exemption').length - 1).toBe(1);
+  });
+  it('has the Legend-ink exemption right after the rite-timing line (proof-pass amendment 5, approved by the human)', () => {
+    const line =
+      "- Legend-ink exemption: the Ink_In of the intro's legend line draws the six Han characters one at a time, in at most 6 s in total, at most 900 ms per character and under 200 ms per stroke. It runs once when the intro opens, never blocks a control, and reduced motion shows the finished line.";
+    expect(text).toContain(
+      'a returning ghost has no hold and no fade.\n' + line + '\n',
+    );
+    expect(text.split('Legend-ink exemption').length - 1).toBe(1);
+    expect(text).toMatch(/Motion that follows a player action or game event runs 200 to 600 ms/);
+  });
+  it('limits the rite-timing constants to a first meeting', () => {
+    const line =
+      '- Rite-timing exemption (approved by the human, Q12): `SUMMON_HOLD_MS`, `SUMMON_FADE_MS` and `SUMMON_INK_SPEED` stay as they are. They apply to a first meeting; a returning ghost has no hold and no fade.';
+    expect(text).toContain(line + '\n');
+    expect(text.split('Rite-timing exemption').length - 1).toBe(1);
+  });
 });

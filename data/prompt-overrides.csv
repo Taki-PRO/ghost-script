@@ -45,5 +45,6 @@ character,entryIndex,meaningIndex,reviewedBy
 字,0,2,human-approved
 现,0,2,human-approved
 在,0,1,human-approved
-本,0,8,human-approved
+本,0,0,human
 然,0,2,human-approved
+天,0,1,human
