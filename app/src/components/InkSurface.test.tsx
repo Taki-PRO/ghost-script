@@ -49,6 +49,18 @@ describe('InkSurface', () => {
     expect(css).toContain('[data-testid="ink-container"] svg > g > g:nth-child(2)');
   });
 
+  it('sets data-brush="true" only when drawable', () => {
+    const ref = createRef<HTMLDivElement>();
+    const { rerender } = render(<InkSurface size="240px" containerRef={ref} />);
+    expect(screen.getByTestId('ink-surface').hasAttribute('data-brush')).toBe(false);
+    rerender(<InkSurface size="240px" containerRef={ref} drawable={false} />);
+    expect(screen.getByTestId('ink-surface').hasAttribute('data-brush')).toBe(false);
+    rerender(<InkSurface size="240px" containerRef={ref} drawable />);
+    const surface = screen.getByTestId('ink-surface');
+    expect(surface.getAttribute('data-brush')).toBe('true');
+    expect(surface.style.touchAction).toBe('none');
+  });
+
   it('renders the overlay after the container with pointer events off, only when given', () => {
     const ref = createRef<HTMLDivElement>();
     const { rerender } = render(<InkSurface size="240px" containerRef={ref} />);

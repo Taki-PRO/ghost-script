@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
@@ -27,10 +27,29 @@ const mediaStart = css.indexOf('@media (prefers-reduced-motion: no-preference)')
 const media = blockAt(css, mediaStart);
 const outside = css.slice(0, mediaStart) + css.slice(media.end);
 
+/** The CSS with every top-level @media block removed. */
+function withoutMediaBlocks(text: string): string {
+  let out = text;
+  for (let i = out.indexOf('@media'); i > -1; i = out.indexOf('@media')) {
+    out = out.slice(0, i) + out.slice(blockAt(out, i).end);
+  }
+  return out;
+}
+
 describe('index.css', () => {
   it('has exactly one no-preference block and no other media block', () => {
     expect(mediaStart).toBeGreaterThan(-1);
-    expect(css.match(/@media/g)).toHaveLength(1);
+    const conditions = [...css.matchAll(/@media\s*([^{]*)\{/g)].map((m) => m[1].trim().replace(/\s+/g, ' '));
+    // Night-polish Requirement 6 AC 7: (hover: hover) appears twice, once for the static hover
+    // states and once nested in the Motion_Block. Any other condition still fails.
+    expect(conditions.sort()).toEqual(
+      [
+        '(hover: hover)',
+        '(hover: hover)',
+        '(hover: hover) and (pointer: fine)',
+        '(prefers-reduced-motion: no-preference)',
+      ].sort(),
+    );
   });
 
   it('has animations and keyframes only inside the no-preference block', () => {
@@ -86,7 +105,17 @@ describe('index.css', () => {
 
     it('has no animation-duration, animation-name or transition longhand to hide a duration', () => {
       expect(css).not.toMatch(/animation-(duration|name)/);
-      expect(css).not.toMatch(/transition/);
+      // Night-polish Requirement 6 AC 5: transitions exist only in the Motion_Block, as shorthands
+      // of 200 ms. Outside the block the word is banned everywhere, and no longhand exists anywhere.
+      expect(outside).not.toMatch(/transition/);
+      expect(css).not.toMatch(/transition-/);
+      const declarations = [...media.body.matchAll(/(?:^|[\s;{])transition\s*:\s*([^;}]+)[;}]/g)];
+      expect(declarations.length).toBeGreaterThan(0);
+      expect(media.body.match(/transition/g)!.length).toBe(declarations.length);
+      for (const d of declarations) {
+        const entries = d[1].split(',').map((e) => e.trim());
+        for (const entry of entries) expect(entry, entry).toMatch(/(?:^|\s)200ms(?:\s|$)/);
+      }
     });
 
     it('runs every non-ambient animation between 200 ms and 600 ms', () => {
@@ -247,6 +276,10 @@ describe('index.css', () => {
       expect(varValue('--candle')).toBe(theme.candle);
     });
 
+    it('--grass equals theme.grass', () => {
+      expect(varValue('--grass')).toBe(theme.grass);
+    });
+
     it('mist and moon channel triples equal their hex', () => {
       const [mr, mg, mb] = rgb(theme.mist);
       expect(outside).toContain(`rgb(${mr} ${mg} ${mb} / var(--mist-a-alpha))`);
@@ -254,7 +287,7 @@ describe('index.css', () => {
       expect(outside).not.toContain('--mist-peak-alpha');
       const [or, og, ob] = rgb(theme.moon);
       expect(outside).toContain(`rgb(${or} ${og} ${ob} / var(--moon-peak-alpha))`);
-      expect(outside).not.toMatch(/rgb\((?!91 111 154|114 131 171|5 8 19 \/ var\(--moon-shade-alpha\))\d+ \d+ \d+ \/ var\(--(mist|moon)/);
+      expect(outside).not.toMatch(/rgb\((?!91 111 154|114 131 171|236 230 214|10 17 38|5 8 19 \/ var\(--moon-shade-alpha\))\d+ \d+ \d+ \/ var\(--(mist|moon)/);
     });
 
     it('every url( is followed by data:', () => {
@@ -271,7 +304,7 @@ describe('index.css', () => {
     });
 
     it('scene pseudo-elements ignore pointer events', () => {
-      for (const s of ['body::before', 'body::after', '#root::before', '#root::after', '.moon-glow::before']) {
+      for (const s of ['body::before', 'body::after', '#root::before', '#root::after', '.moon-glow::before', '.sky-cap']) {
         expect(ruleBody(s)).toMatch(/pointer-events:\s*none/);
       }
       expect(ruleBody('#root')).toMatch(/position:\s*relative/);
@@ -304,9 +337,12 @@ describe('index.css', () => {
       expect(slip).toMatch(/color:\s*var\(--ink-on-paper\)/);
       const primary = blockAt(css, css.indexOf('.slip-primary {')).body;
       expect(primary).toMatch(/min-height:\s*44px/);
-      expect(primary).toMatch(/background-color:\s*var\(--seal\)/);
+      // Night-polish Requirement 6 AC 20: the fill and the border moved to the masked inner layer.
+      const inner = blockAt(css, css.search(/\}\s*\.slip-primary::before \{/)).body;
+      expect(inner).toMatch(/background-color:\s*var\(--seal\)/);
+      expect(inner).toMatch(/border:\s*1px solid var\(--paper\)/);
+      expect(primary).toMatch(/border:\s*1px solid transparent/);
       expect(primary).toMatch(/color:\s*var\(--paper-label\)/);
-      expect(primary).toMatch(/border:\s*1px solid var\(--paper\)/);
       expect(primary).toMatch(/box-shadow:[^;]*var\(--candle\)/);
       expect(blockAt(css, css.indexOf('.card-slip {')).body).toMatch(/background-color:\s*var\(--paper\)/);
     });
@@ -357,13 +393,13 @@ describe('index.css', () => {
     const bandBg = (sel: string, alphaVar: string): number[] =>
       grainLayer(blend(sky(bandCentre(sel)), rgb(theme.mist), parseFloat(varValue(alphaVar))));
     const haloBg = (): number[] =>
-      grainLayer(blend(sky(10), rgb(theme.moon), parseFloat(varValue('--moon-halo-alpha'))));
+      grainLayer(blend(sky(10), rgb(theme.ink), parseFloat(varValue('--moon-halo-alpha'))));
     // Disc composite in paint order: sky at 2%, the halo under the disc, the disc, then the grain.
     const discBg = (): number[] =>
       grainLayer(
         blend(
-          blend(sky(2), rgb(theme.moon), parseFloat(varValue('--moon-halo-alpha'))),
-          rgb(theme.moon),
+          blend(sky(2), rgb(theme.ink), parseFloat(varValue('--moon-halo-alpha'))),
+          rgb(theme.ink),
           parseFloat(varValue('--moon-disc-alpha')),
         ),
       );
@@ -407,8 +443,44 @@ describe('index.css', () => {
       for (const t of TEXT) expect(ratioOn(t, grainLayer(sky(100))), t).toBeGreaterThanOrEqual(4.5);
     });
 
-    it('keeps ink and error at 4.5:1 on the disc composite', () => {
-      for (const t of ['ink', 'error']) expect(ratioOn(t, discBg()), t).toBeGreaterThanOrEqual(4.5);
+    it('keeps all five text tokens at 4.5:1 on the glow ring, the brightest glow outside the disc', () => {
+      // The glow is a linear gradient from the peak alpha at the centre to 0 at 7 rem; at the disc edge
+      // (size / 2 from the centre) its alpha is peak x (1 - size / 2 / 7). Paint order: sky, glow, grain.
+      const rem = (name: string): number => parseFloat(varValue(name));
+      const edgeAlpha = parseFloat(varValue('--moon-halo-alpha')) * (1 - rem('--moon-size') / 2 / 7);
+      const ring = grainLayer(blend(sky(2), rgb(theme.ink), edgeAlpha));
+      for (const t of TEXT) expect(ratioOn(t, ring), `${t} on the glow ring`).toBeGreaterThanOrEqual(4.5);
+    });
+
+    it('keeps text off the disc: the Moon_Room clears the disc and no e2e Moon screen is missing', () => {
+      // Unit part: below 992 px #root pads its top by --moon-room, which reaches past the disc bottom.
+      const rem = (name: string): number => parseFloat(varValue(name));
+      const room = varValue('--moon-room').match(/,\s*([\d.]+)rem\)$/);
+      expect(room).not.toBeNull();
+      expect(parseFloat(room![1])).toBeGreaterThanOrEqual(rem('--moon-inset-y') + rem('--moon-size') / 2);
+      expect(ruleBody('#root')).toMatch(/padding-top:\s*var\(--moon-room\)/);
+      expect(ruleBody('.sticky-below-moon')).toMatch(/top:\s*var\(--moon-room\)/);
+    });
+
+    describe('moonIntruders coverage in e2e/screenshots.spec.ts (replaces the two disc-contrast tests)', () => {
+      const spec = readFileSync(join(here, '..', '..', '..', 'e2e', 'screenshots.spec.ts'), 'utf8');
+      const calls = (): string[] => [...spec.matchAll(/expectMoonInside\(page, '([^']+)'\)/g)].map((m) => m[1]);
+      // 375 x 812 views run in the VIEWPORTS loop (labels without a width); 320 x 640 views carry ' 320'.
+      const AT_375 = ['intro', 'summon', 'write', 'graveyard'];
+      const AT_320 = ['intro 320', 'summon 320', 'graveyard 320'];
+      const ADDED_IN_6_3_375 = ['sources', 'summary'];
+      const ADDED_IN_6_3_320 = ['sources 320', 'summary 320'];
+
+      it('calls expectMoonInside for the screens already covered', () => {
+        for (const view of [...AT_375, ...AT_320]) expect(calls(), view).toContain(view);
+        expect(spec).toContain('const VIEWPORTS = [');
+        expect(spec).toMatch(/\{ width: 375, height: 812 \}/);
+        expect(spec).toMatch(/viewport: \{ width: 320, height: 640 \}/);
+      });
+
+      it('calls expectMoonInside for Sources & licences and Summary at 375 and 320 (task 6.3)', () => {
+        for (const view of [...ADDED_IN_6_3_375, ...ADDED_IN_6_3_320]) expect(calls(), view).toContain(view);
+      });
     });
 
     it('sizes the moon from custom properties, a full disc inside the viewport', () => {
@@ -435,8 +507,8 @@ describe('index.css', () => {
       // Shade colour is the nightTop ink (5 8 19); paint order: sky at 2%, halo, disc, shade, grain.
       const underShade = (): number[] =>
         blend(
-          blend(sky(2), rgb(theme.moon), parseFloat(varValue('--moon-halo-alpha'))),
-          rgb(theme.moon),
+          blend(sky(2), rgb(theme.ink), parseFloat(varValue('--moon-halo-alpha'))),
+          rgb(theme.ink),
           parseFloat(varValue('--moon-disc-alpha')),
         );
       const darkestBg = (): number[] =>
@@ -465,16 +537,74 @@ describe('index.css', () => {
         );
       });
 
-      it('keeps ink and error at 4.5:1 at the lightest and the darkest point', () => {
-        for (const t of ['ink', 'error']) {
-          expect(ratioOn(t, discBg()), `${t} lightest`).toBeGreaterThanOrEqual(4.5);
-          expect(ratioOn(t, darkestBg()), `${t} darkest`).toBeGreaterThanOrEqual(4.5);
-        }
-      });
-
       it('shades visibly: lightest to darkest luminance ratio is at least 1.25', () => {
         const ratio = (lum(discBg()) + 0.05) / (lum(darkestBg()) + 0.05);
         expect(ratio).toBeGreaterThanOrEqual(1.25);
+      });
+    });
+
+    describe('moon', () => {
+      const rem = (name: string): number => {
+        const v = varValue(name);
+        expect(v, name).toMatch(/^[\d.]+rem$/);
+        return parseFloat(v);
+      };
+      /** The maria: ellipse gradients of body::before with their offsets from the disc centre, in rem. */
+      const maria = (): Array<{ rx: number; ry: number; dx: number; dy: number; layer: string }> =>
+        [...ruleBody('body::before').matchAll(/radial-gradient\(ellipse ([\d.]+)rem ([\d.]+)rem at calc\(100% - var\(--moon-inset-x\) ([-+]) ([\d.]+)rem\) calc\(var\(--moon-inset-y\) ([-+]) ([\d.]+)rem\), [^)]*\)[^)]*\)/g)].map((m) => ({
+          rx: parseFloat(m[1]),
+          ry: parseFloat(m[2]),
+          // The centre x is `100% - inset-x <sign> d`, so d is the signed offset from the disc centre.
+          dx: (m[3] === '+' ? 1 : -1) * parseFloat(m[4]),
+          dy: (m[5] === '+' ? 1 : -1) * parseFloat(m[6]),
+          layer: m[0],
+        }));
+      // Lit point: the disc over the glow, without shade or mare, then the grain.
+      const litBg = (): number[] => discBg();
+      const underMare = (): number[] =>
+        blend(
+          blend(sky(2), rgb(theme.ink), parseFloat(varValue('--moon-halo-alpha'))),
+          rgb(theme.ink),
+          parseFloat(varValue('--moon-disc-alpha')),
+        );
+
+      it('has a warm lit point: red above blue, brighter than the old cool disc', () => {
+        const lit = litBg();
+        expect(lit[0]).toBeGreaterThan(lit[2]);
+        const oldDisc = grainLayer(
+          blend(blend(sky(2), rgb(theme.moon), 0.1), rgb(theme.moon), 0.65),
+        );
+        expect(lum(lit)).toBeGreaterThan(0.1187);
+        expect(lum(lit)).toBeGreaterThan(lum(oldDisc));
+      });
+
+      it('has three to four maria in nightMid, each inside the disc and darker than the lit point', () => {
+        const list = maria();
+        expect(list.length).toBeGreaterThanOrEqual(3);
+        expect(list.length).toBeLessThanOrEqual(4);
+        expect(ruleBody('body::before').match(/rgb\(10 17 38 \/ var\(--moon-mare-alpha\)\)/g)).toHaveLength(list.length);
+        expect(rgb(theme.nightMid)).toEqual([10, 17, 38]);
+        const mareAlpha = parseFloat(varValue('--moon-mare-alpha'));
+        const mare = grainLayer(blend(underMare(), rgb(theme.nightMid), mareAlpha));
+        expect(lum(mare)).toBeLessThan(lum(litBg()));
+        for (const m of list) {
+          expect(Math.hypot(m.dx, m.dy) + Math.max(m.rx, m.ry), m.layer).toBeLessThanOrEqual(rem('--moon-size') / 2 - 0.2);
+        }
+      });
+
+      it('has a glow of peak alpha at most 0.10 and radius 7 rem falling to transparent', () => {
+        expect(parseFloat(varValue('--moon-halo-alpha'))).toBeLessThanOrEqual(0.1);
+        const bg = ruleBody('body::before');
+        expect(bg).toContain(
+          'radial-gradient(circle 7rem at calc(100% - var(--moon-inset-x)) var(--moon-inset-y), rgb(236 230 214 / var(--moon-halo-alpha)) 0, transparent 100%)',
+        );
+        expect(rgb(theme.ink)).toEqual([236, 230, 214]);
+      });
+
+      it('has no flat candle fill, no animation and no transition in body::before', () => {
+        const body = ruleBody('body::before');
+        expect(body).not.toContain('--candle');
+        expect(body).not.toMatch(/animation|transition/);
       });
     });
 
@@ -487,7 +617,12 @@ describe('index.css', () => {
       expect(ruleBody('#root > main')).toMatch(/min-height:\s*calc\(100vh - var\(--moon-room\)\)/);
       expect(ruleBody('#root > main')).toMatch(/min-height:\s*calc\(100dvh - var\(--moon-room\)\)/);
       expect(ruleBody('.sticky-below-moon')).toMatch(/top:\s*var\(--moon-room\)/);
-      expect(css.match(/@media/g)).toHaveLength(1);
+      expect(css.match(/@media[^{]*\{/g)!.join('\n')).not.toContain('992px');
+      // The Moon_Room rules sit at the top level, not inside any @media block.
+      const topLevelCss = withoutMediaBlocks(css);
+      for (const selector of ['#root', '#root > main', '.sticky-below-moon']) {
+        expect(topLevelCss, selector).toContain(`${selector} {`);
+      }
     });
 
     it('drops the Moon_Room for the compact séance shell only (design fallback)', () => {
@@ -567,7 +702,7 @@ describe('index.css', () => {
     it('keeps the moon halo peak at or below 0.10 and the disc brighter than the halo', () => {
       expect(parseFloat(varValue('--moon-halo-alpha'))).toBeLessThanOrEqual(0.1);
       expect(parseFloat(varValue('--moon-peak-alpha'))).toBeLessThanOrEqual(0.1);
-      expect(parseFloat(varValue('--moon-disc-alpha'))).toBe(0.65);
+      expect(parseFloat(varValue('--moon-disc-alpha'))).toBe(0.8);
       expect(parseFloat(varValue('--moon-disc-alpha'))).toBeGreaterThan(parseFloat(varValue('--moon-halo-alpha')));
     });
 
@@ -575,6 +710,112 @@ describe('index.css', () => {
       const stripped = css.replace(/url\("data:[^"]*"\)/g, 'DATA');
       expect(stripped).not.toMatch(/url\(/);
       expect(stripped).not.toMatch(/\.(png|jpe?g|webp|gif)\b/);
+    });
+  });
+
+  describe('sky cap', () => {
+    const rule = (selector: string): string => {
+      const i = outside.indexOf(`${selector} {`);
+      expect(i, selector).toBeGreaterThan(-1);
+      return blockAt(outside, i).body;
+    };
+    const squash = (s: string): string => s.replace(/\s+/g, ' ').trim();
+    const bgList = (body: string): string => {
+      const m = body.match(/background(?:-image)?:\s*([^;]+);/);
+      expect(m).not.toBeNull();
+      return squash(m![1]);
+    };
+    /** Splits a CSS list at top-level commas (not inside parentheses or quotes). */
+    const topLevel = (list: string): string[] => {
+      const out: string[] = [];
+      let depth = 0;
+      let quote = '';
+      let start = 0;
+      for (let i = 0; i < list.length; i++) {
+        const c = list[i];
+        if (quote) {
+          if (c === quote) quote = '';
+        } else if (c === '"' || c === "'") quote = c;
+        else if (c === '(') depth++;
+        else if (c === ')') depth--;
+        else if (c === ',' && depth === 0) {
+          out.push(list.slice(start, i).trim());
+          start = i + 1;
+        }
+      }
+      out.push(list.slice(start).trim());
+      return out;
+    };
+    const cap = (): string => rule('.sky-cap');
+    const headerZ = (file: string): number => {
+      const src = readFileSync(join(here, '..', 'components', file), 'utf8');
+      const m = src.match(/<header className="[^"]*\bz-(\d+)\b/);
+      expect(m, file).not.toBeNull();
+      return parseInt(m![1], 10);
+    };
+
+    it('is a fixed, full-width, click-through layer as high as the Moon_Room', () => {
+      const body = cap();
+      expect(body).toMatch(/position:\s*fixed/);
+      expect(body).toMatch(/top:\s*0;/);
+      expect(body).toMatch(/left:\s*0;/);
+      expect(body).toMatch(/right:\s*0;/);
+      expect(body).toMatch(/height:\s*var\(--moon-room\)/);
+      expect(body).toMatch(/pointer-events:\s*none/);
+      expect(body).not.toMatch(/width:\s*100vw/);
+    });
+
+    it('lies above the content and below the sticky headers', () => {
+      const z = parseInt(cap().match(/z-index:\s*(\d+)/)![1], 10);
+      expect(z).toBeGreaterThan(0);
+      expect(headerZ('Graveyard.tsx')).toBe(20);
+      expect(headerZ('Credits.tsx')).toBe(20);
+      expect(z).toBeLessThan(headerZ('Graveyard.tsx'));
+      expect(z).toBeLessThan(headerZ('Credits.tsx'));
+    });
+
+    it('adds no media rule for the cap and hides it on the séance shell only', () => {
+      expect(outside).not.toMatch(/@media[^{]*\{[^}]*sky-cap/);
+      expect(outside).toMatch(/#root:has\(> main\.no-moon-room\) > \.sky-cap\s*\{\s*display:\s*none;\s*\}/);
+    });
+
+    it('repeats the Moon layers of body::before verbatim, in the same order', () => {
+      const moon = topLevel(bgList(rule('body::before')));
+      expect(moon.length).toBeGreaterThanOrEqual(3);
+      const layers = topLevel(bgList(cap()));
+      const at = layers.indexOf(moon[0]);
+      expect(at).toBeGreaterThan(-1);
+      expect(layers.slice(at, at + moon.length)).toEqual(moon);
+    });
+
+    it('repeats the grain URL of #root::after and the sky gradient of html verbatim', () => {
+      const grain = topLevel(bgList(rule('#root::after'))).find((l) => l.startsWith('url('));
+      expect(grain).toBeDefined();
+      const layers = topLevel(bgList(cap()));
+      expect(layers).toContain(grain);
+      const html = outside.match(/(?:^|\n)html\s*\{([^}]*)\}/)![1];
+      const sky = squash(html.match(/background-image:\s*([^;]+);/)![1]);
+      expect(layers).toContain(sky);
+      expect(layers[layers.length - 1]).toBe(sky);
+    });
+
+    it('has one background-size and one background-repeat entry per background layer', () => {
+      const body = cap();
+      const layers = topLevel(bgList(body)).length;
+      expect(layers).toBeGreaterThanOrEqual(6);
+      expect(topLevel(squash(body.match(/background-size:\s*([^;]+);/)![1]))).toHaveLength(layers);
+      expect(topLevel(squash(body.match(/background-repeat:\s*([^;]+);/)![1]))).toHaveLength(layers);
+    });
+
+    it('tiles the sky at 100vh like html, so the cap shows the scroll-0 sky', () => {
+      const sizes = topLevel(squash(cap().match(/background-size:\s*([^;]+);/)![1]));
+      expect(sizes[sizes.length - 1]).toBe('100% 100vh');
+    });
+
+    it('sets the scroll padding to the Moon_Room plus 7 rem, after a 7 rem fallback', () => {
+      const html = outside.match(/(?:^|\n)html\s*\{([^}]*)\}/)![1];
+      const values = [...html.matchAll(/scroll-padding-top:\s*([^;]+);/g)].map((m) => m[1].trim());
+      expect(values).toEqual(['7rem', 'calc(var(--moon-room) + 7rem)']);
     });
   });
 
@@ -637,6 +878,346 @@ describe('index.css', () => {
       expect(fonts).toContain('font-family: "LXGW WenKai Subset"');
       expect(fonts).toContain('font-display: swap');
       expect(fonts).not.toContain('@media');
+    });
+  });
+});
+
+describe('cursor rules', () => {
+  const pointerStart = css.indexOf('@media (hover: hover) and (pointer: fine)');
+  const pointer = blockAt(css, pointerStart);
+
+  it('sits in one pointer media block, outside the Motion_Block', () => {
+    expect(pointerStart).toBeGreaterThan(-1);
+    expect(css.indexOf('@media (hover: hover) and (pointer: fine)', pointerStart + 1)).toBe(-1);
+    expect(pointerStart >= media.end || pointer.end <= mediaStart).toBe(true);
+    expect(media.body).not.toMatch(/cursor\s*:/);
+  });
+
+  it('sets no outline, box-shadow, --tw-shadow, animation or transition', () => {
+    expect(pointer.body).not.toMatch(/outline|box-shadow|--tw-shadow|animation|transition/);
+  });
+
+  it('keeps not-allowed on disabled controls and excludes them from the link cursor', () => {
+    expect(pointer.body).toMatch(/button:disabled,\s*\[aria-disabled="true"\]\s*\{\s*cursor:\s*not-allowed;\s*\}/);
+    expect(pointer.body).toMatch(/button:not\(:disabled\):not\(\[aria-disabled="true"\]\)/);
+    expect(pointer.body).toMatch(/\[role="button"\]:not\(\[aria-disabled="true"\]\)/);
+    expect(pointer.body).toMatch(/\ba\[href\]/);
+    expect(pointer.body).toMatch(/\bsummary\b/);
+  });
+
+  it('puts the brush cursor on [data-brush] and its descendants', () => {
+    expect(pointer.body).toMatch(/\[data-brush="true"\],\s*\[data-brush="true"\] \*\s*\{/);
+  });
+
+  it('uses only data: URIs', () => {
+    const urls = [...pointer.body.matchAll(/url\(/g)];
+    expect(urls).toHaveLength(3);
+    expect(pointer.body.match(/url\("data:image\/svg\+xml,/g)).toHaveLength(3);
+  });
+});
+
+describe('grass', () => {
+  it('has no animation or transition on any selector that mentions grass', () => {
+    const rules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map((m) => ({ selector: m[1].trim(), body: m[2] }));
+    const motion = rules.filter((r) => /(^|[\s;])(animation|transition)(-[a-z-]+)?\s*:/.test(r.body));
+    expect(motion.length).toBeGreaterThan(0);
+    expect(motion.filter((r) => /grass/i.test(r.selector)).map((r) => r.selector)).toEqual([]);
+    expect(css).not.toMatch(/@keyframes\s+[^{]*grass/i);
+    expect(css).not.toMatch(/animation[^;}]*grass/i);
+  });
+});
+
+describe('card-slip and keycap are pinned (night-polish, Requirement 6 AC 16)', () => {
+  const blockText = (selector: string): string => {
+    const start = css.indexOf(`${selector} {`);
+    expect(start, selector).toBeGreaterThan(-1);
+    return css.slice(start, blockAt(css, start).end);
+  };
+
+  it('keeps the .card-slip block exactly as it was before the Slip restyle', () => {
+    expect(blockText('.card-slip')).toBe(`.card-slip {
+    color: var(--ink-on-paper);
+    background-color: var(--paper);
+    background-image: linear-gradient(160deg, rgba(255, 250, 235, 0.3) 0%, rgba(120, 90, 50, 0.12) 100%);
+    border: 1px solid color-mix(in srgb, var(--paper) 55%, var(--ink-on-paper));
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+  }`);
+  });
+
+  it('keeps the .keycap block exactly as it was before the Slip restyle', () => {
+    expect(blockText('.keycap')).toBe(`.keycap {
+    min-height: 44px;
+    color: var(--ink-on-paper);
+    background-color: #d4c8aa;
+    background-image:
+      radial-gradient(circle at 22% 28%, rgba(60, 40, 20, 0.1) 0, transparent 22%),
+      radial-gradient(circle at 78% 70%, rgba(60, 40, 20, 0.08) 0, transparent 26%),
+      linear-gradient(180deg, #e9dfc6, #d4c8aa);
+    border: 1px solid color-mix(in srgb, var(--paper) 55%, var(--ink-on-paper));
+    border-radius: 6px;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 250, 235, 0.6),
+      inset 0 -3px 0 rgba(60, 40, 20, 0.35),
+      0 2px 4px rgba(0, 0, 0, 0.5);
+  }`);
+  });
+
+  it('names neither .card-slip nor .keycap in any rule whose selector contains .slip', () => {
+    const rules = [...css.matchAll(/([^{}]+)\{[^{}]*\}/g)].map((m) => m[1].trim());
+    const slipRules = rules.filter((selector) => /\.slip/.test(selector));
+    expect(slipRules.length).toBeGreaterThan(0);
+    expect(slipRules.filter((selector) => /card-slip|keycap/.test(selector))).toEqual([]);
+  });
+});
+
+describe('slips (night-polish, Requirement 6)', () => {
+  interface Rule {
+    selector: string;
+    body: string;
+    index: number;
+  }
+  const squash = (s: string): string => s.replace(/\s+/g, ' ').trim();
+  /** Every innermost rule of the CSS, with the offset of its selector. */
+  const rules: Rule[] = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map((m) => ({
+    selector: squash(m[1]),
+    body: m[2],
+    index: m.index! + m[1].length - m[1].trimStart().length,
+  }));
+  const isSlipSelector = (selector: string): boolean => /\.slip(-primary)?(?![\w-])/.test(selector);
+  const slipRules = rules.filter((r) => isSlipSelector(r.selector));
+  const rule = (selector: string): Rule => {
+    const found = rules.find((r) => r.selector === selector);
+    expect(found, selector).toBeDefined();
+    return found!;
+  };
+  const rangeOf = (start: number): [number, number] => [start, blockAt(css, start).end];
+  const motionRange: [number, number] = [mediaStart, media.end];
+  const hoverRanges: Array<[number, number]> = [...css.matchAll(/@media \(hover: hover\) \{/g)].map((m) =>
+    rangeOf(m.index!),
+  );
+  const inside = (index: number, [from, to]: [number, number]): boolean => index > from && index < to;
+
+  it('finds the Slip rules it is about to check', () => {
+    expect(slipRules.length).toBeGreaterThanOrEqual(12);
+    expect(hoverRanges).toHaveLength(2);
+  });
+
+  it('keeps every Slip transform and transition inside the Motion_Block, every transition at 200 ms', () => {
+    const withMotion = slipRules.filter((r) => /(^|[\s;])(transform|transition)\s*:/.test(r.body));
+    const transforms = withMotion.filter((r) => /(^|[\s;])transform\s*:/.test(r.body));
+    const transitions = withMotion.filter((r) => /(^|[\s;])transition\s*:/.test(r.body));
+    expect(transforms.map((r) => r.body.match(/transform:\s*([^;]+);/)![1].trim()).sort()).toEqual(
+      ['translateY(-2px)', 'translateY(-2px)', 'translateY(1px)'].sort(),
+    );
+    expect(transitions).toHaveLength(1);
+    for (const r of withMotion) expect(inside(r.index, motionRange), r.selector).toBe(true);
+    for (const r of transitions) {
+      const entries = r.body.match(/transition:\s*([^;]+);/)![1].split(',').map((e) => e.trim());
+      expect(entries.map((e) => e.split(/\s+/)[0]).sort()).toEqual(['box-shadow', 'filter', 'transform']);
+      for (const e of entries) expect(e, e).toMatch(/(?:^|\s)200ms(?:\s|$)/);
+    }
+    // No Slip rule outside the block names motion at all.
+    for (const r of slipRules.filter((x) => !inside(x.index, motionRange))) {
+      expect(r.body, r.selector).not.toMatch(/(^|[\s;])(transform|transition|animation)(-[a-z-]+)?\s*:/);
+    }
+  });
+
+  it('declares every Slip hover rule only inside @media (hover: hover)', () => {
+    const hovered = slipRules.filter((r) => /:hover/.test(r.selector));
+    expect(hovered.length).toBe(4);
+    for (const r of hovered) {
+      expect(
+        hoverRanges.some((range) => inside(r.index, range)),
+        r.selector,
+      ).toBe(true);
+    }
+    // The cursor block, which tests (pointer: fine) as well, is not a home for Slip rules.
+    expect(slipRules.filter((r) => inside(r.index, rangeOf(css.indexOf('@media (hover: hover) and (pointer: fine)'))))).toEqual([]);
+  });
+
+  it('puts every state on an enabled Slip only, so a disabled Slip does not lift, glow or sink', () => {
+    const states = slipRules.filter((r) => /:(hover|focus-visible|active)/.test(r.selector));
+    expect(states.length).toBeGreaterThanOrEqual(10);
+    for (const r of states) {
+      for (const part of r.selector.split(',').map((s) => s.trim())) {
+        expect(part, part).toContain(':not(:disabled)');
+      }
+    }
+    for (const r of slipRules.filter((x) => /:disabled/.test(x.selector) && !/:not\(:disabled\)/.test(x.selector))) {
+      expect(r.body, r.selector).not.toMatch(/transform|box-shadow|filter|transition/);
+    }
+  });
+
+  it('keeps the wax on .slip-primary::before only, with a lightening alpha of 0.12', () => {
+    const users = rules.filter((r) => /var\(--wax-(light|dark)\)/.test(r.body));
+    expect(users.map((r) => r.selector)).toEqual(['.slip-primary::before']);
+    expect(css.match(/--wax-light\s*:/g)).toHaveLength(1);
+    expect(css.match(/--wax-dark\s*:/g)).toHaveLength(1);
+    expect(css.match(/--wax-(light|dark)/g)!.length).toBe(4); // two definitions, two uses
+    const light = decodeURIComponent(css.match(/--wax-light:\s*url\("data:image\/svg\+xml,([^"]+)"\)/)![1]);
+    const values = light.match(/feColorMatrix values='([^']+)'/)![1].trim().split(/\s+/).map(Number);
+    expect(values).toHaveLength(20);
+    expect(values[18]).toBe(0.12);
+    expect(light).toMatch(/<filter id='wl'/);
+  });
+
+  it('adds no clip-path or overflow to .slip or .slip-primary', () => {
+    for (const r of slipRules) expect(r.body, r.selector).not.toMatch(/clip-path|overflow/);
+    expect(rule('.slip').body).toMatch(/min-height:\s*44px/);
+    expect(rule('.slip').body).toMatch(/border:\s*1px solid transparent/);
+    expect(rule('.slip-primary').body).toMatch(/min-height:\s*44px/);
+    expect(rule('.slip-primary').body).toMatch(/border:\s*1px solid transparent/);
+  });
+
+  it('draws the Deckled_Edge from four fixed 64 x 2 and 2 x 64 tiles, within 2 px of the box', () => {
+    const tiles = (['top', 'bottom', 'left', 'right'] as const).map((side) => {
+      const m = css.match(new RegExp(`--deckle-${side}:\\s*url\\("data:image/svg\\+xml,([^"]+)"\\)`));
+      expect(m, side).not.toBeNull();
+      const svg = decodeURIComponent(m![1]);
+      const w = Number(svg.match(/\bwidth='([\d.]+)'/)![1]);
+      const h = Number(svg.match(/\bheight='([\d.]+)'/)![1]);
+      expect(svg).toContain(`viewBox='0 0 ${w} ${h}'`);
+      const d = svg.match(/<path d='([^']+)'/)![1];
+      const points = [...d.matchAll(/(-?[\d.]+) (-?[\d.]+)/g)].map((p) => [Number(p[1]), Number(p[2])] as const);
+      return { side, w, h, points };
+    });
+    for (const t of tiles) {
+      const horizontal = t.side === 'top' || t.side === 'bottom';
+      expect([t.w, t.h], t.side).toEqual(horizontal ? [64, 2] : [2, 64]);
+      for (const [x, y] of t.points) {
+        expect(x, `${t.side} x`).toBeGreaterThanOrEqual(0);
+        expect(x, `${t.side} x`).toBeLessThanOrEqual(t.w);
+        expect(y, `${t.side} y`).toBeGreaterThanOrEqual(0);
+        expect(y, `${t.side} y`).toBeLessThanOrEqual(t.h);
+      }
+      // Equal tile ends: the profile meets itself, so the repeat has no seam.
+      const across = (v: number, axis: 0 | 1): number[] =>
+        t.points.filter((p) => p[horizontal ? 0 : 1] === v).map((p) => p[axis === 0 ? 1 : 0]);
+      const first = across(0, horizontal ? 0 : 1).sort();
+      const last = across(horizontal ? t.w : t.h, horizontal ? 0 : 1).sort();
+      expect(first.length, t.side).toBeGreaterThan(0);
+      expect(first, t.side).toEqual(last);
+      // The edge is irregular: the profile takes at least four different depths.
+      const depth = new Set(t.points.map((p) => p[horizontal ? 1 : 0]));
+      expect(depth.size, t.side).toBeGreaterThanOrEqual(4);
+    }
+    const mask = rule('.slip::before, .slip-primary::before').body;
+    expect(mask).toMatch(/mask-size:\s*64px 2px, 64px 2px, 2px 64px, 2px 64px,/);
+    expect(mask).toMatch(/mask-image:\s*var\(--deckle-top\), var\(--deckle-bottom\), var\(--deckle-left\), var\(--deckle-right\)/);
+  });
+
+  it('puts no Han character in any data: URI', () => {
+    const uris = [...css.matchAll(/data:image\/svg\+xml,[^"')]+/g)].map((m) => m[0]);
+    expect(uris.length).toBeGreaterThanOrEqual(8);
+    for (const uri of uris) expect(decodeURIComponent(uri)).not.toMatch(/[\u3400-\u9fff]/);
+  });
+
+  it('uses the candle only inside box-shadow and gradients on the Slips, and in no candle class', () => {
+    for (const r of slipRules) {
+      for (const m of r.body.matchAll(/([\w-]+)\s*:\s*([^;]*var\(--candle\)[^;]*);/g)) {
+        const ok = m[1] === 'box-shadow' || /gradient\(/.test(m[2]);
+        expect(ok, `${r.selector} ${m[1]}`).toBe(true);
+      }
+    }
+    expect(slipRules.some((r) => /var\(--candle\)/.test(r.body))).toBe(true);
+    const files: string[] = [];
+    const walk = (dir: string): void => {
+      for (const name of readdirSync(dir)) {
+        const path = join(dir, name);
+        if (statSync(path).isDirectory()) walk(path);
+        else if (/\.(tsx?|css)$/.test(name) && !/\.test\.tsx?$/.test(name)) files.push(path);
+      }
+    };
+    walk(join(here, '..'));
+    expect(files.length).toBeGreaterThan(20);
+    for (const file of files) {
+      expect(readFileSync(file, 'utf8'), file).not.toMatch(/\b(bg|border|text)-candle\b/);
+    }
+  });
+
+  describe('contrast', () => {
+    type Rgb = [number, number, number];
+    const rgb = (hex: string): Rgb => [
+      parseInt(hex.slice(1, 3), 16),
+      parseInt(hex.slice(3, 5), 16),
+      parseInt(hex.slice(5, 7), 16),
+    ];
+    const lum = (c: readonly number[]): number => {
+      const [r, g, b] = c.map((v) => {
+        const s = v / 255;
+        return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+      });
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    };
+    const ratio = (a: readonly number[], b: readonly number[]): number => {
+      const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x);
+      return (hi + 0.05) / (lo + 0.05);
+    };
+    const blend = (base: readonly number[], top: readonly number[], a: number): Rgb =>
+      base.map((v, i) => Math.round(v * (1 - a) + top[i] * a)) as Rgb;
+    const bright = (c: readonly number[], k: number): Rgb =>
+      c.map((v) => Math.min(255, Math.round(v * k))) as Rgb;
+
+    it('keeps paperLabel at 4.5:1 on the lightest wax composite in rest, hover, focus and pressed', () => {
+      const light = decodeURIComponent(css.match(/--wax-light:\s*url\("data:image\/svg\+xml,([^"]+)"\)/)![1]);
+      const v = light.match(/feColorMatrix values='([^']+)'/)![1].trim().split(/\s+/).map(Number);
+      const tint = [v[4], v[9], v[14]].map((c) => Math.round(c * 255));
+      expect(tint).toEqual(rgb(theme.sealLight));
+      const lightest = blend(rgb(theme.seal), tint, v[18]);
+      const label = rgb(theme.paperLabel);
+      const hoverFilter = Number(rule('.slip-primary:hover:not(:disabled)').body.match(/filter:\s*brightness\(([\d.]+)\)/)![1]);
+      expect(hoverFilter).toBe(1.1);
+      expect(rule('.slip-primary:active:not(:disabled)').body).toMatch(/filter:\s*none/);
+      for (const r of slipRules.filter((x) => /(^|,\s*)\.slip-primary:focus-visible/.test(x.selector))) {
+        expect(r.body, r.selector).not.toMatch(/filter/);
+      }
+      expect(rule('.slip-primary').body).not.toMatch(/filter/);
+      const cases: Array<[string, number]> = [
+        ['rest', ratio(label, lightest)],
+        ['hover', ratio(bright(label, hoverFilter), bright(lightest, hoverFilter))],
+        ['focus', ratio(label, lightest)],
+        ['pressed', ratio(label, lightest)],
+      ];
+      for (const [name, r] of cases) expect(r, name).toBeGreaterThanOrEqual(4.5);
+      // Design: 4.60 at rest, focus and pressed, about 4.65 on hover (4.646 with channel rounding).
+      expect(cases[0][1]).toBeGreaterThanOrEqual(4.6);
+      expect(cases[1][1]).toBeGreaterThanOrEqual(4.64);
+    });
+
+    /** Both ends of the paper gradient of a Slip state, composited over `paper`. */
+    const paperEnds = (selector: string): [Rgb, Rgb] => {
+      const stops = [
+        ...rule(selector).body.matchAll(/rgba\((\d+), (\d+), (\d+), ([\d.]+)\) (0|100)%/g),
+      ];
+      expect(stops, selector).toHaveLength(2);
+      return stops.map((s) => blend(rgb(theme.paper), [Number(s[1]), Number(s[2]), Number(s[3])], Number(s[4]))) as [Rgb, Rgb];
+    };
+
+    it('keeps inkOnPaper at 4.5:1 on the lightest and the darkest paper of every .slip state', () => {
+      const ink = rgb(theme.inkOnPaper);
+      const states: Record<string, string> = {
+        rest: '.slip::before',
+        hover: '.slip:hover:not(:disabled)::before',
+        focus: '.slip:focus-visible:not(:disabled)::before',
+        pressed: '.slip:active:not(:disabled)::before',
+      };
+      const seen: string[] = [];
+      for (const [name, selector] of Object.entries(states)) {
+        const ends = paperEnds(selector);
+        for (const end of ends) {
+          expect(ratio(ink, end), `${name} ${end}`).toBeGreaterThanOrEqual(4.5);
+          seen.push(`${name} ${end}`);
+        }
+        const [lo, hi] = ends.map(lum).sort((a, b) => a - b);
+        expect(hi, name).toBeGreaterThan(lo);
+      }
+      expect(seen).toHaveLength(8);
+      // Disabled: the `disabled:opacity-70` utility lays the Slip over the page background at 0.7.
+      const page = rgb(theme.background);
+      for (const end of paperEnds(states.rest)) {
+        expect(ratio(blend(page, ink, 0.7), blend(page, end, 0.7))).toBeGreaterThanOrEqual(4.5);
+      }
     });
   });
 });

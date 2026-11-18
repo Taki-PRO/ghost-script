@@ -143,7 +143,8 @@ describe('Graveyard', () => {
     expect(svg.querySelectorAll('path')).toHaveLength(2);
     const list = screen.getByRole('list', { name: 'Graves' });
     expect(svg.contains(list)).toBe(false);
-    expect(container.querySelectorAll('svg')).toHaveLength(1);
+    // Grass tufts are svgs too; the hillside is the only svg outside them.
+    expect(Array.from(container.querySelectorAll('svg')).filter((e) => !e.closest('[data-grass]'))).toHaveLength(1);
   });
 
   it('draws the fixed-height hillside with the theme fills and a hillNear ground', () => {
@@ -199,6 +200,77 @@ describe('Graveyard', () => {
     show({}, onBack);
     fireEvent.click(screen.getByRole('button', { name: 'Back to menu' }));
     expect(onBack).toHaveBeenCalledTimes(1);
+  });
+
+  describe('grass', () => {
+    const history: ReviewHistory = {
+      [order[0]]: applyReview(undefined, 'clean', NOW, DEFAULT_CONFIG),
+      [order[1]]: applyReview(undefined, 'struggled', NOW, DEFAULT_CONFIG),
+    };
+
+    it('puts one hidden, click-through tablet tuft behind the content of every li', () => {
+      show(history);
+      const items = Array.from(screen.getByRole('list', { name: 'Graves' }).children);
+      expect(items).toHaveLength(dataset.size);
+      for (const li of items) {
+        const tufts = li.querySelectorAll('[data-grass="tablet"]');
+        expect(tufts).toHaveLength(1);
+        const tuft = tufts[0];
+        expect(tuft.parentElement).toBe(li);
+        expect(tuft.getAttribute('aria-hidden')).toBe('true');
+        for (const cls of ['-z-10', 'pointer-events-none', 'absolute', 'bottom-0']) {
+          expect(tuft.classList.contains(cls), cls).toBe(true);
+        }
+        expect(tuft.textContent).toBe('');
+        expect(tuft.querySelectorAll('svg')).toHaveLength(1);
+        expect(li.className).not.toMatch(/overflow/);
+      }
+    });
+
+    it('gives the three tablet states the same tuft and keeps their text and Marker', () => {
+      show(history);
+      const items = Array.from(screen.getByRole('list', { name: 'Graves' }).children);
+      const [rest, restless, unmet] = items;
+      for (const li of [rest, restless, unmet]) {
+        expect(li.querySelector('[data-grass="tablet"]')?.className).toBe(
+          'pointer-events-none absolute bottom-0 -z-10',
+        );
+      }
+      expect(rest.textContent).toBe(`${order[0]}✓`);
+      expect(restless.textContent).toBe(`${order[1]}!`);
+      expect(unmet.textContent).toBe('·');
+      expect(rest.querySelector('[lang="zh"]')?.textContent).toBe(order[0]);
+      expect(rest.querySelector('[data-grass]')?.nextElementSibling?.getAttribute('lang')).toBe('zh');
+    });
+
+    it('draws 12 hill tufts between the hillside svg and the grid', () => {
+      show({});
+      const hill = Array.from(document.querySelectorAll('[data-grass="hill"]'));
+      expect(hill).toHaveLength(12);
+      const svg = screen.getByTestId('hillside');
+      const list = screen.getByRole('list', { name: 'Graves' });
+      for (const h of hill) {
+        expect(h.getAttribute('aria-hidden')).toBe('true');
+        expect(h.classList.contains('pointer-events-none')).toBe(true);
+        expect(h.parentElement).toBe(svg.parentElement);
+        expect(svg.compareDocumentPosition(h) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+        expect(h.compareDocumentPosition(list) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+        expect((h as HTMLElement).style.zIndex).toBe('');
+      }
+    });
+
+    it('draws the far ridge from the shared path', () => {
+      show({});
+      expect(screen.getByTestId('hillside').querySelectorAll('path')[0].getAttribute('d')).toBe(
+        'M0 22 C18 14 34 22 52 16 C72 10 88 18 100 14 L100 48 L0 48 Z',
+      );
+    });
+
+    it('keeps the list structure: 300 listitems in Graves, no extra list items', () => {
+      show({});
+      expect(screen.getByRole('list', { name: 'Graves' }).querySelectorAll('li')).toHaveLength(dataset.size);
+      expect(screen.getAllByRole('listitem')).toHaveLength(dataset.size + 3);
+    });
   });
 
   describe('levels', () => {

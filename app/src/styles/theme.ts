@@ -27,6 +27,7 @@ export const theme = {
   skyHold: '#101c38', // sky held below 88% of the first screen (nightMid to nightLow at 33/45)
   hillFar: '#202c4c', // Graveyard far ridge (decorative, aria-hidden)
   hillNear: '#161e38', // Graveyard near ridge and the ground below it (decorative)
+  grass: '#30505c', // Graveyard grass tufts: derived from hillFar, hue turned to teal (decorative, aria-hidden)
   mist: '#5b6f9a', // mist colour (dim, drawn at low alpha)
   moon: '#7283ab', // moon glow colour (dim, drawn at low alpha)
   paperLabel: '#f3ead2', // label on seal

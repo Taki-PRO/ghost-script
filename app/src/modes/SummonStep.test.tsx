@@ -99,6 +99,11 @@ describe('SummonStep typing', () => {
     expect(slots()).toHaveLength(KOU.cangjie!.length);
   });
 
+  it('does not mark the paper as drawable, so it keeps the ghost cursor', () => {
+    setup(WO);
+    expect(surface().hasAttribute('data-brush')).toBe(false);
+  });
+
   it('physical keys fill slots in order, case-insensitively', () => {
     setup(WO);
     press('h');

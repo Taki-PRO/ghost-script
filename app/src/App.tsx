@@ -43,6 +43,7 @@ import { SeanceSession } from './components/SeanceSession';
 import { LevelScreen } from './components/LevelScreen';
 import { Graveyard, type GraveyardStatus } from './components/Graveyard';
 import { Credits } from './components/Credits';
+import { SkyCap } from './components/SkyCap';
 import { scrollToTop } from './components/scrollToTop';
 import { SessionSummary, type SessionResults } from './components/SessionSummary';
 
@@ -170,6 +171,15 @@ function Shell({
 }
 
 export default function App() {
+  return (
+    <>
+      <SkyCap />
+      <AppScreens />
+    </>
+  );
+}
+
+function AppScreens() {
   const [view, setView] = useState<View>({ screen: 'loading' });
   const [sessionCounter, setSessionCounter] = useState(0);
   const [savingWorks, setSavingWorks] = useState(() => isSavingWorking());

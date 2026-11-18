@@ -142,6 +142,11 @@ describe('WriteMode setup (Req 5.1, 5.2)', () => {
     expect(view.container.innerHTML).not.toContain(WO.character);
   });
 
+  it('marks the paper as drawable for the brush cursor', () => {
+    setup();
+    expect(screen.getByTestId('ink-surface')).toHaveAttribute('data-brush', 'true');
+  });
+
   it('gives hanzi-writer the ink palette colours and keeps the outline hidden', () => {
     setup();
     const o = lastCall().opts as unknown as Record<string, unknown>;

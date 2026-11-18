@@ -13,6 +13,8 @@ export interface InkSurfaceProps {
   style?: CSSProperties;
   /** Drawn after the container, absolutely placed, ignoring pointer events. */
   overlay?: ReactNode;
+  /** True on the Write step, where the paper takes strokes. Sets data-brush for the Brush_Cursor. */
+  drawable?: boolean;
 }
 
 /**
@@ -25,13 +27,14 @@ export interface InkSurfaceProps {
  * The filter works in the positioned group's units (about 1024 per glyph, scaled
  * down to the surface), hence the larger numbers than on a screen-sized element.
  */
-export function InkSurface({ size, containerRef, role, ariaLabel, hidden, style, overlay }: InkSurfaceProps) {
+export function InkSurface({ size, containerRef, role, ariaLabel, hidden, style, overlay, drawable }: InkSurfaceProps) {
   const filterId = `ink-bleed-${useId().replace(/:/g, '')}`;
   return (
     <div
       className="ink-paper relative"
       data-testid="ink-surface"
       data-ink-surface={filterId}
+      data-brush={drawable ? 'true' : undefined}
       style={{ width: size, aspectRatio: '1 / 1', touchAction: 'none', ...style }}
     >
       <svg width="0" height="0" aria-hidden="true" focusable="false" className="absolute" data-testid="ink-filter-defs">

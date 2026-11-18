@@ -2,11 +2,20 @@
 
 ## Overview
 
-This design implements `requirements.md` of the same folder: one bug fix (the Sky_Cap) and four pieces of polish (cursors, Grass, Moon, Slips). It changes no game rule, dataset, storage schema or scheduling rule. It adds no image file, no runtime request, no font and no third-party asset, so `README.md` stays unchanged (Requirement 8 AC 20). It touches no steering file and not `kiro-log.md`: Requirement 7 stays "proposed" (see "Proposed steering amendments").
+This design implements `requirements.md` of the same folder: one bug fix (the Sky_Cap) and four pieces of polish (cursors, Grass, Moon, Slips). It changes no game rule, dataset, storage schema or scheduling rule. It adds no image file, no runtime request, no font and no third-party asset, so `README.md` stays unchanged (Requirement 8 AC 20). It touches no steering file and not `kiro-log.md`; the steering amendments of Requirement 7 are approved by the human and are applied only by tasks 8.1 to 8.8 (see "Steering amendments").
 
-### Status of the open questions
+### Decisions approved by the human
 
-The human has not answered the open questions of `requirements.md` yet. Every choice below that depends on one is written to the recommended answer and marked **"pending the human's answer to Open question N.M"**. Where the recommendation is rejected, the section gives the alternative and its consequence (Requirement 7 AC 7). All questions are listed again, with the consequence of each answer, in "Open questions".
+The human answered every open question of `requirements.md` with the recommended answer, except Grass colour (3.1), which the human changed. This design is written to those answers. The numbering is the human's. Each item below is approved by the human.
+
+- **1.1 to 1.4** The Sky_Cap covers every screen at a Narrow_Viewport; it is a fixed element that repaints the sky, the Moon, the grain and the vignette; it shows the scroll-0 sky colours at every offset (tolerance 6); the header focus clearance is included.
+- **2.1 to 2.7** Ghost cursors are flat copies of `GHOST_PATH`, 24 by 30 px, Hotspot (12, 1); the Link_Cursor has wider eyes; the media query is `(hover: hover) and (pointer: fine)`; the Summon paper keeps the ghost cursor; the Brush_Cursor is a 20 by 20 crosshair with a 6 px open centre; no cursor change while drawing. The 2 px limit applies to the crosshair arms, not to the outline: the 4 px paper casing is allowed (Requirement 3 AC 2).
+- **3.1 (changed answer)** The Grass must be visible, not hidden in the hill: dark and night-toned (no bright green), with a new `grass` token, at least 1.3:1 luminance ratio against the stone and the hill, proven by a pixel test at 375 x 812 and 1024 x 768 (Part 3).
+- **3.2 to 3.4** One tuft inside each tablet at its foot with no `overflow: hidden` on the tablet, plus separate hill-crest tufts; five shapes by position modulo 5 and 12 crest slots; tablet tufts never overlap a Marker or glyph, and hill tufts get a paint-order test.
+- **4.1 to 4.4** The two disc-contrast tests are replaced by the `moonIntruders` proof and 4.5:1 is kept on the glow ring; no new Moon token; four Maria; the human reviews the screenshots.
+- **5.1 to 5.5** `.slip` and `.slip-primary` only; masked inner layer with fixed deckle tiles; lift 2 px, sink 1 px, glow 40 and 55 percent, wax at most 0.12; hover rules only inside `@media (hover: hover)`; disabled Slips do not move.
+- **Amendments** A2, A3, A4 (adjusted for the Grass_Floor), A5, A6 (every screen), A9, A10 and A11 are approved by the human.
+- **Rewrites of existing CSS tests** (gaps G1 to G5) are approved by the human, on one condition: no rewrite loosens a test. Each rewrite checks the same property at least as strictly as the assertion it replaces, and each task that changes such a test reports the old and the new assertion.
 
 ### Reading guide
 
@@ -18,17 +27,17 @@ The human has not answered the open questions of `requirements.md` yet. Every ch
 | 4 Moon (Requirement 5) | "Part 4: Moon" |
 | 5 Slips (Requirement 6) | "Part 5: Slips" |
 | Tests (Requirement 8) | "Testing Strategy" |
-| Steering (Requirement 7) | "Proposed steering amendments" |
-| Questions | "Open questions" |
+| Steering (Requirement 7) | "Steering amendments" |
+| Decisions | "Decisions approved by the human" |
 
 ### Requirement gaps found while designing
 
-These are conflicts between `requirements.md` and the existing tests or the existing layout. The design takes the stated resolution and asks the human to confirm. The requirements are not edited by this document.
+These are conflicts between `requirements.md` and the existing tests or the existing layout. The design takes the stated resolution, and the human approved each of them (G1 to G5) on one condition: no rewrite of an existing test loosens it. Each rewrite checks the same property at least as strictly, and each task that changes such a test reports the old and the new assertion.
 
 | # | Gap | Design resolution |
 |---|---|---|
 | G1 | Requirement 8 AC 5 allows only the Moon assertions to change. `index.css.test.ts` also asserts `css.match(/@media/g)` has length 1 (twice), asserts the whole file has no `transition`, asserts `.slip-primary {` carries the fill and border, asserts `ink` and `error` at 4.5:1 on the lightest and darkest point of the shade (a second disc-contrast test that AC 17 and AC 18 do not name), and its allow-list regex for `rgb(r g b / var(--moon...` names only three triples. Each conflicts with Requirement 2, 5 or 6 as written. | Each assertion is changed so that it still checks the same intent, never loosened. The list is in "Existing assertions that change". The human is asked to approve the list as an addition to Requirement 8 AC 5. |
-| G2 | Requirement 4 AC 7 asks that no Grass bounding box meets a Marker or glyph box. Hill tufts sit on the crest of the hillside, behind the first three rows of tablets, so their boxes always overlap tablet boxes. | Tablet-foot tufts keep the geometric check. Hill tufts get a paint-order check instead: they come before the grid in the document and have no `z-index`, so every tablet, glyph and Marker paints above them. |
+| G2 | Requirement 4 AC 7 asks that no Grass bounding box meets a Marker or glyph box. Hill tufts sit on the crest of the hillside, behind the first three rows of tablets, so their boxes always overlap tablet boxes. | Tablet-foot tufts keep the geometric check. Hill tufts get a paint-order check instead (approved by the human): they come before the grid in the document and have no `z-index`, so every tablet, glyph and Marker paints above them. |
 | G3 | Requirement 6 AC 3 asks for a shortened drop shadow while pressed. On a keyboard press the Tailwind focus ring (`ring-2`, utilities layer) owns `box-shadow` and replaces the whole value. | AC 3 is tested for a pointer press (where `:focus-visible` does not match). A keyboard press keeps the ring and glow and still sinks 1 px. |
 | G4 | Requirement 1 AC 12 says no Sky_Cap box is painted at 992 px and wider. The cap is gated by `--moon-room`, which is 0 there (no new `@media` rule, see Part 1). | At 992 px and wider the cap has a computed height of 0 px and paints nothing. The test checks `getBoundingClientRect().height === 0`. |
 | G5 | Requirement 6 AC 10 asks that the wax alpha be "declared in one place". A CSS custom property cannot be read inside a `data:` URI. | The single declaration is the `feColorMatrix` alpha inside the wax `data:` URI. The Contrast_Test parses it from there, the same way the existing test reads the grain alpha. There is no `--wax-alpha` property. |
@@ -49,7 +58,8 @@ These are conflicts between `requirements.md` and the existing tests or the exis
 | D4 | Cursor SVG strings come from one pure builder and `index.css` stays static. | A unit test rebuilds each declaration from `GHOST_PATH` and compares it with the file. No generated file, no build step. |
 | D5 | The Deckled_Edge uses four fixed edge tiles, not one stretched SVG. | A stretched SVG scales the notch size with the button size and breaks the 2 px limit on wide buttons. Fixed-pixel tiles keep the limit at every size. |
 | D6 | Slip paper, border and wax move to a masked `::before`. The element keeps the label, the shadow and the focus ring. | Requirement 6 AC 20: no `clip-path`, no `overflow: hidden` on the Slip. |
-| D7 | The Moon uses existing tokens only: `ink` for disc and glow, `nightMid` for maria, `nightTop` for the shade. | Open question 5.2 (recommended). No new token, so Requirement 7 AC 10 takes its second option. |
+| D7 | The Moon uses existing tokens only: `ink` for disc and glow, `nightMid` for maria, `nightTop` for the shade. | Decision 4.1 to 4.4 (approved by the human). No new Moon token, so Requirement 7 AC 10 records that the Moon uses only existing tokens. |
+| D8 | The Grass has its own token `grass` (`#30505c`), a dark teal-blue derived from `hillFar`, with a 1.3:1 visibility floor proven by a pixel test. | Decision 3.1 (changed by the human): `hillFar` on the stone and the hill is only 1.2:1, so the tufts would be hidden. See Part 3. |
 
 ## Architecture
 
@@ -81,6 +91,8 @@ The cap lives inside the `#root` context. Its `z-index: 10` is above all content
 | `app/src/engine/grassPattern.ts` (+ test) | New. Pure Grass_Pattern. |
 | `app/src/components/GrassTuft.tsx` (+ test) | New. One decorative SVG. |
 | `app/src/components/Graveyard.tsx` | Renders tablet tufts and hill tufts; imports `FAR_RIDGE_PATH`. |
+| `app/src/styles/theme.ts` (+ `theme.test.ts`) | New token `grass` (`#30505c`) and its tests (Part 3). |
+| `e2e/graveyard-fit.spec.ts` | One new test, `the Grass stands out from the stone and the hill`; no existing test changes. |
 | `app/src/styles/index.css` | Sky_Cap rules, cursor rules, Moon layers, Slip rules, wax, deckle, scroll padding. |
 | `app/src/styles/index.css.test.ts` | New blocks and the changed assertions listed below. |
 | `e2e/sky-cap.spec.ts`, `e2e/cursors.spec.ts`, `e2e/grass.spec.ts`, `e2e/slips.spec.ts` | New. |
@@ -116,7 +128,7 @@ export default function App() {
 
 The cap is the first child of `#root`. `#root > main` and `#root:has(> main.no-moon-room)` use child combinators on `main` only, so they are unaffected. There is no `#root > :first-child` rule.
 
-**Scope, pending the human's answer to Open question 1.1 (recommended: every screen at a Narrow_Viewport).** With the recommendation the cap is global as above. Alternative if the human chooses only Graveyard and Sources & licences: `App` does not render `SkyCap`; `Graveyard.tsx` and `Credits.tsx` render `<SkyCap />` as the first child of their `main`. The CSS is the same, because a fixed element inside a non-stacking `main` is still in the `#root` context. Requirement 1 AC 21 and the Summary and Level screens in the e2e test then drop out.
+**Scope: every screen at a Narrow_Viewport (approved by the human).** `App` renders `SkyCap` for every screen, and the cap is hidden only on the compact séance shell, which has no Moon_Room (see below). Requirement 1 AC 21 holds, and the e2e test also scrolls the Summary and Level screens.
 
 The compact séance shell (`main.no-moon-room`, Summon and Write steps) has no Moon_Room (its `padding-top` is 0), so the cap must not cover its first row:
 
@@ -171,7 +183,7 @@ The cap contains layers 3 to 9, so the Moon disc is painted inside the cap, abov
 
 ### Media gating below 992 px
 
-`height: var(--moon-room)` is the gate: `clamp(0px, calc((992px - 100vw) * 1000), 4.75rem)` is 76 px at 991.924 px and narrower, 0 from 992 px. At 992 px and wider the cap box has height 0 and paints nothing (gap G4). No `@media` rule is added for the cap. Alternative considered: `@media (max-width: 991.98px) { .sky-cap { display: block } }` with `display: none` by default. It gives a truly absent box but disagrees with the clamp for widths between 991.924 and 992 px, and it adds a media rule to a file whose tests count them.
+`height: var(--moon-room)` is the gate: `clamp(0px, calc((992px - 100vw) * 1000), 4.75rem)` is 76 px at 991.924 px and narrower, 0 from 992 px. At 992 px and wider the cap box has height 0 and paints nothing (gap G4). No `@media` rule is added for the cap.
 
 ### Scroll padding (Requirement 1 AC 20)
 
@@ -192,10 +204,10 @@ The header keeps `top: var(--moon-room)`. Nothing changes for Requirement 1 AC 1
 
 ### New e2e test: `e2e/sky-cap.spec.ts`
 
-Runs for the Graveyard and Sources & licences, at 375 x 812 and 320 x 640 (and for Summary and Level if Open question 1.1 is answered as recommended). It uses `test.use({ reducedMotion: 'reduce' })`, so the mist and the wisp are still.
+Runs for the Graveyard and Sources & licences, at 375 x 812 and 320 x 640 and, as well, for the Summary and Level screens. It uses `test.use({ reducedMotion: 'reduce' })`, so the mist and the wisp are still.
 
 1. **Open the screen** with the existing openers (`seedGraveyard`, and the Sources opener of `night-scene.spec.ts`; Summary through the new helper `reachSummary`, which reuses the route of `first-meeting.spec.ts`; Level through the start menu).
-2. **Scrollable check.** `max = scrollHeight - innerHeight`. If `max < 152` the test fails with `"<screen> at <viewport>: not scrollable (scrollHeight S, innerHeight H); the Moon_Room check needs at least 152 px"`.
+2. **Scrollable check.** `max = scrollHeight - innerHeight`. If the Summary or the Level screen has `max < 152` at the viewport, the test runs that screen at the same width and a height of 420 px (`page.setViewportSize`) and measures again; if `max < 152` still holds at 420 px, it reruns at 280 px and measures again; if `max < 152` still holds at 280 px, it reruns at 200 px and measures again. The 152 px minimum, the offsets, the pixel grid, the tolerance and the Moon checks are the same at every fallback height. The heights 420 px, 280 px and 200 px are test devices only, not supported layouts, and the one-screen fit tests are unaffected (the Level screen is built to fit one screen, so it is only about 10 px taller than a 420 px viewport and cannot scroll 152 px there; task 3.4 measured its scrollHeight at 430 px at every viewport height of 420 px or less, so at 280 px it scrolls only 150 px, 2 px short of 152 px, and the 200 px step is needed). If `max < 152` still holds at 200 px (or for the Graveyard and Sources & licences at the original viewport), the test fails with `"<screen> at <viewport>: not scrollable (scrollHeight S, innerHeight H); the Moon_Room check needs at least 152 px"`.
 3. **Reference capture, "Night_Sky colour at scroll 0".** At scroll 0 the test injects `<style id="no-cap">.sky-cap{display:none!important}</style>`, takes `page.screenshot({ clip: { x: 0, y: 0, width: vw, height: 76 } })`, then removes the style. The reference is therefore the true sky, independent of the cap, and the same code runs on the old build (where `.sky-cap` does not exist and the style is a no-op).
 4. **Sample points.** Columns at 10, 30, 50, 70, 90 percent of the viewport width, rows at 15, 50, 85 percent of 76 px, minus the points within 7 rem (112 px) of the Moon centre. Computed: at 375 px the Moon centre is at x 335, so the 70 and 90 percent columns drop and 3 columns by 3 rows remain (9 points). At 320 px the centre is at x 280, the 70 and 90 percent columns (224, 288) drop, 9 points remain. The test asserts at least 3 by 3 remain.
 5. **Offsets.** `0`, `round(max/3)`, `round(2*max/3)`, `max`. At each: `window.scrollTo(0, y)`, wait one animation frame, clip screenshot of the band, `pixelsAt` at the sample points, and compare with the reference per channel. A difference above 6 fails with `"<screen> at <viewport>, offset <y>: point (<x>, <y>) is rgb(r, g, b), the Night_Sky is rgb(r, g, b)"`. `document.elementsFromPoint` is used only to name the element beneath in the message (Requirement 1 AC 16).
@@ -242,9 +254,9 @@ export function cursorDeclaration(image: CursorImage): string;
 
 `pathBounds` reads every number pair of `GHOST_PATH` (the path uses absolute `M`, `C`, `Z` only). For `GHOST_PATH` it returns `minX 7.2, maxX 57.2, minY 3.8, maxY 76.4` (control hull; the curve itself spans x 7.83 to 56.39 and tops out at y 4.53 near x 34.2).
 
-### Sizes and hotspot (pending the human's answer to Open question 2.3)
+### Sizes and hotspot (approved by the human)
 
-Requirement 2 AC 4 limits each image to 32 by 32 px. Open question 2.3 recommends 28 by 28 and leaves the exact pixel to this design. The design uses a scale of `0.375` (an exact fraction of the 64 x 80 viewBox) so the image is 24 by 30 px with integer sides and no resampling blur: `width='24' height='30' viewBox='0 0 64 80'`. The silhouette is 21.5 by 27 px. If the human wants the recommended 28 by 28, `GHOST_CURSOR_SCALE` becomes `0.35` (22.4 by 28 px, `width='23' height='28'`); only the constant changes and the unit test follows.
+Requirement 2 AC 4 sets each image at 24 by 30 px, inside the 32 by 32 px limit. The design uses a scale of `0.375` (an exact fraction of the 64 x 80 viewBox) so the image is 24 by 30 px with integer sides and no resampling blur: `width='24' height='30' viewBox='0 0 64 80'`. The silhouette is 21.5 by 27 px.
 
 Hotspot from the path's bounding box and scale: `x = round(((minX + maxX) / 2) * scale)`, `y = round(minY * scale)`.
 
@@ -265,14 +277,14 @@ The true topmost point of the scaled silhouette is `(34.2, 4.53) * 0.375 = (12.8
 
 The first path draws the outline (fill and stroke in `background`, 4.8 viewBox units is 1.8 px, so 0.9 px shows outside the silhouette). The second path is the body. Both use `GHOST_PATH` verbatim. The outline stays inside the image: the path starts 3.8 units (1.4 px) from the top and 7.2 units from the sides, and the half stroke is 2.4 units. No gradient, no filter, no `text`, no `href`, no `url(` inside the SVG (Requirement 2 AC 16).
 
-### Link_Cursor shape variant (pending the human's answer to Open question 2.2)
+### Link_Cursor shape variant (approved by the human)
 
 Same `GHOST_PATH` silhouette, with two differences, one of them a shape:
 
 1. **Shape (the signal that is not colour):** each eye path carries `transform='translate(cx cy) scale(1.4) translate(-cx -cy)'`, where `(cx, cy)` is the centre of the eye's own bounding box: `(23.4, 32.7)` and `(41.5, 32.5)`. The eyes open wider. The `d` strings still equal `GHOST_EYE_PATHS`.
 2. **Tone:** body fill `paper` (`#e6dcc3`), outline and eyes `inkOnPaper` (`#1c1914`).
 
-Same size, same hotspot (the silhouette is unchanged). Alternative if the human rejects the recommended variant: a tilt of the whole silhouette by a fixed angle. It changes the topmost point, so the hotspot must be recomputed from the transformed bounds; the builder already derives it from bounds, so only the test constants change. No hand shape in either case.
+Same size, same hotspot (the silhouette is unchanged). No hand shape.
 
 ### Outline colours and contrast numbers
 
@@ -308,7 +320,7 @@ All are at least 3:1 (Requirement 2 AC 7, Requirement 3 AC 7). The unit test com
 - `not-allowed` for disabled controls is kept, and `LevelScreen`'s `disabled:cursor-not-allowed` utility agrees with it (Requirement 2 AC 10).
 - No rule sets `outline`, `box-shadow` or `--tw-shadow`, so the focus ring is unchanged (AC 13). No `transition` or `animation` (AC 14).
 - Each URL is `data:` with a double-quoted URL and no raw `<`, `>`, `#` or `"` inside, so the existing "no image file" and "every `url(` is followed by `data:`" tests pass (AC 15).
-- Media query `(hover: hover) and (pointer: fine)` is the primary-input test (pending the human's answer to Open question 2.4, recommended). A touch tablet reports `pointer: coarse`, so it gets none (Requirement 2 AC 3). Alternative: `any-pointer: fine`, which would give an iPad with a trackpad and a laptop with a touch screen the ghost on the trackpad, at the cost of a cursor that a touch-first device shows only sometimes.
+- Media query `(hover: hover) and (pointer: fine)` is the primary-input test (approved by the human). A touch tablet reports `pointer: coarse`, so it gets none (Requirement 2 AC 3).
 
 ### How `index.css` stays static and verified
 
@@ -318,7 +330,7 @@ All are at least 3:1 (Requirement 2 AC 7, Requirement 3 AC 7). The unit test com
 2. asserts the file contains exactly the declarations `cursorDeclaration(ghostCursor('default'))`, `cursorDeclaration(ghostCursor('link'))` and `cursorDeclaration(brushCursor())`;
 3. on a mismatch, the failure message prints the expected declaration so the author pastes it in.
 
-### Brush_Cursor artwork (pending the human's answer to Open question 3.2)
+### Brush_Cursor artwork (approved by the human)
 
 A thin crosshair with an open centre, 20 by 20 px, hotspot `(10, 10)` (the exact centre), fallback `crosshair`. Geometry:
 
@@ -341,7 +353,7 @@ arm:    stroke inkOnPaper width 2      (painted second)
 ```
 
 - Open centre: the nearest painted point of any arm casing is the end face at distance 4 from the hotspot. The unit test works on the builder's exported geometry (`BRUSH_ARMS`, `BRUSH_CASING_WIDTH`): it computes the minimum distance from the hotspot to each stroked rectangle and requires at least 3.5 (circle of 6 px diameter plus 0.5 px of antialiasing). Rasterising is not needed. The distance is 4, so it passes (Requirement 3 AC 9, 11).
-- Line width: the visible arm is 2 px wide, which is the limit of Requirement 3 AC 2. The `paper` casing under it is 4 px wide (1 px of casing on each side of the arm). The casing exists so the cursor keeps 3:1 over `inkOnPaper` strokes (AC 7): the arm alone matches a finished stroke. This design reads AC 2 as limiting the arm, not the casing. If the human reads it as limiting the casing too, the casing is dropped and the cursor fails AC 7 over finished strokes, so the two would need to be reconciled in the requirements.
+- Line width: the visible arm is 2 px wide. The 2 px limit of Requirement 3 AC 2 applies to the crosshair arms, not to the outline: the `paper` casing under the arms is 4 px wide (1 px of casing on each side of the arm) and is allowed (approved by the human). The casing exists so the cursor keeps 3:1 over `inkOnPaper` strokes (AC 7): the arm alone matches a finished stroke.
 - No `GHOST_PATH` (AC 4), no seal red, no candle amber (AC 8).
 
 ### How the Write step applies the brush; the Summon step does not
@@ -355,7 +367,7 @@ drawable?: boolean;
 data-brush={drawable ? 'true' : undefined}
 ```
 
-`WriteMode.tsx` passes `drawable` to its `InkSurface`. `SummonStep.tsx` does not, so its paper inherits the `body` Ghost_Cursor (and the Link_Cursor over buttons) (Requirement 3 AC 5, pending the human's answer to Open question 3.1, recommended). Alternative: the Brush_Cursor on both papers; then `SummonStep.tsx` passes `drawable` too, and the Summon test of Requirement 3 AC 5 becomes the inverse. The attribute is on the surface div, so the rule reaches the container and every descendant (`[data-brush='true'] *`), including hanzi-writer's `svg`. No box, `touch-action` or handler changes (AC 12). Cursor while a stroke is drawn is unchanged (pending the human's answer to Open question 3.3).
+`WriteMode.tsx` passes `drawable` to its `InkSurface`. `SummonStep.tsx` does not, so its paper inherits the `body` Ghost_Cursor (and the Link_Cursor over buttons) (Requirement 3 AC 5, approved by the human). The attribute is on the surface div, so the rule reaches the container and every descendant (`[data-brush='true'] *`), including hanzi-writer's `svg`. No box, `touch-action` or handler changes (AC 12). The cursor while a stroke is drawn is unchanged (approved by the human, Requirement 3 AC 14): no `:active` rule touches `cursor`, and `e2e/cursors.spec.ts` reads the computed `cursor` of the Write paper with the mouse button held and finds the value it has at rest.
 
 ### Tests
 
@@ -369,7 +381,7 @@ data-brush={drawable ? 'true' : undefined}
 
 ### Grass_Pattern: `app/src/engine/grassPattern.ts`
 
-Pure, no `Math.random`, no `Date`, no import except types. It follows `tabletTilt.ts`: fixed tables indexed by position modulo the table length (pending the human's answer to Open question 4.3, recommended: five shapes, five offsets, 12 hill slots).
+Pure, no `Math.random`, no `Date`, no import except types. It follows `tabletTilt.ts`: fixed tables indexed by position modulo the table length (approved by the human: five shapes, five offsets, 12 hill slots).
 
 ```ts
 export interface Tuft {
@@ -436,13 +448,13 @@ export function GrassTuft({ shape, scale = 1 }: { shape: number; scale?: number 
   return (
     <svg aria-hidden="true" focusable="false" viewBox="0 0 24 9"
          width={24 * scale} height={9 * scale} className="block">
-      <path d={TUFT_SHAPES[shape]} fill={theme.hillFar} />
+      <path d={TUFT_SHAPES[shape]} fill={theme.grass} />
     </svg>
   );
 }
 ```
 
-No `title`, no `desc`, no text, no `lang` (AC 1). Fill `theme.hillFar` (`#202c4c`), an existing token (AC 11). No green, no seal red, no candle (colours are blue-grey night tokens).
+No `title`, no `desc`, no text, no `lang` (AC 1). Fill `theme.grass` (`#30505c`), the new Grass_Token (AC 11; see "Colour, the `grass` token and the visibility floor"). No bright green, no seal red, no candle.
 
 ### Placement
 
@@ -462,7 +474,7 @@ No `title`, no `desc`, no text, no `lang` (AC 1). Fill `theme.hillFar` (`#202c4c
 - **Stacking.** Each `li` carries a `tablet-tilt-N` class, and all five set `transform`, so each `li` is its own stacking context. A child with `z-index: -10` paints above the `li`'s own background and border and below its in-flow text (glyph and Marker spans), which satisfies Requirement 4 AC 6. The unit test checks the class `-z-10` and the DOM order.
 - **Box.** The wrapper `span` is 24 by 9 px (the svg is `block`). It is absolutely placed at `bottom: 0`, so its bottom edge equals the `li` bottom (within 2 px, AC 2). It is at most 16 px high (AC 2). Its horizontal extent is `50% + dx - 12` to `+ 12`, with `|dx| <= 5`, so within 17 px of the centre; the narrowest tablet column is 48 px wide (the grid is `repeat(auto-fill, minmax(48px, 1fr))`), so the span stays inside the `li`.
 - **Clearance from the glyph and Marker.** The `li` has `min-h-[56px]` and centres a 20 px glyph and a 12 px Marker (32 px), leaving at least 12 px at the bottom. The tuft is 9 px high, which leaves 3 px. Never-met tablets show only the 12 px Marker, centred, which leaves more. This is why the tuft height is 9 and not 12.
-- **Overflow safety with tilted tablets.** The tuft is inside the `li` box, so a 3 degree rotation about `50% 100%` moves it by under 1 px at its corners and cannot add overflow. The recommendation of Open question 4.2 says to put `overflow: hidden` on the tablet's box. This design does not, because `overflow: hidden` on the `li` would clip the restless wisp (`.tablet-restless::after` at `top: -12px`) and the at-rest glow. The tuft does not need it: its box lies inside the `li` by construction, and the e2e overflow check (below) proves it. This is a design departure from the recommendation of Open question 4.2, pending the human's answer to it.
+- **Overflow safety with tilted tablets.** The tuft is inside the `li` box, so a 3 degree rotation about `50% 100%` moves it by under 1 px at its corners and cannot add overflow. The tablet has no `overflow: hidden` (approved by the human, Requirement 4 AC 18): `overflow: hidden` on the `li` would clip the restless wisp (`.tablet-restless::after` at `top: -12px`) and the at-rest glow. The tuft does not need it: its box lies inside the `li` by construction, and the e2e overflow check (below) proves it. The e2e test also reads the computed `overflow` of every tablet and expects `visible`.
 - **Pointer and focus.** The wrapper has `pointer-events: none`, the SVG has no `tabindex` and no handler (AC 9). The `li` accessible name and role are unchanged (AC 10); the wrapper is `aria-hidden`.
 
 **Hill crest (12 slots):** tufts are HTML-positioned wrappers, not shapes inside the stretched hillside SVG. The hillside SVG uses `preserveAspectRatio="none"`, so a shape drawn inside it would be stretched differently in x and y. Instead each tuft is a sibling of the SVG inside the `relative isolate overflow-hidden` wrapper:
@@ -481,13 +493,34 @@ No `title`, no `desc`, no text, no `lang` (AC 1). Fill `theme.hillFar` (`#202c4c
 
 They are rendered between the hillside `svg` and the grid `ul`, so the `ul` (relative, later in the document, same stacking level) paints above them. The base of each tuft sits 2 px into the ridge. The wrapper has `overflow-hidden`, so a tuft cannot leave the hillside box (AC 4). The widest tuft is 24 x 1.6 = 38.4 px, so its half width is 19.2 px; at the narrowest wrapper (about 296 px at 320 px) the first slot (6 percent) is 17.8 px from the edge and its tuft's left edge falls 1.4 px outside. Slot 0 therefore uses scale 1.4 (33.6 px wide, half 16.8 px) and is placed at 7 percent, 20.7 px from the edge; slot 11 is mirrored at 93 percent. The unit test asserts `xPercent * 2.96 >= 24 * scale / 2` for the 296 px case. The hill tufts are decorative gap fillers: most lie behind tablets, which is why gap G2 replaces the geometric non-intersection check of Requirement 4 AC 7 with a paint-order check for them.
 
-### Colours and the 3:1 rule
+### Colour, the `grass` token and the visibility floor (Requirement 4 AC 11, 16, 17; amendment A4)
 
-`hillFar` on the stone (`#1d2028`) is 1.2:1 and on the sky about 1.2:1. The Grass is deliberately quiet, as the hillside already is (hillFar on hillNear is 1.2:1). This needs the exemption of the proposed amendment A4 (pending the human's answer to Open question 4.1). Alternative if the human rejects A4: no Grass colour among the allowed night tokens reaches 3:1 against dark stone, and a lighter colour (`ghost`, `ink`) would make the grass loud and break the calm of the scene. The alternative is to drop Requirement 4 (the Graveyard stays as it is).
+The human changed the answer on Grass colour: the Grass must be visible, not hidden in the hill. `hillFar` on `hillNear` is only about 1.2:1 (`theme.test.ts`), and `hillFar` tufts on the `hillFar` ridge would vanish, so the tufts get their own token.
+
+**Token.** `grass` = `#30505c` (rgb 48, 80, 92; HSL about 196 degrees, 31 percent saturation, 27 percent lightness; relative luminance 0.0714). It is derived from `hillFar` (`#202c4c`, HSL 224 degrees, 41 percent, 21 percent) by turning the hue from blue towards teal (224 to 196 degrees), lowering the saturation (41 to 31 percent) and raising the lightness (21 to 27 percent). It is a dark blue-green, not a bright green: the hue is a teal-blue, well outside the green range (80 to 160 degrees), the saturation is under 35 percent and the lightness is under 30 percent (Requirement 4 AC 11). The token goes into `theme.ts` (`grass`), into `index.css` as `--grass: #30505c` with a hex check in `index.css.test.ts`, and into the Art_Direction palette table (amendment A10). Decorative Grass is `aria-hidden` and is exempt from 3:1 (amendment A4), but it keeps a visibility floor of 1.3:1.
+
+**Luminance ratios** (WCAG, `(lighter + 0.05) / (darker + 0.05)`, computed with the same formula as `contrastRatio` in `theme.ts` and `luminanceRatio` in `e2e/colour.ts`):
+
+| Surface the Grass sits on or against | Colour | Luminance | Ratio with `grass` |
+|---|---|---|---|
+| `hillNear` (the ground and the near ridge) | `#161e38` | 0.0138 | **1.90** |
+| `hillFar` (the far ridge, behind the hill tufts) | `#202c4c` | 0.0263 | **1.59** |
+| `nightMid` (sky behind the crest tufts) | `#0a1126` | 0.0061 | 2.17 |
+| `nightLow` (lightest sky stop) | `#12203f` | 0.0152 | 1.86 |
+| `skyHold` | `#101c38` | 0.0123 | 1.95 |
+| Never-met tablet stone | `#14161c` | 0.0081 | **2.09** |
+| Tablet stone at the foot (Restless, At rest base, bottom of the gradient) | `#1d2028` | 0.0145 | **1.88** |
+| Tablet stone at its lightest (top of the gradient) | `#2a2d36` | 0.0264 | 1.59 |
+| At-rest tablet under its candle glow (`.tablet-rest::before`, up to 0.28 candle alpha over both the stone and the tuft) | stone and tuft both mixed with `#f0b866` | alpha 0.1 / 0.17 / 0.2 / 0.28 | 1.81 / 1.73 / 1.69 / **1.59** |
+
+The lowest ratio is 1.59, which is 0.29 above the 1.3 floor. The tuft is lighter than every surface, so it reads as a quiet teal tuft against dark stone and a dark hill. The `.tablet-rest::before` glow paints above the negative-z-index tuft, so on an at-rest tablet both the tuft and the stone take the same candle overlay; the table row above is computed with that overlay on both. The mist, grain and vignette on top lower the ratios by less than the margin. The unit test asserts at least 1.5 for each row (Requirement 4 AC 17); the pixel test below is the measured proof at 1.3.
+
+**Pixel test (new, `e2e/graveyard-fit.spec.ts`, next to "the far ridge is lighter than the sky").** At 375 x 812 and 1024 x 768, with `reducedMotion: 'reduce'` so the candle glow is static: open the Graveyard from `seedGraveyard` (the checked tablets must include one of each state: `tablet-unmet`, `tablet-restless`, `tablet-rest`, or the test fails naming the missing state), take a full-page screenshot A, inject `<style>[data-grass]{visibility:hidden!important}</style>`, take a full-page screenshot B, and read the box of each `[data-grass]` element in document coordinates. For each Grass element count the pixels of its box whose `luminanceRatio(A pixel, B pixel)` is at least 1.3 (the same pixel with and without the tuft, so the ratio is the tuft against whatever lies behind it). Every tablet tuft must have at least 8 such pixels; at least 6 of the 12 hill tufts must have at least 8 (the rest are largely covered by tablets, which paint above them). The failure message names the viewport, the kind (`tablet` or `hill`), the position or slot, and the best ratio found. The task reports the counts; if fewer than 6 hill tufts pass, the task stops and reports instead of lowering the number.
+
 
 ### Bytes (Requirement 4 AC 14)
 
-Five shapes of about 200 bytes each, two small components and one pure module: about 3 KB of source, below the 20,480 byte limit. A task records `app/dist` JS and CSS sizes before and after (`npm run build -w app`, then the sum of `app/dist/assets/*.js` and `*.css`). No image file is added.
+Five shapes of about 200 bytes each, one token, two small components and one pure module: about 3 KB of source, below the 20,480 byte limit. A task records `app/dist` JS and CSS sizes before and after (`npm run build -w app`, then the sum of `app/dist/assets/*.js` and `*.css`). No image file is added.
 
 ### Motion
 
@@ -533,7 +566,7 @@ Variables in `:root` (changes in bold):
 | `--moon-shade-*`, `--moon-size`, `--moon-inset-*` | | unchanged |
 | `--moon`, `--moon-peak-alpha` | | unchanged (`.moon-glow` heading glow keeps the cool tint) |
 
-The colour triples are the tokens in channels: `236 230 214` is `ink`, `10 17 38` is `nightMid`, `5 8 19` is `nightTop`. No new token (pending the human's answer to Open question 5.2; alternative: new tokens `moonDisc`, `moonMaria`, `moonGlow` in `theme.ts`, `index.css`, the Tailwind config, the hex checks and the README together, per Requirement 7 AC 10 option 1).
+The colour triples are the tokens in channels: `236 230 214` is `ink`, `10 17 38` is `nightMid`, `5 8 19` is `nightTop`. No new Moon token (approved by the human, decision 4.1 to 4.4).
 
 ### Base tone, maria, shade, glow
 
@@ -568,17 +601,15 @@ The ring is the brightest glow outside the disc. At the disc edge (2 rem from th
 
 For comparison, the existing "halo composite" test takes the full peak alpha 0.10 at 10 percent of the tile (rgb about 35, 38, 47, luminance 0.019): `success` 5.4, `muted` 6.3, `ghost` 7.6, `error` 11.1, `ink` 12.2. All are at least 4.5, so the existing tests pass with the glow now in `ink` instead of `moon`. The lowest ratio in both is `success`.
 
-### Disc contrast test: decision path (Open question 5.1, both ways)
+### Disc contrast test: replaced by the `moonIntruders` proof (approved by the human)
 
-`ink` text needs luminance at most 0.1873 behind it for 4.5:1 and `error` at most 0.1209. The new lit disc is 0.524. So the existing tests "keeps ink and error at 4.5:1 on the disc composite" and, in the `Moon_Shade` block, "keeps ink and error at 4.5:1 at the lightest and the darkest point" (a second test of the same claim, see gap G1) cannot stay with a pale disc.
-
-**Recommended (pending the human's answer to Open question 5.1): replace.**
+`ink` text needs luminance at most 0.1873 behind it for 4.5:1 and `error` at most 0.1209. The new lit disc is 0.524. So the existing tests "keeps ink and error at 4.5:1 on the disc composite" and, in the `Moon_Shade` block, "keeps ink and error at 4.5:1 at the lightest and the darkest point" (a second test of the same claim, see gap G1) cannot stay with a pale disc. The human approved replacing both:
 
 - Delete both tests.
-- Add "no text token has to meet 4.5:1 on the disc because no text lies on it". Its body reads `e2e/screenshots.spec.ts` as text and asserts that it calls `expectMoonInside(` for each of the views: intro, summon, write, graveyard (375), the new Sources & licences and Summary (375), and intro, summon, graveyard, Sources & licences and Summary (320). `expectMoonInside` fails on any `moonIntruders` result, so removing a call fails this test. The Art_Direction amendment A3 records the same sentence.
+- Add "no text token has to meet 4.5:1 on the disc because no text lies on it". Its body reads `e2e/screenshots.spec.ts` as text and asserts that it calls `expectMoonInside(` for each of the views: intro, summon, write, graveyard (375), the new Sources & licences and Summary (375), and intro, summon, graveyard, Sources & licences and Summary (320). `expectMoonInside` fails on any `moonIntruders` result, so removing a call fails this test. This test is stricter than the two it replaces in one way (it proves that no text can lie on the disc, for every listed screen) and equal in the other (4.5:1 stays proven on the glow ring, where text can sit). Amendment A3 records the same sentence.
+- The 4.5:1 test on the glow ring stays and covers all five text tokens.
 - Add the new disc tests: lit luminance above the old composite (0.1187, rebuilt inline from the old recipe: `moon` at 0.65 over `moon` halo at 0.10), red above blue at the lit point, four maria with lower centre luminance, shade ratio at least 1.25.
 
-**Alternative (the human wants the disc test kept):** the disc may not exceed luminance 0.1209 (`error` governs), and `--moon-disc-alpha` must stay near 0.65 or below in a cool base. With `ink` as the base, alpha 0.30 gives a lit composite of about rgb(95, 95, 95) (luminance 0.113): ratios hold, but the red-above-blue condition of Requirement 5 AC 3 fails because the cool sky below dominates, and the disc is a dim neutral grey. Satisfying AC 3 then needs a warmer base token (Requirement 7 AC 10 option 1, for example `moonDisc` in a dim sand). That disc is again the flat grey circle the human wanted to leave. The tests then stay as they are, run against the new colours. The Moon amendment A3 loses its second sentence.
 
 ### Existing `index.css.test.ts` assertions that change for the Moon
 
@@ -587,7 +618,7 @@ For comparison, the existing "halo composite" test takes the full peak alpha 0.1
 | `keeps the moon halo peak at or below 0.10 and the disc brighter than the halo`: `--moon-disc-alpha` `toBe(0.65)` | Value becomes `0.80`; the other two checks stay | Requirement 5 AC 20 (pinned value the human approves to change) |
 | `mist and moon channel triples equal their hex`: the negative regex allows only `91 111 154`, `114 131 171` and the shade triple | Allow-list gains `236 230 214` and `10 17 38`; the positive checks for mist and `moon-peak-alpha` stay | Requirement 5 AC 20 (the cool `--moon` blue no longer colours the disc and halo) |
 | `discBg()`, `underShade()`, `haloBg()` helpers | Use `rgb(theme.ink)` for halo and disc, and add the maria layer nowhere (lit point is outside every mare) | Same recipe as the CSS |
-| `keeps ink and error at 4.5:1 on the disc composite` | Removed (recommended answer to 5.1) | Gap G1 and AC 17, 18 |
+| `keeps ink and error at 4.5:1 on the disc composite` | Removed and replaced by the `moonIntruders` proof (approved by the human) | Gap G1 and AC 17, 18 |
 | `Moon_Shade: keeps ink and error at 4.5:1 at the lightest and the darkest point` | Removed (same) | Same claim at two points; not named by AC 17 or 18 (gap G1) |
 | `Moon_Shade: defines the three shade properties`, `is the first layer`, `stays inside the disc`, `shades visibly` | Unchanged (the shade string and its position first in the list are kept; `shades visibly` now reads 2.17) | AC 19 |
 | `sizes the moon from custom properties` | Unchanged: it matches the disc and halo geometry substrings, which are kept | AC 19 |
@@ -596,13 +627,13 @@ New tests in a `describe('moon')` block: lit-point red above blue and luminance 
 
 ### Screens and screenshots (Requirement 5 AC 11 to 13, 22)
 
-`e2e/screenshots.spec.ts` gains, at 375 x 812 and 320 x 640, a `Sources & licences` view and a `Summary` view that call `expectMoonInside` (no PNG for 320). The Summary view uses the new helper `reachSummary(page)`, which extracts the route of the `first-meeting.spec.ts` summary test. The intro screenshot at 375 x 812 already exists and is saved again after the change. A 1440 x 900 intro screenshot is added (pending the human's answer to Open question 5.4, recommended). The human's review of those screenshots is the acceptance test for "reads as a moon".
+`e2e/screenshots.spec.ts` gains, at 375 x 812 and 320 x 640, a `Sources & licences` view and a `Summary` view that call `expectMoonInside` (no PNG for 320). The Summary view uses the new helper `reachSummary(page)`, which extracts the route of the `first-meeting.spec.ts` summary test. The intro screenshot at 375 x 812 already exists and is saved again after the change. A 1440 x 900 intro screenshot is added (approved by the human). The human's review of those screenshots is the acceptance test for "reads as a moon".
 
 ---
 
 ## Part 5: Slips (Requirement 6)
 
-Scope (pending the human's answer to Open question 6.1, recommended): `.slip` and `.slip-primary` only. `.card-slip` and `.keycap` keep their current rules character for character. Alternative: also `.keycap`; then the keyboard rows of the Summon step would lift on hover and the 375 x 812 and 320 x 640 fit tests must be re-run with lifted keys, and the `.keycap` assertions of `index.css.test.ts` change.
+Scope (approved by the human): `.slip` and `.slip-primary` only. `.card-slip` and `.keycap` keep their current rules character for character.
 
 ### Structure: paper on an inner layer
 
@@ -662,7 +693,7 @@ The Slip element keeps its box, label, border width, shadow and focus ring. Its 
 
 No `mask-composite` is declared: the default `add` is the union of the five layers. The existing `.slip:hover { background-image }` and `.slip-primary:hover { filter }` rules are replaced by the state rules below. The `.slip-primary` rest `box-shadow` gains a black drop-shadow layer (it had only the candle glow) so that Requirement 6 AC 3 has a drop shadow to shorten; its `box-shadow` still contains `var(--candle)`, as the existing test requires.
 
-### The deckled edge: four fixed tiles (pending the human's answer to Open question 6.2, recommended: masked inner layer, no turbulence filter)
+### The deckled edge: four fixed tiles (approved by the human: masked inner layer, no turbulence filter)
 
 Custom properties on `:root`, each a `data:` SVG tile of fixed pixel size, painted black (only alpha matters):
 
@@ -684,7 +715,7 @@ Two `data:` SVG tiles on `:root`, 120 x 120 with `stitchTiles`, drawn as `backgr
 | `--wax-light` | `wl` | `sealLight` `#ec7a64` (`0.925 0.478 0.392`) | `0 0 0 0.12 0` | lightening, **maximum alpha 0.12** |
 | `--wax-dark` | `wd` | deep seal (`0.294 0.059 0.031`) | `0 0 0 0.10 0` | darkening |
 
-The alpha row scales the noise alpha (at most 1), so 0.12 is the worst-case lightening alpha, declared once in the `wl` data URI (gap G5). The Contrast_Test reads it from there by the filter id, like the existing grain test reads the grain matrix. Pending the human's answer to Open question 6.3, the recommended value is at most 0.12. The ceiling is the contrast: at 0.14 the rest ratio is 4.5; at 0.15 it is 4.49. 0.12 leaves a margin of 0.10 ratio points.
+The alpha row scales the noise alpha (at most 1), so 0.12 is the worst-case lightening alpha, declared once in the `wl` data URI (gap G5). The Contrast_Test reads it from there by the filter id, like the existing grain test reads the grain matrix. The value 0.12 is approved by the human. The ceiling is the contrast: at 0.14 the rest ratio is 4.5; at 0.15 it is 4.49. 0.12 leaves a margin of 0.10 ratio points.
 
 Both tints are tones of `seal` (lighter and darker), no new hue, no candle. Only `.slip-primary::before` has the property (AC 10, tested by a rule scan).
 
@@ -739,11 +770,11 @@ Rules in `@layer components` so that the Tailwind ring utilities (utilities laye
 }
 ```
 
-- **Lift and sink (pending the human's answer to Open question 6.3, recommended: lift 2 px, sink to 1 px below rest).** Lift is `translateY(-2px)`, press is `translateY(1px)`. A transition from `-2px` to `1px` passes through 0 before going below rest. Layout position (`offsetTop`, `offsetLeft`) and width never change, because `transform` does not affect layout (AC 13).
+- **Lift and sink (approved by the human: lift 2 px, sink to 1 px below rest).** Lift is `translateY(-2px)`, press is `translateY(1px)`. A transition from `-2px` to `1px` passes through 0 before going below rest. Layout position (`offsetTop`, `offsetLeft`) and width never change, because `transform` does not affect layout (AC 13).
 - **Glow.** Hover adds a candle layer absent at rest: for `.slip` the 18 px layer at 40 percent, for `.slip-primary` a second, wider layer at 55 percent on top of its rest layer (40 percent at 18 px). Candle appears only in `box-shadow`, the existing `*:focus-visible --tw-shadow`, and gradients (AC 15). On keyboard focus the Tailwind ring's `box-shadow` carries `--tw-shadow` (a 14 px, 45 percent candle glow), which is absent at rest in both Slips (the Primary_Slip's rest layer is 18 px, 40 percent, a different layer).
 - **Pressed.** The black layer drops from `0 2px 6px` to `0 1px 2px`. The `.slip` candle layer is 20 percent, the Primary_Slip's is its rest 40 percent, both below the hover values (40 and 55). The paper darkens a little. Gap G3: on a keyboard press `:focus-visible` is also set, the ring utility wins `box-shadow`, and only the sink applies. AC 3's shadow check is run on a pointer press.
-- **Disabled.** Every state rule has `:not(:disabled)`. A disabled Slip keeps `transform: none` and its rest `box-shadow` (AC 4). The `disabled:opacity-70` utility stays (pending the human's answer to Open question 6.5, recommended).
-- **Touch (pending the human's answer to Open question 6.4, recommended).** Hover rules are inside `@media (hover: hover)`, so a tapped Slip shows its rest look afterwards. `:active` is outside the media query and works on every device, but its transform is also in the Motion_Block.
+- **Disabled.** Every state rule has `:not(:disabled)`. A disabled Slip keeps `transform: none` and its rest `box-shadow` (AC 4). The `disabled:opacity-70` utility stays (approved by the human).
+- **Touch (approved by the human).** Hover rules are inside `@media (hover: hover)`, so a tapped Slip shows its rest look afterwards. `:active` is outside the media query and works on every device, but its transform is also in the Motion_Block.
 - **Reduced motion.** The `transition` and the three `transform` rules live only in the Motion_Block, so with `prefers-reduced-motion: reduce` the computed `transform` is `none` and the transition duration is `0s` in every state. The glow, the lighter paper and the shortened press shadow are outside the block and still show as static end states (AC 6).
 - **Nested media.** The hover query inside the Motion_Block is a conditional group inside a conditional group, which CSS allows. The existing test's `blockAt` brace matcher handles the nesting.
 
@@ -804,7 +835,7 @@ Neither selector appears in any new rule. The existing `.card-slip` and `.keycap
 
 ## Data Models
 
-No stored data changes. The storage schema (`schemaVersion: 3`) and the dataset are untouched. The new typed values are the constants above: `CursorImage`, `Tuft`, `HillTuft`, and the CSS custom properties `--moon-mare-alpha`, `--deckle-top`, `--deckle-bottom`, `--deckle-left`, `--deckle-right`, `--wax-light`, `--wax-dark`.
+No stored data changes. The storage schema (`schemaVersion: 3`) and the dataset are untouched. The new typed values are the constants above: `CursorImage`, `Tuft`, `HillTuft`, and the CSS custom properties `--grass`, `--moon-mare-alpha`, `--deckle-top`, `--deckle-bottom`, `--deckle-left`, `--deckle-right`, `--wax-light`, `--wax-dark`.
 
 ## Error Handling
 
@@ -841,7 +872,7 @@ Test files marked (new) are created by the tasks; (existing) are edited as liste
 | R1 AC 15 | `e2e/sky-cap.spec.ts`: `findOverflow` at 320 and 375 |
 | R1 AC 19 | `e2e/graveyard-fit.spec.ts`, `e2e/night-scene.spec.ts`, `e2e/screenshots.spec.ts` (existing): run unchanged |
 | R1 AC 20 (focus clearance) | `e2e/sky-cap.spec.ts`: `focused controls clear the sticky header`; `index.css.test.ts`: `scroll-padding-top` effective value is `calc(var(--moon-room) + 7rem)` |
-| R1 AC 21 (global scope, pending Q1.1) | `App.test.tsx` (existing): exactly one `.sky-cap` in the tree; `e2e/sky-cap.spec.ts`: Summary and Level screens |
+| R1 AC 21 (global scope, approved by the human) | `App.test.tsx` (existing): exactly one `.sky-cap` in the tree; `e2e/sky-cap.spec.ts`: Summary and Level screens |
 | R2 AC 1, 2, 4, 5, 6, 7, 8, 9, 11, 15, 16 | `app/src/styles/cursors.test.ts` (new): see list below |
 | R2 AC 3, 12, 17 | `e2e/cursors.spec.ts` (new): desktop context has `url(` on `body`, an enabled button, the intro, start menu and Graveyard backgrounds; touch context has none |
 | R2 AC 10, 13, 14 | `index.css.test.ts`: cursor rules do not set `outline`, `box-shadow`, `--tw-shadow`, `animation`, `transition`; `button:disabled` keeps `not-allowed`; the cursor media block is outside the Motion_Block. `e2e/cursors.spec.ts`: computed `cursor` of a disabled button is `not-allowed` |
@@ -850,11 +881,16 @@ Test files marked (new) are created by the tasks; (existing) are edited as liste
 | R3 AC 12 | `e2e/cursors.spec.ts`: `touch-action: none`, box sizes of paper and container equal with and without the rule (measured on the Summon paper as a control); `InkSurface.test.tsx` (existing): unchanged assertions pass |
 | R3 AC 13 | `index.css.test.ts`: brush rule outside the Motion_Block, `data:` URI |
 | `data-brush` plumbing | `InkSurface.test.tsx` (existing): `data-brush` only with `drawable`; `WriteMode` test: present; `SummonStep` test: absent |
-| R4 AC 1, 10, 11, 12 | `GrassTuft.test.tsx` (new): `aria-hidden`, `focusable=false`, no `title`, `desc`, text; fill is `hillFar`; `Graveyard.test.tsx` (existing): the list structure, accessible names and counts are unchanged, tablet tufts are `aria-hidden`, and the three tablet states carry the same text and Marker as before |
+| R4 AC 1, 10, 11, 12 | `GrassTuft.test.tsx` (new): `aria-hidden`, `focusable=false`, no `title`, `desc`, text; fill is `grass`; `Graveyard.test.tsx` (existing): the list structure, accessible names and counts are unchanged, tablet tufts are `aria-hidden`, and the three tablet states carry the same text and Marker as before |
 | R4 AC 2, 6, 9 | `Graveyard.test.tsx`: one `[data-grass="tablet"]` per `li`; `-z-10` and `pointer-events-none`; `e2e/grass.spec.ts` (new): each tablet tuft's layout box (`offsetLeft`, `offsetTop`, `offsetWidth`, `offsetHeight`) lies inside its `li`, bottom within 2 px, height at most 16 |
 | R4 AC 3, 4, 5 | `grassPattern.test.ts` (new): same output for the same input, defined output for positions 0 to 500 and every slot, `crestY` within 0.05 of the evaluated far ridge, hill tuft boxes inside the wrapper at 296 px, source has no `Math.random` or `Date`; `Graveyard.test.tsx`: 12 hill tufts |
 | R4 AC 7 | `e2e/grass.spec.ts`: no tablet tuft box meets a Marker or `[lang="zh"]` box at 375 x 812 and 320 x 640, naming viewport and position; hill tufts come before the grid in document order and have no `z-index` (gap G2) |
 | R4 AC 8 | `e2e/grass.spec.ts`: `findOverflow` at 320, 375, 1024, 1440; tablet boxes equal their size without Grass (a fixture without tufts via `page.addStyleTag('[data-grass]{display:none}')`) |
+| R4 AC 11 (token, palette) | `theme.test.ts` (existing file, new case): `theme.grass` is `#30505c`, hue between 180 and 230 degrees, saturation at most 35 percent, lightness at most 30 percent; `index.css.test.ts`: `--grass` equals `theme.grass`; no other fill colour in `GrassTuft` |
+| R4 AC 16 (visibility, pixel test) | `e2e/graveyard-fit.spec.ts` (existing file, new test `the Grass stands out from the stone and the hill`) at 375 x 812 and 1024 x 768, as described in Part 3 |
+| R4 AC 17 (ratios) | `theme.test.ts`: `contrastRatio` of `grass` against `hillNear`, `hillFar`, `nightMid`, `nightLow`, `skyHold`, the three tablet stone colours and the candle-glow composites, each at least 1.5 |
+| R4 AC 18 (no `overflow: hidden`) | `e2e/grass.spec.ts`: computed `overflow` of every tablet is `visible` |
+| R4 AC 19 (hill paint order) | `e2e/grass.spec.ts`: hill tufts come before the grid in document order and have no `z-index` (gap G2) |
 | R4 AC 13 | `e2e/graveyard-fit.spec.ts` (existing): runs unchanged |
 | R4 AC 14 | Task step: measure `app/dist` JS and CSS before and after (`npm run build -w app`), recorded in the task; no new test file |
 | R4 AC 15 | `index.css.test.ts`: no `animation` or `transition` selector mentions `grass`; `GrassTuft.test.tsx`: no `style` with animation |
@@ -864,7 +900,7 @@ Test files marked (new) are created by the tasks; (existing) are edited as liste
 | R5 AC 6 | `e2e/night-scene.spec.ts` (existing): `intro: the Moon shade is visible` runs unchanged |
 | R5 AC 11, 12, 13 | `e2e/screenshots.spec.ts` (existing, calls added): `expectMoonInside` for Sources & licences and Summary at 375 and 320 |
 | R5 AC 14, 15, 16 | `index.css.test.ts`: existing text contrast tests (band A, band B, halo, held sky) plus new ring composite test for the five tokens |
-| R5 AC 17, 18 (pending Q5.1) | `index.css.test.ts`: replacement test reads `e2e/screenshots.spec.ts` for the `expectMoonInside` calls (recommended); otherwise the two old tests stay |
+| R5 AC 17, 18 | `index.css.test.ts`: the replacement test reads `e2e/screenshots.spec.ts` for the `expectMoonInside` calls; the two old disc tests are removed |
 | R5 AC 19, 20, 21 | `index.css.test.ts`: structural tests kept, two pinned values and the triple allow-list updated, image-file and `will-change` tests unchanged |
 | R5 AC 22 | `e2e/screenshots.spec.ts`: intro at 375 x 812 (existing) and 1440 x 900 (added); human review |
 | R6 AC 1, 2, 3, 4, 13, 19, 21 | `e2e/slips.spec.ts` (new) |
@@ -892,7 +928,20 @@ Test files marked (new) are created by the tasks; (existing) are edited as liste
 8. Contrast of fill or outline at least 3 against `background`, `surface`, `paper`, `inkOnPaper` (brush: `paper` and `inkOnPaper`), using `contrastRatio`.
 9. Brush: arm stroke width at most 2; no `GHOST_PATH`; no `theme.seal`, `theme.sealLight` or `theme.candle` colour; nearest painted point at least 3.5 px from the hotspot (analytic).
 
-### Existing assertions that change (the addition to Requirement 8 AC 5 that the human is asked to approve, gap G1)
+### Existing assertions that change (gap G1, approved by the human)
+
+**Condition set by the human: none of these rewrites may loosen a test.** Each rewrite below checks the same property at least as strictly as the assertion it replaces. Each task that changes one of them reports, in its task report, the old assertion and the new assertion side by side, and says why the new one is at least as strict. If a rewrite cannot be made at least as strict, the task stops and reports instead of making it.
+
+Gaps G2 to G5 re-express a requirement criterion as a different check. The human approved them on the same condition:
+
+| Gap | Criterion | New check | Why it is not looser |
+|---|---|---|---|
+| G2 | Requirement 4 AC 7 (no Grass box meets a Marker or glyph box) | Tablet tufts keep the geometric check. Hill tufts must come before the grid in the document and set no `z-index` (Requirement 4 AC 19). | A tuft never covers a Marker or a glyph either way. The paint-order check fails if the order changes, which the geometric check could not see for tufts that are meant to overlap tablet boxes. |
+| G3 | Requirement 6 AC 3 (shortened shadow while pressed) | Checked for a pointer press; a keyboard press keeps the ring and sinks 1 px. | The ring owns `box-shadow` on a keyboard press, so a shortened shadow cannot be observed there. Every pointer press is still measured. |
+| G4 | Requirement 1 AC 12 (no Sky_Cap box at 992 px and wider) | The cap's computed height is `0px` (`getBoundingClientRect().height === 0`). | A box of height 0 paints nothing; this is the strictest observable form without a media rule. |
+| G5 | Requirement 6 AC 10 (wax alpha declared in one place) | The alpha is declared once, inside the wax `data:` URI, and parsed from there by the Contrast_Test. | One declaration, read by the test, so the contrast check cannot drift from the CSS. |
+
+
 
 | File and test | Change | Why |
 |---|---|---|
@@ -903,7 +952,7 @@ Test files marked (new) are created by the tasks; (existing) are edited as liste
 | `index.css.test.ts` `mist and moon channel triples equal their hex` | Allow-list adds `236 230 214` and `10 17 38`. | Requirement 5 AC 20. |
 | `index.css.test.ts` `keeps the moon halo peak ... disc brighter than the halo` | `--moon-disc-alpha` `toBe(0.80)`. | Requirement 5 AC 20. |
 | `index.css.test.ts` `discBg`, `underShade`, `haloBg` helpers | Use `theme.ink` for glow and disc. | Same recipe as the CSS. |
-| `index.css.test.ts` `keeps ink and error at 4.5:1 on the disc composite` and `Moon_Shade: keeps ink and error at 4.5:1 at the lightest and the darkest point` | Removed under the recommended answer to Open question 5.1; kept under the alternative. | Requirement 5 AC 17, 18, and gap G1 (the second test). |
+| `index.css.test.ts` `keeps ink and error at 4.5:1 on the disc composite` and `Moon_Shade: keeps ink and error at 4.5:1 at the lightest and the darkest point` | Removed and replaced by the `moonIntruders` proof of the section "Disc contrast test". | Requirement 5 AC 17, 18, and gap G1 (the second test). |
 | `index.css.test.ts` `scene pseudo-elements ignore pointer events` | Selector list gains `.sky-cap`. | Additive. |
 
 Nothing else is removed or loosened. Tests that run unchanged: all of `e2e/*.spec.ts` that exist today (new calls are added to `screenshots.spec.ts`), `theme.test.ts`, `GhostFigure.test.tsx` (favicon path equals `GHOST_PATH`), the existing `Graveyard.test.tsx`, `InkSurface.test.tsx` and `App.test.tsx` assertions.
@@ -914,115 +963,71 @@ New unit and component tests are example-based with concrete values (hotspot 12 
 
 ---
 
-## Proposed steering amendments (Requirement 7)
+## Steering amendments (Requirement 7)
 
-**Every item here is "proposed, needs approval". None is approved. No task edits `.kiro/steering/art-direction.md` or any other steering file until the human writes "approved by the human" next to that item in this section.** Each is approved or rejected on its own. The wording below is exact and quotes the sentence it replaces.
+**Every amendment here is approved by the human, each on its own.** Tasks 8.1 to 8.8 edit `.kiro/steering/art-direction.md` with the exact wording below and edit no other steering file. The wording quotes the sentence it replaces.
 
-### A2 (Requirement 7 AC 2): ghost silhouette copies. **Proposed, needs approval.**
+### A2 (Requirement 7 AC 2): ghost silhouette copies. **Approved by the human.**
 
 Replace, in "The ghost", the phrase `drawn only by \`GhostFigure\`` with:
 
 > drawn by `GhostFigure`. Flat copies of the same silhouette are also allowed: the favicon and the pointer cursors. Each copy is built from the exported `GHOST_PATH` and `GHOST_EYE_PATHS`, has no filter, no gradient and no text, and is a standalone SVG that does not reference the `GhostFigure` component or its filter.
 
 Reason (recorded): the favicon is already a flat copy of the same path (`ink-and-candlelight`, Requirement 8), and a cursor is the same kind of copy. Tied to `GHOST_PATH` by `cursors.test.ts` and `GhostFigure.test.tsx`.
-If rejected: no Ghost_Cursor and no Link_Cursor. The default cursor stays, the Brush_Cursor (a crosshair, no ghost) is kept, and the Summon paper keeps the default cursor. Requirement 2 is dropped except the touch check. The design needs no other change.
 
-### A3 (Requirement 7 AC 3): the Moon bullet. **Proposed, needs approval.**
+### A3 (Requirement 7 AC 3): the Moon bullet. **Approved by the human.**
 
-Replace the bullet `The Moon is a full disc of 4 rem in the top right. It never lies under text. Below 992 px every screen keeps a top room of 4.75 rem for it.` with (long form, if the human approves the replacement of Open question 5.1):
+Replace the bullet `The Moon is a full disc of 4 rem in the top right. It never lies under text. Below 992 px every screen keeps a top room of 4.75 rem for it.` with:
 
 > The Moon is a pale warm disc of 4 rem in the top right, with soft maria, a soft shade toward the lower right and a faint glow of at most 0.10 alpha that fades out over 7 rem. It never lies under text, so no text token has to meet 4.5:1 on the disc itself; the end-to-end check `moonIntruders` proves that no text lies on it on every screen that calls `expectMoonInside`. Text beside the glow keeps 4.5:1. Below 992 px every screen keeps a top room of 4.75 rem for it.
 
-Short form, if the human does not approve the replacement of Open question 5.1 (the disc test stays):
-
-> The Moon is a pale warm disc of 4 rem in the top right, with soft maria, a soft shade toward the lower right and a faint glow of at most 0.10 alpha that fades out over 7 rem. It never lies under text. Below 992 px every screen keeps a top room of 4.75 rem for it.
-
-If rejected: the Moon keeps its current look and item 4 is dropped. A change of tone alone would still pass the current sentence, but the disc contrast test then forces a dim disc (see Part 4, alternative).
-
-### A4 (Requirement 7 AC 4): 3:1 exemption for decorative graphics. **Proposed, needs approval.**
+### A4 (Requirement 7 AC 4): 3:1 exemption for decorative graphics, adjusted for the Grass visibility floor. **Approved by the human.**
 
 Replace `Graphics keep 3:1.` with:
 
-> Graphics keep 3:1, except graphics that are `aria-hidden` and convey no information: the hillside, the Grass, the mist, the Moon glow, the grain, the Wax_Texture and the Deckled_Edge.
+> Graphics keep 3:1, except graphics that are `aria-hidden` and convey no information: the hillside, the Grass, the mist, the Moon glow, the grain, the Wax_Texture and the Deckled_Edge. The Grass keeps its own visibility floor: its tufts keep a luminance ratio of at least 1.3:1 against the stone and the hill behind them.
 
-Reason (recorded): Grass in `hillFar` on `hillNear` is deliberately low in contrast (1.2:1), as the hillside already is.
-If rejected: Grass has no colour among the allowed tokens that is quiet and reaches 3:1. The alternative is to drop Requirement 4 (no Grass).
+Reason (recorded): the Grass is deliberately dark and night-toned (`grass`, `#30505c`), as the hillside already is, so it cannot reach 3:1; but it must stay visible, so it has its own floor of 1.3:1, proven by a pixel test (Requirement 4 AC 16).
 
-### A11 (Requirement 7 AC 11): what stays at 3:1. **Proposed, needs approval; depends on A4.**
+### A11 (Requirement 7 AC 11): what stays at 3:1. **Approved by the human.**
 
 Add after the sentence of A4:
 
 > The cursor images and every graphic that carries meaning keep the 3:1 rule.
 
-If A4 is rejected this item has nothing to attach to and is dropped with it.
-
-### A5 (Requirement 7 AC 5): the Slip rule. **Proposed, needs approval.**
+### A5 (Requirement 7 AC 5): the Slip rule. **Approved by the human.**
 
 Add under "Palette" rules (or a new "Slips" line after "Secondary buttons and cards are paper slips with an ink label"):
 
 > Slips (`.slip` and `.slip-primary`; not `.card-slip` or `.keycap`) lift 2 px and gain a candle glow on hover and keyboard focus, and sink 1 px when pressed. Slips have a Deckled_Edge, a torn-paper edge that stays within 2 px of the box. The Primary_Slip has a faint Wax_Texture in tones of `seal`, at most 0.12 lightening alpha. The transitions run 200 ms inside the reduced-motion block and need no motion exemption.
 
-If rejected: the Slip changes are built without the sentence. All of them already follow the existing rules (candle only as glow, seal red only on the Primary_Slip, 200 ms action motion, 44 px height), so the `index.css.test.ts` checks are the only record. No item is dropped.
+### A6 (Requirement 7 AC 6): the Sky_Cap sentence, scoped to every screen. **Approved by the human.**
 
-### A6 (Requirement 7 AC 6): the Sky_Cap sentence. **Proposed, needs approval.**
-
-Add exactly one sentence to "Moon, mist and seal placement". Global scope (recommended, pending the human's answer to Open question 1.1):
+Add exactly one sentence to "Moon, mist and seal placement":
 
 > Below 992 px a fixed Sky_Cap keeps the top room free of scrolling content on every screen.
 
-Scoped version, if the human chooses the two named screens:
-
-> Below 992 px a fixed Sky_Cap keeps the top room free of scrolling content on the Graveyard and Sources & licences screens.
-
-If rejected: the cap is built without the sentence; the existing statement that every screen keeps a top room for the Moon already describes the intent.
-
-### A9 (Requirement 7 AC 9): the Pointer section. **Proposed, needs approval.**
+### A9 (Requirement 7 AC 9): the Pointer section. **Approved by the human.**
 
 Add a new section after "Motion":
 
 > ## Pointer
 > Cursors apply only to devices whose primary input matches `(hover: hover) and (pointer: fine)`; touch devices keep the default cursor. The Ghost_Cursor and the Link_Cursor are flat ghost silhouettes, each at most 32 by 32 px, a `data:` SVG with an `auto` fallback. The Link_Cursor differs from the Ghost_Cursor in shape (wider eyes) and not only in colour. The Brush_Cursor is a thin crosshair with an open centre, at most 24 by 24 px, a `data:` SVG with a `crosshair` fallback, used on the Writing_Paper of the Write step only.
 
-If rejected: build the cursors without the section (the cursor tests are the record), or drop Requirements 2 and 3.
+### A10 (Requirement 7 AC 10): Moon tokens and the `grass` token. **Approved by the human.**
 
-### A10 (Requirement 7 AC 10): palette tokens for the Moon. **Proposed, needs approval; this design takes option 2 (pending the human's answer to Open question 5.2).**
-
-Option 2 (recommended), add to "Moon, mist and seal placement":
+Add to "Moon, mist and seal placement" (option 2, no new Moon token):
 
 > The Moon uses only existing tokens: `ink` for the disc and the glow, `nightMid` for the maria and `nightTop` for the shade. The `moon` token stays for the mist-coloured heading glow.
 
-Option 1 (alternative): add rows `moonDisc`, `moonMaria`, `moonGlow` to the palette table with values chosen at implementation (the disc a pale warm tone, the glow a warm neutral), and update `theme.ts`, `index.css`, the Tailwind config, the hex checks of `index.css.test.ts` and `README.md` in one task (Requirement 7 AC 10 and Requirement 8 AC 21).
+Add one row to the palette table, after `hintInk`:
+
+> | `grass` | `#30505c` | Graveyard Grass tufts (decorative, `aria-hidden`; at least 1.3:1 against the stone and the hill) |
+
+The `grass` value is added to `theme.ts` and `index.css` by task 5.5 before this row is written, so the steering file and the code agree.
 
 ---
 
-## Open questions
+## Decisions approved by the human
 
-Carried from `requirements.md`. Recommended answers are what this design is written to. Each row gives the design consequence of the recommendation and of the alternative, so the human can answer all at once.
-
-| Q | Question | Recommended | Design consequence if recommended | If the human answers otherwise |
-|---|---|---|---|---|
-| 1.1 | Sky_Cap scope | Every screen at a Narrow_Viewport | `App` renders `SkyCap`; hidden on `main.no-moon-room`; the e2e covers Summary and Level too; A6 global wording | Only Graveyard and Sources & licences: `Graveyard.tsx` and `Credits.tsx` render the cap; R1 AC 21 and the two extra e2e screens drop out; A6 scoped wording |
-| 1.2 | How the band is built | Fixed element repainting sky, Moon, grain and vignette | Part 1 as written | Making `main` a scroll container is rejected: it changes scrolling, `scroll-padding`, full-page captures and every fit test |
-| 1.3 | Which sky while scrolled | The scroll-0 colours | The cap paints the top of the gradient, tolerance 6 | A scrolling sky inside the cap would need JavaScript and defeats the fix |
-| 1.4 | Header focus clearance | Include it | `scroll-padding-top` becomes `calc(var(--moon-room) + 7rem)` and the Tab e2e test | Leave at 5rem: R1 AC 20 and the Tab test drop; a focused control can sit under the header |
-| 2.1 | Steering amendment for the cursor copy | Yes (A2) | Ghost and Link cursors from `GHOST_PATH` | Rejected: see A2, no ghost cursor, Brush_Cursor kept |
-| 2.2 | Link_Cursor look | Same silhouette, paper fill, wider eyes | `eyes` get a `scale(1.4)` transform; same hotspot | Tilted silhouette: hotspot recomputed from bounds (builder already does this) |
-| 2.3 | Size and hotspot | About 28 by 28 | 24 by 30 px at scale 0.375, hotspot (12, 1), confirmed by screenshot | 28 by 28: `GHOST_CURSOR_SCALE = 0.35`, image 23 by 28, hotspot recomputed (11, 1) |
-| 2.4 | Hybrid devices | Primary pointer: `(hover: hover) and (pointer: fine)` | Cursor media block as written | `any-pointer: fine`: the ghost shows with a trackpad on an iPad |
-| 3.1 | Summon paper cursor | Ghost on Summon, brush on Write | `drawable` only in `WriteMode` | Brush on both: `SummonStep` passes `drawable`; R3 AC 5 inverts |
-| 3.2 | Brush tip or crosshair | Crosshair with open 6 px centre | 20 by 20 px, hotspot (10, 10), paper casing | A brush tip: a shape with its tip at the hotspot and the body pointing away; the open-centre test still applies around the tip |
-| 3.3 | Cursor while drawing | No change | No rule | A pressed-state cursor would need `:active` styling on the paper |
-| 4.1 | Grass colour and 3:1 | Existing tokens, exemption A4 | `hillFar` fill | A4 rejected: drop Requirement 4 |
-| 4.2 | Where tablet grass lives | One SVG per tablet inside the `li`, plus hill tufts | Wrapper `span` inside the `li`, `-z-10`, **without** `overflow: hidden` on the tablet (it would clip the wisp and glow) | Add `overflow: hidden` to the `li` and move the wisp inside it; larger change |
-| 4.3 | Pattern size | Five shapes, five offsets, 12 hill slots | Tables in Part 3 | More shapes: the tables grow, the tests are the same |
-| 5.1 | Disc contrast test | Replace by the `moonIntruders` proof | Two tests removed, one meta test added, A3 long form | Keep: dim disc, new warm token for AC 3 (A10 option 1), A3 short form |
-| 5.2 | Tokens | No new token | `ink`, `nightMid`, `nightTop` triples in the gradients | New tokens `moonDisc`, `moonMaria`, `moonGlow` (A10 option 1), README in the same task |
-| 5.3 | Maria and detail | Four maria plus the shade | Part 4 table | Three maria: remove mare D |
-| 5.4 | Acceptance | Screenshot review at 375 x 812 and 1440 x 900 | 1440 x 900 intro screenshot added | 375 x 812 only |
-| 6.1 | Which controls | `.slip` and `.slip-primary` | Part 5 | Add `.keycap`: its assertions and the one-screen fit tests change |
-| 6.2 | Deckle technique | Masked inner layer, fixed tiles | Four tile data URIs | `feTurbulence`-based mask: size-dependent edge, must be proven within 2 px per size |
-| 6.3 | Depth and strength | Lift 2 px, sink 1 px, glow 40 and 55 percent, wax at most 0.12 | As written; wax ceiling about 0.14 | Wax 0.15 or more breaks 4.5:1 on the label |
-| 6.4 | Hover versus touch | Hover rules inside `@media (hover: hover)` | As written | Hover on touch would leave a stuck lift after a tap, which R6 AC 7 forbids |
-| 6.5 | Disabled Slips | No lift, no glow, no sink; keep `opacity-70` | `:not(:disabled)` on every state rule | Not recommended: disabled controls with hover feedback |
-
-Additional decisions that need the human's confirmation and are not in `requirements.md`: the gaps G1 to G5 above (G1: the changed-assertions list; G2: paint-order check for hill tufts; G3: keyboard-press shadow; G4: zero-height cap at 992 px and wider; G5: wax alpha declared inside the data URI), and the brush casing reading of Requirement 3 AC 2.
+The list at the top of this document ("Decisions approved by the human") replaces the former table of open questions. Each former alternative that the human did not choose is dropped from this design.

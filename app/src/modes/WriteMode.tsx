@@ -172,6 +172,7 @@ export function WriteMode({ record, dataset, config, onOutcome, reservedPx = 0, 
       <InkSurface
         size={`${side}px`}
         containerRef={containerRef}
+        drawable
         role="group"
         ariaLabel="Writing area: draw the character from memory, stroke by stroke"
         overlay={sealed ? <SealStamp character={record.character} /> : undefined}

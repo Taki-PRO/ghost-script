@@ -10,6 +10,7 @@ import {
   expectMoonInside,
   expectNoVerticalScroll,
   layToRestClean,
+  reachSummary,
   seed,
   seedBefore,
   seedState,
@@ -127,9 +128,60 @@ for (const vp of VIEWPORTS) {
   });
 }
 
-// Moon check at 320 x 640 (Requirement 8.12): intro, Summon step and Graveyard. No PNG is written.
+// Intro at 1440 x 900 for the human's Moon review (approved by the human).
+test.describe('screenshots at 1440 x 900', () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+
+  test('intro', async ({ page }) => {
+    await seed(page, seedState({ introSeen: false }));
+    await page.goto(START);
+    await expect(page.getByRole('button', { name: 'Begin the Séance' })).toBeVisible();
+    await waitForInkReveal(page);
+    await expectMoonInside(page, 'intro 1440');
+    await save(page, 'intro');
+  });
+});
+
+async function openSources(page: Page): Promise<void> {
+  await seed(page, seedState());
+  await page.goto(START);
+  await page.getByRole('button', { name: 'Sources & licences' }).click();
+  await expect(page.getByRole('heading', { level: 1, name: 'Sources & licences' })).toBeVisible();
+  await page.evaluate(() => document.fonts.ready);
+}
+
+// Moon check on Sources & licences and the Summary at 375 x 812 (no PNG is written).
+test.describe('moon at 375 x 812', () => {
+  test.use({ viewport: { width: 375, height: 812 }, reducedMotion: 'reduce' });
+
+  test('sources', async ({ page }) => {
+    await openSources(page);
+    await expectMoonInside(page, 'sources');
+  });
+
+  test('summary', async ({ page }) => {
+    test.setTimeout(240_000);
+    await reachSummary(page);
+    await expectMoonInside(page, 'summary');
+  });
+});
+
+// Moon check at 320 x 640 (Requirement 8.12): intro, Summon step, Graveyard, Sources & licences
+// and Summary. No PNG is written.
 test.describe('moon at 320 x 640', () => {
   test.use({ viewport: { width: 320, height: 640 } });
+
+  test('sources', async ({ page }) => {
+    await openSources(page);
+    await expectMoonInside(page, 'sources 320');
+  });
+
+  test('summary', async ({ page }) => {
+    test.setTimeout(240_000);
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await reachSummary(page);
+    await expectMoonInside(page, 'summary 320');
+  });
 
   test('intro', async ({ page }) => {
     await seed(page, seedState({ introSeen: false }));

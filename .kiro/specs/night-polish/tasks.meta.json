@@ -1,0 +1,445 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 HUMAN TASK: Human answers the open questions and approves or rejects each proposed steering amendment": [
+      {
+        "executionId": "1651d0ac-f8d2-43c2-8b10-edea431260cb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794995100048
+      }
+    ],
+    "1. Gate: the human answers the open questions and approves or rejects each steering amendment": [
+      {
+        "executionId": "1651d0ac-f8d2-43c2-8b10-edea431260cb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794995100078
+      }
+    ],
+    "2.1 Update `requirements.md`, `design.md` and this `tasks.md` to the recorded answers": [
+      {
+        "executionId": "1651d0ac-f8d2-43c2-8b10-edea431260cb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794996625136
+      },
+      {
+        "executionId": "1651d0ac-f8d2-43c2-8b10-edea431260cb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794996630606
+      }
+    ],
+    "2. Amend the spec to the human's answers": [
+      {
+        "executionId": "1651d0ac-f8d2-43c2-8b10-edea431260cb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794996630637
+      }
+    ],
+    "3.1 Write the sticky-header e2e test and record it failing on the current build": [
+      {
+        "executionId": "1651d0ac-f8d2-43c2-8b10-edea431260cb",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794996636128
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794997957774
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794998464772
+      }
+    ],
+    "3.2 Add the `SkyCap` component and wire it into `App`": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794998515885
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794998631391
+      }
+    ],
+    "3.3 Add the Sky_Cap CSS and the scroll padding, with their unit tests": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794998516897
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794998632330
+      }
+    ],
+    "3.4 Run the Sky_Cap test green and the existing tests that touch the band": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794998637278
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794998980083
+      }
+    ],
+    "3. Sky_Cap (Requirement 1)": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794998980122
+      }
+    ],
+    "4.1 Write the pure cursor builder with unit tests": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794998984905
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794999097754
+      }
+    ],
+    "4.2 Add the `drawable` prop to `InkSurface` and pass it from `WriteMode`": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794998986204
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794999099047
+      }
+    ],
+    "4.3 Add the cursor declarations to `index.css` and test them": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794999103663
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794999261382
+      }
+    ],
+    "4.4 Write the cursor e2e test": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794999262672
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794999392795
+      }
+    ],
+    "4. Cursors (Requirements 2 and 3)": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794999392815
+      }
+    ],
+    "5.1 Record the baseline size and write the pure Grass_Pattern": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794999400746
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794999485118
+      }
+    ],
+    "5.5 Add the `grass` token with its tests": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794999490407
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794999588968
+      }
+    ],
+    "5.2 Add the `GrassTuft` component": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794999593720
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794999639811
+      }
+    ],
+    "5.3 Draw the tufts in the Graveyard": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794999645624
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794999713655
+      }
+    ],
+    "5.4 Write the Grass e2e test, add the CSS check and record the size": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794999718950
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794999906062
+      }
+    ],
+    "5.6 Write the Grass visibility pixel test": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794999911639
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795000018616
+      }
+    ],
+    "5. Grass (Requirement 4)": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795000018637
+      }
+    ],
+    "6.1 Restyle the Moon in `body::before` and in the Sky_Cap copy": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795000023881
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795000084867
+      }
+    ],
+    "6.2 Update the Moon assertions in `index.css.test.ts` and add the new ones": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795000090576
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795000237054
+      }
+    ],
+    "6.3 Add the Moon screens to the screenshot spec and re-run the Moon e2e checks": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795000260375
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795002063766
+      }
+    ],
+    "6. Moon (Requirement 5)": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795002063795
+      }
+    ],
+    "7.1 Pin the `.card-slip` and `.keycap` blocks before any Slip CSS change": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795002072476
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795002121053
+      }
+    ],
+    "7.2 Restyle `.slip` and `.slip-primary`": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795002127492
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795002239016
+      }
+    ],
+    "7.3 Update and extend the Slip assertions in `index.css.test.ts`": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795002245315
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795002449556
+      }
+    ],
+    "7.4 Write the Slip e2e test": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795002455176
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795004656439
+      }
+    ],
+    "7. Slips (Requirement 6)": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795004656473
+      }
+    ],
+    "8.1 A2: ghost silhouette copies": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795004664797
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795004714920
+      }
+    ],
+    "8.2 A3: the Moon bullet": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795004734462
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795004778907
+      }
+    ],
+    "8.3 A4: the 3:1 exemption for decorative graphics": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795004780028
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795004816365
+      }
+    ],
+    "8.4 A11: what stays at 3:1": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795004817289
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795004852552
+      }
+    ],
+    "8.5 A5: the Slip rule": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795004853518
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795004887398
+      }
+    ],
+    "8.6 A6: the Sky_Cap sentence": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795004886236
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795004930292
+      }
+    ],
+    "8.7 A9: the Pointer section": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795004929189
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795004986084
+      }
+    ],
+    "8.8 A10: the Moon tokens": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795004984932
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795005040673
+      }
+    ],
+    "8. Steering edits for approved amendments only": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795005040700
+      }
+    ],
+    "10. Final checkpoint": [
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795005041590
+      },
+      {
+        "executionId": "72cdc7a8-94d6-490a-b870-ff2fd7c3747f",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795005432112
+      }
+    ]
+  }
+}

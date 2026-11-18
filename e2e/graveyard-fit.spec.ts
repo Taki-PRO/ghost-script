@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { moonRoomPx } from '../app/src/engine/moonRoom';
 import { learningOrder } from '../app/src/engine/learningOrder';
-import { START, datasetMap, findOverflow, luminance, pixelsAt, seed, seedState } from './helpers';
+import { START, datasetMap, findOverflow, luminance, luminanceRatio, pixelsAt, regionPixels, seed, seedState } from './helpers';
 
 // Graveyard fit (Requirements 8.11, 15.7, 15.14): tilted tablets cause no
 // horizontal overflow, the sticky header starts below the Moon_Room, the
@@ -238,6 +238,91 @@ for (const vp of [
         ratio,
         `lower ${lower}, upper ${upper}, luminance ${luminance(lower!)} / ${luminance(upper!)}, ratio ${ratio}`,
       ).toBeGreaterThanOrEqual(1.2);
+    });
+    test('the Grass stands out from the stone and the hill', async ({ browser }) => {
+      test.setTimeout(120_000);
+      const context = await browser.newContext({ viewport: vp, reducedMotion: 'reduce' });
+      const page = await context.newPage();
+      try {
+        await openGraveyard(page);
+        // The checked tablets must include one of each state.
+        const labels = await page.locator('[aria-label="Graves"] > li').evaluateAll((els) =>
+          els.map((el) => el.getAttribute('aria-label') ?? ''),
+        );
+        for (const [state, re] of [
+          ['tablet-unmet', /, never met$/],
+          ['tablet-restless', /, restless, /],
+          ['tablet-rest', /, at rest, /],
+        ] as const) {
+          expect(
+            labels.some((l) => re.test(l)),
+            `no ${state} tablet in the Graveyard at ${vp.width} x ${vp.height}`,
+          ).toBe(true);
+        }
+        await page.evaluate(() => window.scrollTo(0, 0));
+        const withGrass = await page.screenshot({ fullPage: true });
+        await page.addStyleTag({ content: '[data-grass]{visibility:hidden!important}' });
+        const withoutGrass = await page.screenshot({ fullPage: true });
+        const tufts = await page.evaluate(() => {
+          const hillEls = Array.from(document.querySelectorAll('[data-grass="hill"]'));
+          return Array.from(document.querySelectorAll('[data-grass]')).map((el) => {
+            const r = el.getBoundingClientRect();
+            const kind = el.getAttribute('data-grass') === 'hill' ? 'hill' : 'tablet';
+            const li = el.closest('[aria-label="Graves"] > li');
+            const position =
+              kind === 'hill'
+                ? hillEls.indexOf(el) + 1
+                : Array.from(document.querySelectorAll('[aria-label="Graves"] > li')).indexOf(li as Element) + 1;
+            return {
+              kind,
+              position,
+              left: r.left + window.scrollX,
+              top: r.top + window.scrollY,
+              right: r.right + window.scrollX,
+              bottom: r.bottom + window.scrollY,
+            };
+          });
+        });
+        const a = await regionPixels(page, withGrass, tufts);
+        const b = await regionPixels(page, withoutGrass, tufts);
+        const rows = tufts.map((t, i) => {
+          let changed = 0;
+          let best = 1;
+          const pa = a[i]!;
+          const pb = b[i]!;
+          for (let k = 0; k < pa.length; k++) {
+            const ratio = luminanceRatio(pa[k]!.rgb, pb[k]!.rgb);
+            if (ratio >= 1.3) changed++;
+            if (ratio > best) best = ratio;
+          }
+          return { kind: t.kind, position: t.position, changed, best };
+        });
+        const tabletRows = rows.filter((r) => r.kind === 'tablet');
+        const hillRows = rows.filter((r) => r.kind === 'hill');
+        expect(hillRows.length, 'hill tufts').toBe(12);
+        expect(tabletRows.length, 'tablet tufts').toBeGreaterThan(0);
+        const median = (xs: number[]): number => [...xs].sort((p, q) => p - q)[Math.floor(xs.length / 2)]!;
+        const summary = (rs: typeof rows): string =>
+          `pixels min ${Math.min(...rs.map((r) => r.changed))} median ${median(rs.map((r) => r.changed))}; best ratio min ${Math.min(...rs.map((r) => r.best)).toFixed(3)} median ${median(rs.map((r) => r.best)).toFixed(3)}`;
+        const line = `GRASS ${vp.width}x${vp.height} tablet(${tabletRows.length}): ${summary(tabletRows)} | hill(12): ${summary(hillRows)} | hill per slot: ${hillRows.map((r) => `${r.position}:${r.changed}/${r.best.toFixed(2)}`).join(' ')}`;
+        console.log(line);
+        const weakTablets = tabletRows.filter((r) => r.changed < 8);
+        expect(
+          weakTablets,
+          `${vp.width} x ${vp.height}: tablet tufts under 8 pixels at 1.3:1: ${weakTablets
+            .map((r) => `position ${r.position} (${r.changed} px, best ${r.best.toFixed(3)})`)
+            .join(', ')}`,
+        ).toEqual([]);
+        const passingHill = hillRows.filter((r) => r.changed >= 8);
+        expect(
+          passingHill.length,
+          `${vp.width} x ${vp.height}: only ${passingHill.length} of 12 hill tufts reach 8 pixels at 1.3:1: ${hillRows
+            .map((r) => `slot ${r.position} (${r.changed} px, best ${r.best.toFixed(3)})`)
+            .join(', ')}`,
+        ).toBeGreaterThanOrEqual(6);
+      } finally {
+        await context.close();
+      }
     });
   });
 }

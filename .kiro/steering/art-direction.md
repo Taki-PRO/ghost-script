@@ -25,14 +25,16 @@ Ink black and aged paper are the base. Seal red is the only accent. Candle amber
 | `error` | `#e6dcc3` | paper neutral, always with a text cue and a shape cue; no red |
 | `gridLine` | `#7a6a4f` at 0.25 opacity | practice grid and hanzi-writer outline |
 | `hintInk` | `#2c3e5a` | hanzi-writer stroke hint on paper |
+| `grass` | `#30505c` | Graveyard Grass tufts (decorative, `aria-hidden`; at least 1.3:1 against the stone and the hill) |
 | `candle` | `#f0b866` | only inside `box-shadow`, `radial-gradient` and `linear-gradient` |
 
 Rules:
 - Seal red is for the Primary_Action, the Seal_Stamp and success marks. Nowhere else.
 - No `bg-candle`, `border-candle` or `text-candle`, and no flat amber fill. The focus ring is aged paper with a soft candle glow.
 - Colour is never the only signal. Success and errors keep their words and shapes.
-- Text keeps 4.5:1 contrast on every dark background and on paper. Graphics keep 3:1.
+- Text keeps 4.5:1 contrast on every dark background and on paper. Graphics keep 3:1, except graphics that are `aria-hidden` and convey no information: the hillside, the Grass, the mist, the Moon glow, the grain, the Wax_Texture and the Deckled_Edge. The Grass keeps its own visibility floor: its tufts keep a luminance ratio of at least 1.3:1 against the stone and the hill behind them. The cursor images and every graphic that carries meaning keep the 3:1 rule.
 - Secondary buttons and cards are paper slips with an ink label. Buttons stay at least 44 px high.
+- Slips (`.slip` and `.slip-primary`; not `.card-slip` or `.keycap`) lift 2 px and gain a candle glow on hover and keyboard focus, and sink 1 px when pressed. Slips have a Deckled_Edge, a torn-paper edge that stays within 2 px of the box. The Primary_Slip has a faint Wax_Texture in tones of `seal`, at most 0.12 lightening alpha. The transitions run 200 ms inside the reduced-motion block and need no motion exemption.
 
 ### Primary action per screen
 At most one per screen at a time.
@@ -49,10 +51,12 @@ At most one per screen at a time.
 | Summon, writing, Graveyard, Sources & licences | none |
 
 ## The ghost
-One original ink-wash ghost: a brushed silhouette with bleeding edges, one inline SVG path with a turbulence and displacement filter, drawn only by `GhostFigure`. The ghost is an ink wash (tone that darkens toward the hem, a second darker wash, a wet lower edge) with the same shape at every size and in the favicon (unfiltered copy, no gradient). Two small eye marks as paths. No text inside it, nothing derived from a character, hidden from assistive technology.
+One original ink-wash ghost: a brushed silhouette with bleeding edges, one inline SVG path with a turbulence and displacement filter, drawn by `GhostFigure`. Flat copies of the same silhouette are also allowed: the favicon and the pointer cursors. Each copy is built from the exported `GHOST_PATH` and `GHOST_EYE_PATHS`, has no filter, no gradient and no text, and is a standalone SVG that does not reference the `GhostFigure` component or its filter. The ghost is an ink wash (tone that darkens toward the hem, a second darker wash, a wet lower edge) with the same shape at every size and in the favicon (unfiltered copy, no gradient). Two small eye marks as paths. No text inside it, nothing derived from a character, hidden from assistive technology.
 
 ## Moon, mist and seal placement (approved by the human, screenshot review)
-- The Moon is a full disc of 4 rem in the top right. It never lies under text. Below 992 px every screen keeps a top room of 4.75 rem for it.
+- The Moon is a pale warm disc of 4 rem in the top right, with soft maria, a soft shade toward the lower right and a faint glow of at most 0.10 alpha that fades out over 7 rem. It never lies under text, so no text token has to meet 4.5:1 on the disc itself; the end-to-end check `moonIntruders` proves that no text lies on it on every screen that calls `expectMoonInside`. Text beside the glow keeps 4.5:1. Below 992 px every screen keeps a top room of 4.75 rem for it.
+- Below 992 px a fixed Sky_Cap keeps the top room free of scrolling content on every screen.
+- The Moon uses only existing tokens: `ink` for the disc and the glow, `nightMid` for the maria and `nightTop` for the shade. The `moon` token stays for the mist-coloured heading glow.
 - The Mist has two bands in the lower third: 0.18 at 88% and 0.10 at 72%. Text keeps 4.5:1 on each band.
 - The seal sits in the paper margin and covers no stroke.
 
@@ -67,6 +71,9 @@ One original ink-wash ghost: a brushed silhouette with bleeding edges, one inlin
 - Rite-timing exemption (approved by the human, Q12): `SUMMON_HOLD_MS`, `SUMMON_FADE_MS` and `SUMMON_INK_SPEED` stay as they are.
 - Outcome motions take 600 ms: clean dissolves upward like ink smoke, struggled lingers at the edge, gave-up slips away. The result text and the primary action do not wait for them.
 - Every animation and transition sits inside the one `prefers-reduced-motion: no-preference` block. Reduced motion shows the static end state.
+
+## Pointer
+Cursors apply only to devices whose primary input matches `(hover: hover) and (pointer: fine)`; touch devices keep the default cursor. The Ghost_Cursor and the Link_Cursor are flat ghost silhouettes, each at most 32 by 32 px, a `data:` SVG with an `auto` fallback. The Link_Cursor differs from the Ghost_Cursor in shape (wider eyes) and not only in colour. The Brush_Cursor is a thin crosshair with an open centre, at most 24 by 24 px, a `data:` SVG with a `crosshair` fallback, used on the Writing_Paper of the Write step only.
 
 ## Cultural care
 - No pumpkins, bats or cobwebs.

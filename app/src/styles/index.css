@@ -41,6 +41,7 @@
   --night-mid: #0a1126;
   --night-low: #12203f;
   --sky-hold: #101c38;
+  --grass: #30505c;
   --mist: #5b6f9a;
   --moon: #7283ab;
   --candle: #f0b866;
@@ -48,7 +49,8 @@
   --mist-b-alpha: 0.1;
   --moon-peak-alpha: 0.06;
   --moon-halo-alpha: 0.1;
-  --moon-disc-alpha: 0.65;
+  --moon-disc-alpha: 0.80;
+  --moon-mare-alpha: 0.28;
   --moon-shade-alpha: 0.35;
   --moon-shade-offset: 0.5rem;
   --moon-shade-radius: 1.25rem;
@@ -57,12 +59,22 @@
   --moon-inset-y: 2.5rem;
   --moon-room: clamp(0px, calc((992px - 100vw) * 1000), 4.75rem);
   --vignette-alpha: 0.55;
+  /* Deckled edge of the Paper_Slips: four fixed-pixel tiles, only alpha matters.
+     Notches are at most 1.7 px deep, so the edge stays within 2 px of the box. */
+  --deckle-top: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='2' viewBox='0 0 64 2'%3E%3Cpath d='M0 2 L0 1 L4 .6 L9 1.3 L14 .3 L20 1 L25 .4 L31 1.5 L37 .5 L42 1.1 L48 .2 L54 1.2 L59 .6 L64 1 L64 2 Z' fill='%23000'/%3E%3C/svg%3E");
+  --deckle-bottom: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='2' viewBox='0 0 64 2'%3E%3Cpath d='M0 0 L0 1 L5 1.5 L11 .7 L17 1.4 L22 .5 L29 1.2 L35 .3 L40 1.3 L46 .7 L52 1.6 L58 .6 L64 1 L64 0 Z' fill='%23000'/%3E%3C/svg%3E");
+  --deckle-left: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2' height='64' viewBox='0 0 2 64'%3E%3Cpath d='M2 0 L1.2 0 L.6 5 L1.4 10 L.4 17 L1.1 23 L.3 29 L1.5 35 L.6 41 L1.3 47 L.2 53 L1.2 59 L1.2 64 L2 64 Z' fill='%23000'/%3E%3C/svg%3E");
+  --deckle-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2' height='64' viewBox='0 0 2 64'%3E%3Cpath d='M0 0 L1.4 0 L.7 6 L1.5 12 L.5 19 L1.2 26 L.3 32 L1.4 38 L.6 45 L1.6 51 L.4 57 L1.4 64 L0 64 Z' fill='%23000'/%3E%3C/svg%3E");
+  /* Wax texture of the Primary_Slip: tones of seal. Lightening alpha is at most 0.12. */
+  --wax-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='wl'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.05' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.925 0 0 0 0 0.478 0 0 0 0 0.392 0 0 0 0.12 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23wl)'/%3E%3C/svg%3E");
+  --wax-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='wd'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.294 0 0 0 0 0.059 0 0 0 0 0.031 0 0 0 0.1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23wd)'/%3E%3C/svg%3E");
 }
 
 /* Canvas_Sky: the sky is the html background, one screen high, held at
    --sky-hold below 88% so it covers any page height. The body has no background. */
 html {
-  scroll-padding-top: 5rem;
+  scroll-padding-top: 7rem;
+  scroll-padding-top: calc(var(--moon-room) + 7rem);
   background-color: var(--sky-hold);
   background-image: linear-gradient(180deg, var(--night-top) 0%, var(--night-mid) 55%, var(--sky-hold) 88%, var(--sky-hold) 100%);
   background-size: 100% 100vh;
@@ -89,8 +101,12 @@ body::before {
   pointer-events: none;
   background:
     radial-gradient(circle var(--moon-shade-radius) at calc(100% - var(--moon-inset-x) + var(--moon-shade-offset)) calc(var(--moon-inset-y) + var(--moon-shade-offset)), rgb(5 8 19 / var(--moon-shade-alpha)) 0, transparent 100%),
-    radial-gradient(circle calc(var(--moon-size) / 2) at calc(100% - var(--moon-inset-x)) var(--moon-inset-y), rgb(114 131 171 / var(--moon-disc-alpha)) 0, rgb(114 131 171 / var(--moon-disc-alpha)) calc(var(--moon-size) / 2 - 0.2rem), transparent calc(var(--moon-size) / 2)),
-    radial-gradient(circle 7rem at calc(100% - var(--moon-inset-x)) var(--moon-inset-y), rgb(114 131 171 / var(--moon-halo-alpha)) 0, transparent 100%);
+    radial-gradient(ellipse 0.6rem 0.5rem at calc(100% - var(--moon-inset-x) - 0.9rem) calc(var(--moon-inset-y) + 0.5rem), rgb(10 17 38 / var(--moon-mare-alpha)) 0, transparent 100%),
+    radial-gradient(ellipse 0.5rem 0.4rem at calc(100% - var(--moon-inset-x) + 0.35rem) calc(var(--moon-inset-y) - 0.9rem), rgb(10 17 38 / var(--moon-mare-alpha)) 0, transparent 100%),
+    radial-gradient(ellipse 0.55rem 0.4rem at calc(100% - var(--moon-inset-x) - 0.15rem) calc(var(--moon-inset-y) + 1.05rem), rgb(10 17 38 / var(--moon-mare-alpha)) 0, transparent 100%),
+    radial-gradient(ellipse 0.35rem 0.5rem at calc(100% - var(--moon-inset-x) + 1rem) calc(var(--moon-inset-y) - 0.25rem), rgb(10 17 38 / var(--moon-mare-alpha)) 0, transparent 100%),
+    radial-gradient(circle calc(var(--moon-size) / 2) at calc(100% - var(--moon-inset-x)) var(--moon-inset-y), rgb(236 230 214 / var(--moon-disc-alpha)) 0, rgb(236 230 214 / var(--moon-disc-alpha)) calc(var(--moon-size) / 2 - 0.2rem), transparent calc(var(--moon-size) / 2)),
+    radial-gradient(circle 7rem at calc(100% - var(--moon-inset-x)) var(--moon-inset-y), rgb(236 230 214 / var(--moon-halo-alpha)) 0, transparent 100%);
 }
 body::after {
   content: '';
@@ -139,6 +155,39 @@ body::after {
   background:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.93 0 0 0 0 0.9 0 0 0 0 0.84 0 0 0 0.03 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"),
     radial-gradient(ellipse at center, transparent 55%, rgb(0 0 0 / var(--vignette-alpha)) 100%);
+}
+/* Sky_Cap: below 992 px a fixed copy of the Night_Sky (vignette, grain, Moon, sky
+   at scroll 0) covers the Moon_Room, above scrolling content (z-index 10) and
+   below the sticky headers (z-20). Gated by --moon-room, which is 0 from 992 px,
+   so the cap has no height there and needs no media rule. The Moon layers are
+   the same strings as body::before, the grain the same as #root::after and the
+   sky the same as html; index.css.test.ts keeps the copies equal. */
+.sky-cap {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--moon-room);
+  z-index: 10;
+  pointer-events: none;
+  overflow: hidden;
+  background-color: var(--sky-hold);
+  background-image:
+    radial-gradient(ellipse at center, transparent 55%, rgb(0 0 0 / var(--vignette-alpha)) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.93 0 0 0 0 0.9 0 0 0 0 0.84 0 0 0 0.03 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"),
+    radial-gradient(circle var(--moon-shade-radius) at calc(100% - var(--moon-inset-x) + var(--moon-shade-offset)) calc(var(--moon-inset-y) + var(--moon-shade-offset)), rgb(5 8 19 / var(--moon-shade-alpha)) 0, transparent 100%),
+    radial-gradient(ellipse 0.6rem 0.5rem at calc(100% - var(--moon-inset-x) - 0.9rem) calc(var(--moon-inset-y) + 0.5rem), rgb(10 17 38 / var(--moon-mare-alpha)) 0, transparent 100%),
+    radial-gradient(ellipse 0.5rem 0.4rem at calc(100% - var(--moon-inset-x) + 0.35rem) calc(var(--moon-inset-y) - 0.9rem), rgb(10 17 38 / var(--moon-mare-alpha)) 0, transparent 100%),
+    radial-gradient(ellipse 0.55rem 0.4rem at calc(100% - var(--moon-inset-x) - 0.15rem) calc(var(--moon-inset-y) + 1.05rem), rgb(10 17 38 / var(--moon-mare-alpha)) 0, transparent 100%),
+    radial-gradient(ellipse 0.35rem 0.5rem at calc(100% - var(--moon-inset-x) + 1rem) calc(var(--moon-inset-y) - 0.25rem), rgb(10 17 38 / var(--moon-mare-alpha)) 0, transparent 100%),
+    radial-gradient(circle calc(var(--moon-size) / 2) at calc(100% - var(--moon-inset-x)) var(--moon-inset-y), rgb(236 230 214 / var(--moon-disc-alpha)) 0, rgb(236 230 214 / var(--moon-disc-alpha)) calc(var(--moon-size) / 2 - 0.2rem), transparent calc(var(--moon-size) / 2)),
+    radial-gradient(circle 7rem at calc(100% - var(--moon-inset-x)) var(--moon-inset-y), rgb(236 230 214 / var(--moon-halo-alpha)) 0, transparent 100%),
+    linear-gradient(180deg, var(--night-top) 0%, var(--night-mid) 55%, var(--sky-hold) 88%, var(--sky-hold) 100%);
+  background-size: 100% 200vh, auto, auto, auto, auto, auto, auto, auto, auto, 100% 100vh;
+  background-repeat: no-repeat, repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+}
+#root:has(> main.no-moon-room) > .sky-cap {
+  display: none;
 }
 /* Moon_Room: below 992 px every screen leaves room under the moon. The height
    rules keep a min-h-screen screen one viewport tall in total. */
@@ -190,27 +239,85 @@ body::after {
 /* Paper_Slip buttons and cards. Candle appears only as glow. */
 @layer components {
   .slip {
+    position: relative;
+    isolation: isolate;
     min-height: 44px;
     color: var(--ink-on-paper);
-    background-color: var(--paper);
-    background-image: linear-gradient(160deg, rgba(255, 250, 235, 0.35) 0%, rgba(120, 90, 50, 0.12) 100%);
-    border: 1px solid color-mix(in srgb, var(--paper) 55%, var(--ink-on-paper));
+    border: 1px solid transparent;
     border-radius: 6px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
   }
-  .slip:hover {
-    background-image: linear-gradient(160deg, rgba(255, 250, 235, 0.55) 0%, rgba(120, 90, 50, 0.08) 100%);
-  }
   .slip-primary {
+    position: relative;
+    isolation: isolate;
     min-height: 44px;
     color: var(--paper-label);
-    background-color: var(--seal);
-    border: 1px solid var(--paper);
+    border: 1px solid transparent;
     border-radius: 6px;
-    box-shadow: 0 0 18px color-mix(in srgb, var(--candle) 40%, transparent);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45), 0 0 18px color-mix(in srgb, var(--candle) 40%, transparent);
   }
-  .slip-primary:hover {
-    filter: brightness(1.1);
+  .slip::before,
+  .slip-primary::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    z-index: -1;
+    pointer-events: none;
+    border-radius: 6px;
+    -webkit-mask-image: var(--deckle-top), var(--deckle-bottom), var(--deckle-left), var(--deckle-right), linear-gradient(#000, #000);
+    mask-image: var(--deckle-top), var(--deckle-bottom), var(--deckle-left), var(--deckle-right), linear-gradient(#000, #000);
+    -webkit-mask-size: 64px 2px, 64px 2px, 2px 64px, 2px 64px, calc(100% - 4px) calc(100% - 4px);
+    mask-size: 64px 2px, 64px 2px, 2px 64px, 2px 64px, calc(100% - 4px) calc(100% - 4px);
+    -webkit-mask-position: top left, bottom left, top left, top right, center;
+    mask-position: top left, bottom left, top left, top right, center;
+    -webkit-mask-repeat: repeat-x, repeat-x, repeat-y, repeat-y, no-repeat;
+    mask-repeat: repeat-x, repeat-x, repeat-y, repeat-y, no-repeat;
+  }
+  .slip::before {
+    background-color: var(--paper);
+    background-image: linear-gradient(160deg, rgba(255, 250, 235, 0.35) 0%, rgba(120, 90, 50, 0.12) 100%);
+    border: 1px solid color-mix(in srgb, var(--paper) 55%, var(--ink-on-paper));
+  }
+  .slip-primary::before {
+    background-color: var(--seal);
+    background-image: var(--wax-light), var(--wax-dark);
+    border: 1px solid var(--paper);
+  }
+  /* The Graveyard level buttons add border-2 to .slip: the inner layer follows. */
+  .slip.border-2::before {
+    inset: -2px;
+    border-width: 2px;
+  }
+  /* Hover only where the device hovers. */
+  @media (hover: hover) {
+    .slip:hover:not(:disabled) {
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.45), 0 0 18px 2px color-mix(in srgb, var(--candle) 40%, transparent);
+    }
+    .slip:hover:not(:disabled)::before {
+      background-image: linear-gradient(160deg, rgba(255, 250, 235, 0.55) 0%, rgba(120, 90, 50, 0.08) 100%);
+    }
+    .slip-primary:hover:not(:disabled) {
+      box-shadow:
+        0 4px 10px rgba(0, 0, 0, 0.45),
+        0 0 18px color-mix(in srgb, var(--candle) 40%, transparent),
+        0 0 26px 6px color-mix(in srgb, var(--candle) 55%, transparent);
+      filter: brightness(1.1);
+    }
+  }
+  /* Keyboard focus: same paper as hover; the ring utility supplies box-shadow. */
+  .slip:focus-visible:not(:disabled)::before {
+    background-image: linear-gradient(160deg, rgba(255, 250, 235, 0.55) 0%, rgba(120, 90, 50, 0.08) 100%);
+  }
+  /* Pressed: after hover so it wins at equal specificity. */
+  .slip:active:not(:disabled) {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 0 10px color-mix(in srgb, var(--candle) 20%, transparent);
+  }
+  .slip:active:not(:disabled)::before {
+    background-image: linear-gradient(160deg, rgba(255, 250, 235, 0.2) 0%, rgba(120, 90, 50, 0.18) 100%);
+  }
+  .slip-primary:active:not(:disabled) {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 0 18px color-mix(in srgb, var(--candle) 40%, transparent);
+    filter: none;
   }
   .card-slip {
     color: var(--ink-on-paper);
@@ -347,12 +454,53 @@ body::after {
   background: radial-gradient(ellipse at 50% 70%, rgb(189 183 166 / 0.7) 0, transparent 70%);
 }
 
+/* Pointer: ghost cursors for fine pointers only. Values are printed by
+   cursorDeclaration (src/styles/cursors.ts) and compared with it in
+   cursors.test.ts; paste, never hand-edit. Not motion: outside the block below. */
+@media (hover: hover) and (pointer: fine) {
+  body {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='30' viewBox='0 0 64 80'%3E%3Cpath d='M9 74 C8 66 9.5 58 8.4 49 C7.2 40 7.8 31 11 23.5 C14.5 14.5 22.5 5.5 32.5 4.6 C42 3.8 50.5 10 54 19 C57.2 27 56.4 36 56 45 C55.6 54 57 62 55.4 73.5 C54 72 52.2 69.2 50.6 67 C49.6 69.8 47.6 73 45.6 76.2 C44.2 73.6 42.4 70.2 40.4 68.4 C39 71 37.6 74.2 35.2 75.8 C33.8 72.8 32.4 69.6 30.4 67.6 C28.8 70.2 27 73.6 24.8 76.4 C23.6 73.4 21.8 70.4 19.8 68.6 C18.2 71.2 16.2 73.4 14 75.6 C12.8 73.8 11 72.8 9 74 Z' fill='%230e0f13' stroke='%230e0f13' stroke-width='4.8' stroke-linejoin='round'/%3E%3Cpath d='M9 74 C8 66 9.5 58 8.4 49 C7.2 40 7.8 31 11 23.5 C14.5 14.5 22.5 5.5 32.5 4.6 C42 3.8 50.5 10 54 19 C57.2 27 56.4 36 56 45 C55.6 54 57 62 55.4 73.5 C54 72 52.2 69.2 50.6 67 C49.6 69.8 47.6 73 45.6 76.2 C44.2 73.6 42.4 70.2 40.4 68.4 C39 71 37.6 74.2 35.2 75.8 C33.8 72.8 32.4 69.6 30.4 67.6 C28.8 70.2 27 73.6 24.8 76.4 C23.6 73.4 21.8 70.4 19.8 68.6 C18.2 71.2 16.2 73.4 14 75.6 C12.8 73.8 11 72.8 9 74 Z' fill='%23ece6d6'/%3E%3Cpath d='M20.5 31.5 C20.8 29.4 23.6 29 25.2 30.4 C26.6 31.8 26.2 34.6 24 35.6 C22 36.4 20.2 34 20.5 31.5 Z' fill='%230e0f13'/%3E%3Cpath d='M38.6 31.2 C39.2 29.2 41.8 28.8 43.4 30.2 C44.8 31.6 44.4 34.4 42.2 35.4 C40.2 36.2 38.2 33.8 38.6 31.2 Z' fill='%230e0f13'/%3E%3C/svg%3E") 12 1, auto;
+  }
+  button:not(:disabled):not([aria-disabled="true"]),
+  a[href],
+  [role="button"]:not([aria-disabled="true"]),
+  summary {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='30' viewBox='0 0 64 80'%3E%3Cpath d='M9 74 C8 66 9.5 58 8.4 49 C7.2 40 7.8 31 11 23.5 C14.5 14.5 22.5 5.5 32.5 4.6 C42 3.8 50.5 10 54 19 C57.2 27 56.4 36 56 45 C55.6 54 57 62 55.4 73.5 C54 72 52.2 69.2 50.6 67 C49.6 69.8 47.6 73 45.6 76.2 C44.2 73.6 42.4 70.2 40.4 68.4 C39 71 37.6 74.2 35.2 75.8 C33.8 72.8 32.4 69.6 30.4 67.6 C28.8 70.2 27 73.6 24.8 76.4 C23.6 73.4 21.8 70.4 19.8 68.6 C18.2 71.2 16.2 73.4 14 75.6 C12.8 73.8 11 72.8 9 74 Z' fill='%231c1914' stroke='%231c1914' stroke-width='4.8' stroke-linejoin='round'/%3E%3Cpath d='M9 74 C8 66 9.5 58 8.4 49 C7.2 40 7.8 31 11 23.5 C14.5 14.5 22.5 5.5 32.5 4.6 C42 3.8 50.5 10 54 19 C57.2 27 56.4 36 56 45 C55.6 54 57 62 55.4 73.5 C54 72 52.2 69.2 50.6 67 C49.6 69.8 47.6 73 45.6 76.2 C44.2 73.6 42.4 70.2 40.4 68.4 C39 71 37.6 74.2 35.2 75.8 C33.8 72.8 32.4 69.6 30.4 67.6 C28.8 70.2 27 73.6 24.8 76.4 C23.6 73.4 21.8 70.4 19.8 68.6 C18.2 71.2 16.2 73.4 14 75.6 C12.8 73.8 11 72.8 9 74 Z' fill='%23e6dcc3'/%3E%3Cpath d='M20.5 31.5 C20.8 29.4 23.6 29 25.2 30.4 C26.6 31.8 26.2 34.6 24 35.6 C22 36.4 20.2 34 20.5 31.5 Z' fill='%231c1914' transform='translate(23.4 32.7) scale(1.4) translate(-23.4 -32.7)'/%3E%3Cpath d='M38.6 31.2 C39.2 29.2 41.8 28.8 43.4 30.2 C44.8 31.6 44.4 34.4 42.2 35.4 C40.2 36.2 38.2 33.8 38.6 31.2 Z' fill='%231c1914' transform='translate(41.5 32.5) scale(1.4) translate(-41.5 -32.5)'/%3E%3C/svg%3E") 12 1, auto;
+  }
+  button:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+  [data-brush="true"],
+  [data-brush="true"] * {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cg stroke='%23e6dcc3' stroke-width='4' fill='none'%3E%3Cpath d='M1 10H6M14 10H19M10 1V6M10 14V19'/%3E%3C/g%3E%3Cg stroke='%231c1914' stroke-width='2' fill='none'%3E%3Cpath d='M1 10H6M14 10H19M10 1V6M10 14V19'/%3E%3C/g%3E%3C/svg%3E") 10 10, crosshair;
+  }
+}
+
 /* All motion lives here. Reduced-motion users get the static end states above.
    Causal motions run 200 to 600 ms. Ambient motions have no cause and are the
    only slow ones (art-direction.md names them): mist-drift-a, mist-drift-b,
    ghost-float, tablet-glow and wisp-rise. The rite timings (SUMMON_HOLD_MS,
    SUMMON_FADE_MS, SUMMON_INK_SPEED) live in SummonStep.tsx and are unchanged. */
 @media (prefers-reduced-motion: no-preference) {
+  .slip,
+  .slip-primary {
+    transition: transform 200ms ease-out, box-shadow 200ms ease-out, filter 200ms ease-out;
+  }
+  @media (hover: hover) {
+    .slip:hover:not(:disabled),
+    .slip-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+    }
+  }
+  .slip:focus-visible:not(:disabled),
+  .slip-primary:focus-visible:not(:disabled) {
+    transform: translateY(-2px);
+  }
+  .slip:active:not(:disabled),
+  .slip-primary:active:not(:disabled) {
+    transform: translateY(1px);
+  }
   @keyframes ghost-float {
     from { transform: translateY(-6px); }
     to { transform: translateY(6px); }

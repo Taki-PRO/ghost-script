@@ -105,6 +105,78 @@ describe('theme contrast (WCAG AA)', () => {
     });
   });
 
+  describe('Grass token (decorative, aria-hidden)', () => {
+    const rgb = (hex: string): number[] => [0, 1, 2].map((i) => parseInt(hex.slice(1 + 2 * i, 3 + 2 * i), 16));
+    const toHex = (c: number[]): string =>
+      `#${c.map((v) => Math.round(v).toString(16).padStart(2, '0')).join('')}`;
+    const mix = (base: string, top: string, a: number): string => {
+      const b = rgb(base);
+      const t = rgb(top);
+      return toHex(b.map((v, i) => v * (1 - a) + t[i] * a));
+    };
+    const hsl = (hex: string): { h: number; s: number; l: number } => {
+      const [r, g, b] = rgb(hex).map((v) => v / 255);
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
+      const l = (max + min) / 2;
+      const d = max - min;
+      if (d === 0) return { h: 0, s: 0, l: l * 100 };
+      const s = d / (1 - Math.abs(2 * l - 1));
+      let h: number;
+      if (max === r) h = ((g - b) / d + 6) % 6;
+      else if (max === g) h = (b - r) / d + 2;
+      else h = (r - g) / d + 4;
+      return { h: h * 60, s: s * 100, l: l * 100 };
+    };
+
+    it('uses the approved hex value', () => {
+      expect(theme.grass).toBe('#30505c');
+    });
+
+    it('is a dark teal-blue, not a bright green (hue 180 to 230, saturation <= 35%, lightness <= 30%)', () => {
+      const { h, s, l } = hsl(theme.grass);
+      expect(h).toBeGreaterThanOrEqual(180);
+      expect(h).toBeLessThanOrEqual(230);
+      expect(s).toBeLessThanOrEqual(35);
+      expect(l).toBeLessThanOrEqual(30);
+    });
+
+    const surfaces: Array<[string, string]> = [
+      ['hillNear', theme.hillNear],
+      ['hillFar', theme.hillFar],
+      ['nightMid', theme.nightMid],
+      ['nightLow', theme.nightLow],
+      ['skyHold', theme.skyHold],
+      ['never-met stone', '#14161c'],
+      ['stone gradient top', '#2a2d36'],
+      ['stone gradient foot', '#1d2028'],
+    ];
+    for (const [name, hex] of surfaces) {
+      it(`grass against ${name} is >= 1.5:1`, () => {
+        expect(contrastRatio(theme.grass, hex)).toBeGreaterThanOrEqual(1.5);
+      });
+    }
+
+    // Under .tablet-rest::before the stone foot (where the tuft stands) and the tuft take the same candle overlay.
+    for (const alpha of [0, 0.1, 0.17, 0.2, 0.28]) {
+      it(`grass against the stone foot, both under candle at alpha ${alpha}, is >= 1.5:1`, () => {
+        const ratio = contrastRatio(mix(theme.grass, theme.candle, alpha), mix('#1d2028', theme.candle, alpha));
+        expect(ratio).toBeGreaterThanOrEqual(1.5);
+      });
+    }
+
+    it('reports the computed ratios', () => {
+      const out = surfaces.map(([n, h]) => `${n}=${contrastRatio(theme.grass, h).toFixed(2)}`);
+      for (const alpha of [0, 0.1, 0.17, 0.2, 0.28]) {
+        out.push(
+          `foot@${alpha}=${contrastRatio(mix(theme.grass, theme.candle, alpha), mix('#1d2028', theme.candle, alpha)).toFixed(2)}`,
+        );
+      }
+      console.log(out.join(' '));
+      expect(out.length).toBeGreaterThan(0);
+    });
+  });
+
   const graves = ['graveRestless', 'graveRest', 'graveWisp'] as const;
   for (const t of ['ink', 'ghost'] as const) {
     for (const g of graves) {

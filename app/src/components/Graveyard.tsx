@@ -8,6 +8,8 @@ import { LEVELS } from '../engine/levels';
 import type { ReviewHistory } from '../engine/scheduler';
 import { tabletTiltIndex } from '../engine/tabletTilt';
 import { theme } from '../styles/theme';
+import { GrassTuft } from './GrassTuft';
+import { FAR_RIDGE_PATH, HILL_REM_PER_UNIT, HILL_TUFTS, tabletTuft } from '../engine/grassPattern';
 
 /** Height of the Hillside svg: three rows of tablets at 4 rem (`h-48`). */
 const HILL_HEIGHT_REM = 12;
@@ -169,9 +171,24 @@ export function Graveyard({
                 className="absolute left-0 top-0 h-48 w-full"
                 data-testid="hillside"
               >
-                <path d="M0 22 C18 14 34 22 52 16 C72 10 88 18 100 14 L100 48 L0 48 Z" fill={theme.hillFar} />
+                <path d={FAR_RIDGE_PATH} fill={theme.hillFar} />
                 <path d="M0 36 C20 28 36 34 54 28 C74 22 88 32 100 26 L100 48 L0 48 Z" fill={theme.hillNear} />
               </svg>
+              {HILL_TUFTS.map((t, slot) => (
+                <span
+                  key={slot}
+                  aria-hidden="true"
+                  data-grass="hill"
+                  className="pointer-events-none absolute"
+                  style={{
+                    left: `${t.xPercent}%`,
+                    top: `${t.crestY * HILL_REM_PER_UNIT}rem`,
+                    transform: 'translate(-50%, calc(-100% + 2px))',
+                  }}
+                >
+                  <GrassTuft shape={t.shape} scale={t.scale} />
+                </span>
+              ))}
               <ul
                 aria-label="Graves"
                 className="relative grid gap-2 p-3"
@@ -183,6 +200,14 @@ export function Graveyard({
                     aria-label={graveLabel(grave, total)}
                     className={`${SHAPE[grave.state]} ${OUTLINE[grave.state]} tablet-tilt-${tabletTiltIndex(grave.position)} relative flex min-h-[56px] flex-col items-center justify-center text-ink`}
                   >
+                    <span
+                      aria-hidden="true"
+                      data-grass="tablet"
+                      className="pointer-events-none absolute bottom-0 -z-10"
+                      style={{ left: '50%', marginLeft: `${tabletTuft(grave.position).dx - 12}px` }}
+                    >
+                      <GrassTuft shape={tabletTuft(grave.position).shape} />
+                    </span>
                     {grave.state !== 'unmet' && (
                       <span lang="zh" className="text-xl leading-none">
                         {grave.char}

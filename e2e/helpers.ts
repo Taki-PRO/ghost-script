@@ -4,6 +4,7 @@ import { expect, type Locator, type Page } from '@playwright/test';
 import type { CharacterRecord } from '../app/src/data/types';
 import { learningOrder } from '../app/src/engine/learningOrder';
 import { pickWalkthroughGhost } from '../app/src/engine/walkthrough';
+import { luminance } from './colour';
 
 // Shared helpers of the E2E_Suite (Requirements 24.7 to 24.10 and 29).
 //
@@ -482,6 +483,51 @@ export async function pixelsAt(
 }
 
 /**
+ * Colour of every pixel inside each box of a PNG (image pixels, origin top left;
+ * each box is rounded outwards and clipped to the image). Returns one row-major
+ * list per box with the pixel coordinates. Decodes the buffer once.
+ */
+export async function regionPixels(
+  page: Page,
+  png: Buffer,
+  boxes: readonly { readonly left: number; readonly top: number; readonly right: number; readonly bottom: number }[],
+): Promise<Array<{ x: number; y: number; rgb: [number, number, number] }[]>> {
+  const decoder = await page.context().newPage();
+  try {
+    return await decoder.evaluate(
+      async ({ base64, boxes }) => {
+        const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+        const bitmap = await createImageBitmap(new Blob([bytes], { type: 'image/png' }));
+        const canvas = document.createElement('canvas');
+        canvas.width = bitmap.width;
+        canvas.height = bitmap.height;
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        if (!ctx) throw new Error('no 2d context');
+        ctx.drawImage(bitmap, 0, 0);
+        return boxes.map((b) => {
+          const x0 = Math.max(0, Math.floor(b.left));
+          const y0 = Math.max(0, Math.floor(b.top));
+          const x1 = Math.min(bitmap.width, Math.ceil(b.right));
+          const y1 = Math.min(bitmap.height, Math.ceil(b.bottom));
+          const out: { x: number; y: number; rgb: [number, number, number] }[] = [];
+          if (x1 <= x0 || y1 <= y0) return out;
+          const d = ctx.getImageData(x0, y0, x1 - x0, y1 - y0).data;
+          for (let y = y0; y < y1; y++) {
+            for (let x = x0; x < x1; x++) {
+              const i = ((y - y0) * (x1 - x0) + (x - x0)) * 4;
+              out.push({ x, y, rgb: [d[i]!, d[i + 1]!, d[i + 2]!] });
+            }
+          }
+          return out;
+        });
+      },
+      { base64: png.toString('base64'), boxes: boxes.map((b) => ({ ...b })) },
+    );
+  } finally {
+    await decoder.close();
+  }
+}
+/**
  * Seeds one at-rest, one restless and one gave-up character (the first three of
  * the learning order), opens the Graveyard and waits for the fonts. No App hook.
  */
@@ -507,4 +553,84 @@ export async function seedGraveyard(
   await expect(page.getByRole('heading', { level: 1, name: 'Graveyard' })).toBeVisible();
   await page.evaluate(() => document.fonts.ready);
   return { at: a as string, restless: b as string, gaveUp: c as string, total: keys.length };
+}
+
+// ---------------------------------------------------------------------------
+// Sky_Cap (spec night-polish, Requirement 1): the band above the sticky header.
+// ---------------------------------------------------------------------------
+
+/**
+ * Screenshot of the top band of the viewport (`x 0, y 0, width, height`) and the
+ * colour of each point in it (band pixels, origin top left of the band). Uses the
+ * live viewport, so it shows what the player sees at the current scroll offset.
+ */
+export async function bandPixels(
+  page: Page,
+  width: number,
+  height: number,
+  points: readonly { readonly x: number; readonly y: number }[],
+): Promise<{ png: Buffer; colours: Array<[number, number, number]> }> {
+  const png = await page.screenshot({ clip: { x: 0, y: 0, width, height } });
+  const colours = await pixelsAt(page, png, points);
+  return { png, colours };
+}
+
+/**
+ * Left and right edge of the Moon disc along one row of a band screenshot: the
+ * first and last x, within `halfSpan` of `cx`, whose luminance is above
+ * `threshold`. Returns null when no pixel of the row passes. The sky and the
+ * halo are well below the threshold, the disc is above it.
+ */
+export async function discExtent(
+  page: Page,
+  png: Buffer,
+  y: number,
+  cx: number,
+  halfSpan: number,
+  threshold: number,
+): Promise<{ left: number; right: number; diameter: number } | null> {
+  const imageWidth = png.readUInt32BE(16); // IHDR width of the PNG
+  const xs: number[] = [];
+  const from = Math.max(0, Math.round(cx - halfSpan));
+  const to = Math.min(imageWidth - 1, Math.round(cx + halfSpan));
+  for (let x = from; x <= to; x += 1) xs.push(x);
+  const colours = await pixelsAt(
+    page,
+    png,
+    xs.map((x) => ({ x, y })),
+  );
+  let left: number | null = null;
+  let right: number | null = null;
+  colours.forEach((rgb, i) => {
+    if (luminance(rgb) > threshold) {
+      if (left === null) left = xs[i]!;
+      right = xs[i]!;
+    }
+  });
+  if (left === null || right === null) return null;
+  return { left, right, diameter: right - left + 1 };
+}
+
+/**
+ * Plays a Nightly Séance from the start menu to the Summary screen by giving up
+ * every ghost (the route of the summary test in `first-meeting.spec.ts`). Seeds a
+ * fresh save first. Callers set a generous test timeout and `reducedMotion`.
+ */
+export async function reachSummary(page: Page): Promise<void> {
+  await seed(page, seedState());
+  await page.goto(START);
+  await page.getByRole('button', { name: 'Begin a Nightly Séance' }).click();
+  const summary = page.getByRole('heading', { name: 'The séance is over' });
+  const next = page.getByRole('button', { name: /^(Next ghost|Finish the séance)$/ });
+  const summonGiveUp = page.getByRole('region', { name: 'Summon step' }).getByRole('button', { name: 'Give up' });
+  const writeGiveUp = page.getByRole('region', { name: 'Write mode' }).getByRole('button', { name: 'Give up' });
+  const deadline = Date.now() + 200_000;
+  while (!(await summary.isVisible())) {
+    if (Date.now() > deadline) throw new Error('the Séance did not reach the summary');
+    if (await next.isVisible()) await next.click();
+    else if (await summonGiveUp.isVisible()) await summonGiveUp.click();
+    else if ((await writeGiveUp.isVisible()) && (await writeGiveUp.isEnabled())) await writeGiveUp.click();
+    else await page.waitForTimeout(100);
+  }
+  await page.evaluate(() => document.fonts.ready);
 }
