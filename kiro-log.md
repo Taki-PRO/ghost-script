@@ -694,6 +694,20 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 
 ---
 
+## Nov 18, 2026: My review of the 100-row samples, and the IDE-versus-CLI comparison
+
+- **What I did:** Reviewed the two random samples of 50 clues per level (fixed, recorded seed). Most were fine. Seven had a poor clue, and I chose a better meaning from each character's own CC-CEDICT alternatives: 愿 "wish; hope; desire" (was "honest and prudent"), 台 "platform" (was "(classical) you (in letters)"), 层 "layer; stratum", 项 "item" (was "back of neck"), 布 "cloth", 修 "to repair", 装 "to install". 苹 stays unreviewed: it is only used in 苹果, and every other meaning it has in the dictionary is wrong for a learner.
+- **A trap found before approving:** an approval row brought back the old rule's clue instead of the one on screen. Approving a sample row would quietly have undone the clue fix for that character. Kiro changed it so an approval only marks the shown clue as reviewed, updated the spec and three tests, and compared all 92 approved clues before and after the rebuild: none changed.
+- **Result:** 111 of the 900 new clues are now human-reviewed (52 at level 2, 59 at level 3), and the Sources & licences screen says so from the data. All 4156 unit tests pass; `tsc` clean; deployed.
+- **IDE versus CLI:** I gave the same review task to the Kiro IDE and to Kiro CLI (`kiro-cli chat`), each in its own copy of the repo from the same commit. I kept the IDE result and deleted the CLI copy without pushing it.
+  - Both finished the task, and both passed the tests.
+  - The IDE was faster and used fewer credits.
+  - With its default settings, the CLI asked my permission before each tool call, which made it slower to babysit. The IDE ran without stopping.
+  - My earlier impression of the CLI (Nov 16): different, but easy to use and easy to understand. For long spec work I'd use the IDE; for a quick question or a scripted check, the CLI.
+  - I didn't record exact times or credit counts for the two runs, so this comparison is my impression, not a measurement.
+
+---
+
 ## Template for new entries
 
 ## [Date]: [Short title]
