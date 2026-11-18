@@ -636,7 +636,7 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   - The new review files must not hold personal names: `reviewedBy` is `human` or empty. Level 1's existing `human-approved` values stay as they are.
 - **Result:**
   - **Source gate passed exactly as predicted:** every new character is in every source, with one Cangjie code each. 13 characters skip the Summon step under the existing rule.
-  - **Loading:** new levels and their font subsets download only when a player picks them. The counted first load is 214,206 bytes gzipped against 300,000.
+  - **Loading:** new levels and their font subsets download only when a player picks them. The bundle the budget counts is 214,206 bytes gzipped against 300,000. That count excludes the level 1 dataset (about 361 kB gzipped), which also loads at start, so the real first load is about 580 kB.
   - **Save:** schema 3 with a tested migration; an old save keeps its history and starts at level 1.
   - **Kiro's e2e test found a real bug:** the new level screen didn't fit one screen at any size, because it stacked a second full-screen height inside the page shell. Kiro fixed it.
   - **4024 unit tests and 95 e2e tests pass**; `tsc` clean.
@@ -725,6 +725,22 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   - **4277 unit and 163 e2e tests pass**; `tsc` clean; bundle 216,796 bytes gzipped against 300,000.
 - **My own check (headless Chrome):** at 375 × 812 I scrolled the Graveyard: nothing shows above the header any more, the grass reads clearly, and the moon now looks like a moon.
 - **Still to judge by eye:** the torn edge on the red button reads more like a dashed outline than torn paper.
+
+---
+
+## Nov 18, 2026: Third outside review: 30 of 50 without a video
+
+- **What I did:** Asked the separate AI reviewer for a third strict review against its own plan.
+- **Score:** 30 of 50 without the video (Impact 6, Technology 9, Design 7, Idea 8, Presentation 0), up from 26. It expects 38 to 41 with a good video and an honest paper test.
+- **What it found that I had wrong:**
+  - After the code is typed, the whole character is drawn and held before writing. On a returning ghost that makes "write it from memory" a test of what I saw three seconds earlier.
+  - My planned paper test measured copying: four of my five characters show their parts on first meeting. It needs a control: half the characters played, half not.
+  - I quoted "217 kB first load". The budget excludes the level 1 dataset, which also loads at start; the real first load is about 580 kB. I corrected the Nov 17–18 entry above.
+  - Choosing level 3 with level 1 ghosts due gave a whole séance of level 1 with no explanation.
+  - The Graveyard says ghosts are "in the order you will meet them", but 明 is met first and shown 13th.
+  - Some level 1 clues a human had screened are still poor (么, 本, 天), and the IDE-versus-CLI comparison has no numbers, so it is not a finding.
+- **What it confirmed:** no answer leaks at any level; 4,277 unit tests pass on a fresh clone; the Power runs on its own from outside the repo; the review counts match the data.
+- **Next:** its four priorities (the memory fix, the controlled paper test, a bigger Summon paper, a summary that feels like a reward), its small fixes, then feature freeze on Nov 21.
 
 ---
 
