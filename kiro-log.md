@@ -703,7 +703,7 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
   - Both finished the task, and both passed the tests.
   - The IDE was faster and used fewer credits.
   - With its default settings, the CLI asked my permission before each tool call, which made it slower to babysit. The IDE ran without stopping.
-  - My earlier impression of the CLI (Nov 16): different, but easy to use and easy to understand. For long spec work I'd use the IDE; for a quick question or a scripted check, the CLI.
+  - My earlier impression of the CLI, from my first use of it: different, but easy to use and easy to understand.
   - I didn't record exact times or credit counts for the two runs, so this comparison is my impression, not a measurement.
 
 ---
