@@ -708,6 +708,26 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 
 ---
 
+## Nov 18, 2026: night-polish: my phone screenshot, a ghost cursor, grass, a real moon, livelier buttons
+
+- **What I did:** Took a screenshot on my phone of a real bug: on the Graveyard, the tablets scrolled visibly through the gap above the sticky header that is kept for the moon. I added four requests of my own: a ghost cursor, grass in the Graveyard, a moon that looks like a moon instead of a grey circle, and buttons that feel more alive. I wrote them as the `night-polish` spec.
+- **Kiro features:** spec with 30 open questions answered before any code; steering amendments approved one by one in `art-direction.md`; parallel sub-agents; "Input required" questions; a test written first that had to fail on the old build.
+- **Decisions I made:**
+  - Grass must be visible, not hidden in the hill: dark and night-toned, but at least 1.3:1 against the stone and hill, measured on screenshot pixels.
+  - Replace the moon's text-contrast test with a proof that no text or control ever lies on the moon, since a pale moon can't carry light text at 4.5:1 anyway.
+  - Allowed one test threshold change: the new moon's glow was being counted as part of the disc, so the edge detector's threshold went from 0.008 to 0.015. The size and position tolerances stayed the same.
+- **Result:**
+  - **Header bug:** a fixed band of night sky now covers the top room on every screen below 992 px. The new `sky-cap` test failed all 14 checks on the old build and passes now.
+  - **Cursors:** a 24 × 30 ghost built from the same path as the ghost figure; wider eyes over buttons; a crosshair with an open centre on the writing paper. Mouse and trackpad only; touch keeps the normal cursor.
+  - **Grass:** a tuft at the foot of every tablet and 12 along the hill. Every tablet tuft measures at least 1.73:1.
+  - **Moon:** pale aged paper with four darker patches, the same shade and a faint glow.
+  - **Buttons:** lift and candle glow on hover and focus, sink when pressed, a torn paper edge, a faint wax texture on the red button. All motion stays inside the reduced-motion rule.
+  - **4277 unit and 163 e2e tests pass**; `tsc` clean; bundle 216,796 bytes gzipped against 300,000.
+- **My own check (headless Chrome):** at 375 × 812 I scrolled the Graveyard: nothing shows above the header any more, the grass reads clearly, and the moon now looks like a moon.
+- **Still to judge by eye:** the torn edge on the red button reads more like a dashed outline than torn paper.
+
+---
+
 ## Template for new entries
 
 ## [Date]: [Short title]
