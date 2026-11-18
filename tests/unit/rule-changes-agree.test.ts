@@ -104,7 +104,7 @@ const hasHumanChoice = (level: Level, ch: string): boolean =>
 function expectedChanges(level: Level): { character: string; oldPinyin: string; oldMeaning: string }[] {
   const out: { character: string; oldPinyin: string; oldMeaning: string }[] = [];
   for (const ch of lists[level]) {
-    if (hasHumanChoice(level, ch)) continue;
+    if (overrides[level].has(ch)) continue;
     const entry = cc.get(ch);
     const current = entry === undefined ? undefined : selectPrompt(ch, entry, undefined);
     if (current === undefined || !current.ok) continue;
@@ -175,8 +175,8 @@ describe('Rule_Changes_File agrees with the datasets', () => {
     expect(same.map((r) => r.character)).toEqual([]);
   });
 
-  it('no row is for an override or approval character', () => {
-    const bad = rows.filter((r) => hasHumanChoice(r.level as Level, r.character));
+  it('no row is for an override character (approved characters stay listed)', () => {
+    const bad = rows.filter((r) => overrides[r.level as Level].has(r.character));
     expect(bad.map((r) => r.character)).toEqual([]);
   });
 

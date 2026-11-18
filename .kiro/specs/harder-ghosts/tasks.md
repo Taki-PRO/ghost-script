@@ -269,6 +269,34 @@ Rules for every task:
   - Ensure all tests pass, ask the user if questions arise.
   - _Requirements: 4.14, 18.18, 18.19_
 
+- [x] 19. Apply the human's sample review
+  - Exception (approved by the human): the human reviewed the two 50-row Review_Samples and asked Kiro to write the override rows (19.2) and approval rows (19.3) on the human's behalf. This supersedes, for these rows only, the rule that Kiro writes no override or approval rows (Requirement 4.8, the Overview rules and the rules of tasks 15 and 17). No other row is written and no prompt outside these rows is reviewed
+  - [x] 19.1 Fix the approval rule in code and tests
+    - In `scripts/lib/build-data.ts` change `choosePrompt` so an approval row no longer selects the Current_Rule: precedence is override, then Clue_Rule (with its Current_Rule fallback); an approval only sets `promptReview` to `reviewed`. Keep the Review_File and Review_Sample prompts in agreement with the dataset
+    - In `scripts/lib/build-data.ts` change the changes list so that only override characters are left out; an approved character whose dataset prompt differs from the Current_Rule's stays listed
+    - Update `tests/unit/build-clue-rule.test.ts` (approval precedence: an approved character keeps the Clue_Rule prompt, an override wins) and `tests/unit/rule-changes-agree.test.ts` (rows equal the records without an override row whose prompt differs from the Current_Rule's choice, approved records included); update `tests/unit/rule-changes.test.ts` only if it pins the old approval exclusion; add no property test
+    - _Requirements: 18.2, 18.9, 18.13, 19.1, 19.2, 19.9_
+  - [x] 19.2 Write the override rows
+    - Texts (character: exact meaning text, matched against the meaning after a leading `(bound form) ` is removed): 愿 "wish; hope; desire" | 台 "platform" | 层 "layer; stratum" | 项 "item" | 布 "cloth" | 修 "to repair" | 装 "to install"
+    - Find each character's level in `data/character-list-level2.txt` and `data/character-list-level3.txt`; find the `entryIndex` and `meaningIndex` with the same CC-CEDICT parsing and indexing as the override parser and the build; if a character is in no level 2 or 3 list, or the text matches no meaning or more than one (entry, meaning) pair, stop and report the candidates and write no row
+    - Append the rows (`character,entryIndex,meaningIndex,reviewedBy`; `reviewedBy` exactly `human`) to `data/prompt-overrides-level2.csv` or `data/prompt-overrides-level3.csv` by level, in list order, keeping the existing rows
+    - _Requirements: 4.16, 19.3, 19.4, 19.9_
+  - [x] 19.3 Write the approvals file
+    - Create `data/prompt-approvals.csv` with the header `character,reviewedBy` and one row (`reviewedBy` exactly `human`) for every character of `data/prompt-review-sample-level2.csv` and then of `data/prompt-review-sample-level3.csv`, in that sample order, except 苹 and except every character that has an override row (existing or from 19.2). If a sample character is not in a level 2 or 3 list, stop and report it
+    - 苹 stays unreviewed: no clue without Chinese characters fits it; record this reason in the report
+    - _Requirements: 4.3, 4.16, 19.5, 19.6, 19.7, 19.9_
+  - [x] 19.4 Rebuild and verify
+    - Before the rebuild, capture the prompt (meaning and pinyin) of every approved character from `characters-level2.json` and `characters-level3.json` (a throwaway script outside the repository or a temporary file that is deleted afterwards)
+    - Run `npm run build:data`; if the Chinese-character gate or any check fails, stop and report
+    - Compare each approved character's prompt before and after, and verify that each of the seven override characters shows exactly its approved meaning; report any difference as a failure
+    - Run `npm test`, `npx tsc --noEmit` at the repository root, `npx tsc --noEmit -p app`, `npx tsc --noEmit -p oracle`, `npm run check:data` and `npm run check:levels`; report the reviewed and unreviewed counts per level. No e2e or bundle run is required unless app text changed
+    - _Requirements: 4.14, 18.10, 19.8_
+- [x] 20. Final checkpoint after the sample review
+  - Run `npm test`, then `npx tsc --noEmit` at the repository root, `npx tsc --noEmit -p app` and `npx tsc --noEmit -p oracle` (no errors), `npm run check:data` and `npm run check:levels`; all must pass
+  - Report the reviewed and unreviewed prompt counts per level, and confirm that no approved character's clue (meaning and pinyin) changed, from the comparison of task 19.4
+  - Search the added and changed files for personal names
+  - Ensure all tests pass, ask the user if questions arise.
+  - _Requirements: 4.14, 19.8, 19.9_
 ## Notes
 
 - There are no optional tasks. Every test task is required. No property-based test is added (tech.md, decision of Nov 15); the existing property tests stay as they are.
@@ -278,6 +306,7 @@ Rules for every task:
 - The decisions in `requirements.md` ("Decisions approved by the human") are final; there are no open questions.
 - Tasks 15 and 16 are the clue-quality follow-up (Requirement 18, approved by the human). Task 15.5 rebuilds the data and must run after 15.1 to 15.4; task 15.6 runs after 15.5 because it reads the regenerated files. Task 14 is unchanged and keeps its own checkpoint.
 - Task 17 is the one exception to "Kiro writes no override rows": the human approved 12 clue texts and asked Kiro to write their rows. Task 17.1 stops and reports instead of writing when a character is in level 1 or in no level list, or when its approved text matches no meaning or more than one (entry, meaning) pair. Task 18 is the checkpoint after it.
+- Tasks 19 and 20 apply the human's sample review (Requirement 19). Task 19.1 supersedes the earlier rule that an approval keeps the Current_Rule's prompt: an approval keeps the Clue_Rule prompt and an approved character stays in the changes file. Tasks 19.2 and 19.3 are the second exception to "Kiro writes no override or approval rows" (as task 17 was): Kiro writes these rows on the human's behalf, for these rows only, and stops and reports instead of writing when a character is in no level 2 or 3 list or an approved text does not match exactly one meaning. Task 20 is the checkpoint after them.
 - Steering edits (tasks 3.1 to 3.3) are approved by the human as worded in the design. Do not edit steering files anywhere else.
 
 ## Task Dependency Graph
@@ -303,7 +332,10 @@ Rules for every task:
     { "id": 15, "tasks": ["15.3"] },
     { "id": 16, "tasks": ["15.5"] },
     { "id": 17, "tasks": ["15.6", "15.7"] },
-    { "id": 18, "tasks": ["17.1"] }
+    { "id": 18, "tasks": ["17.1"] },
+    { "id": 19, "tasks": ["19.1", "19.2"] },
+    { "id": 20, "tasks": ["19.3"] },
+    { "id": 21, "tasks": ["19.4"] }
   ]
 }
 ```

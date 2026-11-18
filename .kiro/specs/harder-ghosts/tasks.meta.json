@@ -853,6 +853,73 @@
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1794937583933
       }
+    ],
+    "19.1 Fix the approval rule in code and tests": [
+      {
+        "executionId": "982180f8-fa30-4a9e-9b34-739edb5f6e51",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794990395374
+      },
+      {
+        "executionId": "982180f8-fa30-4a9e-9b34-739edb5f6e51",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794990504436
+      }
+    ],
+    "19.2 Write the override rows": [
+      {
+        "executionId": "982180f8-fa30-4a9e-9b34-739edb5f6e51",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794990396422
+      },
+      {
+        "executionId": "982180f8-fa30-4a9e-9b34-739edb5f6e51",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794990505392
+      }
+    ],
+    "19.3 Write the approvals file": [
+      {
+        "executionId": "982180f8-fa30-4a9e-9b34-739edb5f6e51",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794990511559
+      },
+      {
+        "executionId": "982180f8-fa30-4a9e-9b34-739edb5f6e51",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794990567053
+      }
+    ],
+    "19.4 Rebuild and verify": [
+      {
+        "executionId": "982180f8-fa30-4a9e-9b34-739edb5f6e51",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794990568038
+      },
+      {
+        "executionId": "982180f8-fa30-4a9e-9b34-739edb5f6e51",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794990685167
+      }
+    ],
+    "19. Apply the human's sample review": [
+      {
+        "executionId": "982180f8-fa30-4a9e-9b34-739edb5f6e51",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794990685230
+      }
+    ],
+    "20. Final checkpoint after the sample review": [
+      {
+        "executionId": "982180f8-fa30-4a9e-9b34-739edb5f6e51",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794990686018
+      },
+      {
+        "executionId": "982180f8-fa30-4a9e-9b34-739edb5f6e51",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1794990694177
+      }
     ]
   }
 }

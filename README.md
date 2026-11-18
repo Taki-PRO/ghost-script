@@ -64,7 +64,7 @@ Note: the Arphic-licensed `graphics.txt` in the Make Me a Hanzi repository is **
 - **Prompt review (levels 2 and 3):** the level 2 and level 3 prompts come from a deterministic rule over CC-CEDICT and the HSK example words (see [Clue rule for levels 2 and 3](#clue-rule-for-levels-2-and-3)), with no AI model. A human has reviewed only the prompts counted as reviewed below. The build replaces the text between the two markers below with the current counts; they are not typed anywhere else. See [Prompt review](#prompt-review) for how the review sample is chosen.
 
 <!-- prompt-counts:start -->
-Of the 900 prompts of levels 2 and 3, 12 are reviewed by a human and 888 are not (level 2: 3 reviewed, 397 not; level 3: 9 reviewed, 491 not). A human reviews a random sample of 50 rows per level.
+Of the 900 prompts of levels 2 and 3, 111 are reviewed by a human and 789 are not (level 2: 52 reviewed, 348 not; level 3: 59 reviewed, 441 not). A human reviews a random sample of 50 rows per level.
 <!-- prompt-counts:end -->
 
 - **Fonts:**

@@ -110,7 +110,7 @@ describe('Clue_Rule wiring', () => {
     expect((JSON.parse(withPath.output) as Record<string, CharacterRecord>)['鸟'].prompt.meaning).toBe('penis');
   });
 
-  it('an override wins over the Clue_Rule, and an approval keeps the Current_Rule prompt', async () => {
+  it('an override wins over the Clue_Rule, and an approval keeps the Clue_Rule prompt and marks it reviewed', async () => {
     const overridden = await buildDataset(
       makeOptions({ chars: ['鸟'], level: 2, withHsk: true, overrides: ['鸟,0,0,human'] }),
     );
@@ -125,9 +125,9 @@ describe('Clue_Rule wiring', () => {
     );
     if (!approved.ok) throw new Error('expected ok');
     const a = (JSON.parse(approved.output) as Record<string, CharacterRecord>)['鸟'];
-    expect(a.prompt.meaning).toBe('penis');
+    expect(a.prompt).toEqual({ meaning: 'bird', pinyin: 'niǎo' });
     expect(a.promptReview).toBe('reviewed');
-    expect(approved.promptReviewCsv.split('\n')[1]).toContain('鸟,penis,diǎo,default,human,');
+    expect(approved.promptReviewCsv.split('\n')[1]).toContain('鸟,bird,niǎo,default,human,');
   });
 
   it('the dataset prompt equals the Review_File chosen values for every character', async () => {

@@ -165,19 +165,21 @@ describe('buildAllLevels ruleChangesCsv', () => {
         `${L2[1]},2,hǎo,(Tw) taiwan thing,hǎo,good`,
         `${L2[2]},2,hǎo,(Tw) taiwan thing,hǎo,"good, fine ""q"""`,
         `${L2[3]},2,hǎo,(Tw) taiwan thing,hǎo,good`,
+        `${L3[0]},3,hǎo,(Tw) taiwan thing,hǎo,good`,
         `${L3[2]},3,hǎo,(Tw) taiwan thing,hǎo,good`,
         '',
       ].join('\n'),
     );
   });
 
-  it('has no row for level 1, an override character or an approval character', async () => {
+  it('has no row for level 1 or an override character, and keeps an approval character', async () => {
     const f = makeFixture(true);
     const result = await buildAllLevels(f.options);
     if (!result.ok) throw new Error('build failed');
-    for (const c of [L1[0], L2[0], L3[0]]) {
+    for (const c of [L1[0], L2[0]]) {
       expect(result.ruleChangesCsv).not.toContain(`${c},`);
     }
+    expect(result.ruleChangesCsv).toContain(`${L3[0]},3,`);
   });
 
   it('has no row when the Clue_Rule leaves every prompt as it was', async () => {
@@ -203,7 +205,7 @@ describe('buildAllLevels ruleChangesCsv', () => {
     expect(readFileSync(f.paths.ruleChanges, 'utf8')).toBe(result.ruleChangesCsv);
     expect(f.paths.ruleChanges.endsWith('data/prompt-rule-changes.csv')).toBe(true);
     expect(formatAllLevelsReport(result, f.paths, '/')).toContain(
-      'Prompt rule changes: level 2: 3, level 3: 1, total: 4\n',
+      'Prompt rule changes: level 2: 3, level 3: 2, total: 5\n',
     );
   });
 

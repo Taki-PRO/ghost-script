@@ -264,11 +264,7 @@ export async function buildDataset(opts: BuildOptions): Promise<BuildResult> {
         if (isLaterLevel && containsHan(cleanupMeaning(prompt.meaning))) {
           prompt = undefined;
           promptFailure = 'chinese-in-meaning';
-        } else if (
-          isLaterLevel &&
-          override === undefined &&
-          !approvals.has(char)
-        ) {
+        } else if (isLaterLevel && override === undefined) {
           // Rule change: the Clue_Rule's prompt against the Current_Rule's.
           const current = selectPrompt(char, cc, undefined);
           if (
@@ -507,10 +503,10 @@ interface PromptContext {
 
 /**
  * The one place that picks a prompt, used by the character loop and by the
- * Review_File writer so they cannot disagree. An override wins; an approval
- * without an override keeps the Current_Rule's prompt (the human approved
- * that one); otherwise the Clue_Rule runs when example words are available;
- * otherwise the Current_Rule.
+ * Review_File writer so they cannot disagree. An override wins; otherwise the
+ * Clue_Rule runs when example words are available; otherwise the Current_Rule.
+ * An approval never changes the prompt (Requirement 19); it only marks it
+ * reviewed, outside this function.
  */
 function choosePrompt(
   char: string,
@@ -521,7 +517,7 @@ function choosePrompt(
   if (override !== undefined) {
     return selectPrompt(char, cc, override);
   }
-  if (ctx.approvals.has(char) || ctx.examples === undefined) {
+  if (ctx.examples === undefined) {
     return selectPrompt(char, cc, undefined);
   }
   return selectPromptByExamples(char, cc, ctx.examples.get(char) ?? [], ctx.ccCedict);

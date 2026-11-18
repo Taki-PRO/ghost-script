@@ -1,9 +1,13 @@
 character,entryIndex,meaningIndex,reviewedBy
+布,1,0,human
 派,1,1,human
 切,0,0,human
+台,5,0,human
+修,1,2,human
 构,1,0,human
 码,0,2,human
 士,1,1,human
+项,1,1,human
 余,2,0,human
 赞,3,1,human
 聪,0,1,human
