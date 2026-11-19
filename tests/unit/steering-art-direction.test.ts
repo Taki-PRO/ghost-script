@@ -46,7 +46,15 @@ describe('art-direction steering file', () => {
 
   it('keeps the Primary_Action table', () => {
     expect(text).toContain('| Intro | Begin the Séance |');
-    expect(text).toContain('| Summary | Begin another Séance |');
+    expect(text).toContain('| Summary (nightly séance) | Begin another Séance |');
+    expect(text).toContain('| Summary (review) | Back to menu |');
+    expect(text).not.toContain('| Summary | Begin another Séance |');
+  });
+
+  it('says the Sound_Toggle and the Ambience_Toggle are slips, never a Primary_Action (night-sounds A2, approved by the human)', () => {
+    expect(text).toContain(
+      '| Summon, writing, Graveyard, Sources & licences | none |\n\nThe Sound_Toggle and the Ambience_Toggle are paper slips and never a Primary_Action.\n',
+    );
   });
 
   it('lists the Level screen with no Primary_Action (harder-ghosts, approved by the human)', () => {
@@ -110,6 +118,15 @@ describe('art-direction steering file', () => {
     expect(moonSection).toContain('The Moon uses only existing tokens');
     expect(text.split('The Moon uses only existing tokens').length - 1).toBe(1);
   });
+  it('places the Sound_Toggle beside the Moon, once, inside the Moon section (night-sounds A4, approved by the human)', () => {
+    const bullet =
+      '- The Sound_Toggle is a 44 px square paper slip fixed beside the Moon: below 992 px inside the Top_Room, 16 px left of the Moon_Disc; from 992 px 16 px below it. It never meets the Moon_Disc, and it lies above the Sky_Cap and the sticky headers.';
+    expect(text).toContain('- The seal sits in the paper margin and covers no stroke.\n' + bullet + '\n');
+    expect(text.split(bullet).length - 1).toBe(1);
+    const start = text.indexOf('## Moon, mist and seal placement');
+    const end = text.indexOf('\n## Intro fix');
+    expect(text.slice(start, end)).toContain(bullet);
+  });
   it('has the grass palette row after hintInk, equal to theme.grass (night-polish A10, approved by the human)', () => {
     const row =
       '| `grass` | `#30505c` | Graveyard Grass tufts (decorative, `aria-hidden`; at least 1.3:1 against the stone and the hill) |';
@@ -139,6 +156,27 @@ describe('art-direction steering file', () => {
     );
     expect(text.split('Legend-ink exemption').length - 1).toBe(1);
     expect(text).toMatch(/Motion that follows a player action or game event runs 200 to 600 ms/);
+  });
+  it('has the optional, synthesised Sound rules instead of "None." (night-sounds A1, approved by the human)', () => {
+    const lines = [
+      'Sound is optional, quiet and made in code.',
+      '- All sounds are synthesised in the browser with the Web Audio API. The app has no audio file, sample, `Audio` element or audio library, so there is nothing to license.',
+      '- The sounds: a soft wooden tap for each Summon key and a duller tap for a wrong key; a faint brush sweep when ink appears and when a stroke is accepted; a low paper thud when the Seal_Stamp appears; a soft low chime when a ghost is laid to rest (shorter and quieter when it struggled) and a quiet falling tone when the player gave up; an optional night wind on the menu and the Graveyard.',
+      '- Every effect sound is at most 1.2 s long, every voice peaks at most 0.2 before the master gain (at most 0.6), and a limiter ends the chain. At most 4 effect sounds play at once.',
+      "- Nothing sounds before the player's first click, tap or key press. Sound is on by default. The night wind is off by default and stays off while reduced motion is requested.",
+      '- One Sound_Toggle, a paper slip with a speaker icon, sits in the same fixed place on every screen except the loading and error screens.',
+      '- Sound never delays or blocks play, and the same sound plays for every character, so a sound never carries an answer. The game plays the same with sound off or when Web Audio is missing.',
+    ];
+    expect(text).toContain('\n## Sound\n' + lines.join('\n'));
+    expect(text).not.toMatch(/## Sound\nNone\./);
+    expect(text.split('\n## Sound\n').length - 1).toBe(1);
+  });
+  it('says sound is not motion and the night wind is not an ambient exemption (night-sounds A3, approved by the human)', () => {
+    expect(text).toContain(
+      'Reduced motion shows the static end state.\n- Sound is not motion. The night wind is not one of the named ambient exemptions: it is off while reduced motion is requested, and it adds no animation or transition.\n',
+    );
+    expect(text.split('Sound is not motion.').length - 1).toBe(1);
+    expect(text.split('Ambient exemption').length - 1).toBe(1);
   });
   it('limits the rite-timing constants to a first meeting', () => {
     const line =

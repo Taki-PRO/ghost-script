@@ -446,12 +446,12 @@ describe('Graveyard shown rows (proof-pass Req 12)', () => {
   it('with no Met_Ghost shows one blank row and the paragraph for the rest', () => {
     show({});
     expect(items()).toHaveLength(6);
-    expect(screen.getByText('294 ghosts not yet met')).toBeTruthy();
+    expect(screen.getByText('294 more graves')).toBeTruthy();
   });
 
   it('keeps the paragraph after and outside the list and the hillside wrapper', () => {
     show({});
-    const p = screen.getByText('294 ghosts not yet met');
+    const p = screen.getByText('294 more graves');
     const list = screen.getByRole('list', { name: 'Graves' });
     expect(p.tagName).toBe('P');
     expect(list.contains(p)).toBe(false);
@@ -462,13 +462,13 @@ describe('Graveyard shown rows (proof-pass Req 12)', () => {
   it('a Met_Ghost in the first row shows that row and one more', () => {
     show(metAt(0));
     expect(items()).toHaveLength(12);
-    expect(screen.getByText('288 ghosts not yet met')).toBeTruthy();
+    expect(screen.getByText('288 more graves')).toBeTruthy();
   });
 
   it('a Met_Ghost in the second row shows three rows', () => {
     show(metAt(0, 7));
     expect(items()).toHaveLength(18);
-    expect(screen.getByText('282 ghosts not yet met')).toBeTruthy();
+    expect(screen.getByText('282 more graves')).toBeTruthy();
   });
 
   it('shows blank rows between Met_Ghosts and the last one', () => {
@@ -482,22 +482,22 @@ describe('Graveyard shown rows (proof-pass Req 12)', () => {
     wrapperWidth = widthFor(7);
     show(metAt(280)); // row 40 (0-based) of 7 columns, so 42 rows = 294 graves
     expect(items()).toHaveLength(294);
-    expect(screen.getByText('6 ghosts not yet met')).toBeTruthy();
+    expect(screen.getByText('6 more graves')).toBeTruthy();
   });
 
-  it('says "1 ghost not yet met" when exactly one grave collapses', () => {
+  it('says "1 more grave" when exactly one grave collapses', () => {
     wrapperWidth = widthFor(13);
     show(metAt(273)); // row 21 of 13 columns, so 23 rows = 299 graves
     expect(items()).toHaveLength(299);
-    expect(screen.getByText('1 ghost not yet met')).toBeTruthy();
-    expect(paragraph(/1 ghosts/)).toBeNull();
+    expect(screen.getByText('1 more grave')).toBeTruthy();
+    expect(paragraph(/1 more graves/)).toBeNull();
   });
 
   it('shows no paragraph when nothing is collapsed', () => {
     wrapperWidth = ALL;
     show({});
     expect(items()).toHaveLength(300);
-    expect(paragraph(/not yet met/)).toBeNull();
+    expect(paragraph(/more graves?$/)).toBeNull();
   });
 
   it('renders no li and no glyph for a collapsed grave, and keeps the full position and total in names', () => {
@@ -525,7 +525,7 @@ describe('Graveyard shown rows (proof-pass Req 12)', () => {
       window.dispatchEvent(new Event('resize'));
     });
     expect(items()).toHaveLength(10);
-    expect(screen.getByText('290 ghosts not yet met')).toBeTruthy();
+    expect(screen.getByText('290 more graves')).toBeTruthy();
   });
 
   it('follows a ResizeObserver where there is one, and disconnects it on unmount', () => {

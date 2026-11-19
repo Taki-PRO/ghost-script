@@ -1,0 +1,57 @@
+# Bundle baseline, recorded 2026-11-20, before any night-sounds code change
+
+$ npm run build -w app
+
+> ghost-script-app@0.1.0 build
+> vite build
+
+vite v5.4.21 building for production...
+transforming...
+✓ 88 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                                   0.50 kB │ gzip:  0.30 kB
+dist/assets/cormorant-garamond-latin-600-normal-Co1r35X9.woff2   23.40 kB
+dist/assets/cormorant-garamond-latin-600-normal-2CBVLo0M.woff    31.30 kB
+dist/assets/lxgw-wenkai-subset-CBIhX_CO.woff2                    66.53 kB
+dist/assets/lxgw-wenkai-subset-level2-qkaaW9Nx.woff2             90.25 kB
+dist/assets/lxgw-wenkai-subset-level3-CBS44pZs.woff2            116.43 kB
+dist/assets/index-BHslMd--.css                                   46.41 kB │ gzip: 12.00 kB
+dist/assets/index-BTcpz7jq.js                                   268.38 kB │ gzip: 84.13 kB
+✓ built in 579ms
+
+$ npm run check:bundle
+
+> ghost-script@0.1.0 check:bundle
+> tsx scripts/check-bundle-size.ts
+
+BUNDLE CHECK PASSED: 230458 bytes gzip, budget 300000 (lazy files not counted)
+Largest files:
+     83958  assets/index-BTcpz7jq.js
+     66575  assets/lxgw-wenkai-subset-CBIhX_CO.woff2
+     31288  assets/cormorant-garamond-latin-600-normal-2CBVLo0M.woff
+     23424  assets/cormorant-garamond-latin-600-normal-Co1r35X9.woff2
+     11959  assets/index-BHslMd--.css
+Lazy files (not counted):
+  raw    90252  gzip    90300  assets/lxgw-wenkai-subset-level2-qkaaW9Nx.woff2
+  raw   116432  gzip   116490  assets/lxgw-wenkai-subset-level3-CBS44pZs.woff2
+  raw  1227644  gzip   455532  data/characters-level2.json
+  raw  1602089  gzip   590710  data/characters-level3.json
+  raw  1718294  gzip   353215  data/characters.json
+First load: 230458 bytes counted + 353215 bytes level 1 dataset = 583673 bytes gzip
+README CHECK PASSED: the README first-load figures are within 1% of the printed ones.
+(node:9871) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+exit: 0
+
+$ git status --short app/src app/public
+ M app/src/App.test.tsx
+ M app/src/App.tsx
+ M app/src/components/Credits.test.tsx
+ M app/src/components/Graveyard.test.tsx
+ M app/src/components/Graveyard.tsx
+ M app/src/components/SessionSummary.test.tsx
+ M app/src/components/SessionSummary.tsx
+ M app/src/data/credits.ts
+ M app/src/engine/graveyardRows.test.ts
+ M app/src/engine/graveyardRows.ts

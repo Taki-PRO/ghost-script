@@ -326,6 +326,47 @@ for (const viewport of VIEWPORTS) {
   });
 }
 
+// --- the Sound_Toggle (night-sounds 10.4) ------------------------------------------------------
+
+for (const viewport of VIEWPORTS) {
+  test.describe(`the Sound_Toggle at ${viewport.width} px`, () => {
+    test.use({ viewport });
+
+    test('is a Slip: at least 44 px, no slip-primary, lifts, glows and sinks', async ({ page }) => {
+      await openMenu(page);
+      const toggle = page.getByTestId('sound-toggle');
+      await expect(toggle).toHaveCount(1);
+      await expect(toggle).toHaveClass(/(^|\s)slip(\s|$)/);
+      await expect(toggle).not.toHaveClass(/slip-primary/);
+      await toggle.hover();
+      await rest(page);
+      const at = await snap(toggle);
+      await toggle.hover();
+      await settle(page);
+      const hover = await snap(toggle);
+      await page.mouse.down();
+      await settle(page);
+      const pressed = await snap(toggle);
+      await page.mouse.move(1, 1); // release outside the Slip: no click
+      await page.mouse.up();
+      expect(at.height, 'toggle height').toBeGreaterThanOrEqual(44);
+      expect(at.width, 'toggle width').toBeGreaterThanOrEqual(44);
+      const lift = hover.top - at.top;
+      expect(lift, `hover moves ${lift} px`).toBeGreaterThanOrEqual(-2 - EPS);
+      expect(lift, `hover must lift by at least 1 px, moved ${lift}`).toBeLessThanOrEqual(-1 + EPS);
+      const sink = pressed.top - at.top;
+      expect(sink, `press sinks ${sink} px`).toBeGreaterThanOrEqual(-EPS);
+      expect(sink, `press sinks ${sink} px`).toBeLessThanOrEqual(1 + EPS);
+      const restCandle = new Set(parseShadow(at.boxShadow).filter(isCandle).map((l) => l.raw));
+      expect(
+        parseShadow(hover.boxShadow).filter(isCandle).some((l) => !restCandle.has(l.raw)),
+        `no new candle layer on hover (${hover.boxShadow})`,
+      ).toBe(true);
+      expect(await page.locator('.slip-primary:visible').count(), 'the menu keeps one Primary_Slip').toBe(1);
+    });
+  });
+}
+
 // --- screens and shapes, at 375 ----------------------------------------------------------------
 
 test.describe('one Primary_Slip per screen, no clip, one mask', () => {

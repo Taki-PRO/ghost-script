@@ -224,9 +224,6 @@ export function SeanceSession({
         >
           Leave séance
         </button>
-        <h2 className="text-lg text-ink max-[359px]:whitespace-nowrap max-[359px]:text-sm">
-          Ghost {index + 1} of {total}
-        </h2>
       </div>
       {confirmingLeave && (
         <div
@@ -256,9 +253,14 @@ export function SeanceSession({
           {shownLine}
         </p>
       )}
-      <div className="flex items-center justify-center gap-3">
+      <div className="flex flex-row-reverse items-center justify-center gap-3">
+        <div className="flex flex-col items-start gap-0.5">
+          <h2 className="text-lg text-ink max-[359px]:whitespace-nowrap max-[359px]:text-sm">
+            Ghost {index + 1} of {total}
+          </h2>
+          <p className="text-xs text-muted sm:text-sm">{stepLabel}</p>
+        </div>
         <GhostPrompt record={record} outcome={result} compact flinch={flinch} />
-        <p className="text-xs text-muted sm:text-sm">{stepLabel}</p>
       </div>
       {step === 'summon' ? (
         <SummonStep

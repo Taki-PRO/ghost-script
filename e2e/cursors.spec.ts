@@ -1,5 +1,5 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
-import { START, datasetRecord, seed, seedBefore, seedGraveyard, seedState, waitForLegendReveal } from './helpers';
+import { START, datasetRecord, seed, seedBefore, seedGraveyard, seedSound, seedState, waitForLegendReveal } from './helpers';
 
 // Cursors (spec night-polish, Requirements 2 and 3): a ghost cursor on fine pointers, a brush-tip
 // cursor on the Write paper only, and no image cursor on touch devices. The same selectors and
@@ -91,6 +91,28 @@ test.describe('desktop (fine pointer)', () => {
     await expectUrl('menu body', page.locator('body'));
     await expectUrl('menu button', page.getByRole('button', { name: 'Begin a Nightly Séance' }));
     await expectUrl('menu heading', page.locator('h1').first());
+  });
+
+  test('the Sound_Toggle carries the Link_Cursor of the other buttons (night-sounds 10.4)', async ({ page }) => {
+    await openMenu(page);
+    const toggle = page.getByTestId('sound-toggle');
+    await expectUrl('Sound_Toggle', toggle);
+    expect(await cursorOf(toggle), 'Sound_Toggle cursor differs from the menu buttons').toBe(
+      await cursorOf(page.getByRole('button', { name: 'Begin a Nightly Séance' })),
+    );
+  });
+
+  test('an aria-disabled Ambience_Toggle on the menu keeps not-allowed (night-sounds 10.4)', async ({ page }) => {
+    await seed(page, seedSound({ soundOn: false }));
+    await page.goto(START);
+    await expect(page.getByRole('button', { name: 'Begin a Nightly Séance' })).toBeVisible();
+    const wind = page.getByTestId('ambience-toggle');
+    // The menu hosts the Ambience_Toggle from task 12; until then there is nothing to measure.
+    const count = await wind.count();
+    test.info().annotations.push({ type: 'ambience-toggle', description: `${count} on the menu` });
+    if (count === 0) return;
+    await expect(wind).toHaveAttribute('aria-disabled', 'true');
+    expect(await cursorOf(wind)).toBe('not-allowed');
   });
 
   test('Graveyard: body, a button and a non-interactive element carry a url( cursor', async ({ page }) => {

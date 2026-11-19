@@ -61,6 +61,9 @@ const validBlob = (over: Record<string, unknown> = {}): string =>
     ...over,
   });
 
+const validBlobV4 = (over: Record<string, unknown> = {}): string =>
+  validBlob({ schemaVersion: 4, soundOn: true, ambienceOn: false, ...over });
+
 const v1Blob = (over: Record<string, unknown> = {}): string => validBlob({ schemaVersion: 1, ...over });
 
 const goodEntry = { step: 1, lastOutcome: 'clean', nextDue: 5, history: [{ outcome: 'clean', at: 1 }] };
@@ -85,6 +88,8 @@ describe('first run and round trip', () => {
       cangjieIntroSeen: true,
       level: 2,
       levelChosen: true,
+      soundOn: false,
+      ambienceOn: true,
       history: { 女: entry('clean'), 好: entry('struggled') },
     };
     s.saveState(state);
@@ -95,14 +100,16 @@ describe('first run and round trip', () => {
 });
 
 describe('schema 2 and cangjieIntroSeen (Req 8)', () => {
-  it('uses schema version 3 and a default with cangjieIntroSeen false', () => {
-    expect(CURRENT_SCHEMA_VERSION).toBe(3);
+  it('uses schema version 4 and a default with cangjieIntroSeen false', () => {
+    expect(CURRENT_SCHEMA_VERSION).toBe(4);
     expect(DEFAULT_STATE).toEqual({
-      schemaVersion: 3,
+      schemaVersion: 4,
       introSeen: false,
       cangjieIntroSeen: false,
       level: 1,
       levelChosen: false,
+      soundOn: true,
+      ambienceOn: false,
       history: {},
     });
     expect(createStore({ backend, key: KEY }).getCangjieIntroSeen()).toBe(false);
@@ -147,7 +154,7 @@ describe('schema 2 and cangjieIntroSeen (Req 8)', () => {
     defaults.setCangjieIntroSeen(true);
     expect(defaults.getCangjieIntroSeen()).toBe(true);
     expect(JSON.parse(localStorage.getItem(STORAGE_KEY) as string)).toMatchObject({
-      schemaVersion: 3,
+      schemaVersion: 4,
       cangjieIntroSeen: true,
     });
     localStorage.clear();
@@ -171,6 +178,8 @@ describe('migrations from known older versions', () => {
       cangjieIntroSeen: false,
       level: 1,
       levelChosen: false,
+      soundOn: true,
+      ambienceOn: false,
       history: { 女: goodEntry },
     });
   });
@@ -194,6 +203,8 @@ describe('migrations from known older versions', () => {
       cangjieIntroSeen: true,
       level: 1,
       levelChosen: false,
+      soundOn: true,
+      ambienceOn: false,
       history: { 女: goodEntry },
     });
   });
@@ -222,6 +233,8 @@ describe('migrations from known older versions', () => {
       cangjieIntroSeen: false,
       level: 1,
       levelChosen: false,
+      soundOn: true,
+      ambienceOn: false,
       history: { 女: goodEntry },
     });
     expect(order).toEqual([1, 2]);
@@ -472,7 +485,7 @@ describe('intro flag and reset', () => {
 describe('schemaVersion stamping and default immutability', () => {
   it('saveState writes the store version, not the passed one', () => {
     const s = createStore({ backend, key: KEY, currentVersion: 4 });
-    s.saveState({ schemaVersion: 99, introSeen: true, cangjieIntroSeen: true, level: 3, levelChosen: true, history: {} });
+    s.saveState({ schemaVersion: 99, introSeen: true, cangjieIntroSeen: true, level: 3, levelChosen: true, soundOn: true, ambienceOn: false, history: {} });
     const raw = JSON.parse(backend.data.get(KEY) as string) as PersistedState;
     expect(raw.schemaVersion).toBe(4);
     expect(s.loadState().schemaVersion).toBe(4);
@@ -497,6 +510,8 @@ describe('schemaVersion stamping and default immutability', () => {
       cangjieIntroSeen: false,
       level: 1,
       levelChosen: false,
+      soundOn: true,
+      ambienceOn: false,
       history: {},
     });
     expect(Object.isFrozen(DEFAULT_STATE)).toBe(true);
@@ -672,11 +687,13 @@ describe('schema 3, level and levelChosen (harder-ghosts Req 11)', () => {
     backend.data.set(KEY, v2Blob({ introSeen: true, cangjieIntroSeen: true, history: { 女: goodEntry } }));
     const s = createStore({ backend, key: KEY });
     expect(s.loadState()).toEqual({
-      schemaVersion: 3,
+      schemaVersion: 4,
       introSeen: true,
       cangjieIntroSeen: true,
       level: 1,
       levelChosen: true,
+      soundOn: true,
+      ambienceOn: false,
       history: { 女: goodEntry },
     });
   });
@@ -712,13 +729,15 @@ describe('schema 3, level and levelChosen (harder-ghosts Req 11)', () => {
     const s = createStore({ backend, key: KEY });
     s.setLevel(2);
     const raw = JSON.parse(backend.data.get(KEY) as string) as Record<string, unknown>;
-    expect(raw).toMatchObject({ schemaVersion: 3, level: 2, levelChosen: true });
+    expect(raw).toMatchObject({ schemaVersion: 4, level: 2, levelChosen: true });
     expect(createStore({ backend, key: KEY }).loadState()).toEqual({
-      schemaVersion: 3,
+      schemaVersion: 4,
       introSeen: true,
       cangjieIntroSeen: false,
       level: 2,
       levelChosen: true,
+      soundOn: true,
+      ambienceOn: false,
       history: manyHistory,
     });
   });
@@ -783,8 +802,8 @@ describe('schema 3, level and levelChosen (harder-ghosts Req 11)', () => {
     }
   });
 
-  it('resets a save newer than version 3 and never migrates it (11.5)', () => {
-    backend.data.set(KEY, validBlob({ schemaVersion: 4, introSeen: true, level: 2, levelChosen: true }));
+  it('resets a save newer than version 4 and never migrates it (11.5)', () => {
+    backend.data.set(KEY, validBlobV4({ schemaVersion: 5, introSeen: true, level: 2, levelChosen: true }));
     const s = createStore({ backend, key: KEY });
     expect(s.loadState()).toEqual(s.defaultState);
   });
@@ -814,9 +833,186 @@ describe('schema 3, level and levelChosen (harder-ghosts Req 11)', () => {
     expect(defaults.getLevel()).toBe(2);
     expect(defaults.getLevelChosen()).toBe(true);
     expect(JSON.parse(localStorage.getItem(STORAGE_KEY) as string)).toMatchObject({
-      schemaVersion: 3,
+      schemaVersion: 4,
       level: 2,
       levelChosen: true,
+    });
+    localStorage.clear();
+  });
+});
+
+describe('schema 4, soundOn and ambienceOn (night-sounds Req 16)', () => {
+  const v2Blob = (over: Record<string, unknown> = {}): string =>
+    JSON.stringify({ schemaVersion: 2, introSeen: true, cangjieIntroSeen: true, history: {}, ...over });
+  const manyHistory = { 女: goodEntry, 好: { ...goodEntry, step: 2 } };
+
+  it('defaults to soundOn true and ambienceOn false', () => {
+    const s = createStore({ backend, key: KEY });
+    expect(s.defaultState).toMatchObject({ soundOn: true, ambienceOn: false });
+    expect(s.getSoundOn()).toBe(true);
+    expect(s.getAmbienceOn()).toBe(false);
+  });
+
+  it('migrates a complete version 3 blob, keeps every field and adds the defaults', () => {
+    backend.data.set(
+      KEY,
+      validBlob({ introSeen: true, cangjieIntroSeen: true, level: 3, levelChosen: true, history: manyHistory }),
+    );
+    expect(createStore({ backend, key: KEY }).loadState()).toEqual({
+      schemaVersion: 4,
+      introSeen: true,
+      cangjieIntroSeen: true,
+      level: 3,
+      levelChosen: true,
+      soundOn: true,
+      ambienceOn: false,
+      history: manyHistory,
+    });
+  });
+
+  it('migrates an empty version 3 blob to the default state', () => {
+    backend.data.set(KEY, validBlob());
+    const s = createStore({ backend, key: KEY });
+    expect(s.loadState()).toEqual(s.defaultState);
+  });
+
+  it('migration 3 overwrites sound fields found in an old blob', () => {
+    backend.data.set(KEY, validBlob({ soundOn: false, ambienceOn: true }));
+    const s = createStore({ backend, key: KEY });
+    expect(s.getSoundOn()).toBe(true);
+    expect(s.getAmbienceOn()).toBe(false);
+  });
+
+  it('resets a corrupt version 3 blob (the migration does not repair it)', () => {
+    const s = createStore({ backend, key: KEY });
+    backend.data.set(KEY, validBlob({ history: { 女: { ...goodEntry, step: -1 } } }));
+    expect(s.loadState()).toEqual(s.defaultState);
+    backend.data.set(KEY, validBlob({ level: 7 }));
+    expect(s.loadState()).toEqual(s.defaultState);
+  });
+
+  it('the chain 2 to 4 equals migrating 2 to 3 and then 3 to 4', () => {
+    backend.data.set(KEY, v2Blob({ history: manyHistory }));
+    const chained = createStore({ backend, key: KEY }).loadState();
+    const b3 = makeBackend();
+    b3.data.set(KEY, v2Blob({ history: manyHistory }));
+    const to3 = createStore({ backend: b3, key: KEY, currentVersion: 3 });
+    to3.saveState(to3.loadState());
+    const b4 = makeBackend();
+    b4.data.set(KEY, b3.data.get(KEY) as string);
+    const stepped = createStore({ backend: b4, key: KEY }).loadState();
+    expect(chained).toEqual(stepped);
+    expect(chained).toMatchObject({ schemaVersion: 4, levelChosen: true, soundOn: true, ambienceOn: false });
+    expect(chained.history).toEqual(manyHistory);
+  });
+
+  it('round-trips both fields', () => {
+    const s = createStore({ backend, key: KEY });
+    s.saveState({ ...s.defaultState, soundOn: false, ambienceOn: true });
+    expect(createStore({ backend, key: KEY }).loadState()).toMatchObject({ soundOn: false, ambienceOn: true });
+  });
+
+  it.each([
+    ['soundOn a string', { soundOn: 'yes' }, { soundOn: true, ambienceOn: true }],
+    ['soundOn missing', { soundOn: undefined }, { soundOn: true, ambienceOn: true }],
+    ['ambienceOn a number', { ambienceOn: 1 }, { soundOn: false, ambienceOn: false }],
+    ['both bad', { soundOn: null, ambienceOn: 'x' }, { soundOn: true, ambienceOn: false }],
+  ])('repairs %s field by field and keeps the history', (_n, over, expected) => {
+    const base = { soundOn: false, ambienceOn: true, introSeen: true, level: 2, levelChosen: true, history: { 女: goodEntry } };
+    backend.data.set(KEY, validBlobV4({ ...base, ...over }));
+    expect(createStore({ backend, key: KEY }).loadState()).toEqual({
+      schemaVersion: 4,
+      introSeen: true,
+      cangjieIntroSeen: false,
+      level: 2,
+      levelChosen: true,
+      ...expected,
+      history: { 女: goodEntry },
+    });
+  });
+
+  it.each([
+    ['history', { history: { 女: { ...goodEntry, step: -1 } } }],
+    ['level', { level: 9 }],
+    ['levelChosen', { levelChosen: 'yes' }],
+    ['introSeen', { introSeen: 'yes' }],
+    ['cangjieIntroSeen', { cangjieIntroSeen: null }],
+  ])('still resets to the default state for an invalid %s in a version 4 blob', (_n, over) => {
+    backend.data.set(KEY, validBlobV4({ soundOn: false, ambienceOn: true, ...over }));
+    const s = createStore({ backend, key: KEY });
+    expect(s.loadState()).toEqual(s.defaultState);
+  });
+
+  it('resets a version 5 blob and never migrates it', () => {
+    backend.data.set(KEY, validBlobV4({ schemaVersion: 5, soundOn: false }));
+    const s = createStore({ backend, key: KEY });
+    expect(s.loadState()).toEqual(s.defaultState);
+  });
+
+  it('each setter changes only its own field and keeps the rest', () => {
+    const s = createStore({ backend, key: KEY });
+    s.setLevel(2);
+    s.setIntroSeen(true);
+    const e = entry();
+    s.recordOutcome('女', e);
+    s.setSoundOn(false);
+    expect(s.loadState()).toMatchObject({ soundOn: false, ambienceOn: false, level: 2, introSeen: true, history: { 女: e } });
+    s.setAmbienceOn(true);
+    expect(s.loadState()).toMatchObject({ soundOn: false, ambienceOn: true, level: 2, introSeen: true, history: { 女: e } });
+    s.setSoundOn(true);
+    expect(s.getSoundOn()).toBe(true);
+    expect(s.getAmbienceOn()).toBe(true);
+    s.setAmbienceOn(false);
+    expect(s.getAmbienceOn()).toBe(false);
+  });
+
+  it('saveState and recordOutcome keep soundOn false and ambienceOn true', () => {
+    const s = createStore({ backend, key: KEY });
+    s.saveState({ ...s.defaultState, soundOn: false, ambienceOn: true });
+    expect(JSON.parse(backend.data.get(KEY) as string)).toMatchObject({ soundOn: false, ambienceOn: true });
+    const result = s.recordOutcome('女', entry());
+    expect(result).toMatchObject({ soundOn: false, ambienceOn: true });
+    expect(JSON.parse(backend.data.get(KEY) as string)).toMatchObject({ soundOn: false, ambienceOn: true });
+    s.setIntroSeen(true);
+    s.setCangjieIntroSeen(true);
+    s.setLevel(3);
+    expect(s.loadState()).toMatchObject({ soundOn: false, ambienceOn: true });
+  });
+
+  it('keeps the defaults and flags the failed save when storage is unwritable or missing', () => {
+    backend.throwOn.setItem = true;
+    const s = createStore({ backend, key: KEY });
+    expect(() => s.setSoundOn(false)).not.toThrow();
+    expect(() => s.setAmbienceOn(true)).not.toThrow();
+    expect(s.getSoundOn()).toBe(true);
+    expect(s.getAmbienceOn()).toBe(false);
+    expect(s.isSavingWorking()).toBe(false);
+    const none = createStore({ key: KEY, backend: () => undefined });
+    expect(() => none.setSoundOn(false)).not.toThrow();
+    expect(none.getSoundOn()).toBe(true);
+    expect(none.getAmbienceOn()).toBe(false);
+    expect(none.isSavingWorking()).toBe(false);
+  });
+
+  it('resetToDefaults gives true and false', () => {
+    const s = createStore({ backend, key: KEY });
+    s.setSoundOn(false);
+    s.setAmbienceOn(true);
+    s.resetToDefaults();
+    expect(s.getSoundOn()).toBe(true);
+    expect(s.getAmbienceOn()).toBe(false);
+  });
+
+  it('persists through the default module-level store', () => {
+    localStorage.clear();
+    defaults.setSoundOn(false);
+    defaults.setAmbienceOn(true);
+    expect(defaults.getSoundOn()).toBe(false);
+    expect(defaults.getAmbienceOn()).toBe(true);
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY) as string)).toMatchObject({
+      schemaVersion: 4,
+      soundOn: false,
+      ambienceOn: true,
     });
     localStorage.clear();
   });

@@ -220,7 +220,8 @@ test.describe('harder ghosts: Graveyard level switch', () => {
       );
       await expect(page.getByRole('list', { name: 'Graves' }).getByRole('listitem')).toHaveCount(shown);
       if (shown < records.size) {
-        await expect(page.getByText(`${records.size - shown} ghosts not yet met`, { exact: true })).toBeVisible();
+        const hidden = records.size - shown;
+        await expect(page.getByText(hidden === 1 ? '1 more grave' : `${hidden} more graves`, { exact: true })).toBeVisible();
       }
       // Never-met graves carry only their position; no character of the level that is unmet is drawn.
       const gravesText = await page.getByRole('list', { name: 'Graves' }).evaluate((el) => el.textContent ?? '');

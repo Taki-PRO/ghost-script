@@ -329,6 +329,22 @@ body::after {
   }
 }
 
+/* Sound_Toggle: fixed beside the Moon. Below 992 px it sits in the Moon_Room, 1 rem left of the
+   disc; from 992 px it sits 1 rem below the disc. The switch is a clamp(), not a media query
+   (index.css.test.ts lists every @media). z-index 30 is above the Sky_Cap (10) and the sticky headers (20). */
+.slip.sound-toggle {
+  position: fixed;
+  z-index: 30;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  top: clamp(0.5rem, calc(0.5rem + (100vw - 991px) * 1000), calc(var(--moon-inset-y) + var(--moon-size) / 2 + 1rem));
+  right: clamp(calc(var(--moon-inset-x) - 1.375rem), calc((var(--moon-inset-x) + var(--moon-size) / 2 + 1rem) - (100vw - 991px) * 1000), calc(var(--moon-inset-x) + var(--moon-size) / 2 + 1rem));
+}
+
 /* Chinese text uses the Chinese_Font_Stack: the bundled LXGW WenKai subset first, then system fonts. */
 [lang='zh'] {
   font-family: "LXGW WenKai Subset", "PingFang SC", "Hiragino Sans GB", "Songti SC", "Microsoft YaHei", "Noto Sans CJK SC", "Noto Serif CJK SC", sans-serif;

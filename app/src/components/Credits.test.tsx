@@ -38,6 +38,24 @@ describe('Credits', () => {
     expect(text()).toContain(`licensed ${CODE_LICENCE}`);
   });
 
+  it('names the three level datasets and the Power data file in the Licensing paragraph', () => {
+    render(<Credits onBack={() => {}} backTo="menu" />);
+    const note = COMBINED_WORK_NOTE;
+    for (const f of [
+      'characters.json',
+      'characters-level2.json',
+      'characters-level3.json',
+      'oracle/power/data/oracle-data.json',
+    ]) {
+      expect(note).toContain(f);
+      expect(text()).toContain(f);
+    }
+    expect(note).toContain('are each a combined work');
+    const levelSentence = note.slice(note.indexOf('The level datasets incorporate'), note.indexOf('The Power file'));
+    expect(levelSentence).toContain('MIT data (HSK 3.0 character list)');
+    expect(text()).toContain('MIT data (HSK 3.0 character list)');
+  });
+
   it('shows the character-list row for three levels, the keyboard limitation and the prompt sentence', () => {
     render(<Credits onBack={() => {}} backTo="menu" />);
     const row = DATA_SOURCES.find((s) => s.name.startsWith('Character list'));

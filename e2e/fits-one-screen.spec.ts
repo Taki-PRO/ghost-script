@@ -65,6 +65,7 @@ for (const vp of VIEWPORTS) {
         await expectInside(page, `row 2 key ${i}`, keys.nth(i));
       }
       await expectInside(page, 'Summon Give up', summon.getByRole('button', { name: 'Give up' }));
+      await expectInside(page, 'Sound_Toggle', page.getByTestId('sound-toggle'));
       await expectNoVerticalScroll(page);
     });
 
@@ -75,6 +76,7 @@ for (const vp of VIEWPORTS) {
       await expectInside(page, 'write ink-surface', page.getByTestId('ink-surface'));
       await expectInside(page, 'walkthrough write line', page.getByTestId('walkthrough-write-line'));
       await expectInside(page, 'Write Give up', write.getByRole('button', { name: 'Give up' }));
+      await expectInside(page, 'Sound_Toggle', page.getByTestId('sound-toggle'));
       await expectNoVerticalScroll(page);
     });
 
@@ -138,6 +140,7 @@ for (const vp of SUMMON_VIEWPORTS) {
         if (scenario.guided) await expect(line).toBeVisible();
         else await expect(line).toHaveCount(0);
 
+        await expectInside(page, 'Sound_Toggle', page.getByTestId('sound-toggle'));
         const ink = page.getByTestId('ink-surface');
         await expectInside(page, 'ink-surface', ink);
         const box = await ink.evaluate((el) => {
@@ -196,6 +199,7 @@ for (const vp of INTRO_VIEWPORTS) {
       const sources = page.getByRole('button', { name: 'Sources' });
       await expectInside(page, 'Begin the Séance', begin);
       await expectInside(page, 'Sources', sources);
+      await expectInside(page, 'Sound_Toggle', page.getByTestId('sound-toggle'));
       await expectNoVerticalScroll(page);
       const m = await page.evaluate(() => ({
         scrollHeight: document.documentElement.scrollHeight,
@@ -230,6 +234,7 @@ for (const vp of VIEWPORTS) {
       }
       await expect(page.getByRole('img', { name: /^Seal: / }).first()).toBeVisible();
       await expectInside(page, 'Begin another Séance', page.getByRole('button', { name: 'Begin another Séance' }));
+      await expectInside(page, 'Sound_Toggle', page.getByTestId('sound-toggle'));
       await expect(page.locator('.slip-primary')).toHaveCount(1);
       await expectMoonInside(page, `summary ${vp.width}`);
       const m = await page.evaluate(() => ({
@@ -260,6 +265,7 @@ for (const vp of VIEWPORTS) {
       await expect(begin).toBeVisible();
       await page.evaluate(() => document.fonts.ready);
       await expectInside(page, 'Begin a Nightly Séance', begin);
+      await expectInside(page, 'Sound_Toggle', page.getByTestId('sound-toggle'));
       await expectNoVerticalScroll(page);
       const m = await page.evaluate(() => ({
         scrollHeight: document.documentElement.scrollHeight,
@@ -324,6 +330,7 @@ for (const vp of VIEWPORTS) {
         await expectInside(page, String(name), page.getByRole('button', { name }));
       }
       await expectInside(page, 'finished notice', page.getByText('You have met every ghost of level 1.'));
+      await expectInside(page, 'Sound_Toggle', page.getByTestId('sound-toggle'));
       await expectInside(
         page,
         'sources hint',

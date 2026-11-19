@@ -4,6 +4,7 @@ import { expect, type Locator, type Page } from '@playwright/test';
 import type { CharacterRecord } from '../app/src/data/types';
 import { learningOrder } from '../app/src/engine/learningOrder';
 import { pickWalkthroughGhost } from '../app/src/engine/walkthrough';
+import { type AudioLog, seedSchemaVersion } from './audioLog';
 import { luminance } from './colour';
 
 // Shared helpers of the E2E_Suite (Requirements 24.7 to 24.10 and 29).
@@ -20,12 +21,15 @@ export const START = '/ghost-script/';
 
 type SeedHistory = Record<string, { step: number; lastOutcome: string; nextDue: number }>;
 export interface SeedState {
-  readonly schemaVersion: 3;
+  readonly schemaVersion: 3 | 4;
   readonly introSeen: boolean;
   readonly cangjieIntroSeen: boolean;
   readonly history: SeedHistory;
   readonly level: 1 | 2 | 3;
   readonly levelChosen: boolean;
+  /** Schema 4 only; `seedState` writes both when the version is 4. */
+  readonly soundOn?: boolean;
+  readonly ambienceOn?: boolean;
 }
 /** A save written before levels existed (version 2); the app migrates it to version 3. */
 export interface SeedStateV2 {
@@ -100,15 +104,26 @@ export async function seed(page: Page, state: SeedState | SeedStateV2): Promise<
 
 export function seedState(overrides: Partial<SeedState> = {}): SeedState {
   const introSeen = overrides.introSeen ?? true;
-  return {
-    schemaVersion: 3,
+  const version = seedSchemaVersion(overrides.schemaVersion, overrides);
+  const { soundOn, ambienceOn, ...rest } = overrides;
+  const base = {
     introSeen,
     cangjieIntroSeen: true,
     history: {},
-    level: 1,
+    level: 1 as const,
     levelChosen: introSeen,
-    ...overrides,
+    ...rest,
   };
+  // Without a sound field the seed stays at schema 3 (the app migrates it); otherwise schema 4 with both flags.
+  if (version === 3) return { ...base, schemaVersion: 3 };
+  return { ...base, schemaVersion: 4, soundOn: soundOn ?? true, ambienceOn: ambienceOn ?? false };
+}
+/** A schema 4 seed with the two sound flags (defaults: sound on, wind off). */
+export function seedSound(
+  flags: { soundOn?: boolean; ambienceOn?: boolean } = {},
+  overrides: Partial<SeedState> = {},
+): SeedState {
+  return seedState({ ...overrides, schemaVersion: 4, soundOn: flags.soundOn ?? true, ambienceOn: flags.ambienceOn ?? false });
 }
 /** A version 2 save for the migration test: opens on the menu at level 1 when `introSeen` is true. */
 export function seedV2(overrides: Partial<SeedStateV2> = {}): SeedStateV2 {
@@ -766,4 +781,155 @@ export async function openStartMenuWorstCase(page: Page): Promise<void> {
   await expect(page.getByRole('button', { name: 'Move on to level 2' })).toBeVisible();
   await expect(page.getByRole('button', { name: /^Review restless ghosts \(\d{4}\)$/ })).toBeVisible();
   await page.evaluate(() => document.fonts.ready);
+}
+
+// ---------------------------------------------------------------------------
+// Night sounds (spec night-sounds, task 10.3): the Audio_Recorder, media
+// recording and the toggle placement box.
+// ---------------------------------------------------------------------------
+
+export { beforeGesture, loopingStarts, type AudioLog } from './audioLog';
+
+/**
+ * Installs the Audio_Recorder before any page script runs and exposes the log as
+ * `window.__audio` (read it with `readAudioLog`). It wraps `AudioContext` and
+ * `webkitAudioContext` (construction, `resume`, `suspend`), the `createOscillator` and
+ * `createBufferSource` calls, and `AudioScheduledSourceNode.prototype.start`. Each event
+ * carries `t`, the ms since the first pointerdown, touchend, click or keydown, or null
+ * before it. Every wrapper records a failure and rethrows or passes the rejection on, so
+ * the app sees exactly what it would see without the recorder. Chromium's autoplay policy
+ * is kept, so contexts start suspended until a real click or key press.
+ */
+export async function installAudioRecorder(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    const log = {
+      firstGestureAt: null as number | null,
+      constructed: 0,
+      constructions: [] as { t: number | null }[],
+      resumes: 0,
+      resumeCalls: [] as { t: number | null }[],
+      suspends: 0,
+      starts: [] as { t: number | null; kind: string; loop: boolean }[],
+      failures: [] as { t: number | null; what: string; message: string }[],
+    };
+    (window as unknown as { __audio: typeof log }).__audio = log;
+    const now = (): number | null => (log.firstGestureAt === null ? null : performance.now() - log.firstGestureAt);
+    const fail = (what: string, error: unknown): void => {
+      log.failures.push({ t: now(), what, message: error instanceof Error ? error.message : String(error) });
+    };
+    for (const type of ['pointerdown', 'touchend', 'click', 'keydown']) {
+      window.addEventListener(
+        type,
+        () => {
+          if (log.firstGestureAt === null) log.firstGestureAt = performance.now();
+        },
+        { capture: true, passive: true },
+      );
+    }
+
+    type Ctor = new (options?: AudioContextOptions) => AudioContext;
+    const wrap = (Orig: Ctor): Ctor =>
+      class extends Orig {
+        constructor(options?: AudioContextOptions) {
+          try {
+            super(options);
+          } catch (error) {
+            fail('construct', error);
+            throw error;
+          }
+          log.constructed += 1;
+          log.constructions.push({ t: now() });
+        }
+        override resume(): Promise<void> {
+          log.resumes += 1;
+          log.resumeCalls.push({ t: now() });
+          const result = super.resume();
+          result.catch((error: unknown) => fail('resume', error));
+          return result;
+        }
+        override suspend(): Promise<void> {
+          log.suspends += 1;
+          return super.suspend();
+        }
+        override createOscillator(): OscillatorNode {
+          try {
+            return super.createOscillator();
+          } catch (error) {
+            fail('createOscillator', error);
+            throw error;
+          }
+        }
+        override createBufferSource(): AudioBufferSourceNode {
+          try {
+            return super.createBufferSource();
+          } catch (error) {
+            fail('createBufferSource', error);
+            throw error;
+          }
+        }
+      };
+    const w = window as unknown as { AudioContext?: Ctor; webkitAudioContext?: Ctor };
+    if (w.AudioContext) w.AudioContext = wrap(w.AudioContext);
+    if (w.webkitAudioContext) w.webkitAudioContext = wrap(w.webkitAudioContext);
+
+    if (typeof AudioScheduledSourceNode !== 'undefined') {
+      const start = AudioScheduledSourceNode.prototype.start;
+      AudioScheduledSourceNode.prototype.start = function (this: AudioScheduledSourceNode, when?: number): void {
+        log.starts.push({
+          t: now(),
+          kind: this.constructor.name,
+          loop: (this as unknown as { loop?: boolean }).loop === true,
+        });
+        try {
+          start.call(this, when);
+        } catch (error) {
+          fail('start', error);
+          throw error;
+        }
+      };
+    }
+  });
+}
+
+/** The Audio_Recorder log of the current page; throws when `installAudioRecorder` was not called first. */
+export async function readAudioLog(page: Page): Promise<AudioLog> {
+  const log = await page.evaluate(() => (window as unknown as { __audio?: unknown }).__audio ?? null);
+  if (log === null) throw new Error('window.__audio is missing: call installAudioRecorder(page) before page.goto');
+  return log as AudioLog;
+}
+
+/** Collects the URL of every `media` request and every `audio/*` response (Requirement 18.3). */
+export function recordMedia(page: Page): { readonly requests: string[]; readonly responses: string[] } {
+  const requests: string[] = [];
+  const responses: string[] = [];
+  page.on('request', (request) => {
+    if (request.resourceType() === 'media') requests.push(request.url());
+  });
+  page.on('response', (response) => {
+    const type = response.headers()['content-type'] ?? '';
+    if (type.toLowerCase().startsWith('audio/')) responses.push(response.url());
+  });
+  return { requests, responses };
+}
+
+/** The Sound_Toggle (`data-testid="sound-toggle"`). */
+export function soundToggle(page: Page): Locator {
+  return page.getByTestId('sound-toggle');
+}
+
+export interface TogglePlacement {
+  readonly toggle: Box;
+  readonly moon: MoonDisc;
+  /** Gap in px between the toggle box and the Moon disc box; negative when they overlap. */
+  readonly gapToMoon: number;
+}
+
+/** Bounding box of the Sound_Toggle and the Moon disc box (`moonDisc`), for placement checks. */
+export async function togglePlacement(page: Page): Promise<TogglePlacement> {
+  const moon = await moonDisc(page);
+  const toggle = await soundToggle(page).evaluate((el) => {
+    const r = el.getBoundingClientRect();
+    return { left: r.left, top: r.top, right: r.right, bottom: r.bottom };
+  });
+  return { toggle, moon, gapToMoon: boxGap(toggle, moon) };
 }

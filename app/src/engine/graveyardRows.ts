@@ -23,7 +23,7 @@ export function visibleGraveCount(total: number, columns: number, lastMetIndex: 
 }
 
 /** The paragraph after the grid: null when nothing is collapsed. */
-export function notYetMetText(collapsed: number): string | null {
+export function moreGravesText(collapsed: number): string | null {
   if (!(collapsed > 0)) return null;
-  return collapsed === 1 ? '1 ghost not yet met' : `${collapsed} ghosts not yet met`;
+  return collapsed === 1 ? '1 more grave' : `${collapsed} more graves`;
 }

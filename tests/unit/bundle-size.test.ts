@@ -2,11 +2,14 @@ import { describe, expect, it } from 'vitest';
 import {
   BUNDLE_BUDGET_BYTES,
   compareFirstLoad,
+  FIRST_LOAD_TOLERANCE,
   firstLoad,
   isLazy,
   lazyFiles,
   parseReadmeFirstLoad,
+  roundedKb,
   summariseBundle,
+  withinTolerance,
   type SizedFile,
 } from '../../scripts/check-bundle-size';
 
@@ -132,29 +135,67 @@ describe('firstLoad', () => {
   });
 });
 
-describe('README first-load comparison', () => {
-  const sentence = (c: string, l: string, t: string): string =>
-    `Real first load, in gzip bytes, as printed by \`npm run check:bundle\`: ${c} bytes counted + ${l} bytes level 1 dataset = ${t} bytes. The budget is 300,000 bytes.`;
-  const printed = { counted: 230_232, level1: 353_215, total: 583_447 };
+describe('roundedKb', () => {
+  it('rounds to the nearest kB with .5 going up', () => {
+    expect(roundedKb(0)).toBe(0);
+    expect(roundedKb(499)).toBe(0);
+    expect(roundedKb(500)).toBe(1);
+    expect(roundedKb(1_499)).toBe(1);
+    expect(roundedKb(1_500)).toBe(2);
+    expect(roundedKb(583_662)).toBe(584);
+    expect(roundedKb(230_447)).toBe(230);
+  });
+});
 
-  it('parses the stated figures', () => {
-    expect(parseReadmeFirstLoad(sentence('230,232', '353,215', '583,447'))).toEqual(printed);
+describe('withinTolerance', () => {
+  it('allows a difference of 1% of the printed figure and no more', () => {
+    expect(FIRST_LOAD_TOLERANCE).toBe(0.01);
+    expect(withinTolerance(101_000, 100_000)).toBe(true);
+    expect(withinTolerance(99_000, 100_000)).toBe(true);
+    expect(withinTolerance(101_001, 100_000)).toBe(false);
+    expect(withinTolerance(98_999, 100_000)).toBe(false);
   });
-  it('returns null when the README has no figures', () => {
+});
+
+describe('README first-load comparison', () => {
+  const text = (tKb: string, cKb: string, c: string, l: string, t: string): string =>
+    `Real first load: about ${tKb} kB gzipped, of which about ${cKb} kB counts against the 300 kB budget.\n\n` +
+    `Exact figures, as printed by \`npm run check:bundle\`: ${c} bytes counted + ${l} bytes level 1 dataset = ${t} bytes. The budget is 300,000 bytes.`;
+  const printed = { counted: 230_447, level1: 353_215, total: 583_662 };
+  const stated = { ...printed, countedKb: 230, totalKb: 584 };
+
+  it('parses the exact and the rounded figures', () => {
+    expect(parseReadmeFirstLoad(text('584', '230', '230,447', '353,215', '583,662'))).toEqual(stated);
+  });
+  it('returns null when the README has no figures or only one of the two places', () => {
     expect(parseReadmeFirstLoad('# Title\nNo sizes here.')).toBeNull();
+    expect(parseReadmeFirstLoad(text('584', '230', '1', '2', '3').split('\n\n')[0] ?? '')).toBeNull();
+    expect(parseReadmeFirstLoad(text('584', '230', '1', '2', '3').split('\n\n')[1] ?? '')).toBeNull();
   });
-  it('reports nothing when the figures are equal', () => {
-    expect(compareFirstLoad(printed, printed)).toEqual([]);
+  it('passes when the figures are equal or within 1%', () => {
+    expect(compareFirstLoad(stated, printed)).toEqual({ ok: true });
+    expect(
+      compareFirstLoad({ counted: 232_700, level1: 351_000, total: 589_400, countedKb: 232, totalKb: 589 }, printed),
+    ).toEqual({ ok: true });
   });
   it.each([
-    ['counted', { ...printed, counted: 230_233 }, '230233'],
-    ['level1', { ...printed, level1: 353_216 }, '353216'],
-    ['total', { ...printed, total: 583_448 }, '583448'],
-  ])('names both figures when %s differs', (key, stated, statedText) => {
-    const diffs = compareFirstLoad(stated, printed);
-    expect(diffs).toHaveLength(1);
-    expect(diffs[0]).toContain(key);
-    expect(diffs[0]).toContain(statedText);
-    expect(diffs[0]).toContain(String(printed[key as keyof typeof printed]));
+    ['counted', { ...stated, counted: 232_752 }, 'counted 232752'],
+    ['level1', { ...stated, level1: 356_748 }, 'level1 356748'],
+    ['total', { ...stated, total: 589_499 }, 'total 589499'],
+  ])('fails, naming both figures, when %s is just outside 1%', (key, s, statedText) => {
+    const r = compareFirstLoad(s, printed);
+    expect(r.ok).toBe(false);
+    if (r.ok) return;
+    expect(r.messages).toHaveLength(1);
+    expect(r.messages[0]).toContain(statedText);
+    expect(r.messages[0]).toContain(String(printed[key as keyof typeof printed]));
+  });
+  it('fails when a rounded figure is more than 1% from the printed figure', () => {
+    expect(compareFirstLoad({ ...stated, countedKb: 233 }, printed).ok).toBe(false);
+    expect(compareFirstLoad({ ...stated, totalKb: 590 }, printed).ok).toBe(false);
+  });
+  it('fails when the figures could not be parsed', () => {
+    const r = compareFirstLoad(null, printed);
+    expect(r.ok).toBe(false);
   });
 });

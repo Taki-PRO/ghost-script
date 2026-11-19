@@ -132,7 +132,7 @@ async function describeBeneath(page: Page, x: number, y: number): Promise<string
     ({ x, y }) => {
       const names = document
         .elementsFromPoint(x, y)
-        .filter((el) => !el.matches('html, body, #root, .sky-cap'))
+        .filter((el) => !el.matches('html, body, #root, .sky-cap, [data-testid="sound-toggle"]'))
         .slice(0, 2)
         .map((el) => {
           const label = el.getAttribute('aria-label');
@@ -192,7 +192,7 @@ for (const vp of VIEWPORTS) {
         await page.evaluate(() => {
           const style = document.createElement('style');
           style.id = 'no-cap';
-          style.textContent = '.sky-cap{display:none!important}';
+          style.textContent = '.sky-cap,.sound-toggle{display:none!important}';
           document.head.appendChild(style);
         });
         await nextFrames(page);
@@ -202,6 +202,14 @@ for (const vp of VIEWPORTS) {
         await nextFrames(page);
         expect(refDisc, `${label}: no Moon disc found at scroll 0`).not.toBeNull();
 
+        // The capped run hides the Sound_Toggle too, so the compared pixels are the sky's.
+        await page.evaluate(() => {
+          const style = document.createElement('style');
+          style.id = 'no-toggle';
+          style.textContent = '.sound-toggle{display:none!important}';
+          document.head.appendChild(style);
+        });
+        await nextFrames(page);
         const offsets = [0, Math.round(range.max / 3), Math.round((2 * range.max) / 3), range.max];
         for (const offset of offsets) {
           await page.evaluate((y) => window.scrollTo(0, y), offset);
@@ -270,10 +278,40 @@ for (const vp of VIEWPORTS) {
           }
         }
 
+        await page.evaluate(() => document.getElementById('no-toggle')?.remove());
+        await nextFrames(page);
+
         // No horizontal overflow, at rest and scrolled to the end.
         expect(await findOverflow(page, viewport.width), `${label}: horizontal overflow`).toEqual([]);
       });
     }
+
+    // night-sounds 10.4: the Sound_Toggle is fixed above the cap and lies inside the Moon_Room (the band).
+    test('the Sound_Toggle is fixed, above the cap and inside the Moon_Room', async ({ page }) => {
+      await seed(page, seedState());
+      await page.goto(START);
+      await expect(page.getByRole('button', { name: 'Begin a Nightly Séance' })).toBeVisible();
+      const toggle = page.getByTestId('sound-toggle');
+      await expect(toggle, `no Sound_Toggle at ${vp.width} x ${vp.height}`).toHaveCount(1);
+      const m = await page.evaluate(() => {
+        const t = document.querySelector('[data-testid="sound-toggle"]') as HTMLElement;
+        const cap = document.querySelector('.sky-cap') as HTMLElement;
+        const r = t.getBoundingClientRect();
+        return {
+          position: getComputedStyle(t).position,
+          toggleZ: Number.parseInt(getComputedStyle(t).zIndex, 10),
+          capZ: Number.parseInt(getComputedStyle(cap).zIndex, 10),
+          rect: { left: r.left, top: r.top, right: r.right, bottom: r.bottom },
+          width: document.documentElement.clientWidth,
+        };
+      });
+      expect(m.position, 'Sound_Toggle position').toBe('fixed');
+      expect(m.toggleZ, `Sound_Toggle z-index ${m.toggleZ} against the cap's ${m.capZ}`).toBeGreaterThan(m.capZ);
+      expect(m.rect.top, 'toggle top inside the Moon_Room').toBeGreaterThanOrEqual(0);
+      expect(m.rect.bottom, `toggle bottom ${m.rect.bottom} inside the ${BAND} px Moon_Room`).toBeLessThanOrEqual(BAND);
+      expect(m.rect.left, 'toggle left inside the Moon_Room').toBeGreaterThanOrEqual(0);
+      expect(m.rect.right, 'toggle right inside the Moon_Room').toBeLessThanOrEqual(m.width);
+    });
 
     for (const screen of SCREENS.filter((s) => s.hasHeader)) {
       test(`${screen.name}: the cap is hidden, takes no focus, and every focused control clears the header`, async ({

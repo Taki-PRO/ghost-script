@@ -868,6 +868,73 @@
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1795067941505
       }
+    ],
+    "21.1 Graveyard collapse line wording": [
+      {
+        "executionId": "e0635ae0-f0fd-44f5-ae64-ba88b823f373",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795113941380
+      },
+      {
+        "executionId": "e0635ae0-f0fd-44f5-ae64-ba88b823f373",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795114113022
+      }
+    ],
+    "21.2 Sources & licences licensing wording and accuracy review": [
+      {
+        "executionId": "e0635ae0-f0fd-44f5-ae64-ba88b823f373",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795113941623
+      },
+      {
+        "executionId": "e0635ae0-f0fd-44f5-ae64-ba88b823f373",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795114236801
+      }
+    ],
+    "21.4 Review summary wording and button, with steering amendment 6": [
+      {
+        "executionId": "e0635ae0-f0fd-44f5-ae64-ba88b823f373",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795113950641
+      },
+      {
+        "executionId": "e0635ae0-f0fd-44f5-ae64-ba88b823f373",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795114113243
+      }
+    ],
+    "21.3 README rounded first load and 1% tolerance": [
+      {
+        "executionId": "e0635ae0-f0fd-44f5-ae64-ba88b823f373",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795114129081
+      },
+      {
+        "executionId": "e0635ae0-f0fd-44f5-ae64-ba88b823f373",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795114237450
+      }
+    ],
+    "21. Fourth-review fixes": [
+      {
+        "executionId": "e0635ae0-f0fd-44f5-ae64-ba88b823f373",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795114237480
+      }
+    ],
+    "22. Final checkpoint after the fourth-review fixes": [
+      {
+        "executionId": "e0635ae0-f0fd-44f5-ae64-ba88b823f373",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795114238008
+      },
+      {
+        "executionId": "e0635ae0-f0fd-44f5-ae64-ba88b823f373",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795114628613
+      }
     ]
   }
 }

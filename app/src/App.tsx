@@ -46,6 +46,8 @@ import { LevelScreen } from './components/LevelScreen';
 import { Graveyard, type GraveyardStatus } from './components/Graveyard';
 import { Credits } from './components/Credits';
 import { SkyCap } from './components/SkyCap';
+import { SoundToggle } from './components/SoundToggle';
+import { SoundProvider, useSound } from './audio/SoundProvider';
 import { scrollToTop } from './components/scrollToTop';
 import { SessionSummary, type SessionResults } from './components/SessionSummary';
 
@@ -190,10 +192,10 @@ function Shell({
 
 export default function App() {
   return (
-    <>
+    <SoundProvider>
       <SkyCap />
       <AppScreens />
-    </>
+    </SoundProvider>
   );
 }
 
@@ -285,6 +287,10 @@ function AppScreens() {
   }, [ensureHistoryLevels]);
 
   const screenName = view.screen;
+  const { setAmbientScreen } = useSound();
+  useEffect(() => {
+    setAmbientScreen(screenName === 'menu' || screenName === 'graveyard');
+  }, [screenName, setAmbientScreen]);
   useLayoutEffect(() => {
     scrollToTop();
   }, [screenName]);
@@ -445,6 +451,7 @@ function AppScreens() {
     setSavingWorks(isSavingWorking());
   }, []);
 
+  const renderScreen = (): JSX.Element | null => {
   switch (view.screen) {
     case 'loading':
       return (
@@ -636,9 +643,20 @@ function AppScreens() {
       const { results } = view;
       return (
         <Shell>
-          <SessionSummary results={results} onPlayAgain={() => startSeance()} />
+          <SessionSummary results={results} onPlayAgain={() => startSeance()}
+            onBackToMenu={() => setView({ screen: 'menu' })}
+          />
         </Shell>
       );
     }
   }
+  };
+
+  const showToggle = view.screen !== 'loading' && view.screen !== 'error';
+  return (
+    <>
+      {renderScreen()}
+      {showToggle ? <SoundToggle /> : null}
+    </>
+  );
 }

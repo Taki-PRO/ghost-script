@@ -19,6 +19,7 @@ ghost-script/
 │       ├── modes/       # WriteMode, plus the Cangjie summon step
 │       ├── data/        # typed loaders for characters.json
 │       ├── storage/     # localStorage wrapper
+│       ├── audio/       # Web Audio sound engine: voice limits, recipes, engine, provider
 │       └── styles/
 ├── data/
 │   ├── raw/             # downloaded source datasets (keep their licence files next to them)

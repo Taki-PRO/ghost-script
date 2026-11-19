@@ -301,8 +301,39 @@ Rules for every task:
   - Ensure all tests pass, ask the user if questions arise.
   - _Requirements: 7.13, 7.15, 7.16, 13.32, 13.33, 13.35, 14.10, 14.11, 14.12_
 
+- [x] 21. Fourth-review fixes
+  - Rules for this group: edit only what each sub-task names; no `kiro-log.md`, `tasks.meta.json`, scheduler, data file or steering edit except the one in 21.4; no property-based test, no mutation test; no personal name; no existing assertion loosened (state old and new assertion for every change). Decisions approved by the human, fourth review, before the feature freeze
+  - [x] 21.1 Graveyard collapse line wording
+    - Rename `notYetMetText` to `moreGravesText` in `app/src/engine/graveyardRows.ts`, `Graveyard.tsx` and `graveyardRows.test.ts`; the text is "N more graves" and "1 more grave" (null for 0). The legend keeps counting real never-met ghosts over the whole level
+    - Update every test that names the old text: `graveyardRows.test.ts`, `Graveyard.test.tsx`, `e2e/graveyard-fit.spec.ts` and `e2e/harder-ghosts.spec.ts` (search the repository for "not yet met" and `notYetMetText`; none remains). Old and new assertion for each, the new at least as strict (exact number and singular form)
+    - _Requirements: 12.4, 12.5, 12.6, 12.8_
+  - [x] 21.2 Sources & licences licensing wording and accuracy review
+    - Reword `COMBINED_WORK_NOTE` in `app/src/data/credits.ts` as in design Item 7 ("Fourth review: the Licensing paragraph"): the three level datasets and `oracle/power/data/oracle-data.json`, each a combined work carrying each source's licence terms for its fields; no new licence claim. Mirror the sentence in `README.md` (line 74) so `credits-readme` passes; extend `credits.test.ts` to assert the four file names and keep its existing assertions
+    - Run the `accuracy-reviewer` agent with the changed `credits.ts` and README text pasted into its prompt; report its raw output unedited; fix anything it flags that is a real inaccuracy and rerun it
+    - _Requirements: 7.21, 7.22, 7.23_
+  - [x] 21.3 README rounded first load and 1% tolerance
+    - In `scripts/check-bundle-size.ts` (or its `scripts/lib/` module) add `roundedKb`, `withinTolerance` and `FIRST_LOAD_TOLERANCE` (0.01), and update `parseReadmeFirstLoad` (exact and rounded figures) and `compareFirstLoad` (per-figure 1% tolerance relative to the printed figure) as in design Item 7; the budget check stays exact
+    - Update the unit tests of the pure functions on fixture README text: within tolerance passes, just outside fails for counted, level 1 and total, unparsable fails, `roundedKb` boundaries. Update `tests/unit/readme-first-load.test.ts` (no `app/dist`): exact sum, budget 300,000, the exclusion sentence, and each rounded figure equals the nearest kB of the exact one
+    - Run `npm run build -w app` and `npm run check:bundle`; write the README rounded sentence and the exact line from the printed figures (edit `README.md` only for these); `check:bundle` exits 0
+    - _Requirements: 7.13, 7.15, 7.16, 7.17, 7.18, 7.19, 7.20_
+  - [x] 21.4 Review summary wording and button, with steering amendment 6
+    - In `SessionSummary.tsx` (mode `'review'`): heading "The review is over", the only `slip-primary` "Back to menu" that returns to the Start menu (`onBackToMenu`, wired in `App.tsx`); no "Begin another Séance" in review mode; nightly summary unchanged
+    - Update every test that asserts the review summary heading or button: `SessionSummary.test.tsx`, `App.test.tsx`, `e2e/review.spec.ts` and any helper or spec that reaches a review summary; add a test that the button shows the Start menu. Old and new assertion for each
+    - Apply steering amendment 6 (approved by the human) to `.kiro/steering/art-direction.md`: replace the row `| Summary | Begin another Séance |` with `| Summary (nightly séance) | Begin another Séance |` and `| Summary (review) | Back to menu |`; update the assertion in `tests/unit/steering-art-direction.test.ts` (line 49) to both rows. This task is the only one that edits the steering file
+    - _Requirements: 4.12, 10.24, 10.36, 10.37, 10.38_
+
+- [x] 22. Final checkpoint after the fourth-review fixes
+  - Before every end-to-end run, wait until nothing listens on port 4173
+  - Run `npm test` at the repository root; `npx tsc --noEmit`, `npx tsc --noEmit -p app` and `npx tsc --noEmit -p oracle` (no errors); `npm run build -w app`; `npm run check:bundle` (exit 0)
+  - Run the Graveyard e2e specs (`graveyard-fit`, `grass`, `harder-ghosts`), the Sources e2e specs (any spec that opens the Sources & licences screen and asserts credits text; if none asserts credits text, say so in a note) and `review.spec.ts`, for example `npm run test:e2e -- graveyard-fit grass harder-ghosts review`
+  - Report the exact commands and the passed, failed and skipped counts of each run; confirm with `git diff --stat` that `kiro-log.md`, `tasks.meta.json`, scheduler files and data files are untouched and that the only steering change is `art-direction.md` (amendment 6); make no commit
+  - Report anything not achieved: name each failing or skipped check, the file or test and the command
+  - Ensure all tests pass, ask the user if questions arise.
+  - _Requirements: 7.15, 7.16, 7.21, 10.24, 12.4, 12.5, 14.10, 14.11, 14.12_
+
 ## Notes
 
+- Tasks 21 and 22 are the fourth-review fixes before the feature freeze, approved by the human; 21.4 applies steering amendment 6 and is the only task of this round that edits a steering file.
 - There are no optional tasks. Every test task is required. No property-based test and no mutation test is added (decision of Nov 15); the existing property tests stay.
 - Tasks 1.1 and 18.1 are human tasks. Kiro does not do them, does not answer questions, does not approve an amendment and does not review the screenshots. Task 18.1 is the last human-only task and no Kiro task waits for it; tasks 19 and 20 are the follow-up after the third review and run in Kiro's own order.
 - After task 1.1, task 2.1 amends the spec first (requirements, design and this file), so the code tasks follow the human's answers.
@@ -372,7 +403,11 @@ Rules for every task:
     {"id": 53, "tasks": ["16.8"]},
     {"id": 54, "tasks": ["18.1"]},
     {"id": 55, "tasks": ["19.1", "19.3"]},
-    {"id": 56, "tasks": ["19.2"]}
+    {"id": 56, "tasks": ["19.2"]},
+    {"id": 57, "tasks": ["21.1"]},
+    {"id": 58, "tasks": ["21.2"]},
+    {"id": 59, "tasks": ["21.3"]},
+    {"id": 60, "tasks": ["21.4"]}
   ]
 }
 ```

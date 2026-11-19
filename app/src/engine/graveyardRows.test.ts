@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { columnCount, notYetMetText, visibleGraveCount } from './graveyardRows';
+import { columnCount, moreGravesText, visibleGraveCount } from './graveyardRows';
 
 describe('visibleGraveCount (R12.1 to R12.3, R12.19, R12.20)', () => {
   it('shows exactly one blank row when no ghost is met', () => {
@@ -58,15 +58,15 @@ describe('columnCount', () => {
   });
 });
 
-describe('notYetMetText (R12.4 to R12.6)', () => {
+describe('moreGravesText (R12.4 to R12.6)', () => {
   it('has no text for 0', () => {
-    expect(notYetMetText(0)).toBeNull();
+    expect(moreGravesText(0)).toBeNull();
   });
   it('uses the singular for 1', () => {
-    expect(notYetMetText(1)).toBe('1 ghost not yet met');
+    expect(moreGravesText(1)).toBe('1 more grave');
   });
   it('uses the plural for 2 or more', () => {
-    expect(notYetMetText(2)).toBe('2 ghosts not yet met');
-    expect(notYetMetText(288)).toBe('288 ghosts not yet met');
+    expect(moreGravesText(2)).toBe('2 more graves');
+    expect(moreGravesText(288)).toBe('288 more graves');
   });
 });

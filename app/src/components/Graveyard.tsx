@@ -21,7 +21,7 @@ import {
   TUFT_WIDTH,
   tabletTufts,
 } from '../engine/grassPattern';
-import { columnCount, notYetMetText, visibleGraveCount } from '../engine/graveyardRows';
+import { columnCount, moreGravesText, visibleGraveCount } from '../engine/graveyardRows';
 
 /** Height of the Hillside svg: three rows of tablets at 4 rem (`h-48`). */
 const HILL_HEIGHT_REM = 12;
@@ -144,7 +144,7 @@ export function Graveyard({
     });
     return visibleGraveCount(model.graves.length, columns, lastMetIndex);
   }, [model, columns]);
-  const collapsedText = notYetMetText(total - shown);
+  const collapsedText = moreGravesText(total - shown);
 
   return (
     <main className="min-h-screen px-4 pb-8 text-ink">

@@ -69,6 +69,9 @@ test('a Review_Run with one clean and two missed ghosts stores the right history
   await next.click();
   await expect(page.getByText('1 of 3 ghosts remembered')).toBeVisible();
   await expect(page.getByText(/laid to rest/i)).toHaveCount(0);
+  await expect(page.getByRole('heading', { level: 1, name: 'The review is over' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Begin another Séance' })).toHaveCount(0);
+  await expect(page.locator('.slip-primary')).toHaveCount(1);
   const stored = await storedHistory(page);
   expect(Object.keys(stored).sort()).toEqual([cleanChar, struggledChar, gaveUpChar].sort());
   // The clean entry equals its seed.
@@ -84,6 +87,9 @@ test('a Review_Run with one clean and two missed ghosts stores the right history
   expect(stored[gaveUpChar]!.lastOutcome).toBe('gave-up');
   expect(stored[gaveUpChar]!.nextDue).toBeGreaterThanOrEqual(beforeGaveUp + delay);
   expect(stored[gaveUpChar]!.nextDue).toBeLessThanOrEqual(afterGaveUp + delay);
+  // "Back to menu" returns to the Start menu.
+  await page.getByRole('button', { name: 'Back to menu' }).click();
+  await expect(page.getByRole('button', { name: 'Begin a Nightly Séance' })).toBeVisible();
   // The Graveyard counts equal buildGraveyard over the stored history.
   await page.reload();
   await page.getByRole('button', { name: 'Graveyard' }).click();

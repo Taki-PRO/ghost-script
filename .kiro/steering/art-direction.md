@@ -46,9 +46,12 @@ At most one per screen at a time.
 | Cangjie guide | its continue button |
 | Séance, after an outcome | Next ghost / Finish the séance |
 | Leave prompt | Stay (then "Next ghost" is a paper slip) |
-| Summary | Begin another Séance |
+| Summary (nightly séance) | Begin another Séance |
+| Summary (review) | Back to menu |
 | Level screen | none |
 | Summon, writing, Graveyard, Sources & licences | none |
+
+The Sound_Toggle and the Ambience_Toggle are paper slips and never a Primary_Action.
 
 ## The ghost
 One original ink-wash ghost: a brushed silhouette with bleeding edges, one inline SVG path with a turbulence and displacement filter, drawn by `GhostFigure`. Flat copies of the same silhouette are also allowed: the favicon and the pointer cursors. Each copy is built from the exported `GHOST_PATH` and `GHOST_EYE_PATHS`, has no filter, no gradient and no text, and is a standalone SVG that does not reference the `GhostFigure` component or its filter. The ghost is an ink wash (tone that darkens toward the hem, a second darker wash, a wet lower edge) with the same shape at every size and in the favicon (unfiltered copy, no gradient). Two small eye marks as paths. No text inside it, nothing derived from a character, hidden from assistive technology.
@@ -59,6 +62,7 @@ One original ink-wash ghost: a brushed silhouette with bleeding edges, one inlin
 - The Moon uses only existing tokens: `ink` for the disc and the glow, `nightMid` for the maria and `nightTop` for the shade. The `moon` token stays for the mist-coloured heading glow.
 - The Mist has two bands in the lower third: 0.18 at 88% and 0.10 at 72%. Text keeps 4.5:1 on each band.
 - The seal sits in the paper margin and covers no stroke.
+- The Sound_Toggle is a 44 px square paper slip fixed beside the Moon: below 992 px inside the Top_Room, 16 px left of the Moon_Disc; from 992 px 16 px below it. It never meets the Moon_Disc, and it lies above the Sky_Cap and the sticky headers.
 
 ## Intro fix (approved by the human)
 - The Moon disc has a soft off-centre shade, darker toward the lower right. Text on it keeps 4.5:1.
@@ -72,6 +76,7 @@ One original ink-wash ghost: a brushed silhouette with bleeding edges, one inlin
 - Legend-ink exemption: the Ink_In of the intro's legend line draws the six Han characters one at a time, in at most 6 s in total, at most 900 ms per character and under 200 ms per stroke. It runs once when the intro opens, never blocks a control, and reduced motion shows the finished line.
 - Outcome motions take 600 ms: clean dissolves upward like ink smoke, struggled lingers at the edge, gave-up slips away. The result text and the primary action do not wait for them.
 - Every animation and transition sits inside the one `prefers-reduced-motion: no-preference` block. Reduced motion shows the static end state.
+- Sound is not motion. The night wind is not one of the named ambient exemptions: it is off while reduced motion is requested, and it adds no animation or transition.
 
 ## Pointer
 Cursors apply only to devices whose primary input matches `(hover: hover) and (pointer: fine)`; touch devices keep the default cursor. The Ghost_Cursor and the Link_Cursor are flat ghost silhouettes, each at most 32 by 32 px, a `data:` SVG with an `auto` fallback. The Link_Cursor differs from the Ghost_Cursor in shape (wider eyes) and not only in colour. The Brush_Cursor is a thin crosshair with an open centre, at most 24 by 24 px, a `data:` SVG with a `crosshair` fallback, used on the Writing_Paper of the Write step only.
@@ -84,4 +89,10 @@ Cursors apply only to devices whose primary input matches `(hover: hover) and (p
 - The legend is a story and a design premise. Claims about Cangjie stay within `content-accuracy.md`.
 
 ## Sound
-None.
+Sound is optional, quiet and made in code.
+- All sounds are synthesised in the browser with the Web Audio API. The app has no audio file, sample, `Audio` element or audio library, so there is nothing to license.
+- The sounds: a soft wooden tap for each Summon key and a duller tap for a wrong key; a faint brush sweep when ink appears and when a stroke is accepted; a low paper thud when the Seal_Stamp appears; a soft low chime when a ghost is laid to rest (shorter and quieter when it struggled) and a quiet falling tone when the player gave up; an optional night wind on the menu and the Graveyard.
+- Every effect sound is at most 1.2 s long, every voice peaks at most 0.2 before the master gain (at most 0.6), and a limiter ends the chain. At most 4 effect sounds play at once.
+- Nothing sounds before the player's first click, tap or key press. Sound is on by default. The night wind is off by default and stays off while reduced motion is requested.
+- One Sound_Toggle, a paper slip with a speaker icon, sits in the same fixed place on every screen except the loading and error screens.
+- Sound never delays or blocks play, and the same sound plays for every character, so a sound never carries an answer. The game plays the same with sound off or when Web Audio is missing.

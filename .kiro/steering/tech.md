@@ -38,4 +38,5 @@ inclusion: always
 ## Things to avoid
 - Paid APIs, API keys in the frontend, or any runtime LLM calls in the shipped app.
 - Generating character data (components, pinyin, meanings, stroke order, Cangjie codes) with an AI model. All character data comes from the data pipeline.
+- Audio files, samples, `Audio` elements and audio libraries. All sound is synthesised in code with the Web Audio API and loaded from nowhere.
 - Adding `.kiro/` to `.gitignore`. It must stay in the repo for judging.

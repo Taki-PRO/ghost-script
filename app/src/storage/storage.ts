@@ -10,7 +10,7 @@ import type { AttemptRecord, Outcome, ReviewEntry, ReviewHistory } from '../engi
  */
 
 /** Schema version written by this build. */
-export const CURRENT_SCHEMA_VERSION = 3;
+export const CURRENT_SCHEMA_VERSION = 4;
 
 /** The single localStorage key holding the persisted blob. */
 export const STORAGE_KEY = 'ghost-script:state';
@@ -30,6 +30,10 @@ export interface PersistedState {
   readonly level: Level;
   /** True once the player has chosen a level (or had a save before levels existed). Added in schema 3. */
   readonly levelChosen: boolean;
+  /** Whether sound effects are on. Added in schema 4; default true. */
+  readonly soundOn: boolean;
+  /** Whether the night wind is on. Added in schema 4; default false. */
+  readonly ambienceOn: boolean;
   readonly history: ReviewHistory;
 }
 
@@ -65,6 +69,10 @@ export interface Store {
   getLevelChosen(): boolean;
   /** Sets the level and marks it as chosen; leaves everything else as it is. */
   setLevel(level: Level): void;
+  getSoundOn(): boolean;
+  setSoundOn(on: boolean): void;
+  getAmbienceOn(): boolean;
+  setAmbienceOn(on: boolean): void;
   resetToDefaults(): void;
   /** False once any write has failed or had no backend during this page session; never reverts. */
   isSavingWorking(): boolean;
@@ -72,14 +80,20 @@ export interface Store {
 
 /**
  * Migrations shipped with the app. `2` migrates a version-2 blob to version 3
- * (level 1; levelChosen is true when the intro was already seen). There is no
+ * (level 1; levelChosen is true when the intro was already seen). `3` migrates
+ * a version-3 blob to version 4: it keeps every field and sets soundOn to true
+ * and ambienceOn to false, overwriting any value in the old blob. There is no
  * `1`: a version-1 blob has no migration path and resets to defaults. Add
- * `3: (old) => ...` etc. when CURRENT_SCHEMA_VERSION is bumped again.
+ * `4: (old) => ...` etc. when CURRENT_SCHEMA_VERSION is bumped again.
  */
 const SHIPPED_MIGRATIONS: MigrationMap = {
   2: (old) => {
     const b = old as Record<string, unknown>;
     return { ...b, level: 1, levelChosen: b.introSeen === true };
+  },
+  3: (old) => {
+    const b = old as Record<string, unknown>;
+    return { ...b, soundOn: true, ambienceOn: false };
   },
 };
 
@@ -139,6 +153,9 @@ function validateState(blob: unknown, version: number): PersistedState | undefin
     cangjieIntroSeen: blob.cangjieIntroSeen,
     level: blob.level,
     levelChosen: blob.levelChosen,
+    // A bad sound field is repaired on its own and never drops the history.
+    soundOn: typeof blob.soundOn === 'boolean' ? blob.soundOn : true,
+    ambienceOn: typeof blob.ambienceOn === 'boolean' ? blob.ambienceOn : false,
     history: blob.history,
   };
 }
@@ -157,6 +174,8 @@ export function createStore(options: StoreOptions = {}): Store {
     cangjieIntroSeen: false,
     level: 1,
     levelChosen: false,
+    soundOn: true,
+    ambienceOn: false,
     history: Object.freeze({}) as ReviewHistory,
   });
 
@@ -211,6 +230,8 @@ export function createStore(options: StoreOptions = {}): Store {
         cangjieIntroSeen: state.cangjieIntroSeen,
         level: state.level,
         levelChosen: state.levelChosen,
+        soundOn: state.soundOn,
+        ambienceOn: state.ambienceOn,
         history: state.history,
       };
       backend.setItem(key, JSON.stringify(blob));
@@ -234,6 +255,8 @@ export function createStore(options: StoreOptions = {}): Store {
       cangjieIntroSeen: prior.cangjieIntroSeen,
       level: prior.level,
       levelChosen: prior.levelChosen,
+      soundOn: prior.soundOn,
+      ambienceOn: prior.ambienceOn,
       history: { ...prior.history, [char]: entry },
     };
     saveState(next);
@@ -271,6 +294,22 @@ export function createStore(options: StoreOptions = {}): Store {
     saveState({ ...prior, level, levelChosen: true });
   }
 
+  function getSoundOn(): boolean {
+    return loadState().soundOn;
+  }
+
+  function setSoundOn(on: boolean): void {
+    saveState({ ...loadState(), soundOn: on });
+  }
+
+  function getAmbienceOn(): boolean {
+    return loadState().ambienceOn;
+  }
+
+  function setAmbienceOn(on: boolean): void {
+    saveState({ ...loadState(), ambienceOn: on });
+  }
+
   function resetToDefaults(): void {
     try {
       getBackend()?.removeItem(key);
@@ -290,6 +329,10 @@ export function createStore(options: StoreOptions = {}): Store {
     getLevel,
     getLevelChosen,
     setLevel,
+    getSoundOn,
+    setSoundOn,
+    getAmbienceOn,
+    setAmbienceOn,
     resetToDefaults,
     isSavingWorking,
   };
@@ -311,5 +354,9 @@ export const setCangjieIntroSeen = (seen: boolean): void => defaultStore.setCang
 export const getLevel = (): Level => defaultStore.getLevel();
 export const getLevelChosen = (): boolean => defaultStore.getLevelChosen();
 export const setLevel = (level: Level): void => defaultStore.setLevel(level);
+export const getSoundOn = (): boolean => defaultStore.getSoundOn();
+export const setSoundOn = (on: boolean): void => defaultStore.setSoundOn(on);
+export const getAmbienceOn = (): boolean => defaultStore.getAmbienceOn();
+export const setAmbienceOn = (on: boolean): void => defaultStore.setAmbienceOn(on);
 export const resetToDefaults = (): void => defaultStore.resetToDefaults();
 export const isSavingWorking = (): boolean => defaultStore.isSavingWorking();

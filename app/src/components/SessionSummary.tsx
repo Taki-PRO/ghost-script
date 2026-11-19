@@ -53,6 +53,8 @@ export interface SessionResults {
 export interface SessionSummaryProps {
   results: SessionResults;
   onPlayAgain: () => void;
+  /** Review summary only: returns to the Start menu. */
+  onBackToMenu?: () => void;
 }
 
 /**
@@ -67,7 +69,7 @@ function normalise(results: SessionResults): { total: number; laidToRest: number
   return { total, laidToRest };
 }
 
-export function SessionSummary({ results, onPlayAgain }: SessionSummaryProps) {
+export function SessionSummary({ results, onPlayAgain, onBackToMenu }: SessionSummaryProps) {
   const { total, laidToRest } = normalise(results);
   const rows = results.returns ?? [];
   const finishedAt =
@@ -88,7 +90,7 @@ export function SessionSummary({ results, onPlayAgain }: SessionSummaryProps) {
           id="summary-title"
           className="font-display text-3xl font-semibold tracking-wide text-ink sm:text-5xl"
         >
-          The séance is over
+          {isReview ? 'The review is over' : 'The séance is over'}
         </h1>
 
         <p role="status" className="card-slip mt-2 px-5 py-2 text-lg">
@@ -133,10 +135,10 @@ export function SessionSummary({ results, onPlayAgain }: SessionSummaryProps) {
 
         <button
           type="button"
-          onClick={onPlayAgain}
+          onClick={isReview ? onBackToMenu : onPlayAgain}
           className="slip-primary mt-3 min-h-[44px] px-8 py-2 text-lg font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
-          Begin another Séance
+          {isReview ? 'Back to menu' : 'Begin another Séance'}
         </button>
       </div>
     </main>

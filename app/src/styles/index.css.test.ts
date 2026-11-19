@@ -1232,3 +1232,92 @@ describe('slips (night-polish, Requirement 6)', () => {
     });
   });
 });
+
+describe('Sound_Toggle placement (night-sounds 10.1)', () => {
+  const top = withoutMediaBlocks(css);
+  const rule = blockAt(top, top.indexOf('.slip.sound-toggle {')).body;
+  const decl = (name: string): string => {
+    const m = rule.match(new RegExp(`(?:^|[\\s;])${name}\\s*:\\s*([^;]+);`));
+    expect(m, name).not.toBeNull();
+    return m![1].trim();
+  };
+  const rootVar = (name: string): number => {
+    const m = css.match(new RegExp(`${name}:\\s*([\\d.]+)rem;`));
+    expect(m, name).not.toBeNull();
+    return parseFloat(m![1]);
+  };
+  /** Evaluate a clamp()/calc() length of the rule at a viewport width, in px (1 rem = 16 px). */
+  const px = (expr: string, vw: number): number => {
+    const js = expr
+      .replace(/var\(--moon-inset-x\)/g, `${rootVar('--moon-inset-x')}rem`)
+      .replace(/var\(--moon-inset-y\)/g, `${rootVar('--moon-inset-y')}rem`)
+      .replace(/var\(--moon-size\)/g, `${rootVar('--moon-size')}rem`)
+      .replace(/(\d*\.?\d+)rem/g, '($1*16)')
+      .replace(/(\d*\.?\d+)px/g, '$1')
+      .replace(/100vw/g, String(vw))
+      .replace(/calc\(/g, '(')
+      .replace(/clamp\(/g, 'clamp(');
+    const clamp = (lo: number, v: number, hi: number): number => Math.max(lo, Math.min(v, hi));
+    return new Function('clamp', `return ${js};`)(clamp) as number;
+  };
+  const box = (vw: number) => {
+    const size = px(decl('width'), vw);
+    const right = px(decl('right'), vw);
+    const topPx = px(decl('top'), vw);
+    return { left: vw - right - size, right: vw - right, top: topPx, bottom: topPx + size, size };
+  };
+  const moon = (vw: number) => {
+    const r = (rootVar('--moon-size') * 16) / 2;
+    const cx = vw - rootVar('--moon-inset-x') * 16;
+    const cy = rootVar('--moon-inset-y') * 16;
+    return { left: cx - r, right: cx + r, top: cy - r, bottom: cy + r, cx };
+  };
+
+  it('is fixed, above the Sky_Cap (10) and the sticky headers (20), with no transition or animation', () => {
+    expect(decl('position')).toBe('fixed');
+    expect(Number(decl('z-index'))).toBeGreaterThan(20);
+    expect(Number(decl('z-index'))).toBe(30);
+    expect(rule).not.toMatch(/transition|animation/);
+    expect(top).toContain('.slip.sound-toggle {');
+  });
+
+  it('adds no @media condition', () => {
+    const conditions = [...css.matchAll(/@media\s*([^{]*)\{/g)].map((m) => m[1].trim().replace(/\s+/g, ' '));
+    expect(conditions.sort()).toEqual(
+      [
+        '(hover: hover)',
+        '(hover: hover)',
+        '(hover: hover) and (pointer: fine)',
+        '(prefers-reduced-motion: no-preference)',
+      ].sort(),
+    );
+  });
+
+  it('is a 44 px square', () => {
+    expect(px(decl('width'), 1024)).toBe(44);
+    expect(px(decl('height'), 1024)).toBe(44);
+  });
+
+  it('lies 16 px left of the Moon disc below 992 px, in the top room', () => {
+    for (const vw of [320, 375, 600, 991]) {
+      const t = box(vw);
+      const m = moon(vw);
+      expect(vw - t.right, `${vw} right offset`).toBe(88);
+      expect(m.left - t.right, `${vw} gap`).toBe(16);
+      expect(t.top, `${vw} top`).toBe(8);
+      expect(t.bottom).toBe(52);
+    }
+  });
+
+  it('lies 16 px below the Moon disc, centred under it, from 992 px', () => {
+    for (const vw of [992, 1024, 1440, 1920]) {
+      const t = box(vw);
+      const m = moon(vw);
+      expect(t.top - m.bottom, `${vw} gap`).toBe(16);
+      expect(vw - t.right, `${vw} right offset`).toBe(18);
+      expect((t.left + t.right) / 2, `${vw} centre`).toBe(m.cx);
+      expect(t.top).toBe(88);
+      expect(t.bottom).toBe(132);
+    }
+  });
+});

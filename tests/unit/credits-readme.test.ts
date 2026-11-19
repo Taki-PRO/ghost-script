@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { DATA_FILES, DATA_SOURCES, FONTS } from '../../app/src/data/credits';
+import { COMBINED_WORK_NOTE, DATA_FILES, DATA_SOURCES, FONTS } from '../../app/src/data/credits';
 import { LEGEND_SOURCE } from '../../app/src/data/citations';
 
 const root = resolve(__dirname, '../..');
@@ -74,6 +74,16 @@ describe('README credits match app/src/data', () => {
     expect(plain(accuracy)).toContain(citation);
   });
 
+  it('level-datasets sentence names the HSK 3.0 character list (MIT) in both', () => {
+    const sentence = (t: string): string => {
+      const i = t.indexOf('The level datasets incorporate');
+      return t.slice(i, t.indexOf('every level record', i) === -1 ? undefined : t.indexOf('every level record', i));
+    };
+    const fromNote = sentence(COMBINED_WORK_NOTE);
+    const fromReadme = plain(sentence(readme));
+    expect(fromNote).toContain('MIT data (HSK 3.0 character list)');
+    expect(fromReadme).toContain('MIT data (HSK 3.0 character list)');
+  });
   it('names the notices file and its build command', () => {
     expect(readme).toContain('app/public/THIRD_PARTY_NOTICES.txt');
     expect(readme).toContain('npm run build:notices');

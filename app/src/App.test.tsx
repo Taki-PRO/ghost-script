@@ -748,15 +748,17 @@ describe('Review_Run wiring (proof-pass 10)', () => {
     expect(document.querySelectorAll('.slip-primary')).toHaveLength(1);
   });
 
-  it('the summary primary starts a nightly séance', async () => {
+  it('the review summary says "The review is over" and its "Back to menu" shows the Start menu', async () => {
     seed({ introSeen: true, cangjieIntroSeen: true, history: seeds() });
     const user = await openApp();
     await startReview(user);
     await playSeance(user, ['clean', 'clean', 'clean']);
-    await user.click(await screen.findByRole('button', { name: 'Begin another Séance' }));
-    expect(await screen.findByText('Ghost 1 of 10')).toBeTruthy();
-    emit('clean');
-    expect(screen.getByText('Laid to rest')).toBeTruthy();
+    expect(await screen.findByRole('heading', { level: 1, name: 'The review is over' })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Begin another Séance' })).toBeNull();
+    await user.click(await screen.findByRole('button', { name: 'Back to menu' }));
+    expect(await screen.findByRole('button', { name: /begin a nightly séance/i })).toBeTruthy();
+    expect(screen.queryByRole('heading', { name: 'The review is over' })).toBeNull();
+    expect(screen.queryByText(/^Ghost 1 of /)).toBeNull();
   });
 
   it('a failed level load keeps the menu, shows the alert and leaves history unchanged', async () => {
@@ -820,5 +822,59 @@ describe('review slip counts (proof-pass 10.2, 10.5)', () => {
     await openApp();
     await screen.findByRole('button', { name: /begin a nightly séance/i });
     expect(screen.queryByRole('button', { name: /Review restless ghosts/ })).toBeNull();
+  });
+});
+
+describe('Sound_Toggle placement in App (night-sounds 10.1)', () => {
+  const toggle = () => screen.queryByTestId('sound-toggle');
+
+  it('is absent on the loading screen, present on intro, menu, level and Sources, with Web Audio present', async () => {
+    vi.stubGlobal('AudioContext', class {});
+    const user = userEvent.setup();
+    render(<App />);
+    expect(screen.getByRole('status')).toBeTruthy();
+    expect(toggle()).toBeNull();
+    await user.click(await screen.findByRole('button', { name: 'Sources' }));
+    expect(toggle()).not.toBeNull();
+    await user.click(screen.getByRole('button', { name: 'Back to the intro' }));
+    expect(toggle()).not.toBeNull();
+    await user.click(screen.getByRole('button', { name: /begin the séance/i }));
+    expect(await screen.findByRole('button', { name: /^level 1/i })).toBeTruthy();
+    expect(screen.getAllByTestId('sound-toggle')).toHaveLength(1);
+  });
+
+  it('is the last child of the container on the menu and on the séance, once', async () => {
+    vi.stubGlobal('AudioContext', class {});
+    seed({ introSeen: true, cangjieIntroSeen: true });
+    const user = userEvent.setup();
+    const { container } = render(<App />);
+    await user.click(await screen.findByRole('button', { name: /begin a nightly séance/i }));
+    expect(await screen.findByText('Ghost 1 of 10')).toBeTruthy();
+    expect(screen.getAllByTestId('sound-toggle')).toHaveLength(1);
+    expect(container.lastElementChild).toBe(toggle());
+  });
+
+  it('is present on the Graveyard', async () => {
+    vi.stubGlobal('AudioContext', class {});
+    seed({ introSeen: true, cangjieIntroSeen: true });
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(await screen.findByRole('button', { name: /graveyard/i }));
+    expect(toggle()).not.toBeNull();
+  });
+
+  it('is absent on the error screen', async () => {
+    vi.stubGlobal('AudioContext', class {});
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: false, text: async () => '' })));
+    render(<App />);
+    await screen.findByRole('alert');
+    expect(toggle()).toBeNull();
+  });
+
+  it('is not drawn when Web Audio is missing', async () => {
+    seed({ introSeen: true, cangjieIntroSeen: true });
+    render(<App />);
+    await screen.findByRole('button', { name: /begin a nightly séance/i });
+    expect(toggle()).toBeNull();
   });
 });

@@ -85,25 +85,80 @@ export function firstLoad(files: readonly SizedFile[]): FirstLoad {
   return { counted, level1, total: counted + level1 };
 }
 
-/**
- * Pure: reads the stated first-load figures from the README text. Returns null when the
- * "Real first load ... N bytes counted + N bytes level 1 dataset = N bytes." sentence is absent.
- */
-export function parseReadmeFirstLoad(readme: string): FirstLoad | null {
-  const m = readme.match(
-    /Real first load[^\n]*?: ([\d,]+) bytes counted \+ ([\d,]+) bytes level 1 dataset = ([\d,]+) bytes\./,
-  );
-  if (!m) return null;
-  const num = (s: string | undefined): number => Number((s ?? '').replace(/,/g, ''));
-  return { counted: num(m[1]), level1: num(m[2]), total: num(m[3]) };
+/** A README figure may differ from the printed figure by this fraction of the printed figure. */
+export const FIRST_LOAD_TOLERANCE = 0.01;
+
+/** Pure: bytes divided by 1,000 and rounded to the nearest kB. */
+export function roundedKb(bytes: number): number {
+  return Math.round(bytes / 1000);
 }
 
-/** Pure: one message per figure that differs, each naming the README figure and the printed figure. */
-export function compareFirstLoad(readmeFigures: FirstLoad, printedFigures: FirstLoad): readonly string[] {
-  const keys: readonly (keyof FirstLoad)[] = ['counted', 'level1', 'total'];
-  return keys
-    .filter((k) => readmeFigures[k] !== printedFigures[k])
-    .map((k) => `${k}: README says ${readmeFigures[k]}, build prints ${printedFigures[k]}`);
+/** Pure: true when the stated figure is within 1% of the printed figure (relative to the printed one). */
+export function withinTolerance(stated: number, printed: number): boolean {
+  return Math.abs(stated - printed) <= FIRST_LOAD_TOLERANCE * printed;
+}
+
+export interface StatedFirstLoad {
+  /** Exact figures, from the "Exact figures" line. */
+  readonly counted: number;
+  readonly level1: number;
+  readonly total: number;
+  /** Rounded figures, from the "Real first load: about T kB ... about C kB" sentence. */
+  readonly countedKb: number;
+  readonly totalKb: number;
+}
+
+export type FirstLoadComparison = { ok: true } | { ok: false; messages: readonly string[] };
+
+/**
+ * Pure: reads the stated first-load figures from the README text: the rounded sentence
+ * "Real first load: about T kB gzipped, of which about C kB counts against the 300 kB budget." and the exact line
+ * "Exact figures, as printed by npm run check:bundle: N bytes counted + N bytes level 1 dataset = N bytes."
+ * Returns null when either place is absent.
+ */
+export function parseReadmeFirstLoad(readme: string): StatedFirstLoad | null {
+  const rounded = readme.match(
+    /Real first load: about ([\d,]+) kB gzipped, of which about ([\d,]+) kB counts against the 300 kB budget\./,
+  );
+  const exact = readme.match(
+    /Exact figures[^\n]*?: ([\d,]+) bytes counted \+ ([\d,]+) bytes level 1 dataset = ([\d,]+) bytes\./,
+  );
+  if (!rounded || !exact) return null;
+  const num = (s: string | undefined): number => Number((s ?? '').replace(/,/g, ''));
+  return {
+    counted: num(exact[1]),
+    level1: num(exact[2]),
+    total: num(exact[3]),
+    totalKb: num(rounded[1]),
+    countedKb: num(rounded[2]),
+  };
+}
+
+/**
+ * Pure: compares each README figure with the printed one, per figure, with a 1% tolerance relative to the
+ * printed figure (kB figures against the printed bytes divided by 1,000). The budget check is not affected.
+ */
+export function compareFirstLoad(stated: StatedFirstLoad | null, printed: FirstLoad): FirstLoadComparison {
+  if (!stated) {
+    return { ok: false, messages: ['the README first-load figures could not be parsed'] };
+  }
+  const messages: string[] = [];
+  const exactKeys: readonly (keyof FirstLoad)[] = ['counted', 'level1', 'total'];
+  for (const k of exactKeys) {
+    if (!withinTolerance(stated[k], printed[k])) {
+      messages.push(`README ${k} ${stated[k]} differs from printed ${printed[k]} by more than 1%`);
+    }
+  }
+  const kbKeys: readonly (readonly ['countedKb' | 'totalKb', 'counted' | 'total'])[] = [
+    ['countedKb', 'counted'],
+    ['totalKb', 'total'],
+  ];
+  for (const [kb, exact] of kbKeys) {
+    if (!withinTolerance(stated[kb], printed[exact] / 1000)) {
+      messages.push(`README ${kb} ${stated[kb]} differs from printed ${printed[exact] / 1000} kB by more than 1%`);
+    }
+  }
+  return messages.length === 0 ? { ok: true } : { ok: false, messages };
 }
 
 function walk(dir: string): string[] {
@@ -156,17 +211,19 @@ function main(): void {
   const stated = existsSync(readmePath) ? parseReadmeFirstLoad(readFileSync(readmePath, 'utf8')) : null;
   if (!stated) {
     process.stderr.write(
-      'README CHECK FAILED: the README first-load figures could not be parsed (expected "Real first load ...: N bytes counted + N bytes level 1 dataset = N bytes.").\n',
+      'README CHECK FAILED: the README first-load figures could not be parsed (expected the "Real first load: about T kB gzipped, ..." sentence and the "Exact figures ...: N bytes counted + N bytes level 1 dataset = N bytes." line).\n',
     );
     process.exitCode = 1;
     return;
   }
-  const diffs = compareFirstLoad(stated, fl);
-  if (diffs.length > 0) {
-    process.stderr.write(`README CHECK FAILED: the README first-load figures differ from the build:\n${diffs.map((d) => `  ${d}\n`).join('')}`);
+  const result = compareFirstLoad(stated, fl);
+  if (!result.ok) {
+    process.stderr.write(
+      `README CHECK FAILED: the README first-load figures differ from the build:\n${result.messages.map((d) => `  ${d}\n`).join('')}`,
+    );
     process.exitCode = 1;
   } else {
-    process.stdout.write('README CHECK PASSED: the README first-load figures equal the printed ones.\n');
+    process.stdout.write('README CHECK PASSED: the README first-load figures are within 1% of the printed ones.\n');
   }
 }
 

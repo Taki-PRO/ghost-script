@@ -113,6 +113,15 @@ for (const vp of VIEWPORTS) {
       const problems = await findOverflow(page, vp.width);
       expect(problems, problems.join('\n')).toEqual([]);
     });
+    test('the Sound_Toggle is present and the page does not overflow (night-sounds 10.4)', async ({ page }) => {
+      expectViewport(page);
+      await seed(page, seedState());
+      await page.goto(START);
+      await expect(page.getByRole('button', { name: 'Begin a Nightly Séance' })).toBeVisible();
+      await expect(page.getByTestId('sound-toggle')).toHaveCount(1);
+      const problems = await findOverflow(page, vp.width);
+      expect(problems, problems.join('\n')).toEqual([]);
+    });
     test('guard: an appended 600 px div is reported', async ({ page }) => {
       expectViewport(page);
       await seed(page, seedState());
@@ -146,6 +155,7 @@ for (const vp of [
       expect(problems, problems.join('\n')).toEqual([]);
       const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
       expect(scrollWidth).toBeLessThanOrEqual(vp.width);
+      await expect(page.getByTestId('sound-toggle'), 'the Sound_Toggle is present').toHaveCount(1);
     });
   });
 }

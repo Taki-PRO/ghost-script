@@ -1,0 +1,370 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 HUMAN TASK: Human answers the open questions and decides each amendment and departure": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117040862
+      }
+    ],
+    "1. Gate: the human answers the open questions and decides the amendments and departures": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117040887
+      }
+    ],
+    "2.1 Update `requirements.md`, `design.md` and this `tasks.md` to the recorded answers": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117046090
+      },
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117463073
+      }
+    ],
+    "2. Amend the spec to the human's answers": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117463106
+      }
+    ],
+    "3.1 Amendment A1: `art-direction.md`, \"## Sound\"": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117469980
+      },
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117524627
+      }
+    ],
+    "3.5 Amendment A5: `tech.md`, \"Things to avoid\"": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117470091
+      },
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117524756
+      }
+    ],
+    "3.6 Amendment A6: `structure.md`, the project tree": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117470712
+      },
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117525449
+      }
+    ],
+    "3.2 Amendment A2: `art-direction.md`, \"Primary action per screen\"": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117532367
+      },
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117563871
+      }
+    ],
+    "3.3 Amendment A3: `art-direction.md`, \"Motion\"": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117568996
+      },
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117599461
+      }
+    ],
+    "3.4 Amendment A4: `art-direction.md`, \"Moon, mist and seal placement\"": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117604849
+      },
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117636910
+      }
+    ],
+    "3. Steering edits for approved amendments only": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117636942
+      }
+    ],
+    "4.1 Record the bundle figures of the current build": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117642252
+      },
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117668604
+      }
+    ],
+    "4. Baseline of the bundle figures, before any code changes": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117668637
+      }
+    ],
+    "5.1 Implement schema 4 in `app/src/storage/storage.ts`": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117679681
+      },
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117812170
+      }
+    ],
+    "5.2 Update and extend `app/src/storage/storage.test.ts`": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117818549
+      },
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117928505
+      }
+    ],
+    "6.1 Write `app/src/audio/voices.ts`": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117818653
+      },
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117929235
+      }
+    ],
+    "5. Storage schema 4: `soundOn` and `ambienceOn`": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117928539
+      }
+    ],
+    "6.2 Write `app/src/audio/voices.test.ts`": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117936105
+      },
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795118029126
+      }
+    ],
+    "7.1 Write `app/src/audio/recipes.ts`": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117936260
+      },
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795118029820
+      }
+    ],
+    "7.2 Write the test double `app/src/audio/audioMock.ts`": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795117936870
+      },
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795118030562
+      }
+    ],
+    "6. The pure voice limiter": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795118029160
+      }
+    ],
+    "7.3 Write `app/src/audio/recipes.test.ts`": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795118036836
+      },
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795118161811
+      }
+    ],
+    "8.1 Write `app/src/audio/engine.ts`": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795118036947
+      },
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795118162586
+      }
+    ],
+    "7. Recipes, noise and the audio mock": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795118161845
+      }
+    ],
+    "8.2 Write `app/src/audio/engine.test.ts`": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795118167726
+      },
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795118348209
+      }
+    ],
+    "9.1 Write `app/src/audio/SoundProvider.tsx`": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795118168241
+      },
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795118347433
+      }
+    ],
+    "8. The sound engine": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795118348235
+      }
+    ],
+    "9.2 Write `SoundToggle.tsx` and `AmbienceToggle.tsx` in `app/src/components/`": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795118353604
+      },
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795118471403
+      }
+    ],
+    "9.3 Write the provider and toggle tests": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795118479145
+      },
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795118738546
+      }
+    ],
+    "10.1 Place the toggle: CSS and `App.tsx`": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795118479254
+      },
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795118739240
+      }
+    ],
+    "10.2 Re-lay out the séance header in `SeanceSession.tsx`": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795118479866
+      },
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795118740004
+      }
+    ],
+    "10.3 Add the end-to-end helpers": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795118480355
+      },
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795118740773
+      }
+    ],
+    "9. The provider, the hook and the toggles": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795118738573
+      }
+    ],
+    "10.4 Teach the existing end-to-end specs about the toggle": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795118806012
+      }
+    ],
+    "10.6 Write `app/src/App.sound.test.tsx`": [
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795118806505
+      },
+      {
+        "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795119250931
+      }
+    ]
+  }
+}

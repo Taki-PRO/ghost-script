@@ -99,7 +99,7 @@ export const DATA_FILES: readonly DataFileCredit[] = [
 
 /** Combined-work statement, from the README "Licensing summary". */
 export const COMBINED_WORK_NOTE =
-  'characters.json is a combined work. It incorporates CC BY-SA 4.0 data (CC-CEDICT), LGPL-3.0-or-later data (Make Me a Hanzi dictionary.txt), Arphic Public License data (hanzi-writer-data) and Unicode License V3 data (Unihan kCangjie Cangjie codes). It carries the licence terms of each source for its fields.';
+  'The three level datasets (characters.json, characters-level2.json and characters-level3.json) and the Power\'s derived data file oracle/power/data/oracle-data.json are each a combined work, and each carries the licence terms of each source for its fields. The level datasets incorporate CC BY-SA 4.0 data (CC-CEDICT), LGPL-3.0-or-later data (Make Me a Hanzi dictionary.txt), Arphic Public License data (hanzi-writer-data), Unicode License V3 data (Unihan kCangjie Cangjie codes) and MIT data (HSK 3.0 character list). The Power file incorporates only the LGPL-3.0-or-later and Unicode License V3 data.';
 
 export const CODE_LICENCE = 'MIT';
 

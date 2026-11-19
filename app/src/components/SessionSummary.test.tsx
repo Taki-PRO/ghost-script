@@ -283,12 +283,33 @@ describe('SessionSummary review mode (proof-pass 10)', () => {
     expect(within(struggled!).queryByTestId('seal-stamp')).toBeNull();
     expect(within(gaveUp!).queryByTestId('seal-stamp')).toBeNull();
   });
-  it('has "Begin another Séance" as the only slip-primary and it calls onPlayAgain', async () => {
-    const onPlayAgain = renderReview();
-    const button = screen.getByRole('button', { name: 'Begin another Séance' });
+  it('has the heading "The review is over", not "The séance is over"', () => {
+    renderReview();
+    expect(screen.getByRole('heading', { level: 1, name: 'The review is over' })).toBeTruthy();
+    expect(screen.queryByRole('heading', { name: 'The séance is over' })).toBeNull();
+  });
+  it('has "Back to menu" as the only slip-primary and it calls onBackToMenu, not onPlayAgain', async () => {
+    const onPlayAgain = vi.fn();
+    const onBackToMenu = vi.fn();
+    render(
+      <SessionSummary
+        results={{ total: 3, laidToRest: 1, returns: rows, finishedAt: NOW, mode: 'review' }}
+        onPlayAgain={onPlayAgain}
+        onBackToMenu={onBackToMenu}
+      />,
+    );
+    const button = screen.getByRole('button', { name: 'Back to menu' });
     expect(document.querySelectorAll('.slip-primary')).toHaveLength(1);
     expect(button).toHaveClass('slip-primary');
+    expect(screen.queryByRole('button', { name: 'Begin another Séance' })).toBeNull();
+    expect(screen.getAllByRole('button')).toHaveLength(1);
     await userEvent.setup().click(button);
-    expect(onPlayAgain).toHaveBeenCalledTimes(1);
+    expect(onBackToMenu).toHaveBeenCalledTimes(1);
+    expect(onPlayAgain).not.toHaveBeenCalled();
+  });
+  it('keeps the nightly heading "The séance is over" and its button in a nightly summary', () => {
+    setup(10, 7);
+    expect(screen.getByRole('heading', { level: 1, name: 'The séance is over' })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Back to menu' })).toBeNull();
   });
 });

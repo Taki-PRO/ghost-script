@@ -432,7 +432,7 @@ First load: <counted> bytes counted + <level1> bytes level 1 dataset = <sum> byt
 
 through a new pure `firstLoad(files)` returning `{ counted, level1, total }` (`level1` is the gzip size of `data/characters.json`, level 9, like the other figures). Today this is 214,206 + 361,679 = 575,885 (README figures; the check prints the current ones). The budget of 300,000 still applies to the counted part only.
 
-The README "Bundle and file weights" section states the budget, the counted figure, the level 1 figure and their sum, and says the budget does not count the level 1 dataset (R7.6, R7.7). It also refreshes the stale file table: the on-disk level 2 file is 1,227,660 bytes, the README says 1,228,185. All figures are copied from the `check:bundle` output at the time of the change; a test compares the README sum with `counted + level1` only for arithmetic (it cannot know the build).
+The README "Bundle and file weights" section (see "Fourth review: rounded README sentence and 1% tolerance" below) states the budget, the counted figure, the level 1 figure and their sum, and says the budget does not count the level 1 dataset (R7.6, R7.7). It also refreshes the stale file table: the on-disk level 2 file is 1,227,660 bytes, the README says 1,228,185. All figures are copied from the `check:bundle` output at the time of the change; a test compares the README sum with `counted + level1` only for arithmetic (it cannot know the build).
 
 **The legend file is counted.** Decision recorded by task 10.2: the Legend_Strokes_File is counted, not lazy, and the counted total must stay at most 300,000 bytes gzip. `check-bundle-size.ts` already implements this (`LAZY_PATHS` has no legend entry, `firstLoad` is exported and printed); task 16.x only adds the file and re-checks the total. Printed figures at 10.2, before the legend file exists: 218,373 counted + 353,215 level 1 = 571,588. `LAZY_PATHS` is unchanged, so `data/legend-strokes.json` (14,208 bytes raw, about 6,350 bytes gzip level 9) is part of the counted first load: the intro fetches it on the first screen, so counting it is the honest choice (R7.9). The counted total goes from about 214 kB to about 221 kB, inside 300 kB. Item 11 adds 2,373 bytes gzip of sample outlines to `levels.json`, which is also counted, so the counted total is about 223 kB, still inside 300 kB. `bundle-size.test.ts` asserts `isLazy('data/legend-strokes.json')` is false and `firstLoad` adds correctly.
 
@@ -462,6 +462,35 @@ export function compareFirstLoad(
 ```
 
 Both are pure and exported from `scripts/check-bundle-size.ts` (or a `scripts/lib/` module it imports). `parseReadmeFirstLoad` reuses the pattern the existing README test uses to read the three figures. After printing the `First load:` line, the script reads `README.md`, calls the two functions and, on a difference or on a README with no stated figures, prints one line per difference naming both figures (for example `README counted 214,206 differs from printed 214,210`) and exits with status 1. The existing budget check and exit code are unchanged. Unit tests (in `tests/unit/check-bundle-size.test.ts` or the existing bundle test file) cover fixture README text: equal figures, a differing counted figure, a differing level 1 figure, a differing total, and no figures. The README is edited only if the printed figures differ from it.
+
+**Fourth review: rounded README sentence and 1% tolerance (approved by the human; replaces the exact-match rule of R7.13 to R7.17).** The README presents the first load twice, in two adjacent places of "Bundle and file weights":
+
+1. The rounded sentence a reader sees first: `Real first load: about T kB gzipped, of which about C kB counts against the 300 kB budget.` T and C are the exact total and counted figures divided by 1,000 and rounded to the nearest kB (`Math.round(bytes / 1000)`), so the sentence follows the build.
+2. The exact line the checks parse, kept as today, directly after the sentence: `Exact figures, as printed by npm run check:bundle: <counted> bytes counted + <level1> bytes level 1 dataset = <sum> bytes.` The existing wording of the paragraph (budget 300,000 bytes, "The budget does not count the level 1 dataset", the largest files) stays after it.
+
+```ts
+export interface StatedFirstLoad {
+  counted: number; level1: number; total: number;          // exact figures
+  countedKb: number; totalKb: number;                       // rounded figures
+}
+export const FIRST_LOAD_TOLERANCE = 0.01;
+export function roundedKb(bytes: number): number;           // Math.round(bytes / 1000)
+export function withinTolerance(stated: number, printed: number): boolean; // |stated - printed| <= 0.01 * printed
+export function parseReadmeFirstLoad(readme: string): StatedFirstLoad | null; // null when either place is unparsable
+export function compareFirstLoad(stated: StatedFirstLoad | null, printed: { counted: number; level1: number; total: number }): { ok: true } | { ok: false; messages: readonly string[] };
+```
+
+`compareFirstLoad` compares per figure, relative to the printed figure: counted, level 1 and total with `withinTolerance`, and the rounded `countedKb` and `totalKb` against `roundedKb(printed)` with the same 1% rule applied to kB (`|stated - printed/1000| <= 0.01 * printed/1000`, so a README rounded from a nearby build passes). A difference at 1% or less passes; a larger one adds one message naming both figures (for example `README counted 214,206 differs from printed 221,000 by more than 1%`). `null` (any of the five figures unparsable) returns `ok: false` with one message. The tolerance exists because gzip output varies a little by machine; it does not change the budget check, which stays exact.
+
+`tests/unit/readme-first-load.test.ts` stays free of `app/dist` and keeps its always-on checks, now parsed with `parseReadmeFirstLoad`: counted + level 1 = sum (exact), the stated budget is 300,000, the README says the budget does not count the level 1 dataset, and each rounded figure equals `roundedKb` of the matching exact figure (the sentence follows the exact line). Unit tests of the pure functions, on fixture README text: equal figures; each figure just inside 1% (passes); counted, level 1 and total each just outside 1% (fails); a README with no parsable figures, and a README with only one of the two places (fails); `roundedKb` at .5 boundaries.
+
+The README is regenerated from the print, not typed: the implementing task runs `npm run build -w app` and `npm run check:bundle`, then writes the exact line with the printed bytes and the sentence with `roundedKb` of them. The task writes whatever the nearest-kB rule gives for the printed bytes (for example 583,559 bytes rounds to 584 kB and 230,344 bytes to 230 kB).
+
+**Fourth review: the Licensing paragraph (approved by the human).** `COMBINED_WORK_NOTE` in `credits.ts` (line 102) says "characters.json is a combined work. It incorporates ...". New text, no new licence claim:
+
+> The three level datasets (characters.json, characters-level2.json and characters-level3.json) and the Power's derived data file oracle/power/data/oracle-data.json are each a combined work. Together they incorporate CC BY-SA 4.0 data (CC-CEDICT), LGPL-3.0-or-later data (Make Me a Hanzi dictionary.txt), Arphic Public License data (hanzi-writer-data) and Unicode License V3 data (Unihan kCangjie Cangjie codes). Each file carries the licence terms of each source for its fields.
+
+The sentence in README line 74 ("The three generated level datasets ... are a **combined work** ...") already names the three level files; it gains the Power's file in the same wording and keeps its bold markers and the share-alike sentence, so `credits-readme` still compares the two. `credits.test.ts` keeps `toContain('combined work')` and gains assertions for the four file names. The task runs the `accuracy-reviewer` agent with the changed text pasted into its prompt and reports its raw output.
 
 ### Item 8: Give up is a paper slip (Requirement 8)
 
@@ -527,13 +556,13 @@ export function recordReview(prior: ReviewEntry | undefined, outcome: Outcome, n
 - `startReview()`: `await ensureHistoryLevels(loadState().history)`; on `false`, `setReviewError(true)` and return (R10.28; history unchanged, the screen stays). Otherwise build `orders` from the loaded levels, `ids = planReview(...)`, map to records through the merged lookup, and `setView({ screen: 'seance', mode: 'review', ghosts, firstMeeting: new Set(), walkthroughChar: null, report: [], crossLevelLine: null, sessionId })`. If `ids` is empty (the set changed since the menu was drawn), the menu re-renders with a fresh count.
 - `handleOutcome(char, outcome, now)`: nightly keeps today's `applyReview` + `recordOutcome`. Review: `const next = recordReview(prior, outcome, now, DEFAULT_CONFIG); if (next !== null) recordOutcome(char, next);`. In both modes `returnsRef.set(char, next ?? prior)` and `outcomesRef.set(char, outcome)`, so the summary's Return_Text comes from the stored entry after the run (R10.23). Leaving a review during a ghost stores nothing for it and keeps earlier entries (R10.27): the existing `leftRef` guard in `SeanceSession.handleOutcome` already stops a late outcome.
 - `SeanceSession` gets `mode` (default `'nightly'`), which selects `RESULT_TEXT`: review `clean` is "Remembered. It rests after its next séance."; review `struggled` is "Still restless. It will return soon." (no "laid to rest" in either case, R10.20); `gave-up` unchanged.
-- `SessionSummary` gets the run's `mode`: for a review the count line is `"{N} of {M} ghosts remembered"` (`"1 of 1 ghost remembered"` for one) with N the clean ghosts, and no tile text says "laid to rest": the clean outcome word is "Remembered". Clean tiles keep the `SealStamp` (R10.22). The primary action stays "Begin another Séance" and starts a nightly séance (R10.24). The texts and the primary action are approved by the human.
+- `SessionSummary` gets the run's `mode`: for a review the count line is `"{N} of {M} ghosts remembered"` (`"1 of 1 ghost remembered"` for one) with N the clean ghosts, and no tile text says "laid to rest": the clean outcome word is "Remembered". Clean tiles keep the `SealStamp` (R10.22). The heading is "The review is over" (a nightly summary keeps "The séance is over"), and the primary action is "Back to menu", which returns to the Start_Menu (R10.24, R10.36 to R10.38, approved by the human, fourth review; the earlier "Begin another Séance" for a review is superseded). It stays the only `slip-primary` of the screen and the nightly summary is unchanged. `SessionSummary` takes an `onBackToMenu` callback beside `onBeginAnother`, and the review mode renders only the one it needs; `App` wires `onBackToMenu` to `setView` of the start menu. The texts and the primary action are approved by the human.
 
 **Start menu and Graveyard.** `StartMenu` gains `restlessCount: number`, `onReviewRestless: () => void`, `reviewError: boolean`. When `restlessCount > 0` it renders, right after "Starting level" (so before the finished notice and any "Move on" slip, R10.3), `<button className="slip min-h-[44px] px-6 py-2 text-base">Review restless ghosts ({restlessCount})</button>`. `Graveyard` gets the same three props and renders the same slip after the "Your séances draw new ghosts" sentence. Both counts come from `restlessCount(history, now, known)` over all loaded levels (approved by the human, R10.5). With zero restless ghosts neither slip renders (R10.6, R10.7). A failed start shows `<p role="alert">The review could not start. Check your connection and try again.</p>` under the slip.
 
 **After a review.** The stored history is the only source: `buildGraveyard` over `loadState().history` gives the counts, and the grave accessible-name format is unchanged (R10.25, R10.26). A clean reviewed ghost stays restless until a nightly séance clears it (the accepted cost of a clean review storing nothing).
 
-**Tests.** `engine/review.test.ts`: restless for a missed ghost, a clean due ghost, a clean not-due ghost, no entry (R10.29); pool order across levels, `selectSession` order, cap 10 with a pool of 11, all with fewer (R10.30); `recordReview` for the three outcomes and for `undefined` (R10.31). `StartMenu.test.tsx` and `Graveyard.test.tsx`: slip present with a count and absent with none; position among three controls (second after "Starting level" among Begin, Starting level, Review, then Move on); `slip` and not `slip-primary` (R10.32, R10.33). `App.test.tsx` runs a full review with the datasets mocked: stored history, a failed level load shows the alert and leaves history unchanged. `e2e/review.spec.ts` (new): seed three restless ghosts, run a review with one clean and two missed (the clean by writing, the missed by Give up), assert the clean entry equals its seed, the missed entries have `step` 0 and `nextDue` equal to the recording time plus `relearnDelayMs` (600,000 ms; tolerance of the run's clock), and the Graveyard counts equal `buildGraveyard` over the stored history (R10.34, R10.35).
+**Tests.** `engine/review.test.ts`: restless for a missed ghost, a clean due ghost, a clean not-due ghost, no entry (R10.29); pool order across levels, `selectSession` order, cap 10 with a pool of 11, all with fewer (R10.30); `recordReview` for the three outcomes and for `undefined` (R10.31). `StartMenu.test.tsx` and `Graveyard.test.tsx`: slip present with a count and absent with none; position among three controls (second after "Starting level" among Begin, Starting level, Review, then Move on); `slip` and not `slip-primary` (R10.32, R10.33). `App.test.tsx` runs a full review with the datasets mocked: stored history, a failed level load shows the alert and leaves history unchanged. `e2e/review.spec.ts` (new): seed three restless ghosts, run a review with one clean and two missed (the clean by writing, the missed by Give up), assert the clean entry equals its seed, the missed entries have `step` 0 and `nextDue` equal to the recording time plus `relearnDelayMs` (600,000 ms; tolerance of the run's clock), and the Graveyard counts equal `buildGraveyard` over the stored history (R10.34, R10.35). Fourth review: `SessionSummary.test.tsx` and `App.test.tsx` assert, for a review, the heading "The review is over", the button "Back to menu" as the only `slip-primary`, no "Begin another Séance", and that the button shows the Start menu; the nightly assertions ("The séance is over", "Begin another Séance") stay. `review.spec.ts` asserts the same after the run and the e2e helpers that wait for "The séance is over" after a review (the helpers that wait for "The séance is over" in `e2e/helpers.ts` and `first-meeting.spec.ts` reach nightly summaries and stay; any helper or spec that reaches a review summary uses the new heading).
 
 ### Item 11: The level screen shows the ghost and one sample per level (Requirement 11)
 
@@ -642,14 +671,16 @@ export function visibleGraveCount(total: number, columns: number, lastMetIndex: 
   if (lastMetIndex < 0) return Math.min(total, cols);              // one blank row, R12.3
   return Math.min(total, (Math.floor(lastMetIndex / cols) + 2) * cols); // through the row of the last met grave, plus one row, R12.1, R12.2
 }
-export function notYetMetText(collapsed: number): string | null; // null for 0, "1 ghost not yet met", "N ghosts not yet met"
+export function moreGravesText(collapsed: number): string | null; // null for 0, "1 more grave", "N more graves"
 ```
 
 `lastMetIndex` is the index in the displayed (reordered) order of the last grave whose state is not `unmet`, found in one pass over `model.graves`. `columnCount` is the browser's own `auto-fill` count: `repeat(auto-fill, minmax(48px, 1fr))` with an 8 px gap and 12 px padding gives `floor((inner + 8) / 56)` tracks, and the `1fr` stretch does not change the count.
 
 **Column detection.** A `useGridColumns(ref)` hook in `Graveyard.tsx` measures the wrapper `div` (`relative isolate overflow-hidden`) with `clientWidth` in a `useLayoutEffect` (so no 300-row frame is painted), and observes it with `ResizeObserver` (falling back to the window `resize` event when `ResizeObserver` is missing, as in jsdom). The callback sets state immediately, so the shown graves and the paragraph update in well under 500 ms (R12.7). The e2e test compares `columnCount` with the number of tracks in `getComputedStyle(ul).gridTemplateColumns` at several widths.
 
-**Rendering.** `Graveyard` renders `model.graves.slice(0, shown)` as `li` elements, with accessible names built from the full order position and the full total (`graveLabel(grave, total)` with `total = model.graves.length`, R12.9). The legend counts come from `model.counts`, which covers every grave (R12.8). Collapsed graves have no `li` and no character anywhere (R12.10, R12.11). After and outside the `ul`, and after the hillside wrapper, `notYetMetText(total - shown)` renders as `<p className="text-sm text-ink">` when not null (R12.4 to R12.6). The existing `noneMet` sentence stays.
+**Rendering.** `Graveyard` renders `model.graves.slice(0, shown)` as `li` elements, with accessible names built from the full order position and the full total (`graveLabel(grave, total)` with `total = model.graves.length`, R12.9). The legend counts come from `model.counts`, which covers every grave (R12.8). Collapsed graves have no `li` and no character anywhere (R12.10, R12.11). After and outside the `ul`, and after the hillside wrapper, `moreGravesText(total - shown)` renders as `<p className="text-sm text-ink">` when not null (R12.4 to R12.6). The existing `noneMet` sentence stays.
+
+**Fourth-review wording (approved by the human).** The paragraph counts hidden graves, not ghosts, so its text is "N more graves" ("1 more grave") and never says "ghosts" or "met". The legend's "Never met" count stays over the whole level and so keeps counting real never-met ghosts; the two numbers no longer pretend to measure the same thing. Rename `notYetMetText` to `moreGravesText` in `graveyardRows.ts`, `Graveyard.tsx` and `graveyardRows.test.ts`, and change the expected text in `Graveyard.test.tsx` and in `e2e/graveyard-fit.spec.ts` and `e2e/harder-ghosts.spec.ts` (the e2e specs match the old text by a regular expression or a string; both become the new text, asserted at least as strictly: the exact number and the singular form).
 
 Level 1 with the guided ghost met and nothing else: `lastMetIndex` is 0, so with 6 columns the first row plus one row show (12 graves) and 288 collapse. A player who has met ghosts spread across 40 graves with 6 columns shows rows 1 to 8.
 
@@ -673,8 +704,8 @@ Level 1 with the guided ghost met and nothing else: `lastMetIndex` is 0, so with
 
 **Tests.**
 
-- `engine/graveyardRows.test.ts` (R12.20): no Met_Ghost; a Met_Ghost in the first row; in the last row; a last row that is not full; one column; fewer graves than one row. Plus `columnCount` at 296, 343 and 768 px, and `notYetMetText`.
-- `Graveyard.test.tsx`: with `clientWidth` stubbed, the shown rows, the paragraph ("1 ghost not yet met" / "N ghosts not yet met" / none), no `li` for collapsed graves, legend counts over all graves, names with full position and total, and a width change through the stubbed observer.
+- `engine/graveyardRows.test.ts` (R12.20): no Met_Ghost; a Met_Ghost in the first row; in the last row; a last row that is not full; one column; fewer graves than one row. Plus `columnCount` at 296, 343 and 768 px, and `moreGravesText`.
+- `Graveyard.test.tsx`: with `clientWidth` stubbed, the shown rows, the paragraph ("1 more grave" / "N more graves" / none), no `li` for collapsed graves, legend counts over all graves, names with full position and total, and a width change through the stubbed observer.
 - `grassPattern.test.ts`: `HILL_SLOTS` and `HILL_TUFTS` are 24; slots 0 to 11 equal the old table; `crestY` of slots 12 to 23 is within 0.05 of the near-ridge evaluation; the pair is different in shape, on opposite sides (or right when the first is centred), blade extents disjoint, box inside 48 px. `hillTuft(24)` wraps to slot 0 and `hillTuft(-1)` is slot 23.
 - `e2e/grass.spec.ts`: 24 hill tufts (was 12) and `row.count` of 2 per tablet (was 1); every other assertion stays and applies to each tuft. `e2e/graveyard-fit.spec.ts` adds, at both viewports, the collapsed paragraph, the single blank row with no Met_Ghost, and Met_Ghosts across several rows (R12.17).
 
@@ -805,7 +836,7 @@ export async function waitForLegendReveal(page: Page): Promise<void> {
 ### Item 14: Constraints that apply to every item (Requirement 14)
 
 - **No target character before reveal (R14.1).** The Level_Screen samples are the one new place a character appears before a ghost is met, drawn from stroke data and never as text, and only through amendment 4. The summary may show glyphs of finished ghosts (already approved). The tile accessible names appear only after the séance.
-- **One `slip-primary` per screen (R14.3, R14.4).** Intro: Begin the Séance. Start menu: Begin a Nightly Séance (the review slip is a `slip`). Summary: Begin another Séance (also after a review). Level_Screen, Summon, Write, Graveyard, Sources: none.
+- **One `slip-primary` per screen (R14.3, R14.4).** Intro: Begin the Séance. Start menu: Begin a Nightly Séance (the review slip is a `slip`). Summary: Begin another Séance after a nightly séance, Back to menu after a review (amendment 6). Level_Screen, Summon, Write, Graveyard, Sources: none.
 - **Motion (R14.5, R14.6).** New CSS animation and transitions are only the grain keyframes and two 200 ms transitions, all in the one block. The Ink_In is script-driven and starts only when `prefers-reduced-motion: reduce` is not set. Returning ghosts add no timer.
 - **Contrast and sizes (R14.7 to R14.9).** All new text is `text-xs` (12 px) or larger, on `ink`, `ghost` or `ink-on-paper`. Decorative graphics (grain, ghost watermark on a tile, grass) are `aria-hidden`. Every new control keeps `min-h-[44px]`.
 - **Tests (R14.10 to R14.13).** Only unit, component and e2e tests are added. No property-based test and no mutation testing. The existing property tests, including `summonInk.property.test.ts`, are not touched.
@@ -966,7 +997,7 @@ The condition for every row: the expectation is kept, made stricter, or moved to
 
 ## Steering amendments (approved by the human)
 
-All five are approved by the human, each on its own. The current text is quoted so the change can be compared. Tasks 3.1 to 3.5 write them into the steering files, and the matching item starts only after its task. Amendments 6 and 7 of the requirements need no change.
+Amendments 1 to 5 and amendment 6 (fourth review) are approved by the human, each on its own. The current text is quoted so the change can be compared. Tasks 3.1 to 3.5 write them into the steering files, and the matching item starts only after its task. Amendments 7 and 8 of the requirements (`tech.md`, `structure.md`) need no change.
 
 ### Amendment 1: `content-accuracy.md`, "What is not an answer leak" (gates Item 1), approved by the human
 
@@ -1024,6 +1055,19 @@ New line, after the rite-timing exemption:
 
 > - Legend-ink exemption: the Ink_In of the intro's legend line draws the six Han characters one at a time, in at most 6 s in total, at most 900 ms per character and under 200 ms per stroke. It runs once when the intro opens, never blocks a control, and reduced motion shows the finished line.
 
+### Amendment 6: `art-direction.md`, Primary action per screen (fourth review, gates Item 10's summary change), approved by the human
+
+Current line, in the table "Primary action per screen":
+
+> | Summary | Begin another Séance |
+
+New, two rows in the same table:
+
+> | Summary (nightly séance) | Begin another Séance |
+> | Summary (review) | Back to menu |
+
+Applied by task 21.4, the only task that edits `art-direction.md` in this round, with an assertion in `tests/unit/steering-art-direction.test.ts` (today it asserts `'| Summary | Begin another Séance |'` at line 49). The new assertions check both rows and that "Back to menu" is the review summary's primary. This is a steering amendment approved by the human.
+
 ### Not amended
 
 `tech.md` keeps the Nov 15 testing decision (no new property-based tests, no mutation testing). `structure.md` needs nothing: `legend-strokes.json` is a generated file under `app/public/data/`, produced only by `scripts/`, and the sample outlines in `levels.json` are written by the same pipeline.
@@ -1033,7 +1077,7 @@ New line, after the rite-timing exemption:
 - Every open question takes the recommended answer of the earlier draft, including the new ones: Item 1 Q6 (strokes already requested finish, none is added), Item 3 Q5 (a 560 px ceiling), Item 12 Q4 (the no-overlap scope of R12.21) and Item 13 Q6 (the comma reuses the 600 ms ink-reveal wipe). The two exceptions follow.
 - Item 2, 么: no override. The row `么,2,0,human-approved` and the stored clue stay, so its data and review line stay byte-identical. A display rule in `cleanupMeaning` drops the traditional half of every traditional|simplified pair on every level (Item 2, "Display rule"). The level 1 data changes only in 本 and 天, and `data/prompt-review.csv` changes only on those two lines. 刚 keeps both its override row and its approval row.
 - Item 11: the samples are drawn from stroke data, not from a font, at position 31 or later with the stroke count closest to the level average (ties: lowest position): 两, 京 and 冒. They are SVG drawings with `role="img"` and an English label, so no Han character appears as text.
-- Item 10: a clean review stores nothing; a miss counts as a miss; a clean review shows the seal with "Remembered"; the Graveyard count covers all levels; the review summary keeps "Begin another Séance" as its only primary action.
+- Item 10: a clean review stores nothing; a miss counts as a miss; a clean review shows the seal with "Remembered"; the Graveyard count covers all levels; the review summary's only primary action was "Begin another Séance" (superseded by the fourth review: "Back to menu").
 - Item 13: at most 6 s in total, 900 ms per character, strokes under 200 ms; the intro does not wait; `legend-strokes.json` is counted in the first load, with the wipe as the fallback; no grain under reduced motion; grain in the `ink` token at low alpha.
 - Steering amendments 1 to 5 are approved, amendment 4 as reworded above.
 - The six corrections to `requirements.md` that the earlier draft proposed are approved and applied.
@@ -1053,3 +1097,10 @@ New line, after the rite-timing exemption:
 - **R11.6**: replaced by the stroke-count rule.
 - **R1.10**: "draws no stroke" means no stroke is requested after the give-up.
 - **R12.21**: "no overlap" is guaranteed as in Item 12, not within one hill row.
+
+### Fourth review, before the feature freeze (approved by the human)
+
+- **Graveyard line.** "N more graves" ("1 more grave"), because the paragraph counts hidden graves; the legend keeps counting real never-met ghosts over the whole level. `notYetMetText` becomes `moreGravesText` (Item 12).
+- **Sources licensing.** The Licensing paragraph covers the three level datasets and `oracle/power/data/oracle-data.json`, with no new licence claim; the changed text goes through the `accuracy-reviewer` agent (Item 7).
+- **README first load.** A rounded sentence plus the exact line; `check:bundle` compares each figure with a 1% tolerance. This replaces the exact-match rule of R7.13 to R7.17 (Item 7).
+- **Review summary.** Heading "The review is over", primary "Back to menu" returning to the start menu; the nightly summary is unchanged; steering amendment 6 is approved (Item 10, Amendment 6).

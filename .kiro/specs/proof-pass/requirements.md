@@ -192,7 +192,7 @@ Three items conflict with current steering text: item 1 (content-accuracy and pr
 9. THE `formatReturn` function SHALL keep its output unchanged.
 10. WHILE the séance has at most 10 ghosts, THE Summary_Screen SHALL fit one screen, with no vertical scrolling and no horizontal overflow, at 1024 × 768 and 375 × 812.
 11. WHILE no Review_Run is shown, THE Summary_Screen SHALL show the count line "N of M ghosts laid to rest" with `role="status"`, with N computed by the existing `SessionSummary` rule.
-12. THE Summary_Screen SHALL keep "Begin another Séance" as its only `slip-primary`.
+12. THE Summary_Screen of a nightly séance SHALL keep "Begin another Séance" as its only `slip-primary` (a Review_Run summary is covered by Requirement 10 criteria 24 and 36 to 38).
 13. IF the séance has no ghosts, THEN THE Summary_Screen SHALL show "No ghosts appeared this time" and the primary action, and no Ghost_Tile.
 14. THE Summary_Screen SHALL keep text at a contrast of at least 4.5:1.
 15. THE Summary_Screen SHALL keep the Moon's top room below 992 px.
@@ -263,11 +263,17 @@ Three items conflict with current steering text: item 1 (content-accuracy and pr
 10. THE e2e suite SHALL include a test with a fresh browser context that goes from the intro through the Level_Screen and level 1 to the first Summon_Step, records every network request, and asserts that no request URL contains `lxgw-wenkai-subset-level2` or `lxgw-wenkai-subset-level3`.
 11. IF the test of criterion 10 finds such a request, THEN THE implementer SHALL identify the glyph, remove the cause and record both in the design.
 12. THE README data table SHALL list every file named in criteria 1 and 2.
-13. THE `tests/unit/readme-first-load.test.ts` suite SHALL keep its checks that do not need a build: the stated counted figure plus the stated level 1 figure equals the stated sum, the stated budget is 300,000 bytes, and the README says that the budget does not count the level 1 dataset.
+13. THE `tests/unit/readme-first-load.test.ts` suite SHALL keep its checks that do not need a build: the stated exact counted figure plus the stated exact level 1 figure equals the stated exact sum, the stated budget is 300,000 bytes, the README says that the budget does not count the level 1 dataset, and each rounded figure of criterion 18 equals the matching exact figure rounded to the nearest kB.
 14. THE `tests/unit/readme-first-load.test.ts` suite SHALL NOT read `app/dist` or compare the README with a build.
-15. WHEN `npm run check:bundle` runs, THE `scripts/check-bundle-size.ts` script SHALL read `README.md`, extract the stated counted, level 1 and total figures, and compare them with the First_Load_Figures it prints.
-16. IF a stated figure differs from the printed First_Load_Figure, THEN THE `scripts/check-bundle-size.ts` script SHALL exit with a non-zero status and print both the stated and the printed figure.
-17. THE comparison of criteria 15 and 16 SHALL be a pure function, and its unit tests SHALL cover, on fixture README text, equal figures, a differing counted figure, a differing level 1 figure, a differing total, and a README with no stated figures.
+15. WHEN `npm run check:bundle` runs, THE `scripts/check-bundle-size.ts` script SHALL read `README.md`, extract the stated exact counted, level 1 and total figures and the stated rounded counted and total figures, and compare them with the First_Load_Figures it prints.
+16. IF a stated figure differs from the printed First_Load_Figure by more than 1% of the printed figure, compared per figure (counted, level 1, total), THEN THE `scripts/check-bundle-size.ts` script SHALL exit with a non-zero status and print both the stated and the printed figure; a difference of at most 1% SHALL pass (the exact-match rule of the earlier text of this criterion is replaced).
+17. THE comparison of criteria 15 and 16 SHALL be a pure function, and its unit tests SHALL cover, on fixture README text, equal figures, a figure within 1% of the printed figure (passes), a counted, a level 1 and a total figure just outside 1% (each fails), and a README with no parsable figures (fails).
+18. THE README SHALL state the first load in one rounded sentence of the form "about T kB gzipped, of which about C kB counts against the 300 kB budget" (T the total and C the counted figure), where each figure is the exact printed figure divided by 1,000 and rounded to the nearest kB.
+19. THE README SHALL keep the exact byte figures (counted, level 1 and sum) in the line of criterion 6, so that `parseReadmeFirstLoad` has the exact figures to parse beside the rounded sentence.
+20. THE README first-load figures SHALL be copied from the `check:bundle` output, the rounded sentence derived from the exact figures and not typed by hand.
+21. THE Licensing paragraph of the Sources_Screen SHALL say that the three level datasets (`characters.json`, `characters-level2.json` and `characters-level3.json`) and the Power's derived data file `oracle/power/data/oracle-data.json` are each a combined work, and that each carries the licence terms of each source for its fields, naming only the sources and licences already in `credits.ts` and the README (the earlier wording named `characters.json` alone).
+22. THE README SHALL carry the same wording as criterion 21 where it states the combined work, and the `credits-readme` test SHALL compare the two.
+23. THE changed Licensing text SHALL be reviewed by the `accuracy-reviewer` agent before the task is reported done, and the raw output of that agent SHALL be reported.
 
 ### Requirement 8: Give up is a paper slip
 
@@ -341,7 +347,7 @@ Three items conflict with current steering text: item 1 (content-accuracy and pr
 21. THE Summary_Screen of a Review_Run SHALL show the count line "N of M ghosts remembered" (with "1 of 1 ghost remembered" when M = 1), with N the number of clean ghosts, and no text SHALL say "laid to rest".
 22. THE Summary_Screen of a Review_Run SHALL show the Ghost_Tile of a clean ghost with the `SealStamp` as Requirement 4 criterion 4 defines.
 23. THE Summary_Screen of a Review_Run SHALL show for each ghost the Return_Text computed from its stored entry after the run.
-24. THE Summary_Screen of a Review_Run SHALL show "Begin another Séance" as its only `slip-primary`, and activating it SHALL start a nightly séance.
+24. THE Summary_Screen of a Review_Run SHALL show "Back to menu" as its only `slip-primary`, and activating it SHALL return to the Start_Menu (the earlier criterion that the review summary's primary action starts a nightly séance is superseded).
 25. WHEN a Review_Run has ended, THE Graveyard counts SHALL equal `buildGraveyard` over the stored history.
 26. THE Graveyard SHALL keep the format of its grave accessible names.
 27. WHEN the player leaves a Review_Run during a ghost, THE App SHALL store nothing for the current ghost and SHALL keep the entries of earlier ghosts.
@@ -353,6 +359,9 @@ Three items conflict with current steering text: item 1 (content-accuracy and pr
 33. THE component tests SHALL cover the position of the Slip among three Start_Menu controls and that it is not a `slip-primary`.
 34. THE e2e suite SHALL seed three Restless_Ghosts, run a Review_Run with one clean and two missed ghosts, and assert the stored history and the Graveyard counts.
 35. THE e2e test SHALL assert that the clean entry equals its seed and that each missed entry has step 0 and `nextDue` equal to the recording time plus `relearnDelayMs`.
+36. THE Summary_Screen of a Review_Run SHALL show the heading "The review is over", and the Summary_Screen of a nightly séance SHALL keep the heading "The séance is over".
+37. THE Summary_Screen of a Review_Run SHALL show no "Begin another Séance" button, and THE Summary_Screen of a nightly séance SHALL be unchanged.
+38. THE component tests and the review e2e test SHALL assert the heading, the "Back to menu" button, that it is the only `slip-primary`, and that activating it shows the Start_Menu; every existing test that asserts the review summary's heading or button SHALL be updated to the new text.
 
 ### Requirement 11: The level screen shows the ghost and one sample character per level
 
@@ -390,11 +399,11 @@ Three items conflict with current steering text: item 1 (content-accuracy and pr
 1. WHILE the shown level has at least one Met_Ghost, THE Graveyard SHALL show every Grave_Row from the first through the row that holds the Met_Ghost grave with the highest displayed position, including blank rows in between.
 2. WHILE the shown level has at least one Met_Ghost, THE Graveyard SHALL show one further Grave_Row of blank stones after the rows of criterion 1, or none if no graves remain.
 3. WHILE the shown level has no Met_Ghost, THE Graveyard SHALL show exactly one Grave_Row of blank stones, or all graves if there are fewer than one row.
-4. WHEN N ≥ 2 graves are Collapsed_Graves, THE Graveyard SHALL show one paragraph, after and outside the list, with the text "N ghosts not yet met", where N is the total number of graves minus the shown graves.
-5. WHEN exactly one grave is a Collapsed_Grave, THE Graveyard SHALL show the paragraph "1 ghost not yet met".
+4. WHEN N ≥ 2 graves are Collapsed_Graves, THE Graveyard SHALL show one paragraph, after and outside the list, with the text "N more graves", where N is the total number of graves minus the shown graves (superseded wording: "N ghosts not yet met"; see "Decisions approved by the human (fourth review)").
+5. WHEN exactly one grave is a Collapsed_Grave, THE Graveyard SHALL show the paragraph "1 more grave".
 6. WHILE no grave is a Collapsed_Grave, THE Graveyard SHALL show no such paragraph.
 7. WHEN a width change alters the column count, THE Graveyard SHALL update the shown graves and the paragraph within 500 ms.
-8. THE Graveyard legend counts SHALL cover all graves of the level, including Collapsed_Graves.
+8. THE Graveyard legend counts SHALL cover all graves of the level, including Collapsed_Graves, so that the legend's "Never met" count keeps counting every never-met ghost of the level and the paragraph of criteria 4 and 5 counts hidden graves, not ghosts.
 9. THE Graveyard SHALL keep the accessible-name format of every shown grave, with the position taken from the full order and the total taken from the full level.
 10. THE Graveyard SHALL render no `li` for a Collapsed_Grave.
 11. THE Graveyard SHALL render no character in any text or attribute for an unmet grave.
@@ -485,7 +494,7 @@ Three items conflict with current steering text: item 1 (content-accuracy and pr
 - Item 11: the three Level_Samples are drawn from their stroke data, not from a font, at learning position 31 or later, with a stroke count closest to the level's average (ties: lowest position). The samples are SVG drawings with `role="img"` and an English label; no Han character appears as text.
 - Item 10 (recommended answers): a clean review stores nothing, a miss counts as a miss, a clean review shows the seal with the text "Remembered", the Graveyard count is over all levels, and the review summary keeps "Begin another Séance" as its only primary action.
 - Item 13 (recommended answers): at most 6 s in total, 900 ms per character and under 200 ms per stroke; the intro does not wait; the strokes come from a counted `legend-strokes.json` with the wipe as fallback; no grain under reduced motion; grain in the `ink` token at low alpha.
-- Steering amendments 1 to 5 are approved (amendment 4 as reworded below). `tech.md` and `structure.md` need no amendment.
+- Steering amendments 1 to 5 are approved (amendment 4 as reworded below). `tech.md` and `structure.md` need no amendment. Amendment 6 is added by the fourth review below.
 - The six corrections to this document that the design proposed are approved and applied: criteria 2.19 and 2.21, 3.4 and 3.7, 11.6, 1.10, and 12.21.
 - `kiro-log.md` is written by the human, never by this work.
 - The final checkpoint also retakes the screenshots and adds the new summary at 1024 × 768 and 375 × 812; the human screenshot review stays last and human-only.
@@ -503,5 +512,13 @@ Three items conflict with current steering text: item 1 (content-accuracy and pr
 3. **`art-direction.md`, rite-timing exemption Q12 (item 1), approved by the human.** The three summon timing constants apply to first meetings; a returning ghost has no hold and no fade.
 4. **`content-accuracy.md`, "What is not an answer leak", second bullet (item 11), approved by the human, reworded.** The level screen shows English example meanings and may draw one sample character per level from its stroke data, at position 31 or later of the level's learning order, chosen by the stroke-count rule; no Han character appears as text. The `harder-ghosts` requirement and design text that say "no Chinese character on the Level_Screen" are amended with the same clarification.
 5. **`art-direction.md`, Motion (item 13), approved by the human.** Add "the intro's Grain_Fall" to the ambient exemption list, and add the named legend-ink exemption (at most 6 s in total, at most 900 ms per character, under 200 ms per stroke).
-6. **`tech.md`, Testing rules.** No amendment.
-7. **`structure.md`.** No amendment.
+6. **`art-direction.md`, Primary action per screen (item 10, fourth review), approved by the human.** The table row "Summary | Begin another Séance" becomes two rows: "Summary (nightly séance) | Begin another Séance" and "Summary (review) | Back to menu". It is applied by task 21.4 with its steering test.
+7. **`tech.md`, Testing rules.** No amendment.
+8. **`structure.md`.** No amendment.
+
+## Decisions approved by the human (fourth review, before the feature freeze)
+
+- **Graveyard collapse line (R12.4 to R12.6, R12.8).** The paragraph counts hidden graves, so it says "N more graves" ("1 more grave" for one) and not "N ghosts not yet met", which disagreed with the legend's "Never met" count. The legend keeps counting the real never-met ghosts over the whole level. `notYetMetText` is renamed `moreGravesText`; every test that names the old text is updated.
+- **Sources & licences (R7.21 to R7.23).** The Licensing paragraph covers the three level datasets and the Power's derived file, each carrying each source's licence terms for its fields. No new licence claim. The `accuracy-reviewer` agent reviews the changed text.
+- **README first load (R7.13 to R7.20, replaces the exact-match rule of R7.13 to R7.17).** The README states a rounded sentence and keeps the exact byte figures. `npm run check:bundle` compares the README with the printed figures with a 1% tolerance per figure (counted, level 1, total), because gzip output varies by machine.
+- **Review summary (R10.24, R10.36 to R10.38).** The heading is "The review is over", and the primary button is "Back to menu", which returns to the Start_Menu. The earlier criterion that the review summary's primary starts a nightly séance is superseded. The nightly summary is unchanged. Steering amendment 6 above is approved by the human.

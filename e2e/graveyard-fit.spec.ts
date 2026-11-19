@@ -360,7 +360,7 @@ for (const vp of [
     test.use({ viewport: vp });
 
     const total = (): number => learningOrder(datasetMap()).length;
-    const notMet = (n: number): string => (n === 1 ? '1 ghost not yet met' : `${n} ghosts not yet met`);
+    const moreGraves = (n: number): string => (n === 1 ? '1 more grave' : `${n} more graves`);
 
     test('collapsed paragraph after the list, with no collapsed grave rendered', async ({ page }) => {
       await openGraveyard(page);
@@ -368,11 +368,11 @@ for (const vp of [
       const shown = 2 * cols; // grave 4 is the last met one, in row 1; one row more
       const items = page.getByRole('list', { name: 'Graves' }).getByRole('listitem');
       await expect(items).toHaveCount(shown);
-      const paragraph = page.getByText(notMet(total() - shown), { exact: true });
+      const paragraph = page.getByText(moreGraves(total() - shown), { exact: true });
       await expect(paragraph).toBeVisible();
       const place = await page.evaluate(() => {
         const ul = document.querySelector('[aria-label="Graves"]');
-        const p = Array.from(document.querySelectorAll('p')).find((e) => /not yet met$/.test(e.textContent ?? ''));
+        const p = Array.from(document.querySelectorAll('p')).find((e) => /^\d+ more graves?$/.test(e.textContent ?? ''));
         if (!ul || !p) throw new Error('grid or paragraph missing');
         return {
           inside: ul.contains(p),
@@ -407,7 +407,7 @@ for (const vp of [
       expect(info.rows, 'one row').toBe(1);
       expect(info.glyphs, 'no glyph').toBe(0);
       expect(info.names.every((n) => /, never met$/.test(n))).toBe(true);
-      await expect(page.getByText(notMet(total() - cols), { exact: true })).toBeVisible();
+      await expect(page.getByText(moreGraves(total() - cols), { exact: true })).toBeVisible();
       await expect(page.getByText('No ghost has been met yet.', { exact: false })).toBeVisible();
     });
 
@@ -433,7 +433,7 @@ for (const vp of [
       expect(rows).toBe(Math.floor(40 / cols) + 2);
       const glyphs = await items.evaluateAll((els) => els.filter((el) => el.querySelector('[lang="zh"]') !== null).length);
       expect(glyphs).toBe(3);
-      await expect(page.getByText(notMet(total() - shown), { exact: true })).toBeVisible();
+      await expect(page.getByText(moreGraves(total() - shown), { exact: true })).toBeVisible();
     });
   });
 }
