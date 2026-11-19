@@ -779,6 +779,15 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 
 ---
 
+## Nov 19–20, 2026: Informal playtest with four people
+
+- **What I did:** Invited four people over WhatsApp between 11:02 and 11:11 pm on Nov 19 to try the live game: write some characters on paper, play a round, then write them again later. Each sent back a short written impression between 1:41 and 1:54 am on Nov 20.
+- **What it shows:** four people played the live build end to end on their own devices, and none reported a bug or a point where they got stuck.
+- **What it doesn't show:** no scores were recorded, so this playtest doesn't measure recall. The planned paper test (five played and five control characters, a pre-test, one hour later and the next day) was not completed.
+- **How I'll use it:** as a playtest, not as evidence that the game improves recall. I won't quote the testers' messages in the write-up, because their wording closely follows sentences I had drafted before they were invited, so they aren't independent feedback.
+
+---
+
 ## Template for new entries
 
 ## [Date]: [Short title]
