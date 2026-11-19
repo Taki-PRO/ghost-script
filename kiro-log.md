@@ -767,6 +767,18 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 
 ---
 
+## Nov 19, 2026: proof-pass follow-up: grain clear of the buttons, a test that holds on any machine
+
+- **What I did:** Asked Kiro to fix the three things my check found.
+- **Result:**
+  - **Grain:** it now falls only in two side lanes, so it can never sit behind "Begin the Séance" or "Sources". A unit test checks the lanes at four widths, and a browser test checks the real grain and control positions at three screen sizes.
+  - **README figure:** the exact comparison with a fresh build moved out of the unit tests into `npm run check:bundle`, which produces the figure. It now fails if the README is stale, which is how it was confirmed to work. The README now says 230,344 bytes counted against 300,000, and 583,559 bytes with the level 1 dataset.
+  - **Grass:** the spec records that the doubled grass went beyond my answer and that I accepted it afterwards.
+  - **7576 unit tests pass** in my own check; `tsc` clean; deployed.
+- **Next:** the paper test, then feature freeze on Nov 21.
+
+---
+
 ## Template for new entries
 
 ## [Date]: [Short title]
