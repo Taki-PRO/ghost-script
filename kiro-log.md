@@ -814,6 +814,18 @@ Playtest with 5 people
 
 ---
 
+## Nov 20, 2026: The fourth review's fixes, and night-sounds begun
+
+- **Fourth-review fixes (all built):**
+  - The Graveyard's collapse line reads "N more graves", so it no longer contradicts the legend's "Never met" count.
+  - Sources & licences now names all three level datasets and the Power's data file as combined works. The `accuracy-reviewer` caught two errors in the new wording on two runs: it first credited the Power file with sources it doesn't contain, then left out the HSK 3.0 list (MIT), an omission that had been there since the start. Its third run returned "No findings". I checked the Power data file myself: it holds only `character`, `cangjie`, `decomposition` and `sources`.
+  - The README states the first load rounded, about 584 kB with about 230 kB counted, and `check:bundle` allows 1%, because gzip output varies by machine.
+  - The review summary says "The review is over" with "Back to menu".
+- **night-sounds:** I want sound for the video, so I added one last feature before the freeze. Every sound is synthesised in code with the Web Audio API: no audio files, nothing to license. It is on by default but silent until the first click, with a "Sound" toggle on every screen beside the moon, and a night-wind ambience that is off by default. The build is part-way: the engine (about 3 kB gzipped), voice limits, save schema 4 and the toggle are in. Kiro stopped at task 10.4 instead of loosening a test, because the fixed toggle trips a sticky-header check on two screens.
+- **Result so far:** 7,789 unit tests pass in my own check; `tsc` clean; deployed.
+
+---
+
 ## Template for new entries
 
 ## [Date]: [Short title]
