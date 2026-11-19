@@ -744,6 +744,29 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 
 ---
 
+## Nov 19, 2026: proof-pass: every point of the third review
+
+- **What I did:** Turned the third review into one spec, `proof-pass`, with the reviewer's priorities first, and added one feature of my own: a review of restless ghosts outside the nightly schedule.
+- **Decisions I made:**
+  - A clean review does not move a ghost to rest early, and a miss counts as a miss. Otherwise a player could clear the Graveyard by grinding easy reviews.
+  - 么 gets no override: the only clean text would read "ma", which is 吗's job, so a player would write 吗 and be marked wrong. Instead the clue display now drops the traditional half of every "traditional|simplified" pair, so 么 no longer shows 麼.
+  - The level-screen samples are drawn from stroke data, not the font, so level 3's sample can be a real level 3 character (冒) instead of a key shape.
+- **Kiro features:** spec with 14 open-question groups; five steering amendments approved one by one; the never-reveal suite (now 5,365 cases) found a real leak: on a returning ghost, the 14 characters that are also Cangjie key shapes showed their own glyph in the last slot for one render. Kiro fixed it.
+- **Result:**
+  - **Memory fix:** a returning ghost shows only the strokes its keys inked, then writing starts at once. In my own check, 明 went to the writing step about 1 s after the last key, on blank paper.
+  - **Summon paper:** 284 px on a 1024 × 768 laptop, up from about 160.
+  - **Summary:** a tile per ghost, seals on clean ones, faint ghosts with their return time on the rest; fits one screen.
+  - **Cross-level line,** Graveyard order (明 first), every data file named on Sources, the real first load in the README (583,447 bytes gzipped, of which 230,232 count against the 300,000 budget), Give up as a slip, a start menu that fits a phone.
+  - **Restless review** on the menu and the Graveyard.
+  - **Level screen** with the ghost and three drawn samples (两 京 冒); **Graveyard** collapsed to the met rows plus "N ghosts not yet met"; **intro** legend that inks itself in with falling grain.
+  - **7,565 unit and 225 e2e tests pass** on Kiro's run.
+- **What my own check found:**
+  - Kiro doubled the grass, though I had asked to keep today's count. Harmless, but it didn't follow the instruction.
+  - The falling grain can sit behind the "Sources" link and drop it to about 2.9:1, which Kiro reported itself.
+  - The README first-load test fails on my checking machine: my build is 134 bytes larger than the figure in the README, so the test only holds on the machine that last built it.
+
+---
+
 ## Template for new entries
 
 ## [Date]: [Short title]
