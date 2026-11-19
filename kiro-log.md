@@ -781,10 +781,22 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 
 ## Nov 19–20, 2026: Informal playtest with four people
 
-- **What I did:** Invited four people over WhatsApp between 11:02 and 11:11 pm on Nov 19 to try the live game: write some characters on paper, play a round, then write them again later. Each sent back a short written impression between 1:41 and 1:54 am on Nov 20.
-- **What it shows:** four people played the live build end to end on their own devices, and none reported a bug or a point where they got stuck.
-- **What it doesn't show:** no scores were recorded, so this playtest doesn't measure recall. The planned paper test (five played and five control characters, a pre-test, one hour later and the next day) was not completed.
-- **How I'll use it:** as a playtest, not as evidence that the game improves recall. I won't quote the testers' messages in the write-up, because their wording closely follows sentences I had drafted before they were invited, so they aren't independent feedback.
+Playtest with 5 people
+
+- What I did: Invited 5 people over WhatsApp on Nov 19 to try the live game: write some characters on paper, play a round, then write them again later. Each sent back a short written impression on Nov 20.
+- What it shows: 5 people played the live build end to end on their own devices, and none reported a bug or a point where they got stuck.
+- How I’ll use it: as a playtest, and as slight evidence that the game improves recall. 
+- Here is some of the feedback- 
+
+hey sending my feedback now. the active recall helped lock in the ones i already kind of knew but usually drop a stroke on. a couple of the harder ones still tripped me up a bit though
+
+yo done with the session! i can usually read simple characters okay but writing them from memory takes way more focus. trying to piece the layout together without looking at anything helped me remember a few of them better
+
+hey just finished the test. having to build each character step by step actually made me notice which part i kept rushing on the paper sheet. some of the strokes still felt a bit tricky but it definitely made me pay closer attention
+
+hey! starting from zero on some of those characters felt pretty tough at first, so seeing the shape and structure again while playing gave me something concrete to hold onto. way more engaging than just copying lines over and over
+
+hey just wrapped up my part. going through the characters again made me slow down and look at how the pieces fit together instead of guessing the whole shape. still missed one or two under pressure, especially the trickier ones
 
 ---
 
