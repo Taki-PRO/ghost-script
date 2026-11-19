@@ -276,10 +276,35 @@ Rules for every task:
     - Record the decision (accepted, or what to change) in the review notes the human keeps. Kiro does not review the screenshots and does not edit `kiro-log.md`. Any change the human asks for becomes a new task
     - _Requirements: 4.1, 11.1, 12.12, 13.6_
 
+- [x] 19. Follow-up after the third review
+  - Rules for this group: spec-only except 19.1 and 19.2; no steering, data, `kiro-log.md` or `tasks.meta.json` edit; no property-based test, no mutation test; no personal name; no existing assertion loosened
+  - [x] 19.1 Grain keeps clear of controls
+    - Settle and record in design Item 13 the mechanism (lanes that avoid the controls' boxes at every width, or clipping the grain layer to the legend card area), then implement it in `engine/grain.ts`, `IntroScreen.tsx` and `styles/index.css` without changing the intro layout or the one-screen fit; export the layout constants the unit test needs; keep 24 grains, alpha at most 0.35, the `ink` token, passes of at least 12 s, `pointer-events: none` and `aria-hidden`
+    - Unit tests in `engine/grain.test.ts`: for every grain in `GRAINS` at 375 and 1024 px, no Grain_Path intersects a Control_Box (from the `GRAINS` table and the layout constants, if feasible; otherwise record why and cover the rule), plus the contrast of every intro text token over the `ink` token at alpha 0.35 is at least 4.5:1
+    - E2E in `e2e/legend-ink.spec.ts` at 375 × 812 and 1024 × 768: compute each grain's left and size from its element and its fall extent (x range over the whole fall, y range 0 to 100 % of the layer), and assert that none crosses the bounding box (plus 4 px) of any button or link on the intro; keep the existing fit assertions. Wait for port 4173 to be free before the run
+    - _Requirements: 13.32, 13.33, 13.34, 13.35, 13.36_
+  - [x] 19.2 Move the README first-load comparison into `check:bundle`
+    - In `tests/unit/readme-first-load.test.ts` keep the checks that need no build (counted + level 1 = sum, the 300,000 budget, the wording that the budget excludes the level 1 dataset) and remove every read of `app/dist`
+    - In `scripts/check-bundle-size.ts` add the pure functions `parseReadmeFirstLoad` and `compareFirstLoad`; after printing the first-load line, read `README.md`, extract the stated counted, level 1 and total figures, and exit non-zero naming both figures when they differ from the printed ones
+    - Add unit tests of the pure comparison on fixture README text (equal, differing counted, level 1 and total figures, no figures). Run `npm run build -w app` and `npm run check:bundle`; edit `README.md` only if the printed figures differ from it
+    - _Requirements: 7.13, 7.14, 7.15, 7.16, 7.17_
+  - [x] 19.3 Record the grass decision in the spec (done by this amendment)
+    - Spec-only edit made as part of this amendment: requirements criterion 12.22 and the follow-up decisions, and the decision record in design Item 12. No grass code changes. Nothing remains to do; a later reader only verifies that the three documents carry the record
+    - _Requirements: 12.22_
+
+- [x] 20. Final checkpoint after the follow-up
+  - Before every end-to-end run, wait until nothing listens on port 4173
+  - Run `npm test` at the repository root and report the passed, failed and skipped counts
+  - Run the intro e2e specs `legend-ink`, `fits-one-screen`, `screenshots`, `night-scene`, `sky-cap`, `slips`, `cursors` and `font-requests` (for example `npm run test:e2e -- legend-ink fits-one-screen screenshots night-scene sky-cap slips cursors font-requests`) and report the passed, failed and skipped counts
+  - Run `npm run check:bundle` and confirm it exits 0 with the README figures equal to the printed ones; confirm `git diff --stat` shows no change to `kiro-log.md`, steering files, data files or `tasks.meta.json`; make no commit
+  - Report anything not achieved: name each failing or skipped check, the file or test and the command
+  - Ensure all tests pass, ask the user if questions arise.
+  - _Requirements: 7.13, 7.15, 7.16, 13.32, 13.33, 13.35, 14.10, 14.11, 14.12_
+
 ## Notes
 
 - There are no optional tasks. Every test task is required. No property-based test and no mutation test is added (decision of Nov 15); the existing property tests stay.
-- Tasks 1.1 and 18.1 are human tasks. Kiro does not do them, does not answer questions, does not approve an amendment and does not review the screenshots. Task 18.1 is the last task and nothing waits for it.
+- Tasks 1.1 and 18.1 are human tasks. Kiro does not do them, does not answer questions, does not approve an amendment and does not review the screenshots. Task 18.1 is the last human-only task and no Kiro task waits for it; tasks 19 and 20 are the follow-up after the third review and run in Kiro's own order.
 - After task 1.1, task 2.1 amends the spec first (requirements, design and this file), so the code tasks follow the human's answers.
 - Tasks 4, 14 and 16 are gated on tasks 3.1 to 3.3, 3.4 and 3.5, which write the approved amendments 1 to 3, 4 and 5 into the steering files.
 - Task 5.1 captures every hash fixture before task 5.2 edits any override file; task 5.3 is the first build after the edits. Tasks 5.5 and 5.6 add and test the display rule for traditional|simplified pairs, which changes no stored data.
@@ -345,7 +370,9 @@ Rules for every task:
     {"id": 51, "tasks": ["16.6"]},
     {"id": 52, "tasks": ["16.7"]},
     {"id": 53, "tasks": ["16.8"]},
-    {"id": 54, "tasks": ["18.1"]}
+    {"id": 54, "tasks": ["18.1"]},
+    {"id": 55, "tasks": ["19.1", "19.3"]},
+    {"id": 56, "tasks": ["19.2"]}
   ]
 }
 ```

@@ -69,6 +69,10 @@ Three items conflict with current steering text: item 1 (content-accuracy and pr
 - **Pipeline**: the Node and TypeScript scripts in `scripts/` that build the datasets and derived files.
 - **Slip**: an element with the `slip` or `slip-primary` class as defined in `art-direction.md`.
 - **Fit_Tests**: the Playwright specs that check one-screen fit (`e2e/fits-one-screen.spec.ts`, `e2e/no-horizontal-overflow.spec.ts`, `e2e/sky-cap.spec.ts`, `e2e/graveyard-fit.spec.ts`).
+- **Intro_Control**: any `button` or link (`a`) on the intro screen, including "Begin the Séance" and "Sources".
+- **Control_Box**: the bounding box of an Intro_Control, expanded by 4 px on every side to cover the 2 px hover lift and the focus ring.
+- **Grain_Path**: the area a grain sweeps during its whole fall: its x range (left to left plus size) and the full height of the grain layer (0 to 100 %).
+- **First_Load_Figures**: the counted bundle, the level 1 dataset and their sum, in gzip bytes, as printed by `npm run check:bundle`.
 
 ## Requirements
 
@@ -259,6 +263,11 @@ Three items conflict with current steering text: item 1 (content-accuracy and pr
 10. THE e2e suite SHALL include a test with a fresh browser context that goes from the intro through the Level_Screen and level 1 to the first Summon_Step, records every network request, and asserts that no request URL contains `lxgw-wenkai-subset-level2` or `lxgw-wenkai-subset-level3`.
 11. IF the test of criterion 10 finds such a request, THEN THE implementer SHALL identify the glyph, remove the cause and record both in the design.
 12. THE README data table SHALL list every file named in criteria 1 and 2.
+13. THE `tests/unit/readme-first-load.test.ts` suite SHALL keep its checks that do not need a build: the stated counted figure plus the stated level 1 figure equals the stated sum, the stated budget is 300,000 bytes, and the README says that the budget does not count the level 1 dataset.
+14. THE `tests/unit/readme-first-load.test.ts` suite SHALL NOT read `app/dist` or compare the README with a build.
+15. WHEN `npm run check:bundle` runs, THE `scripts/check-bundle-size.ts` script SHALL read `README.md`, extract the stated counted, level 1 and total figures, and compare them with the First_Load_Figures it prints.
+16. IF a stated figure differs from the printed First_Load_Figure, THEN THE `scripts/check-bundle-size.ts` script SHALL exit with a non-zero status and print both the stated and the printed figure.
+17. THE comparison of criteria 15 and 16 SHALL be a pure function, and its unit tests SHALL cover, on fixture README text, equal figures, a differing counted figure, a differing level 1 figure, a differing total, and a README with no stated figures.
 
 ### Requirement 8: Give up is a paper slip
 
@@ -399,6 +408,7 @@ Three items conflict with current steering text: item 1 (content-accuracy and pr
 19. THE Graveyard SHALL compute the number of graves to show with a pure function of the total number of graves, the column count and the index of the last Met_Ghost grave (−1 if none).
 20. THE unit tests of that function SHALL cover: no Met_Ghost; a Met_Ghost in the first row; a Met_Ghost in the last row; a last row that is not full; one column; and fewer graves than one row.
 21. THE Graveyard SHALL keep the two tufts of one tablet, the tufts of different hill rows, and every tablet tuft and every Marker or glyph free of overlap, and tufts within one hill row MAY overlap.
+22. THE grass count of criteria 12 and 13 (24 hill tufts and two tufts per shown tablet) SHALL stay as implemented, per the decision recorded in "Decisions approved by the human (follow-up)".
 
 ### Requirement 13: The legend line inks itself in
 
@@ -437,6 +447,11 @@ Three items conflict with current steering text: item 1 (content-accuracy and pr
 29. THE unit tests SHALL assert that the seven code points lie in the Level_1_Font_Range.
 30. THE unit tests SHALL cover each failure kind of criterion 13.
 31. THE unit tests SHALL cover the reduced-motion static state of criteria 21 and 22.
+32. THE Grain_Fall SHALL keep every Grain_Path clear of every Control_Box on the intro, at every viewport width.
+33. THE intro SHALL keep the contrast of every text on it, including the "Sources" link and the ghost text, at least 4.5:1 with a grain at maximum alpha behind it.
+34. THE change of criteria 32 and 33 SHALL leave the intro layout and the one-screen fit of criterion 23 unchanged.
+35. THE e2e suite SHALL assert, at 375 × 812 and 1024 × 768, for every grain, that its Grain_Path (computed from the element's left and size and the fall extent of the layer) does not intersect any Control_Box.
+36. WHERE the layout constants allow it, THE unit tests SHALL assert the same clearance from the `GRAINS` table and the layout constants of the design.
 
 ### Requirement 14: Constraints that apply to every requirement
 
@@ -474,6 +489,12 @@ Three items conflict with current steering text: item 1 (content-accuracy and pr
 - The six corrections to this document that the design proposed are approved and applied: criteria 2.19 and 2.21, 3.4 and 3.7, 11.6, 1.10, and 12.21.
 - `kiro-log.md` is written by the human, never by this work.
 - The final checkpoint also retakes the screenshots and adds the new summary at 1024 × 768 and 375 × 812; the human screenshot review stays last and human-only.
+
+## Decisions approved by the human (follow-up)
+
+- **Grain and controls (R13.32 to R13.36).** The falling grain stays out from behind every button and link on the intro. Measured: the "Sources" link can fall to about 2.9:1 under a grain at maximum alpha, and ghost text must keep 4.5:1. The implementer settles the mechanism and records it in the design (Item 13), for example columns or lanes of the grain layer that avoid the Control_Boxes at every width, or clipping the layer to the legend card area, without changing the intro layout or the one-screen fit.
+- **README first load (R7.13 to R7.17).** `tests/unit/readme-first-load.test.ts` keeps its always-on checks and no longer compares with `app/dist`, because the build differs by a few bytes on other machines. The exact comparison with the build moves into `npm run check:bundle`, where the figures are produced.
+- **Grass count (R12.22).** The human's answer for item 12 was to keep today's grass count. The implementation doubled it (24 hill tufts, two per tablet). That went beyond the human's answer, and the human accepted it afterwards. No change to the grass code.
 
 ## Steering amendments (approved by the human)
 

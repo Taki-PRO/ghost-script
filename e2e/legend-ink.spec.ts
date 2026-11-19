@@ -1,4 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
+import { CLEAR_HALF_WIDTH_PX, CONTROL_HALF_WIDTH_PX } from '../app/src/engine/grain';
+import { contrastRatio, theme } from '../app/src/styles/theme';
 import { START, expectNoVerticalScroll, findOverflow, waitForLegendReveal } from './helpers';
 
 // The legend line inks itself in (spec proof-pass, Requirement 13, ACs 9, 12, 13, 17, 18, 21, 22, 23).
@@ -167,6 +169,69 @@ test.describe('legend ink', () => {
     const container = await page.getByTestId('legend-grain').evaluate((el) => getComputedStyle(el).pointerEvents);
     expect(container).toBe('none');
   });
+
+  // Grain keeps clear of the controls (spec proof-pass, Requirement 13, ACs 32 to 36).
+  const grainSizes = [
+    { width: 1024, height: 768 },
+    { width: 375, height: 812 },
+    { width: 320, height: 640 },
+  ];
+  for (const size of grainSizes) {
+    test(`no grain path meets a control box, and ink text over a grain keeps 4.5:1, at ${size.width} x ${size.height}`, async ({ page }) => {
+      await page.setViewportSize(size);
+      await page.goto(START);
+      await waitForLegendReveal(page);
+      const m = await page.evaluate(() => {
+        const layer = document.querySelector('[data-testid="legend-grain"]') as HTMLElement;
+        const lr = layer.getBoundingClientRect();
+        const grains = [...layer.querySelectorAll<HTMLElement>('.grain')].map((el) => {
+          const cs = getComputedStyle(el);
+          const left = lr.left + Number.parseFloat(cs.left);
+          return { left, right: left + Number.parseFloat(cs.width) };
+        });
+        const controls = [...document.querySelectorAll<HTMLElement>('main button, main a, button, a')].map((el) => {
+          const r = el.getBoundingClientRect();
+          return { name: (el.textContent ?? '').trim(), left: r.left, right: r.right, top: r.top, bottom: r.bottom };
+        });
+        const texts = [...document.querySelectorAll<HTMLElement>('main *')]
+          .filter(
+            (el) =>
+              [...el.childNodes].some((n) => n.nodeType === 3 && (n.textContent ?? '').trim()) &&
+              !el.closest('figure, button, a, [aria-hidden="true"]'),
+          )
+          .map((el) => {
+            const r = el.getBoundingClientRect();
+            return { text: (el.textContent ?? '').trim().slice(0, 20), left: r.left, right: r.right, colour: getComputedStyle(el).color };
+          });
+        return { layer: { top: lr.top, bottom: lr.bottom }, grains, controls, texts };
+      });
+      expect(m.grains).toHaveLength(24);
+      expect(m.controls.length).toBeGreaterThanOrEqual(2);
+      for (const c of m.controls) {
+        // the layout constants must cover the real control
+        expect(c.right - c.left, c.name).toBeLessThanOrEqual(2 * CONTROL_HALF_WIDTH_PX);
+        const box = { left: c.left - 4, right: c.right + 4, top: c.top - 4, bottom: c.bottom + 4 };
+        expect(box.left, c.name).toBeGreaterThanOrEqual(size.width / 2 - CLEAR_HALF_WIDTH_PX - 0.5);
+        for (const g of m.grains) {
+          const xOverlap = g.left < box.right && g.right > box.left;
+          // the fall covers the layer from its top to its bottom, so any box inside the layer is crossed in y
+          const yOverlap = box.top < m.layer.bottom && box.bottom > m.layer.top;
+          expect(xOverlap && yOverlap, `grain ${g.left}..${g.right} meets "${c.name}" ${box.left}..${box.right}`).toBe(false);
+        }
+      }
+      const hex = (rgb: string) =>
+        '#' + (rgb.match(/\d+/g) ?? []).slice(0, 3).map((n) => Number(n).toString(16).padStart(2, '0')).join('');
+      const bg = theme.background.slice(1);
+      const ink = theme.ink.slice(1);
+      const ch = (h: string, i: number) => parseInt(h.slice(i, i + 2), 16);
+      const worst =
+        '#' + [0, 2, 4].map((i) => Math.round(ch(ink, i) * 0.35 + ch(bg, i) * 0.65).toString(16).padStart(2, '0')).join('');
+      for (const t of m.texts) {
+        const hit = m.grains.some((g) => g.left < t.right && g.right > t.left);
+        if (hit) expect(contrastRatio(hex(t.colour), worst), t.text).toBeGreaterThanOrEqual(4.5);
+      }
+    });
+  }
 
   test('assistive technology reads the whole legend line once', async ({ page }) => {
     await page.goto(START);

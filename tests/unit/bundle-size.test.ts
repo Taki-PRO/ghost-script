@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
   BUNDLE_BUDGET_BYTES,
+  compareFirstLoad,
   firstLoad,
   isLazy,
   lazyFiles,
+  parseReadmeFirstLoad,
   summariseBundle,
   type SizedFile,
 } from '../../scripts/check-bundle-size';
@@ -127,5 +129,32 @@ describe('firstLoad', () => {
     const files = [f('a.js', 250_000), f('data/characters.json', 361_679)];
     expect(summariseBundle(files).ok).toBe(true);
     expect(firstLoad(files).total).toBeGreaterThan(BUNDLE_BUDGET_BYTES);
+  });
+});
+
+describe('README first-load comparison', () => {
+  const sentence = (c: string, l: string, t: string): string =>
+    `Real first load, in gzip bytes, as printed by \`npm run check:bundle\`: ${c} bytes counted + ${l} bytes level 1 dataset = ${t} bytes. The budget is 300,000 bytes.`;
+  const printed = { counted: 230_232, level1: 353_215, total: 583_447 };
+
+  it('parses the stated figures', () => {
+    expect(parseReadmeFirstLoad(sentence('230,232', '353,215', '583,447'))).toEqual(printed);
+  });
+  it('returns null when the README has no figures', () => {
+    expect(parseReadmeFirstLoad('# Title\nNo sizes here.')).toBeNull();
+  });
+  it('reports nothing when the figures are equal', () => {
+    expect(compareFirstLoad(printed, printed)).toEqual([]);
+  });
+  it.each([
+    ['counted', { ...printed, counted: 230_233 }, '230233'],
+    ['level1', { ...printed, level1: 353_216 }, '353216'],
+    ['total', { ...printed, total: 583_448 }, '583448'],
+  ])('names both figures when %s differs', (key, stated, statedText) => {
+    const diffs = compareFirstLoad(stated, printed);
+    expect(diffs).toHaveLength(1);
+    expect(diffs[0]).toContain(key);
+    expect(diffs[0]).toContain(statedText);
+    expect(diffs[0]).toContain(String(printed[key as keyof typeof printed]));
   });
 });

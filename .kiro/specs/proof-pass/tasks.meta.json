@@ -825,6 +825,49 @@
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1795027057105
       }
+    ],
+    "19.1 Grain keeps clear of controls": [
+      {
+        "executionId": "8384c4f2-53d8-4c6a-bfc1-0989ae5073d7",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795067149703
+      },
+      {
+        "executionId": "8384c4f2-53d8-4c6a-bfc1-0989ae5073d7",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795067612604
+      }
+    ],
+    "19.2 Move the README first-load comparison into `check:bundle`": [
+      {
+        "executionId": "8384c4f2-53d8-4c6a-bfc1-0989ae5073d7",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795067613378
+      },
+      {
+        "executionId": "8384c4f2-53d8-4c6a-bfc1-0989ae5073d7",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795067692611
+      }
+    ],
+    "19. Follow-up after the third review": [
+      {
+        "executionId": "8384c4f2-53d8-4c6a-bfc1-0989ae5073d7",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795067692644
+      }
+    ],
+    "20. Final checkpoint after the follow-up": [
+      {
+        "executionId": "8384c4f2-53d8-4c6a-bfc1-0989ae5073d7",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795067693200
+      },
+      {
+        "executionId": "8384c4f2-53d8-4c6a-bfc1-0989ae5073d7",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795067941505
+      }
     ]
   }
 }

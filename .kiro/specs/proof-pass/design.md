@@ -450,6 +450,19 @@ The README "Bundle and file weights" section states the budget, the counted figu
 
 `levels.json` is named in the credits, and the README figure is copied from the `check:bundle` output and not hand-maintained (approved by the human).
 
+**Follow-up: the README comparison moves into `check:bundle` (R7.13 to R7.17, approved by the human).** `tests/unit/readme-first-load.test.ts` fails by a few bytes on other machines because gzip output of the build differs, so it no longer reads `app/dist`. It keeps three always-on checks: counted + level 1 = stated sum, the stated budget is 300,000, and the README says the budget excludes the level 1 dataset. The exact comparison lives where the figures are produced:
+
+```ts
+export interface StatedFirstLoad { counted: number; level1: number; total: number }
+export function parseReadmeFirstLoad(readme: string): StatedFirstLoad | null;
+export function compareFirstLoad(
+  stated: StatedFirstLoad | null,
+  printed: { counted: number; level1: number; total: number },
+): { ok: true } | { ok: false; messages: readonly string[] };
+```
+
+Both are pure and exported from `scripts/check-bundle-size.ts` (or a `scripts/lib/` module it imports). `parseReadmeFirstLoad` reuses the pattern the existing README test uses to read the three figures. After printing the `First load:` line, the script reads `README.md`, calls the two functions and, on a difference or on a README with no stated figures, prints one line per difference naming both figures (for example `README counted 214,206 differs from printed 214,210`) and exits with status 1. The existing budget check and exit code are unchanged. Unit tests (in `tests/unit/check-bundle-size.test.ts` or the existing bundle test file) cover fixture README text: equal figures, a differing counted figure, a differing level 1 figure, a differing total, and no figures. The README is edited only if the printed figures differ from it.
+
 ### Item 8: Give up is a paper slip (Requirement 8)
 
 `WriteMode.tsx` line 189: the class string becomes `slip min-h-[44px] px-4 py-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-ghost disabled:opacity-50`. `rounded-md`, `border` and `border-muted` and `text-ink` (the `slip` class carries its own ink-on-paper colour) are dropped. The existing logic is unchanged: it renders only while `status === 'writing'`, is `disabled={loading}`, and `handleGiveUp` cancels the quiz, reveals the character and reports `gave-up` once. `.slip:hover:not(:disabled)` already excludes a disabled slip, so a loading Give up does not lift.
@@ -655,7 +668,8 @@ Level 1 with the guided ghost met and nothing else: `lastMetIndex` is 0, so with
 | 4 | 2, +5 | 1, −11 | 2.9 px |
 
   Gaps are computed on the control-point extents of each shape at scale 0.8 (a conservative bound), and each tuft box (19.2 × 7.2 px) lies inside the 48 px minimum tablet (`|dx| + 9.6 ≤ 24`). `tabletTufts(position): readonly [Tuft, Tuft]` is the new accessor. Each is rendered as `<span data-grass="tablet" aria-hidden="true" className="pointer-events-none absolute bottom-0 -z-10" style={{ left: '50%', marginLeft: dx − 9.6 }}>`. Height 7.2 px is under 16 (R12.15); the Marker sits above (the tablet content is centred in 56 px, leaving 12 px at the foot).
-- 24 hill tufts and two per tablet, approved by the human. Tufts within one hill row may overlap (R12.21); the row pitch is kept.
+- 24 hill tufts and two per tablet. Tufts within one hill row may overlap (R12.21); the row pitch is kept.
+- **Decision record (follow-up, approved by the human).** The human's answer for item 12 was to keep today's grass count. The implementation doubled it (24 hill tufts, 2 per tablet). That went beyond the human's answer, and the human accepted it afterwards. The grass code does not change (R12.22).
 
 **Tests.**
 
@@ -756,6 +770,23 @@ and inside the one `prefers-reduced-motion: no-preference` block:
 ```
 
 Each pass takes 14, 17 or 20 s, at least the 12 s of R13.17. The layer sits behind the figure and every text (negative `z-index` inside the isolated `main`), has `pointer-events: none`, and is absolutely positioned, so layout does not change (R13.18). The colour is the `ink` token (`#ece6d6`) at alpha 0.35 at most, never `seal` and never `candle` (R13.16, R13.25; `candle-usage.test.ts` stays green). Contrast with a grain at 0.35 alpha behind: the `ink` text on the dark page over a grain (`#5c5c5d`, lum 0.107) is 5.35:1, and the ink-on-paper text on the paper slip is unaffected because the slip is opaque and covers the grain (R13.19).
+
+**Follow-up: the grain keeps clear of every control (R13.32 to R13.36, approved by the human).** Measured after the review: under a grain at maximum alpha (0.35) the "Sources" link drops to about 2.9:1, below 4.5:1, because the grain can fall behind it. Ghost text must keep 4.5:1. The grain layer is `z-index: -1` behind everything, so the fix is geometric: no grain's path may cross a Control_Box.
+
+*Design choice, settled and implemented by task 19.1: lanes.* The grain layer keeps its place (absolute, `inset: 0`, `z-index: -1`, `pointer-events: none`, `aria-hidden`), so the intro layout and the one-screen fit do not change. Every grain now falls in one of two side lanes, left or right of a grain-free band centred on the layer. The band is `CLEAR_HALF_WIDTH_PX` = `CONTROL_HALF_WIDTH_PX` (112, half the width of the widest control, "Begin the Séance", which measures well under 224 px) + `CONTROL_BOX_MARGIN_PX` (4) = 116 px on each side of the centre, because the controls are centred in the column. `Grain` gains `lane: 'left' | 'right'` (alternating), and `xPercent` is now the position inside the lane (0 to 100). `engine/grain.ts` exports `grainSpan` (x range in px for a layer width, used by the unit test) and `grainLeftCss` (the same position as a CSS `calc(...)` for `left`, so the markup stays static and nothing is measured at run time). The grain stays at 24 entries, alpha at most 0.35, `ink` token, 14, 17 and 20 s passes. Reason for lanes over clipping: clipping to the legend card would end the fall at the card and shorten it, while lanes keep the full-height fall. Cost: at 320 px the lanes are 44 px wide (the 116 px band on each side of the centre leaves 160 − 116). Ghost text over a grain at 0.35 is below 4.5:1 (about 2.9:1 measured on the Sources link), so the only ghost-coloured text on the intro, the Sources control, must never have a grain behind it; the unit test also checks that `IntroScreen.tsx` uses `text-ghost` only on the ghost figure and that control. The e2e test (`legend-ink.spec.ts`, 1024 × 768, 375 × 812 and 320 × 640) fails if the real control is wider than the constant.
+
+*Earlier candidates (kept for the record).* The implementer picks one mechanism, keeps the intro layout and the one-screen fit unchanged (R13.34), and writes the choice and the reason here. Candidates: The implementer picks one mechanism, keeps the intro layout and the one-screen fit unchanged (R13.34), and writes the choice and the reason here. Candidates:
+
+1. **Lanes.** Replace the single full-width layer by lanes (vertical strips) whose x ranges avoid every Control_Box at every width. Because the buttons are centred in the column, the lanes sit in the side margins, left and right of the column's controls, and `xPercent` of each grain maps into a lane. The controls' widths are bounded by layout constants, so the lanes are computed from those constants and not measured at run time.
+2. **Clip to the legend card.** Clip the layer to the area of the legend card (the `figure`), which holds no control, so the grain falls only behind the legend line. This keeps the 12 s fall and the ambient exemption unchanged, but shortens the visible fall.
+
+A runtime measurement of the controls is not used: the guarantee must hold at every width without script (R13.32), and the grain layer stays static markup built from `GRAINS`. Whatever the choice, a Control_Box is the control's bounding box expanded by 4 px on every side (hover lift of 2 px and the focus ring). `GRAINS` keeps 24 entries, alpha at most 0.35, `ink` token, 14, 17 and 20 s passes, `pointer-events: none` and `aria-hidden`; only `xPercent` values and the layer's extent may change, and the layout constants that the choice relies on are exported from `engine/grain.ts` so the unit test can read them.
+
+*Contrast (R13.33).* With the grain kept out from behind every control, the worst case behind a control is the page background, so the "Sources" link and "Begin the Séance" keep their normal contrast. The remaining text behind which a grain may fall is the legend line and its caption on the paper card. The test composes the text colour over the `ink` token at alpha 0.35 over the page background and asserts at least 4.5:1 for every text token used on the intro (`ink`, `ghost`, `muted` where used), so a later change that lets a grain reach other text fails.
+
+*Tests.*
+- Unit (`engine/grain.test.ts`, R13.36): for every grain in `GRAINS` and each of the two widths 375 and 1024, the x range from `xPercent`, `sizePx` and the layer width, with the whole-height fall, does not intersect any Control_Box derived from the exported layout constants. If the constants cannot give a Control_Box (for example a width set by content), the test covers the lane or clip rule itself and the e2e test carries the clearance; the implementer records which applied.
+- E2E (`e2e/legend-ink.spec.ts`, R13.35): at 375 × 812 and 1024 × 768, after `waitForLegendReveal`, read every `.grain` element's `left` and size, and the layer's box, compute each Grain_Path (x range from `left` to `left + size`, y range 0 to 100 % of the layer, since the translate runs the full height), read the bounding box of every `button` and `a` on the intro with 4 px added on every side, and assert that no pair intersects. The same spec keeps its fit assertions (R13.34).
 
 **CSS tests that change (additive, none loosened).** `index.css.test.ts`: the keyframes allow-list gains `grain-fall`; the `animations()` name pattern gains the prefix `grain`; `AMBIENT` gains `grain-fall` (the infinite 14 to 20 s animations). That is exactly the one named exemption of amendment 5. The 200 to 600 ms bound for every other animation, the 200 ms transition rule, the one-block rule and the `ink-reveal 600ms` assertions are unchanged. `steering-art-direction.test.ts` still matches `Ambient exemption` and `Rite-timing exemption` and gains an assertion for the legend-ink exemption sentence once amendment 5 is approved.
 
@@ -1008,6 +1039,12 @@ New line, after the rite-timing exemption:
 - The six corrections to `requirements.md` that the earlier draft proposed are approved and applied.
 - The Level_1_Review_Value is `human`. `kiro-log.md` is written by the human.
 - The final checkpoint also retakes the screenshots and adds the new summary at 1024 × 768 and 375 × 812; the human screenshot review stays last and human-only.
+
+### Follow-up after the third review (approved by the human)
+
+- **Grain and controls.** The grain stays out from behind every button and link on the intro; the mechanism is the implementer's choice, recorded in Item 13 (R13.32 to R13.36).
+- **README first load.** The exact README comparison with the build moves from `tests/unit/readme-first-load.test.ts` into `npm run check:bundle` (Item 7, R7.13 to R7.17).
+- **Grass count.** The human's answer for item 12 was to keep today's grass count; the implementation doubled it (24 hill tufts, 2 per tablet), which went beyond that answer; the human accepted it afterwards. No code change (Item 12, R12.22).
 
 ### Corrections to `requirements.md` (approved by the human, applied)
 

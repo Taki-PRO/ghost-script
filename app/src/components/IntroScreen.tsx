@@ -5,7 +5,7 @@ import { LEGEND_SOURCE } from '../data/citations';
 import type { HanziWriterCharData } from '../data/charDataLoader';
 import { loadLegendStrokes } from '../data/legendStrokes';
 import { LEGEND_TOTAL_CAP_MS, planLegendInk, type LegendPlan } from '../engine/legendInk';
-import { GRAINS } from '../engine/grain';
+import { GRAINS, grainLeftCss } from '../engine/grain';
 import { prefersReducedMotion } from '../engine/motion';
 import { theme } from '../styles/theme';
 
@@ -234,7 +234,7 @@ export function IntroScreen({ onBegin, onOpenSources }: IntroScreenProps) {
               className={`grain grain-${g.speed}`}
               data-grain=""
               style={{
-                left: `${g.xPercent}%`,
+                left: grainLeftCss(g),
                 width: `${g.sizePx}px`,
                 height: `${g.sizePx}px`,
                 backgroundColor: rgba(theme.ink, g.alpha),

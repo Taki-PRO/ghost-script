@@ -85,6 +85,27 @@ export function firstLoad(files: readonly SizedFile[]): FirstLoad {
   return { counted, level1, total: counted + level1 };
 }
 
+/**
+ * Pure: reads the stated first-load figures from the README text. Returns null when the
+ * "Real first load ... N bytes counted + N bytes level 1 dataset = N bytes." sentence is absent.
+ */
+export function parseReadmeFirstLoad(readme: string): FirstLoad | null {
+  const m = readme.match(
+    /Real first load[^\n]*?: ([\d,]+) bytes counted \+ ([\d,]+) bytes level 1 dataset = ([\d,]+) bytes\./,
+  );
+  if (!m) return null;
+  const num = (s: string | undefined): number => Number((s ?? '').replace(/,/g, ''));
+  return { counted: num(m[1]), level1: num(m[2]), total: num(m[3]) };
+}
+
+/** Pure: one message per figure that differs, each naming the README figure and the printed figure. */
+export function compareFirstLoad(readmeFigures: FirstLoad, printedFigures: FirstLoad): readonly string[] {
+  const keys: readonly (keyof FirstLoad)[] = ['counted', 'level1', 'total'];
+  return keys
+    .filter((k) => readmeFigures[k] !== printedFigures[k])
+    .map((k) => `${k}: README says ${readmeFigures[k]}, build prints ${printedFigures[k]}`);
+}
+
 function walk(dir: string): string[] {
   const out: string[] = [];
   for (const name of readdirSync(dir).sort()) {
@@ -129,6 +150,23 @@ function main(): void {
   } else {
     process.stderr.write(out);
     process.exitCode = 1;
+  }
+
+  const readmePath = join(repoRoot(), 'README.md');
+  const stated = existsSync(readmePath) ? parseReadmeFirstLoad(readFileSync(readmePath, 'utf8')) : null;
+  if (!stated) {
+    process.stderr.write(
+      'README CHECK FAILED: the README first-load figures could not be parsed (expected "Real first load ...: N bytes counted + N bytes level 1 dataset = N bytes.").\n',
+    );
+    process.exitCode = 1;
+    return;
+  }
+  const diffs = compareFirstLoad(stated, fl);
+  if (diffs.length > 0) {
+    process.stderr.write(`README CHECK FAILED: the README first-load figures differ from the build:\n${diffs.map((d) => `  ${d}\n`).join('')}`);
+    process.exitCode = 1;
+  } else {
+    process.stdout.write('README CHECK PASSED: the README first-load figures equal the printed ones.\n');
   }
 }
 
