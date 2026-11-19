@@ -779,24 +779,38 @@ Add an entry every time you use a Kiro feature or make a decision about how to u
 
 ---
 
-## Nov 19–20, 2026: Informal playtest with four people
+## Nov 19–20, 2026: Playtest with five people
 
-Playtest with 5 people
+- **What I did:** Invited five people over WhatsApp on Nov 19 to try the live game: write some characters on paper, play a round, then write them again later. Each sent back a short written impression on Nov 20.
+- **What it shows:** five people played the live build end to end on their own devices, and none reported a bug or a point where they got stuck.
+- **What it doesn't show:** no scores were recorded, so this playtest doesn't measure recall.
+- **Consent to quote:** not yet asked. Until each person agrees, their words stay here as notes and go in no write-up or video.
+- **Their feedback, as sent:**
 
-- What I did: Invited 5 people over WhatsApp on Nov 19 to try the live game: write some characters on paper, play a round, then write them again later. Each sent back a short written impression on Nov 20.
-- What it shows: 5 people played the live build end to end on their own devices, and none reported a bug or a point where they got stuck.
-- How I’ll use it: as a playtest, and as slight evidence that the game improves recall. 
-- Here is some of the feedback- 
+  > hey sending my feedback now. the active recall helped lock in the ones i already kind of knew but usually drop a stroke on. a couple of the harder ones still tripped me up a bit though
 
-hey sending my feedback now. the active recall helped lock in the ones i already kind of knew but usually drop a stroke on. a couple of the harder ones still tripped me up a bit though
+  > yo done with the session! i can usually read simple characters okay but writing them from memory takes way more focus. trying to piece the layout together without looking at anything helped me remember a few of them better
 
-yo done with the session! i can usually read simple characters okay but writing them from memory takes way more focus. trying to piece the layout together without looking at anything helped me remember a few of them better
+  > hey just finished the test. having to build each character step by step actually made me notice which part i kept rushing on the paper sheet. some of the strokes still felt a bit tricky but it definitely made me pay closer attention
 
-hey just finished the test. having to build each character step by step actually made me notice which part i kept rushing on the paper sheet. some of the strokes still felt a bit tricky but it definitely made me pay closer attention
+  > hey! starting from zero on some of those characters felt pretty tough at first, so seeing the shape and structure again while playing gave me something concrete to hold onto. way more engaging than just copying lines over and over
 
-hey! starting from zero on some of those characters felt pretty tough at first, so seeing the shape and structure again while playing gave me something concrete to hold onto. way more engaging than just copying lines over and over
+  > hey just wrapped up my part. going through the characters again made me slow down and look at how the pieces fit together instead of guessing the whole shape. still missed one or two under pressure, especially the trickier ones
 
-hey just wrapped up my part. going through the characters again made me slow down and look at how the pieces fit together instead of guessing the whole shape. still missed one or two under pressure, especially the trickier ones
+---
+
+## Nov 20, 2026: Fourth outside review: 32 of 50 without a video
+
+- **What I did:** Asked the separate AI reviewer for a fourth strict review.
+- **Score:** 32 of 50 without the video (Impact 7, Technology 9, Design 8, Idea 8, Presentation 0), up from 30. About 41 with a strong video; up to 42 with a measured recall result.
+- **What it confirmed:** every item from the third review was built; 7,576 unit tests pass on a fresh clone; no answer leaks at any level, on returning ghosts or in review mode; the review counts match the data.
+- **What it found wrong:**
+  - The Graveyard's "276 ghosts not yet met" counts hidden graves, while the legend above it says "Never met: 290".
+  - Sources & licences still calls only `characters.json` a combined work.
+  - The README's exact first-load figure fails `check:bundle` on another machine, because gzip output varies.
+  - My playtest entry said four people in its heading and five in its text, and called the feedback "slight evidence" of better recall, though no scores were recorded. I corrected the entry above.
+  - The memory fix changes nothing for transparent ghosts: their keys ink every stroke, so the whole character is on screen seconds before writing. It advised describing this honestly rather than changing it before the freeze.
+- **Next:** its four fixes and one optional fix, the freeze on Nov 21, a small recall test over the weekend, then the video.
 
 ---
 
