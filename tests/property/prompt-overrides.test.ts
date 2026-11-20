@@ -44,6 +44,7 @@ import type { BuildOptions, CharacterRecord } from '../../app/src/data/types';
 import { buildDataset } from '../../scripts/build-data';
 import { sha256Hex } from '../../scripts/lib/verify-sha256';
 import { numberedToToneMarks } from '../../scripts/lib/prompt';
+import { CLUE_CORRECTIONS } from '../../scripts/lib/clue-corrections';
 import { arbitraryCharacter, arbitraryStrokeData } from '../helpers/arbitraries';
 import type { StrokeData } from '../../app/src/data/types';
 
@@ -121,10 +122,23 @@ function arbitraryGeneratedCharInput(
   });
 }
 
+/**
+ * buildDataset always runs the hard-coded, human-approved CLUE_CORRECTIONS
+ * guard (it is not reachable through BuildOptions). A generated character that
+ * has a correction would need an override that matches the real clue text, which
+ * these plain generated glosses never carry. So the generator never produces a
+ * character that has a clue correction.
+ */
+const CLUE_CORRECTED = new Set(CLUE_CORRECTIONS.map((c) => c.character));
+
+function arbitraryUncorrectedCharacter(): fc.Arbitrary<string> {
+  return arbitraryCharacter().filter((c) => !CLUE_CORRECTED.has(c));
+}
+
 /** 1..3 distinct characters, each with a full input bundle. */
 function arbitraryInputBundle(): fc.Arbitrary<GeneratedCharInput[]> {
   return fc
-    .uniqueArray(arbitraryCharacter(), { minLength: 1, maxLength: 3 })
+    .uniqueArray(arbitraryUncorrectedCharacter(), { minLength: 1, maxLength: 3 })
     .chain((characters) =>
       fc.tuple(
         ...characters.map((character) =>
