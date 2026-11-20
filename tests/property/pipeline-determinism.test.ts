@@ -33,6 +33,7 @@ import { buildDataset } from '../../scripts/build-data';
 import { sha256Hex } from '../../scripts/lib/verify-sha256';
 import {
   arbitraryCharacter,
+  arbitraryUncorrectedCharacter,
   arbitraryStrokeData,
 } from '../helpers/arbitraries';
 import type { StrokeData } from '../../app/src/data/types';
@@ -97,7 +98,7 @@ function arbitraryGeneratedCharInput(
  */
 function arbitraryInputBundle(): fc.Arbitrary<GeneratedCharInput[]> {
   return fc
-    .uniqueArray(arbitraryCharacter(), { minLength: 1, maxLength: 8 })
+    .uniqueArray(arbitraryUncorrectedCharacter(), { minLength: 1, maxLength: 8 })
     .chain((characters) =>
       fc.tuple(
         ...characters.map((character) =>

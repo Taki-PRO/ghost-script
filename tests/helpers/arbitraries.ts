@@ -34,6 +34,7 @@ import type {
   CcCedictEntry,
   CcCedictSense,
 } from '../../scripts/lib/parse-cc-cedict';
+import { CLUE_CORRECTIONS } from '../../scripts/lib/clue-corrections';
 import { classifySummonInk } from '../../app/src/engine/summonInk';
 import { extractLeafComponents } from '../../scripts/lib/parse-make-me-a-hanzi';
 
@@ -44,6 +45,21 @@ export function arbitraryCharacter(): fc.Arbitrary<string> {
   return fc
     .integer({ min: 0x4e00, max: 0x9fff })
     .map((cp) => String.fromCodePoint(cp));
+}
+
+/**
+ * A CJK character that has no entry in the real CLUE_CORRECTIONS list.
+ *
+ * buildDataset always runs the hard-coded, human-approved clue-correction guard
+ * (not reachable through BuildOptions). A generated list character that has a
+ * correction (本, 天, ...) would need an override matching the real clue text,
+ * which generated glosses never carry, so the build would throw "clue
+ * corrections failed". Use this for any character that is written into a
+ * character list that goes through the real buildDataset.
+ */
+export function arbitraryUncorrectedCharacter(): fc.Arbitrary<string> {
+  const corrected = new Set(CLUE_CORRECTIONS.map((c) => c.character));
+  return arbitraryCharacter().filter((c) => !corrected.has(c));
 }
 
 /**

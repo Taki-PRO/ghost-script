@@ -36,7 +36,7 @@ import type {
   MissingFieldError,
   RequiredField,
 } from '../../app/src/data/types';
-import { arbitraryCharacter } from '../helpers/arbitraries';
+import { arbitraryUncorrectedCharacter } from '../helpers/arbitraries';
 
 // Unihan input for the pipeline: the committed fixture and its real SHA-256.
 // The generated characters are not in the fixture, so their `cangjie` is null.
@@ -125,7 +125,7 @@ interface GeneratedCase {
  */
 function arbitraryCase(): fc.Arbitrary<GeneratedCase> {
   return fc
-    .uniqueArray(arbitraryCharacter(), { minLength: 2, maxLength: 10 })
+    .uniqueArray(arbitraryUncorrectedCharacter(), { minLength: 2, maxLength: 10 })
     .chain((chars) =>
       fc
         .array(

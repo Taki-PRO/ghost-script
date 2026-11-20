@@ -57,6 +57,7 @@ import { numberedToToneMarks, selectPrompt } from '../../scripts/lib/prompt';
 import {
   arbitraryCcCedictEntry,
   arbitraryCharacter,
+  arbitraryUncorrectedCharacter,
   arbitraryStrokeData,
 } from '../helpers/arbitraries';
 
@@ -207,7 +208,7 @@ function arbitraryGeneratedCharInput(
 /** 1..6 DISTINCT characters, each with its own unique-sense bundle. */
 function arbitraryInputBundle(): fc.Arbitrary<GeneratedCharInput[]> {
   return fc
-    .uniqueArray(arbitraryCharacter(), { minLength: 1, maxLength: 6 })
+    .uniqueArray(arbitraryUncorrectedCharacter(), { minLength: 1, maxLength: 6 })
     .chain((characters) =>
       fc.tuple(
         ...characters.map((character) =>

@@ -34,7 +34,10 @@ import { afterEach, describe, expect, it } from 'vitest';
 import type { BuildOptions, StrokeData } from '../../app/src/data/types';
 import { buildDataset } from '../../scripts/build-data';
 import { sha256Hex } from '../../scripts/lib/verify-sha256';
-import { arbitraryCharacter, arbitraryStrokeData } from '../helpers/arbitraries';
+import {
+  arbitraryStrokeData,
+  arbitraryUncorrectedCharacter,
+} from '../helpers/arbitraries';
 
 // --- Generated input model --------------------------------------------------
 
@@ -82,7 +85,7 @@ function arbitraryGeneratedCharInput(
  */
 function arbitraryInputBundle(): fc.Arbitrary<GeneratedCharInput[]> {
   return fc
-    .uniqueArray(arbitraryCharacter(), { minLength: 1, maxLength: 10 })
+    .uniqueArray(arbitraryUncorrectedCharacter(), { minLength: 1, maxLength: 10 })
     .chain((characters) =>
       fc.tuple(
         ...characters.map((character) =>
