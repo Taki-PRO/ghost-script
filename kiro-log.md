@@ -842,6 +842,16 @@ Playtest with 5 people
 
 ---
 
+## Nov 20, 2026: Two random test failures traced and fixed
+
+- **What I did:** Asked Kiro to trace the property test that failed once on a random seed, and then a second one that did the same.
+- **Cause:** the property tests generate random characters from the whole CJK range and build a dataset from them. The build always checks my new level 1 clue corrections (本 "root; stem", 天 "sky"). When a test happened to draw 本 or 天, its made-up dictionary text could never match, so the build threw. That happened in a few percent of runs.
+- **Kiro features:** it reproduced each failure with a fixed seed or a forced example before changing anything, then found three more tests with the same risk by reading the code.
+- **Fix:** one shared test generator that leaves out the characters in the real corrections list, read from that list so it stays right if corrections are added. No assertion changed, no run count was lowered, and no app code or data changed.
+- **Result:** `npm test` passed five times in a row on Kiro's run and three times in a row on mine (7,863 tests each); deployed.
+
+---
+
 ## Template for new entries
 
 ## [Date]: [Short title]
