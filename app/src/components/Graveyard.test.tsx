@@ -14,6 +14,9 @@ import { NEAR_RIDGE_PATH, TABLET_TUFT_SCALE } from '../engine/grassPattern';
 import { columnCount } from '../engine/graveyardRows';
 import { theme } from '../styles/theme';
 import raw from '../../public/data/characters.json';
+import { SoundProvider } from '../audio/SoundProvider';
+import type { SoundEngine } from '../audio/engine';
+import { STORAGE_KEY } from '../storage/storage';
 
 const dataset: CharacterDataset = new Map(
   Object.entries(raw as unknown as Record<string, CharacterRecord>),
@@ -575,5 +578,115 @@ describe('Graveyard review slip (proof-pass Req 10.4, 10.5, 10.7, 10.8, 10.9, 10
     expect(screen.getByRole('alert').textContent).toBe(
       'The review could not start. Check your connection and try again.',
     );
+  });
+});
+
+describe('Graveyard night wind toggle (night-sounds Req 8.3, 8.7, 15.1, 15.4 to 15.7)', () => {
+  const fakeEngine = (): SoundEngine => ({
+    play: vi.fn(),
+    setEnabled: vi.fn(),
+    setAmbience: vi.fn(),
+    unlock: vi.fn(),
+    suspend: vi.fn(),
+    dispose: vi.fn(),
+  });
+
+  function seed(extra: object = {}) {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        schemaVersion: 4,
+        introSeen: true,
+        cangjieIntroSeen: true,
+        level: 1,
+        levelChosen: true,
+        soundOn: true,
+        ambienceOn: false,
+        history: {},
+        ...extra,
+      }),
+    );
+  }
+
+  function showWithSound() {
+    render(
+      <SoundProvider createEngine={fakeEngine}>
+        <Graveyard
+          dataset={dataset}
+          level={1}
+          chosenLevel={2}
+          history={{}}
+          now={NOW}
+          status={{ kind: 'idle' }}
+          onChangeLevel={() => {}}
+          onBack={() => {}}
+        />
+      </SoundProvider>,
+    );
+  }
+
+  const savedAmbience = () => JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}').ambienceOn;
+
+  beforeEach(() => {
+    localStorage.clear();
+    vi.stubGlobal('AudioContext', function FakeAudioContext() {});
+  });
+  afterEach(() => localStorage.clear());
+
+  it('renders no toggle outside a provider', () => {
+    show({});
+    expect(screen.queryByTestId('ambience-toggle')).toBeNull();
+  });
+
+  it('shows the toggle in a self-start wrapper right after the level line', () => {
+    seed();
+    showWithSound();
+    const toggle = screen.getByTestId('ambience-toggle');
+    const line = screen.getByText('Your séances draw new ghosts from level 2.');
+    expect(line.nextElementSibling).toBe(toggle.parentElement);
+    expect(toggle.parentElement?.className).toContain('self-start');
+    expect(toggle.classList.contains('slip')).toBe(true);
+    expect(toggle.className).not.toContain('slip-primary');
+  });
+
+  it('is aria-disabled with its note while sound is off, and a click changes nothing', () => {
+    seed({ soundOn: false });
+    showWithSound();
+    const toggle = screen.getByTestId('ambience-toggle');
+    expect(toggle.getAttribute('aria-disabled')).toBe('true');
+    expect(screen.getByText('Turn sound on to hear the night wind.')).toBeTruthy();
+    fireEvent.click(toggle);
+    expect(toggle.getAttribute('aria-pressed')).toBe('false');
+    expect(savedAmbience()).toBe(false);
+  });
+
+  it('is aria-disabled with its note while reduced motion is requested', () => {
+    seed();
+    vi.stubGlobal('matchMedia', () => ({
+      matches: true,
+      addEventListener: () => undefined,
+      removeEventListener: () => undefined,
+    }));
+    showWithSound();
+    const toggle = screen.getByTestId('ambience-toggle');
+    expect(toggle.getAttribute('aria-disabled')).toBe('true');
+    expect(screen.getByText('The night wind is off while reduced motion is requested.')).toBeTruthy();
+    fireEvent.click(toggle);
+    expect(toggle.getAttribute('aria-pressed')).toBe('false');
+    expect(savedAmbience()).toBe(false);
+  });
+
+  it('flips and saves ambienceOn on a click', () => {
+    seed();
+    showWithSound();
+    const toggle = screen.getByTestId('ambience-toggle');
+    expect(toggle.getAttribute('aria-disabled')).toBeNull();
+    fireEvent.click(toggle);
+    expect(toggle.getAttribute('aria-pressed')).toBe('true');
+    expect(toggle.textContent).toBe('Night wind: on');
+    expect(savedAmbience()).toBe(true);
+    fireEvent.click(toggle);
+    expect(toggle.getAttribute('aria-pressed')).toBe('false');
+    expect(savedAmbience()).toBe(false);
   });
 });

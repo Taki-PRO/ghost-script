@@ -1,7 +1,30 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
+import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import { render, screen, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { StartMenu } from './StartMenu';
+import { SoundProvider } from '../audio/SoundProvider';
+import type { SoundEngine } from '../audio/engine';
+import { STORAGE_KEY } from '../storage/storage';
+import App from '../App';
+import raw from '../../public/data/characters.json';
+
+const wind = vi.hoisted(() => ({ calls: [] as string[] }));
+
+// A fake engine behind the real provider (used by the App tests below only).
+vi.mock('../audio/engine', async (importOriginal) => {
+  const original = await importOriginal<typeof import('../audio/engine')>();
+  return {
+    ...original,
+    createSoundEngine: () => ({
+      play: () => undefined,
+      setEnabled: () => undefined,
+      setAmbience: (w: boolean) => void wind.calls.push(`ambience:${w}`),
+      unlock: () => undefined,
+      suspend: () => undefined,
+      dispose: () => undefined,
+    }),
+  };
+});
 
 const BEGIN = 'Begin a Nightly Séance';
 const LEGEND = 'Read the legend again';
@@ -373,5 +396,204 @@ describe('StartMenu review slip (proof-pass Req 10.2 to 10.9, 10.32, 10.33)', ()
     expect(screen.getByRole('alert').textContent).toBe(
       'The review could not start. Check your connection and try again.',
     );
+  });
+});
+
+describe('StartMenu night wind placement (night-sounds Req 8.3, 8.7, 9.4, 15.1, 15.4 to 15.7)', () => {
+  function fakeEngine(): SoundEngine {
+    return {
+      play: vi.fn(),
+      setEnabled: vi.fn(),
+      setAmbience: vi.fn(),
+      unlock: vi.fn(),
+      suspend: vi.fn(),
+      dispose: vi.fn(),
+    };
+  }
+
+  function seed(extra: object = {}) {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        schemaVersion: 4,
+        introSeen: true,
+        cangjieIntroSeen: true,
+        level: 1,
+        levelChosen: true,
+        soundOn: true,
+        ambienceOn: false,
+        history: {},
+        ...extra,
+      }),
+    );
+  }
+
+  function renderWithSound() {
+    render(
+      <SoundProvider createEngine={fakeEngine}>
+        <StartMenu
+          onStartSeance={vi.fn()}
+          onReviewLegend={vi.fn()}
+          onReviewCangjieGuide={vi.fn()}
+          onOpenGraveyard={vi.fn()}
+          onOpenCredits={vi.fn()}
+          level={1}
+          onChooseLevel={vi.fn()}
+          finishedNotice={null}
+        />
+      </SoundProvider>,
+    );
+    return userEvent.setup();
+  }
+
+  const savedAmbience = () => JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}').ambienceOn;
+
+  beforeEach(() => {
+    wind.calls = [];
+    localStorage.clear();
+    vi.stubGlobal('AudioContext', function FakeAudioContext() {});
+  });
+  afterEach(() => {
+    cleanup();
+    document.getElementById('root')?.remove();
+    vi.unstubAllGlobals();
+    localStorage.clear();
+  });
+
+  it('shows the toggle after Graveyard and before the Sources block, and keeps one slip-primary', () => {
+    seed();
+    renderWithSound();
+    const toggle = screen.getByTestId('ambience-toggle');
+    const graveyard = screen.getByRole('button', { name: GRAVEYARD });
+    const credits = screen.getByRole('button', { name: CREDITS });
+    expect(graveyard.compareDocumentPosition(toggle) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(toggle.compareDocumentPosition(credits) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(toggle.classList.contains('slip')).toBe(true);
+    expect(toggle.className).not.toContain('slip-primary');
+    expect(document.querySelectorAll('.slip-primary')).toHaveLength(1);
+    expect(screen.getByRole('button', { name: BEGIN }).classList.contains('slip-primary')).toBe(true);
+  });
+
+  it('is aria-disabled with its note while sound is off, and a click changes nothing', async () => {
+    seed({ soundOn: false });
+    const user = renderWithSound();
+    const toggle = screen.getByTestId('ambience-toggle');
+    expect(toggle.getAttribute('aria-disabled')).toBe('true');
+    expect(screen.getByText('Turn sound on to hear the night wind.')).toBeTruthy();
+    await user.click(toggle);
+    expect(toggle.getAttribute('aria-pressed')).toBe('false');
+    expect(savedAmbience()).toBe(false);
+  });
+
+  it('is aria-disabled with its note while reduced motion is requested', async () => {
+    seed();
+    vi.stubGlobal('matchMedia', () => ({
+      matches: true,
+      addEventListener: () => undefined,
+      removeEventListener: () => undefined,
+    }));
+    const user = renderWithSound();
+    const toggle = screen.getByTestId('ambience-toggle');
+    expect(toggle.getAttribute('aria-disabled')).toBe('true');
+    expect(screen.getByText('The night wind is off while reduced motion is requested.')).toBeTruthy();
+    await user.click(toggle);
+    expect(toggle.getAttribute('aria-pressed')).toBe('false');
+    expect(savedAmbience()).toBe(false);
+  });
+
+  it('flips and saves ambienceOn on a click', async () => {
+    seed();
+    const user = renderWithSound();
+    const toggle = screen.getByTestId('ambience-toggle');
+    expect(toggle.getAttribute('aria-disabled')).toBeNull();
+    await user.click(toggle);
+    expect(toggle.getAttribute('aria-pressed')).toBe('true');
+    expect(toggle.textContent).toBe('Night wind: on');
+    expect(savedAmbience()).toBe(true);
+    await user.click(toggle);
+    expect(toggle.getAttribute('aria-pressed')).toBe('false');
+    expect(savedAmbience()).toBe(false);
+  });
+
+  it('renders no toggle outside a provider', () => {
+    setup();
+    expect(screen.queryByTestId('ambience-toggle')).toBeNull();
+  });
+
+  describe('in the app', () => {
+    const lastWish = () => wind.calls[wind.calls.length - 1];
+
+    beforeEach(() => {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async () => ({ ok: true, text: async () => JSON.stringify(raw) })),
+      );
+    });
+
+    function mount() {
+      const container = document.createElement('div');
+      container.id = 'root';
+      document.body.appendChild(container);
+      render(<App />, { container });
+    }
+
+    it('shows the toggle on the menu and the Graveyard and on no other screen', async () => {
+      seed({ ambienceOn: true });
+      mount();
+      const user = userEvent.setup();
+      await screen.findByRole('button', { name: BEGIN });
+      expect(screen.getByTestId('ambience-toggle')).toBeTruthy();
+
+      await user.click(screen.getByRole('button', { name: GRAVEYARD }));
+      await screen.findByRole('button', { name: /back/i });
+      expect(screen.getAllByTestId('ambience-toggle')).toHaveLength(1);
+
+      await user.click(screen.getByRole('button', { name: /back/i }));
+      await user.click(await screen.findByRole('button', { name: CREDITS }));
+      await screen.findByRole('heading', { name: 'Sources & licences' });
+      expect(screen.queryByTestId('ambience-toggle')).toBeNull();
+
+      await user.click(screen.getByRole('button', { name: /back/i }));
+      await user.click(await screen.findByRole('button', { name: GUIDE }));
+      await screen.findByRole('heading', { name: /how cangjie works/i });
+      expect(screen.queryByTestId('ambience-toggle')).toBeNull();
+    });
+
+    it('is absent on the intro', async () => {
+      seed({ ambienceOn: true });
+      mount();
+      const user = userEvent.setup();
+      await user.click(await screen.findByRole('button', { name: LEGEND }));
+      await screen.findByRole('button', { name: /^begin the séance$/i });
+      expect(screen.queryByTestId('ambience-toggle')).toBeNull();
+    });
+
+    it('wishes for wind only on the menu and the Graveyard, and keeps it when moving between them', async () => {
+      seed({ ambienceOn: true });
+      mount();
+      const user = userEvent.setup();
+      await screen.findByRole('button', { name: BEGIN });
+      expect(lastWish()).toBe('ambience:true');
+
+      const before = wind.calls.length;
+      await user.click(screen.getByRole('button', { name: GRAVEYARD }));
+      await screen.findByRole('button', { name: /back/i });
+      expect(lastWish()).toBe('ambience:true');
+      expect(wind.calls.slice(before)).not.toContain('ambience:false');
+
+      await user.click(screen.getByRole('button', { name: /back/i }));
+      await screen.findByRole('button', { name: BEGIN });
+      expect(lastWish()).toBe('ambience:true');
+      expect(wind.calls.slice(before)).not.toContain('ambience:false');
+
+      await user.click(screen.getByRole('button', { name: CREDITS }));
+      await screen.findByRole('heading', { name: 'Sources & licences' });
+      expect(lastWish()).toBe('ambience:false');
+
+      await user.click(screen.getByRole('button', { name: /back/i }));
+      await user.click(await screen.findByRole('button', { name: LEGEND }));
+      await screen.findByRole('button', { name: /^begin the séance$/i });
+      expect(lastWish()).toBe('ambience:false');
+    });
   });
 });

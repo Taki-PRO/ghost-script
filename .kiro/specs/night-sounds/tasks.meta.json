@@ -352,6 +352,21 @@
         "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1795118806012
+      },
+      {
+        "executionId": "7c4a3e23-6949-4481-b4c1-01de700421ce",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795150180714
+      },
+      {
+        "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795153884227
+      },
+      {
+        "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795154041778
       }
     ],
     "10.6 Write `app/src/App.sound.test.tsx`": [
@@ -364,6 +379,221 @@
         "executionId": "95d3c236-bca8-47fc-9b49-f8c0d5c3d5a5",
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1795119250931
+      }
+    ],
+    "10.5 Write `e2e/sound-toggle-fit.spec.ts`": [
+      {
+        "executionId": "7c4a3e23-6949-4481-b4c1-01de700421ce",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795150183540
+      },
+      {
+        "executionId": "7c4a3e23-6949-4481-b4c1-01de700421ce",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795150431688
+      },
+      {
+        "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795154660374
+      },
+      {
+        "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795154672601
+      }
+    ],
+    "10. Toggle placement on every screen and the séance header": [
+      {
+        "executionId": "7c4a3e23-6949-4481-b4c1-01de700421ce",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795150431721
+      }
+    ],
+    "11.1 Summon step key and ink sounds in `app/src/modes/SummonStep.tsx`": [
+      {
+        "executionId": "7c4a3e23-6949-4481-b4c1-01de700421ce",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795150435872
+      },
+      {
+        "executionId": "7c4a3e23-6949-4481-b4c1-01de700421ce",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795150523840
+      }
+    ],
+    "11.2 Write step stroke sound in `app/src/modes/WriteMode.tsx`": [
+      {
+        "executionId": "7c4a3e23-6949-4481-b4c1-01de700421ce",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795150436095
+      },
+      {
+        "executionId": "7c4a3e23-6949-4481-b4c1-01de700421ce",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795150523962
+      },
+      {
+        "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795154661415
+      },
+      {
+        "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795154673819
+      },
+      {
+        "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795155378160
+      }
+    ],
+    "11.3 Outcome sounds in `app/src/components/SeanceSession.tsx`": [
+      {
+        "executionId": "7c4a3e23-6949-4481-b4c1-01de700421ce",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795150436592
+      },
+      {
+        "executionId": "7c4a3e23-6949-4481-b4c1-01de700421ce",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795150524494
+      },
+      {
+        "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795154662902
+      },
+      {
+        "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795154674358
+      },
+      {
+        "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795155378309
+      }
+    ],
+    "11.4 Write the Summon and Write sound tests": [
+      {
+        "executionId": "7c4a3e23-6949-4481-b4c1-01de700421ce",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795150528369
+      },
+      {
+        "executionId": "7c4a3e23-6949-4481-b4c1-01de700421ce",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795150596839
+      },
+      {
+        "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795154663426
+      }
+    ],
+    "11.5 Write the outcome sound tests": [
+      {
+        "executionId": "7c4a3e23-6949-4481-b4c1-01de700421ce",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795150528465
+      },
+      {
+        "executionId": "7c4a3e23-6949-4481-b4c1-01de700421ce",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795150597269
+      },
+      {
+        "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795154664192
+      }
+    ],
+    "11. Sound call sites": [
+      {
+        "executionId": "7c4a3e23-6949-4481-b4c1-01de700421ce",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795150597294
+      }
+    ],
+    "12.1 Place the Ambience_Toggle and the ambient screen": [
+      {
+        "executionId": "7c4a3e23-6949-4481-b4c1-01de700421ce",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795150600070
+      },
+      {
+        "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795154051271
+      },
+      {
+        "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795154096662
+      }
+    ],
+    "12.2 Write the ambience placement tests": [
+      {
+        "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795154100089
+      },
+      {
+        "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795154207014
+      }
+    ],
+    "13.1 Write `tests/unit/no-audio-files.test.ts`": [
+      {
+        "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795154100621
+      },
+      {
+        "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795154207534
+      }
+    ],
+    "12. Night wind on the menu and the Graveyard": [
+      {
+        "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795154207045
+      }
+    ],
+    "13.2 Write `e2e/sound.spec.ts`": [
+      {
+        "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795154212195
+      },
+      {
+        "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795154659065
+      }
+    ],
+    "14.1 Write the README \"Sound\" section": [
+      {
+        "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795154212513
+      },
+      {
+        "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795154659228
+      }
+    ],
+    "13. Audio-file scan and sound end-to-end tests": [
+      {
+        "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795154659102
       }
     ]
   }

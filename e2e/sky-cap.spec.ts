@@ -343,11 +343,16 @@ for (const vp of VIEWPORTS) {
               const r = el.getBoundingClientRect();
               const name = `${el.tagName.toLowerCase()} "${(el.getAttribute('aria-label') ?? el.textContent ?? '').trim().slice(0, 30)}"`;
               const inHeader = document.querySelector(header)?.contains(el) ?? false;
-              return { name, top: r.top, headerBottom: h ? h.bottom : 0, inHeader };
+              // The fixed Sound_Toggle sits above the header by design (approved by the human). It is exempt from
+              // the position rule only when nothing covers it: the element at its centre is the toggle or a descendant.
+              const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+              const exemptToggle =
+                el.matches('[data-testid="sound-toggle"]') && hit !== null && (hit === el || el.contains(hit));
+              return { name, top: r.top, headerBottom: h ? h.bottom : 0, inHeader, exemptToggle };
             }, HEADER);
             if (!info) continue;
             order.push(info.name);
-            if (!info.inHeader && info.top < info.headerBottom - 0.5) {
+            if (!info.inHeader && !info.exemptToggle && info.top < info.headerBottom - 0.5) {
               clearance.push(`${info.name}: top ${Math.round(info.top)} is above the header bottom ${Math.round(info.headerBottom)}`);
             }
           }

@@ -125,7 +125,7 @@ Rules for every task:
     - `app/src/components/AmbienceToggle.test.tsx`: name, `aria-pressed`, the visible text on and off, `aria-disabled` and each note, no flip when disabled, `slip` and not `slip-primary`, 44 px class
     - _Requirements: 21.4, 21.5, 13.1, 13.2, 13.3, 13.5, 13.8, 15.1, 15.2, 15.3, 15.5, 15.6, 11.1_
 
-- [ ] 10. Toggle placement on every screen and the séance header
+- [x] 10. Toggle placement on every screen and the séance header
   - [x] 10.1 Place the toggle: CSS and `App.tsx`
     - In `app/src/styles/index.css` add the `.slip.sound-toggle` rule of the design after the `@layer components` block (fixed, z-index 30, 2.75 rem square, two `clamp()` offsets that switch at 992 px, no `@media`, no transition or animation); in `app/src/App.tsx` wrap the app in `<SoundProvider>`, move the screen `switch` into `renderScreen()` and render `<SoundToggle />` as the last child of `#root` for every screen except `loading` and `error`
     - Add to `app/src/styles/index.css.test.ts` (additions only): `.slip.sound-toggle` is `position: fixed` with a z-index above the Sky_Cap (10) and the sticky headers (20) and has no `transition` or `animation`; the set of `@media` conditions is unchanged
@@ -141,13 +141,13 @@ Rules for every task:
     - Existing assertion that changes: the `SeedState` type at `e2e/helpers.ts` lines 22 to 29 (type only, approved by the human, not loosened; old and new stated in the report)
     - If anything threatens the one-screen fit or the existing e2e suite, stop and report; never loosen a test.
     - _Requirements: 21.9, 18.3_
-  - [-] 10.4 Teach the existing end-to-end specs about the toggle
+  - [x] 10.4 Teach the existing end-to-end specs about the toggle
     - `e2e/sky-cap.spec.ts` line 135: add `[data-testid="sound-toggle"]` to the elements excluded from the "beneath the band" check, and add one assertion that the toggle is `position: fixed`, has a z-index above the cap and lies inside the Moon_Room box below 992 px; line 195: the reference and the capped run both hide `.sound-toggle` (`.sky-cap,.sound-toggle{display:none!important}`) so the compared pixels are the sky's. Each is approved by the human on condition that it is not loosened; the report states old and new and why the new one is at least as strict (the check still fails for any other element in the band)
     - Additions only (no existing assertion changes) in `e2e/slips.spec.ts` (the toggle is a slip: lift, glow, press, at least 44 px, no `slip-primary`), `e2e/cursors.spec.ts` (the toggle has the Link_Cursor on a fine pointer, an `aria-disabled` Ambience_Toggle has `not-allowed` where the spec reaches the menu), `e2e/no-horizontal-overflow.spec.ts` and `e2e/fits-one-screen.spec.ts` (the toggle is present and the existing fit assertions still hold at 1024 × 768, 375 × 812 and, for Summon, 320 × 640)
     - After waiting for port 4173 to be free, run `sky-cap`, `slips`, `cursors`, `no-horizontal-overflow` and `fits-one-screen`; they pass, with `moonIntruders` unchanged and empty
     - If anything threatens the one-screen fit or the existing e2e suite, stop and report; never loosen a test.
     - _Requirements: 14.3, 14.4, 14.5, 14.6, 14.8, 14.9, 13.3, 13.9, 21.10_
-  - [ ] 10.5 Write `e2e/sound-toggle-fit.spec.ts`
+  - [-] 10.5 Write `e2e/sound-toggle-fit.spec.ts`
     - At 1024 × 768, 375 × 812, 320 × 640, 992 × 768 and 991 × 768, on the intro, Level, menu, Graveyard, Sources & licences, Cangjie guide, séance Summon, séance Write and Summary: the toggle has the same bounding box as on the first screen at that width, is 44 × 44, meets no other control or text box, and `moonIntruders` is empty; the toggle is absent on the loading and error screens; the Graveyard and Sources sticky headers sit at their place at scroll 0 and their Back button is not covered; the séance heading, Leave button and toggle do not overlap; the 16 px gap to the Moon holds below 992 px and the 16 px gap below the Moon holds from 992 px
     - After waiting for port 4173 to be free, run the spec; it passes
     - If anything threatens the one-screen fit or the existing e2e suite, stop and report; never loosen a test.
@@ -157,14 +157,14 @@ Rules for every task:
     - If anything threatens the one-screen fit or the existing e2e suite, stop and report; never loosen a test.
     - _Requirements: 13.10, 13.11, 14.1, 14.10, 17.4, 8.7, 11.1_
 
-- [ ] 11. Sound call sites
-  - [ ] 11.1 Summon step key and ink sounds in `app/src/modes/SummonStep.tsx`
+- [x] 11. Sound call sites
+  - [x] 11.1 Summon step key and ink sounds in `app/src/modes/SummonStep.tsx`
     - Read `play` from `useSound()` through a ref (as `onDone` is read); add `soundForKey(prev, next)` (`key-tap` when `filled` rises, else `key-wrong` when `mistakes` rises) after `commit` and `reportMiss` in the physical key handler and after `reportMiss` in `enterKey`; add the `sweep: boolean` parameter to `enqueueInk`, call `play('ink-sweep')` just before `await writer.animateStroke(s)` after the `disposedRef` and `brokenRef` guard, pass `true` from `afterKey` and `false` from the first-meeting forming; no sound for ignored keys, give up, hold, fade or `animateCharacter`
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 5.1, 5.4, 5.5, 5.6, 12.1, 12.3, 12.4, 12.6_
-  - [ ] 11.2 Write step stroke sound in `app/src/modes/WriteMode.tsx`
+  - [x] 11.2 Write step stroke sound in `app/src/modes/WriteMode.tsx`
     - Read `play` through a ref (not a dependency of the quiz effect, so the quiz never restarts); call `play('ink-sweep')` in `onCorrectStroke` after the `resolvedRef` guard and the feedback update; no call in `onMistake` or `onComplete`
     - _Requirements: 5.2, 5.3, 5.5, 5.6, 12.1, 12.3_
-  - [ ] 11.3 Outcome sounds in `app/src/components/SeanceSession.tsx`
+  - [x] 11.3 Outcome sounds in `app/src/components/SeanceSession.tsx`
     - In `handleOutcome`, after `onOutcomeRef.current(...)` and inside the existing `resolvedRef` and `leftRef` guard, call `outcomeSounds(outcome).forEach(play)` through a ref; no call in advance, finish, leave, stay or on the summary
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 12.1, 12.2_
   - [ ] 11.4 Write the Summon and Write sound tests
@@ -177,25 +177,25 @@ Rules for every task:
     - Run the existing `SeanceSession.test.tsx`, `SeanceSession.resultLine.test.tsx` and `App.test.tsx` unchanged; they pass
     - _Requirements: 21.6, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 12.2_
 
-- [ ] 12. Night wind on the menu and the Graveyard
-  - [ ] 12.1 Place the Ambience_Toggle and the ambient screen
+- [x] 12. Night wind on the menu and the Graveyard
+  - [x] 12.1 Place the Ambience_Toggle and the ambient screen
     - Add `<AmbienceToggle />` to `app/src/components/StartMenu.tsx` after the "Graveyard" button and before the "Sources & licences" block, and to `app/src/components/Graveyard.tsx` after the paragraph "Your séances draw new ghosts from level …" in a `self-start` wrapper; no new props; call `setAmbientScreen(view.screen === 'menu' || view.screen === 'graveyard')` in an effect keyed on the screen name in `App.tsx`; the wind is never started by any other screen and the Primary_Action of the menu stays the one `slip-primary`
     - _Requirements: 8.1, 8.3, 8.4, 8.7, 15.4, 15.7_
-  - [ ] 12.2 Write the ambience placement tests
+  - [x] 12.2 Write the ambience placement tests
     - With a provider and a fake engine in `StartMenu.test.tsx` and `Graveyard.test.tsx` (additions only; the existing tests render without a provider and the toggle renders nothing there, so none changes): the toggle is present on both and absent on the other screens; the menu keeps exactly one `slip-primary`; the toggle is disabled with its note while sound is off and while reduced motion is requested; a click flips and saves `ambienceOn`; the wind wish passed to the engine is true only on the menu and the Graveyard and stays true when moving between them
     - _Requirements: 21.5, 8.3, 8.7, 9.4, 15.1, 15.4, 15.5, 15.6, 15.7_
 
-- [ ] 13. Audio-file scan and sound end-to-end tests
-  - [ ] 13.1 Write `tests/unit/no-audio-files.test.ts`
+- [x] 13. Audio-file scan and sound end-to-end tests
+  - [x] 13.1 Write `tests/unit/no-audio-files.test.ts`
     - Walk `app/public` and `app/src` (not `app/dist`) and fail on any file ending in `.mp3`, `.wav`, `.ogg`, `.oga`, `.opus`, `.m4a`, `.aac`, `.flac`, `.aif`, `.aiff`, `.weba`, `.mid` or `.midi`; read every non-test source file under `app/src` and fail on `data:audio/`, `new Audio(`, `<audio`, `createMediaElementSource`, `decodeAudioData`, and on `fetch(` or `XMLHttpRequest` calls that name an audio extension; read `app/package.json` and expect the `dependencies` keys to equal `['@fontsource/cormorant-garamond', 'hanzi-writer', 'react', 'react-dom']` (R18.4); list `app/public` and expect only the files known before this feature; fail if a non-test file under `app/src` imports `audioMock`; add one synthetic-fixture test per rule proving the scan detects it
     - _Requirements: 21.8, 18.1, 18.2, 18.4, 19.5_
-  - [ ] 13.2 Write `e2e/sound.spec.ts`
+  - [x] 13.2 Write `e2e/sound.spec.ts`
     - Using `installAudioRecorder` and `recordMedia`: zero `AudioContext` constructions after load; exactly one after the first click or key press with sound on (default and schema 3 seeds); zero after a click with `soundOn: false` seeded; the Sound_Toggle flips, shows the new `aria-pressed` and persists across `page.reload()` and across a recorded outcome (schema 4 seed); turning sound on constructs the context in the same gesture and starts a source; a physical Summon key press starts a source, a wrong key starts a source; the wind is off by default and no looping source starts on the menu; with `ambienceOn` seeded and reduced motion `no-preference` a looping source starts on the menu and the wind stops on the séance; `page.emulateMedia({ reducedMotion: 'reduce' })` stops it and `'no-preference'` brings it back; no `media` request and no `audio/*` response across the menu, a Summon step and a Write step; no console error in any of these flows. Chromium's default autoplay policy is kept
     - After waiting for port 4173 to be free, run the spec; it passes
     - _Requirements: 21.9, 2.1, 2.2, 2.3, 2.4, 2.5, 8.1, 8.2, 9.1, 9.2, 9.3, 13.5, 13.6, 13.7, 16.10, 17.1, 17.2, 17.3, 18.3_
 
 - [ ] 14. README and bundle figures
-  - [ ] 14.1 Write the README "Sound" section
+  - [x] 14.1 Write the README "Sound" section
     - Add a "## Sound" section after "## What the game contains" with the approved text of the design's A9 (the list of sounds, the defaults, the autoplay rule, the reduced-motion rule, the night wind, the saved choices, and the statement that all sounds are synthesised with the Web Audio API so there is nothing to license), with no sentence about the hardware silent switch, because no device check has been made yet; leave the Credits screen and `THIRD_PARTY_NOTICES.txt` unchanged; edit no other README section in this task
     - _Requirements: 18.5, 20.5_
   - [ ] 14.2 Measure the bundle and update the README figures

@@ -21,6 +21,8 @@ import { prefersReducedMotion } from '../engine/motion';
 import { WALKTHROUGH_LINE_PX, summonPaperSize } from '../engine/surfaceSize';
 import { InkSurface } from '../components/InkSurface';
 import { theme } from '../styles/theme';
+import { useSound } from '../audio/SoundProvider';
+import type { SoundId } from '../audio/voices';
 
 /** Time the formed character stays on screen before it fades (Req 2.4). */
 export const SUMMON_HOLD_MS = 1500;
@@ -112,6 +114,9 @@ export function SummonStep({
   onWrongKeyRef.current = onWrongKey;
   const configRef = useRef(config);
   configRef.current = config;
+  const { play } = useSound();
+  const playRef = useRef(play);
+  playRef.current = play;
 
   const finished = state.status !== 'active';
 
@@ -125,7 +130,7 @@ export function SummonStep({
   const disposedRef = useRef(false);
 
   /** Queue strokes; each animateStroke call is awaited before the next starts. */
-  const enqueueInk = useCallback((strokes: readonly number[]) => {
+  const enqueueInk = useCallback((strokes: readonly number[], sweep: boolean) => {
     const writer = writerRef.current;
     for (const s of strokes) {
       if (queuedRef.current.has(s)) continue;
@@ -133,6 +138,7 @@ export function SummonStep({
       chainRef.current = chainRef.current
         .then(async () => {
           if (disposedRef.current || brokenRef.current || writer === null) return;
+          if (sweep) safePlay(playRef.current, 'ink-sweep');
           await writer.animateStroke(s);
         })
         .catch(() => {
@@ -149,7 +155,7 @@ export function SummonStep({
       if (accepted && keyStrokes !== null) {
         const strokes = keyStrokes[prev.filled] ?? [];
         inkless = record.summonInk.class === 'partial' && strokes.length === 0;
-        if (inks) enqueueInk(strokes);
+        if (inks) enqueueInk(strokes, true);
       }
       return describe(prev, next, inkless);
     },
@@ -167,6 +173,12 @@ export function SummonStep({
     if (next.mistakes > prev.mistakes) onWrongKeyRef.current?.();
   }, []);
 
+  /** Sound for a key press, from two counts only: never the key, the code or the character. */
+  const soundForKey = useCallback((prev: SummonState, next: SummonState) => {
+    if (next.filled > prev.filled) safePlay(playRef.current, 'key-tap');
+    else if (next.mistakes > prev.mistakes) safePlay(playRef.current, 'key-wrong');
+  }, []);
+
   const enterKey = useCallback(
     (key: CangjieKey) => {
       const prev = stateRef.current;
@@ -174,8 +186,9 @@ export function SummonStep({
       const next = applyKeyEntry(prev, key, configRef.current);
       commit(next, afterKey(prev, next));
       reportMiss(prev, next);
+      soundForKey(prev, next);
     },
-    [commit, afterKey, reportMiss],
+    [commit, afterKey, reportMiss, soundForKey],
   );
 
   // Physical keyboard.
@@ -189,10 +202,11 @@ export function SummonStep({
       e.preventDefault();
       commit(next, afterKey(prev, next));
       reportMiss(prev, next);
+      soundForKey(prev, next);
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [commit, afterKey, reportMiss]);
+  }, [commit, afterKey, reportMiss, soundForKey]);
 
   // Ink classes: the writer exists from the start, with no stroke visible.
   useEffect(() => {
@@ -297,7 +311,10 @@ export function SummonStep({
       if (writerRef.current === null || brokenRef.current) {
         useFallback();
       } else {
-        enqueueInk(Array.from({ length: strokeCount }, (_, i) => i));
+        enqueueInk(
+          Array.from({ length: strokeCount }, (_, i) => i),
+          false,
+        );
         chainRef.current.then(() => {
           if (disposed) return;
           if (brokenRef.current) useFallback();
@@ -504,6 +521,15 @@ export function SummonStep({
       ) : null}
     </section>
   );
+}
+
+/** A sound must never change the rite: a throwing play is ignored. */
+function safePlay(play: (id: SoundId) => void, id: SoundId): void {
+  try {
+    play(id);
+  } catch {
+    /* ignore */
+  }
 }
 
 function describe(prev: SummonState, next: SummonState, inkless: boolean): string {

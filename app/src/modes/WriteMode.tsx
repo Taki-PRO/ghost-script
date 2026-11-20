@@ -11,6 +11,8 @@ import { WRITE_PADDING_PX } from '../engine/sealLayout';
 import { theme } from '../styles/theme';
 import { InkSurface } from '../components/InkSurface';
 import { SealStamp } from '../components/SealStamp';
+import { useSound } from '../audio/SoundProvider';
+import type { SoundId } from '../audio/voices';
 
 export interface WriteModeProps {
   record: CharacterRecord;
@@ -38,6 +40,15 @@ export function isHintTriggered(
   return mistakesOnStroke >= config.strokeHintAfterConsecutiveMisses;
 }
 
+/** A sound must never change the rite: a throwing play is ignored. */
+function safePlay(play: (id: SoundId) => void, id: SoundId): void {
+  try {
+    play(id);
+  } catch {
+    /* ignore */
+  }
+}
+
 type Status = 'writing' | 'resolved' | 'failed';
 
 /**
@@ -57,6 +68,9 @@ export function WriteMode({ record, dataset, config, onOutcome, reservedPx = 0, 
   onOutcomeRef.current = onOutcome;
   const configRef = useRef(config);
   configRef.current = config;
+  const { play } = useSound();
+  const playRef = useRef(play);
+  playRef.current = play;
 
   // Computed once per mount so the surface and hanzi-writer always agree.
   const [side] = useState(() => writeSurfaceSize(window.innerWidth, window.innerHeight, reservedPx + moonRoomPx(window.innerWidth)));
@@ -123,6 +137,7 @@ export function WriteMode({ record, dataset, config, onOutcome, reservedPx = 0, 
           onCorrectStroke: () => {
             if (resolvedRef.current) return;
             setFeedback('✓ Stroke accepted');
+            safePlay(playRef.current, 'ink-sweep');
           },
           onComplete: (data) => {
             if (resolvedRef.current) return;

@@ -11,6 +11,7 @@ import type { ReviewHistory } from '../engine/scheduler';
 import { tabletTiltIndex } from '../engine/tabletTilt';
 import { pickWalkthroughGhost } from '../engine/walkthrough';
 import { theme } from '../styles/theme';
+import { AmbienceToggle } from './AmbienceToggle';
 import { GrassTuft } from './GrassTuft';
 import {
   FAR_RIDGE_PATH,
@@ -182,6 +183,9 @@ export function Graveyard({
           })}
         </div>
         <p className="text-sm text-ink">{`Your séances draw new ghosts from level ${chosenLevel}.`}</p>
+        <div className="self-start">
+          <AmbienceToggle />
+        </div>
         {restlessCount >= 1 && onReviewRestless && (
           <button
             type="button"

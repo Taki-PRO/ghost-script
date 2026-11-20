@@ -10,6 +10,8 @@ import { WALKTHROUGH_WRITE_LINE, walkthroughSummonLines } from '../engine/walkth
 import { REVIEW_RESULT_TEXT } from '../engine/review';
 import { SummonStep } from '../modes/SummonStep';
 import { WriteMode } from '../modes/WriteMode';
+import { outcomeSounds } from '../audio/recipes';
+import { useSound } from '../audio/SoundProvider';
 import { GhostPrompt } from './GhostPrompt';
 import { scrollToTop } from './scrollToTop';
 import type { SessionResults } from './SessionSummary';
@@ -108,6 +110,9 @@ export function SeanceSession({
   onOutcomeRef.current = onOutcome;
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
+  const { play } = useSound();
+  const playRef = useRef(play);
+  playRef.current = play;
 
   const [confirmingLeave, setConfirmingLeave] = useState(false);
   const leaveBtnRef = useRef<HTMLButtonElement>(null);
@@ -155,6 +160,11 @@ export function SeanceSession({
       if (mode === 'review' ? outcome === 'clean' : outcome !== 'gave-up') laidToRestRef.current += 1;
       setResult(outcome);
       onOutcomeRef.current(record.character, outcome, Date.now());
+      try {
+        outcomeSounds(outcome).forEach((id) => playRef.current(id));
+      } catch {
+        // A failing sound never blocks play.
+      }
     },
     [record, mode],
   );

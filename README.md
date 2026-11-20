@@ -42,6 +42,18 @@ One-time repository setting: Settings → Pages → Build and deployment → Sou
 
 The game has 1,200 checked characters in three levels, taken from HSK 3.0 writing levels 1 to 3: level 1 has 300 characters, level 2 has 400 and level 3 has 500. Each level is its own dataset file (see [Bundle and file weights](#bundle-and-file-weights)). The player chooses a level, and the Nightly Séance draws its ghosts from the chosen level.
 
+## Sound
+
+Ghost Script has quiet sounds, all made in your browser with the Web Audio API. There is no audio file, sample or sound library, so there is nothing to license.
+
+- A soft wooden tap for each Summon key, and a duller tap for a wrong key.
+- A faint brush sweep when ink appears and when the Write step accepts a stroke.
+- A low paper thud when the seal appears, followed by a soft low chime.
+- A shorter, quieter chime when a ghost struggled, and a quiet falling tone when you gave up.
+- An optional night wind on the menu and the Graveyard.
+
+Sound is on by default, but nothing sounds until your first click, tap or key press. The night wind is off by default, and it stays off while your device asks for reduced motion. The speaker button at the top of every screen except the loading and error screens turns all sound on or off, and the night wind has its own button on the menu and the Graveyard. Both choices are saved in your browser. The sounds are the same for every character, so they never hint at an answer.
+
 ## Data and licences
 
 The character dataset is assembled from four open-source raw datasets plus a published character list. Each source and its licence:
