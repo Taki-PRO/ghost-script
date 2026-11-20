@@ -859,6 +859,14 @@ Playtest with 5 people
 
 ---
 
+## Nov 20, 2026: Feature freeze
+
+- **What I did:** Froze the game at commit `c8f71b2` and tagged it `v1.0-kiroween`. From here, only real bug fixes go into the game; the video, write-up and Devpost page are made against this build.
+- **State at the freeze:** 7,863 unit tests and 258 browser tests pass; the counted first load is 235,164 bytes gzipped against a 300,000-byte budget (about 588 kB including the level 1 dataset); 1,200 characters in three levels, with 113 of the 900 harder clues reviewed by a person.
+- **Not done, and stated as such:** recall has not been measured with users.
+
+---
+
 ## Template for new entries
 
 ## [Date]: [Short title]
