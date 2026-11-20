@@ -826,6 +826,22 @@ Playtest with 5 people
 
 ---
 
+## Nov 20, 2026: night-sounds finished
+
+- **What I did:** Finished the sound build. Two decisions of mine:
+  - The night-wind toggle made the start menu 12 px taller than a laptop screen, so it lives on the Graveyard only. The menu is byte-identical to before the sound work, and its fit tests pass unchanged.
+  - I approved a fix to the shared audio recorder in the e2e helpers: in Chromium it never logged noise or wind sources, so the wind tests could not see them.
+- **Kiro features:** spec with steering amendments; parallel sub-agents; Kiro stopping twice instead of loosening a test (the sticky-header check and the menu fit).
+- **Kiro caught false progress:** five tasks had been ticked as done while their code did not exist (the Write-step and outcome sounds, and three test tasks). Kiro reset them and redid them. A sub-agent found it because its own e2e assertion for a stroke sound failed.
+- **Result:**
+  - Every sound is synthesised in code: key taps, a duller tap for a wrong key, a brush sweep for inked and written strokes, a seal thud, a chime for a ghost at rest, a falling tone for giving up, and an optional night wind. No audio files, and a scan test fails if one ever appears.
+  - Sound is on by default but silent until the first click or key press; an e2e test proves no audio context exists before then. A "Sound" toggle sits beside the moon on every screen.
+  - The sound work added 4,541 bytes gzipped to the counted bundle (now 235,164 of 300,000).
+  - **7,863 unit tests pass** in my own check, and Kiro reported 258 e2e tests passing; `tsc` clean; deployed.
+- **Found on the way:** a property test for prompt overrides failed once on a random seed: it generated a fake 本 record that clashed with the new 本 override. It passed on rerun, but it can fail at random, including in the deploy check.
+
+---
+
 ## Template for new entries
 
 ## [Date]: [Short title]
