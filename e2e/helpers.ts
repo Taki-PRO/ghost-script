@@ -809,6 +809,7 @@ export async function installAudioRecorder(page: Page): Promise<void> {
       resumes: 0,
       resumeCalls: [] as { t: number | null }[],
       suspends: 0,
+      loopStops: 0,
       starts: [] as { t: number | null; kind: string; loop: boolean }[],
       failures: [] as { t: number | null; what: string; message: string }[],
     };
@@ -872,9 +873,19 @@ export async function installAudioRecorder(page: Page): Promise<void> {
     if (w.AudioContext) w.AudioContext = wrap(w.AudioContext);
     if (w.webkitAudioContext) w.webkitAudioContext = wrap(w.webkitAudioContext);
 
-    if (typeof AudioScheduledSourceNode !== 'undefined') {
-      const start = AudioScheduledSourceNode.prototype.start;
-      AudioScheduledSourceNode.prototype.start = function (this: AudioScheduledSourceNode, when?: number): void {
+    // Chromium defines its own `start` and `stop` on AudioBufferSourceNode.prototype, so that prototype is
+    // wrapped too. Where it only inherits them (no own property) the base wrapper already sees it.
+    const protos: { start: unknown; stop: unknown }[] = [];
+    if (typeof AudioScheduledSourceNode !== 'undefined') protos.push(AudioScheduledSourceNode.prototype);
+    if (
+      typeof AudioBufferSourceNode !== 'undefined' &&
+      Object.prototype.hasOwnProperty.call(AudioBufferSourceNode.prototype, 'start')
+    ) {
+      protos.push(AudioBufferSourceNode.prototype);
+    }
+    for (const proto of protos) {
+      const start = proto.start as (this: AudioScheduledSourceNode, when?: number) => void;
+      proto.start = function (this: AudioScheduledSourceNode, when?: number): void {
         log.starts.push({
           t: now(),
           kind: this.constructor.name,
@@ -887,8 +898,19 @@ export async function installAudioRecorder(page: Page): Promise<void> {
           throw error;
         }
       };
+      const stop = proto.stop as (this: AudioScheduledSourceNode, when?: number) => void;
+      proto.stop = function (this: AudioScheduledSourceNode, when?: number): void {
+        if ((this as unknown as { loop?: boolean }).loop === true) log.loopStops += 1;
+        stop.call(this, when);
+      };
     }
   });
+}
+
+/** Number of `stop()` calls on looping sources (the night wind) since the page loaded. */
+export async function loopStopCount(page: Page): Promise<number> {
+  const log = await readAudioLog(page);
+  return (log as AudioLog & { loopStops?: number }).loopStops ?? 0;
 }
 
 /** The Audio_Recorder log of the current page; throws when `installAudioRecorder` was not called first. */

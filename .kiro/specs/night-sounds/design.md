@@ -242,7 +242,7 @@ The existing cursor rule gives `aria-disabled="true"` the `not-allowed` cursor a
 ### Screens that render things
 
 - **`App.tsx`**: `App` becomes `<SoundProvider><SkyCap /><AppScreens /></SoundProvider>`. `AppScreens` keeps its hooks and moves the existing `switch` (line 448 onward) into a local function `renderScreen()`. It returns `<>{renderScreen()}{showToggle ? <SoundToggle /> : null}</>` where `showToggle` is true for every `view.screen` except `loading` and `error` (R14.10). The toggle is therefore the last child of `#root` after `<main>`, so the first Tab stop and initial focus of every screen are unchanged (R13.10). `AppScreens` also calls `setAmbientScreen(view.screen === 'menu' || view.screen === 'graveyard')` in an effect keyed on `screenName` (the existing constant at line 287).
-- **`StartMenu.tsx`**: `<AmbienceToggle />` is added inside the button column (`flex w-full max-w-sm flex-col gap-2`), after the "Graveyard" button and before the "Sources & licences" block. The component has no new props.
+- **`StartMenu.tsx`**: unchanged. It shows no `<AmbienceToggle />`, because the toggle made the worst-case menu overflow one screen (780 > 768 at 1024 × 768, 820 > 812 at 375 × 812); approved by the human. The wind still plays on the menu when the saved choice is on.
 - **`Graveyard.tsx`**: `<AmbienceToggle />` is added after the paragraph "Your séances draw new ghosts from level …" (line 184), wrapped in a `self-start` element like the restless button.
 - **`SeanceSession.tsx`**: the header change is described in "Séance header".
 
@@ -392,7 +392,7 @@ The Summary was not measured. Below 992 px it starts below the Moon_Room, so the
 - **Focus ring.** The same `focus-visible` string as the other buttons; the global `*:focus-visible` rule (aged paper with candle glow) applies.
 - **Hover lift.** The slip rule lifts it 2 px; from y 8 it stays inside the viewport.
 - **Horizontal overflow.** At 320 px the toggle's left edge is at x 188, far from any edge, so `no-horizontal-overflow.spec.ts` is unaffected.
-- **Menu and Graveyard ambience toggle** sits in page content (see Components), not fixed, so it scrolls with the page and never meets the Moon.
+- **Graveyard ambience toggle** (the menu has none, approved by the human) sits in page content (see Components), not fixed, so it scrolls with the page and never meets the Moon.
 
 ### Séance header
 
@@ -724,7 +724,7 @@ The human approved the answer given with every open question of the requirements
 - **Resume window:** 300 ms for the first key tap (Requirements 2.2 and 2.10).
 - **Séance heading:** moves into the step-label column at every width, as one element (Requirement 14.7).
 - **Existing assertions:** the list under "Existing assertions that change" (the storage "newer than 3" test moves to 5, the loaded-state `toEqual` gains the two fields, the two `sky-cap.spec.ts` lines, the `SeedState` type, and the `App.test.tsx` header class kept), none loosened.
-- **Sound:** on by default (also for an old schema 3 save), never before the first gesture. The night wind is built, off by default, on the menu and the Graveyard only, with its toggle in the page content, disabled with a visible note while sound is off or reduced motion is requested.
+- **Sound:** on by default (also for an old schema 3 save), never before the first gesture. The night wind is built, off by default, on the menu and the Graveyard only, with its toggle in the page content of the Graveyard only, disabled with a visible note while sound is off or reduced motion is requested.
 - **Sounds:** an ignored key, a rejected Write stroke and navigation are silent; the sweep also plays under reduced motion; the thud only after a clean outcome, with the chime 180 ms later; struggled has one partial, shorter and quieter; gave-up is a quiet fall from 330 to 196 Hz.
 - **Toggle:** name "Sound" with `aria-pressed`; not on the loading and error screens; one confirming `key-tap` when sound is turned on; not rendered when Web Audio is missing.
 - **Engine:** unlock on `pointerdown`, `touchend`, `click` and `keydown`; no retry after a constructor throw; limits 4, 3, 2, 40 ms and 80 ms with no voice stealing; effect sounds stay on under reduced motion.

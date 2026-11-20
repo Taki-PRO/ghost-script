@@ -401,6 +401,21 @@
         "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1795154672601
+      },
+      {
+        "executionId": "d37e0add-ccac-48b8-a988-81b206653a5a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795155813299
+      },
+      {
+        "executionId": "d37e0add-ccac-48b8-a988-81b206653a5a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795156195852
+      },
+      {
+        "executionId": "d37e0add-ccac-48b8-a988-81b206653a5a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795156352348
       }
     ],
     "10. Toggle placement on every screen and the séance header": [
@@ -491,6 +506,16 @@
         "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1795154663426
+      },
+      {
+        "executionId": "d37e0add-ccac-48b8-a988-81b206653a5a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795155948172
+      },
+      {
+        "executionId": "d37e0add-ccac-48b8-a988-81b206653a5a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795156192787
       }
     ],
     "11.5 Write the outcome sound tests": [
@@ -508,6 +533,16 @@
         "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1795154664192
+      },
+      {
+        "executionId": "d37e0add-ccac-48b8-a988-81b206653a5a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795155948991
+      },
+      {
+        "executionId": "d37e0add-ccac-48b8-a988-81b206653a5a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795156435726
       }
     ],
     "11. Sound call sites": [
@@ -532,6 +567,16 @@
         "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1795154096662
+      },
+      {
+        "executionId": "d37e0add-ccac-48b8-a988-81b206653a5a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795155813408
+      },
+      {
+        "executionId": "d37e0add-ccac-48b8-a988-81b206653a5a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795155946856
       }
     ],
     "12.2 Write the ambience placement tests": [
@@ -544,6 +589,16 @@
         "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1795154207014
+      },
+      {
+        "executionId": "d37e0add-ccac-48b8-a988-81b206653a5a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795155946993
+      },
+      {
+        "executionId": "d37e0add-ccac-48b8-a988-81b206653a5a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795156193968
       }
     ],
     "13.1 Write `tests/unit/no-audio-files.test.ts`": [
@@ -575,6 +630,16 @@
         "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1795154659065
+      },
+      {
+        "executionId": "d37e0add-ccac-48b8-a988-81b206653a5a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795155947401
+      },
+      {
+        "executionId": "d37e0add-ccac-48b8-a988-81b206653a5a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795156195478
       }
     ],
     "14.1 Write the README \"Sound\" section": [
@@ -594,6 +659,44 @@
         "executionId": "313ef42c-9a98-4da1-9089-7b1c838ffec6",
         "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
         "timestamp": 1795154659102
+      }
+    ],
+    "14.2 Measure the bundle and update the README figures": [
+      {
+        "executionId": "d37e0add-ccac-48b8-a988-81b206653a5a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795156436196
+      },
+      {
+        "executionId": "d37e0add-ccac-48b8-a988-81b206653a5a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795156492225
+      }
+    ],
+    "14. README and bundle figures": [
+      {
+        "executionId": "d37e0add-ccac-48b8-a988-81b206653a5a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795156492259
+      }
+    ],
+    "15.1 Run every check and report": [
+      {
+        "executionId": "d37e0add-ccac-48b8-a988-81b206653a5a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795156498361
+      },
+      {
+        "executionId": "d37e0add-ccac-48b8-a988-81b206653a5a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795157126017
+      }
+    ],
+    "15. Final checkpoint": [
+      {
+        "executionId": "d37e0add-ccac-48b8-a988-81b206653a5a",
+        "chatSessionId": "sess_fa77c1f1-0781-4f19-a621-c31e3d99c89d",
+        "timestamp": 1795157126060
       }
     ]
   }

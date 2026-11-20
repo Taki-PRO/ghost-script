@@ -446,8 +446,6 @@ describe('StartMenu night wind placement (night-sounds Req 8.3, 8.7, 9.4, 15.1, 
     return userEvent.setup();
   }
 
-  const savedAmbience = () => JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}').ambienceOn;
-
   beforeEach(() => {
     wind.calls = [];
     localStorage.clear();
@@ -460,59 +458,13 @@ describe('StartMenu night wind placement (night-sounds Req 8.3, 8.7, 9.4, 15.1, 
     localStorage.clear();
   });
 
-  it('shows the toggle after Graveyard and before the Sources block, and keeps one slip-primary', () => {
+  it('shows no Ambience_Toggle with a provider and keeps exactly one slip-primary', () => {
     seed();
     renderWithSound();
-    const toggle = screen.getByTestId('ambience-toggle');
-    const graveyard = screen.getByRole('button', { name: GRAVEYARD });
-    const credits = screen.getByRole('button', { name: CREDITS });
-    expect(graveyard.compareDocumentPosition(toggle) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(toggle.compareDocumentPosition(credits) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(toggle.classList.contains('slip')).toBe(true);
-    expect(toggle.className).not.toContain('slip-primary');
+    expect(screen.queryByTestId('ambience-toggle')).toBeNull();
+    expect(screen.queryByRole('button', { name: /night wind/i })).toBeNull();
     expect(document.querySelectorAll('.slip-primary')).toHaveLength(1);
     expect(screen.getByRole('button', { name: BEGIN }).classList.contains('slip-primary')).toBe(true);
-  });
-
-  it('is aria-disabled with its note while sound is off, and a click changes nothing', async () => {
-    seed({ soundOn: false });
-    const user = renderWithSound();
-    const toggle = screen.getByTestId('ambience-toggle');
-    expect(toggle.getAttribute('aria-disabled')).toBe('true');
-    expect(screen.getByText('Turn sound on to hear the night wind.')).toBeTruthy();
-    await user.click(toggle);
-    expect(toggle.getAttribute('aria-pressed')).toBe('false');
-    expect(savedAmbience()).toBe(false);
-  });
-
-  it('is aria-disabled with its note while reduced motion is requested', async () => {
-    seed();
-    vi.stubGlobal('matchMedia', () => ({
-      matches: true,
-      addEventListener: () => undefined,
-      removeEventListener: () => undefined,
-    }));
-    const user = renderWithSound();
-    const toggle = screen.getByTestId('ambience-toggle');
-    expect(toggle.getAttribute('aria-disabled')).toBe('true');
-    expect(screen.getByText('The night wind is off while reduced motion is requested.')).toBeTruthy();
-    await user.click(toggle);
-    expect(toggle.getAttribute('aria-pressed')).toBe('false');
-    expect(savedAmbience()).toBe(false);
-  });
-
-  it('flips and saves ambienceOn on a click', async () => {
-    seed();
-    const user = renderWithSound();
-    const toggle = screen.getByTestId('ambience-toggle');
-    expect(toggle.getAttribute('aria-disabled')).toBeNull();
-    await user.click(toggle);
-    expect(toggle.getAttribute('aria-pressed')).toBe('true');
-    expect(toggle.textContent).toBe('Night wind: on');
-    expect(savedAmbience()).toBe(true);
-    await user.click(toggle);
-    expect(toggle.getAttribute('aria-pressed')).toBe('false');
-    expect(savedAmbience()).toBe(false);
   });
 
   it('renders no toggle outside a provider', () => {
@@ -537,12 +489,12 @@ describe('StartMenu night wind placement (night-sounds Req 8.3, 8.7, 9.4, 15.1, 
       render(<App />, { container });
     }
 
-    it('shows the toggle on the menu and the Graveyard and on no other screen', async () => {
+    it('shows the toggle on the Graveyard and on no other screen, the menu included', async () => {
       seed({ ambienceOn: true });
       mount();
       const user = userEvent.setup();
       await screen.findByRole('button', { name: BEGIN });
-      expect(screen.getByTestId('ambience-toggle')).toBeTruthy();
+      expect(screen.queryByTestId('ambience-toggle')).toBeNull();
 
       await user.click(screen.getByRole('button', { name: GRAVEYARD }));
       await screen.findByRole('button', { name: /back/i });

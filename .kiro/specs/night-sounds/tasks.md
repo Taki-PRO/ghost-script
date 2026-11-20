@@ -143,11 +143,11 @@ Rules for every task:
     - _Requirements: 21.9, 18.3_
   - [x] 10.4 Teach the existing end-to-end specs about the toggle
     - `e2e/sky-cap.spec.ts` line 135: add `[data-testid="sound-toggle"]` to the elements excluded from the "beneath the band" check, and add one assertion that the toggle is `position: fixed`, has a z-index above the cap and lies inside the Moon_Room box below 992 px; line 195: the reference and the capped run both hide `.sound-toggle` (`.sky-cap,.sound-toggle{display:none!important}`) so the compared pixels are the sky's. Each is approved by the human on condition that it is not loosened; the report states old and new and why the new one is at least as strict (the check still fails for any other element in the band)
-    - Additions only (no existing assertion changes) in `e2e/slips.spec.ts` (the toggle is a slip: lift, glow, press, at least 44 px, no `slip-primary`), `e2e/cursors.spec.ts` (the toggle has the Link_Cursor on a fine pointer, an `aria-disabled` Ambience_Toggle has `not-allowed` where the spec reaches the menu), `e2e/no-horizontal-overflow.spec.ts` and `e2e/fits-one-screen.spec.ts` (the toggle is present and the existing fit assertions still hold at 1024 × 768, 375 × 812 and, for Summon, 320 × 640)
+    - Additions only (no existing assertion changes) in `e2e/slips.spec.ts` (the toggle is a slip: lift, glow, press, at least 44 px, no `slip-primary`), `e2e/cursors.spec.ts` (the toggle has the Link_Cursor on a fine pointer, an `aria-disabled` Ambience_Toggle has `not-allowed` where the spec reaches the Graveyard), `e2e/no-horizontal-overflow.spec.ts` and `e2e/fits-one-screen.spec.ts` (the toggle is present and the existing fit assertions still hold at 1024 × 768, 375 × 812 and, for Summon, 320 × 640)
     - After waiting for port 4173 to be free, run `sky-cap`, `slips`, `cursors`, `no-horizontal-overflow` and `fits-one-screen`; they pass, with `moonIntruders` unchanged and empty
     - If anything threatens the one-screen fit or the existing e2e suite, stop and report; never loosen a test.
     - _Requirements: 14.3, 14.4, 14.5, 14.6, 14.8, 14.9, 13.3, 13.9, 21.10_
-  - [-] 10.5 Write `e2e/sound-toggle-fit.spec.ts`
+  - [x] 10.5 Write `e2e/sound-toggle-fit.spec.ts`
     - At 1024 × 768, 375 × 812, 320 × 640, 992 × 768 and 991 × 768, on the intro, Level, menu, Graveyard, Sources & licences, Cangjie guide, séance Summon, séance Write and Summary: the toggle has the same bounding box as on the first screen at that width, is 44 × 44, meets no other control or text box, and `moonIntruders` is empty; the toggle is absent on the loading and error screens; the Graveyard and Sources sticky headers sit at their place at scroll 0 and their Back button is not covered; the séance heading, Leave button and toggle do not overlap; the 16 px gap to the Moon holds below 992 px and the 16 px gap below the Moon holds from 992 px
     - After waiting for port 4173 to be free, run the spec; it passes
     - If anything threatens the one-screen fit or the existing e2e suite, stop and report; never loosen a test.
@@ -167,22 +167,22 @@ Rules for every task:
   - [x] 11.3 Outcome sounds in `app/src/components/SeanceSession.tsx`
     - In `handleOutcome`, after `onOutcomeRef.current(...)` and inside the existing `resolvedRef` and `leftRef` guard, call `outcomeSounds(outcome).forEach(play)` through a ref; no call in advance, finish, leave, stay or on the summary
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 12.1, 12.2_
-  - [ ] 11.4 Write the Summon and Write sound tests
+  - [x] 11.4 Write the Summon and Write sound tests
     - `app/src/modes/SummonStep.sound.test.tsx` with `SoundApiContext.Provider` and a recording `play`: accepted physical key `['key-tap']`; wrong key `['key-wrong']`; on-screen keys the same; a non-letter key and a key after completion request nothing; the last key requests one `key-tap` and nothing during the 1,500 + 1,500 ms hold and fade; one `ink-sweep` per key-driven `animateStroke`, none for the first-meeting forming, none after the animation failed, still one under reduced motion; two different characters with equally long codes request the same list; a throwing `play` leaves the same state, status text and `onDone` result
     - `app/src/modes/WriteMode.sound.test.tsx`: `onCorrectStroke` plays `ink-sweep`, `onMistake` plays nothing, nothing after resolve or give up, a throwing `play` leaves the outcome unchanged
     - Run the existing `SummonStep.neverReveal.test.tsx`, `SummonStep.test.tsx`, `SummonStep.ink.test.tsx` and `WriteMode.test.tsx` unchanged; they pass (the never-reveal tests stay green)
     - _Requirements: 21.6, 4.1, 4.2, 4.3, 4.4, 4.6, 5.1, 5.2, 5.3, 5.4, 5.5, 12.2, 12.4_
-  - [ ] 11.5 Write the outcome sound tests
+  - [x] 11.5 Write the outcome sound tests
     - `app/src/components/SeanceSession.sound.test.tsx`: `clean` requests `seal-thud` then `rest-clean`; `struggled` requests `rest-struggled` only; `gave-up` requests `rest-gave-up`; exactly once per ghost even when the outcome callback fires twice; none after Leave; none on "Next ghost", "Finish the séance", "Leave séance", "Stay" and "Leave" or when the summary opens; the same in the review mode and for the walkthrough ghost; a throwing `play` leaves `onOutcome` calls and the saved history identical to a run where `play` does nothing
     - Run the existing `SeanceSession.test.tsx`, `SeanceSession.resultLine.test.tsx` and `App.test.tsx` unchanged; they pass
     - _Requirements: 21.6, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 12.2_
 
-- [x] 12. Night wind on the menu and the Graveyard
+- [x] 12. Night wind on the menu and the Graveyard (toggle on the Graveyard only)
   - [x] 12.1 Place the Ambience_Toggle and the ambient screen
-    - Add `<AmbienceToggle />` to `app/src/components/StartMenu.tsx` after the "Graveyard" button and before the "Sources & licences" block, and to `app/src/components/Graveyard.tsx` after the paragraph "Your séances draw new ghosts from level …" in a `self-start` wrapper; no new props; call `setAmbientScreen(view.screen === 'menu' || view.screen === 'graveyard')` in an effect keyed on the screen name in `App.tsx`; the wind is never started by any other screen and the Primary_Action of the menu stays the one `slip-primary`
-    - _Requirements: 8.1, 8.3, 8.4, 8.7, 15.4, 15.7_
+    - Add `<AmbienceToggle />` to `app/src/components/Graveyard.tsx` after the paragraph "Your séances draw new ghosts from level …" in a `self-start` wrapper; no new props; call `setAmbientScreen(view.screen === 'menu' || view.screen === 'graveyard')` in an effect keyed on the screen name in `App.tsx`; the wind is never started by any other screen; `StartMenu.tsx` stays unchanged and shows no Ambience_Toggle (approved by the human: the toggle made the worst-case menu overflow, 780 > 768 at 1024 × 768 and 820 > 812 at 375 × 812)
+    - _Requirements: 8.1, 8.3, 8.4, 8.7, 15.4_
   - [x] 12.2 Write the ambience placement tests
-    - With a provider and a fake engine in `StartMenu.test.tsx` and `Graveyard.test.tsx` (additions only; the existing tests render without a provider and the toggle renders nothing there, so none changes): the toggle is present on both and absent on the other screens; the menu keeps exactly one `slip-primary`; the toggle is disabled with its note while sound is off and while reduced motion is requested; a click flips and saves `ambienceOn`; the wind wish passed to the engine is true only on the menu and the Graveyard and stays true when moving between them
+    - With a provider and a fake engine in `Graveyard.test.tsx` and `StartMenu.test.tsx` (additions only; the existing tests render without a provider and the toggle renders nothing there, so none changes): the toggle is present on the Graveyard and absent on the menu and the other screens; the Graveyard shows no `slip-primary`; the toggle is disabled with its note while sound is off and while reduced motion is requested; a click flips and saves `ambienceOn`; the wind wish passed to the engine is true only on the menu and the Graveyard and stays true when moving between them
     - _Requirements: 21.5, 8.3, 8.7, 9.4, 15.1, 15.4, 15.5, 15.6, 15.7_
 
 - [x] 13. Audio-file scan and sound end-to-end tests
@@ -194,16 +194,16 @@ Rules for every task:
     - After waiting for port 4173 to be free, run the spec; it passes
     - _Requirements: 21.9, 2.1, 2.2, 2.3, 2.4, 2.5, 8.1, 8.2, 9.1, 9.2, 9.3, 13.5, 13.6, 13.7, 16.10, 17.1, 17.2, 17.3, 18.3_
 
-- [ ] 14. README and bundle figures
+- [x] 14. README and bundle figures
   - [x] 14.1 Write the README "Sound" section
     - Add a "## Sound" section after "## What the game contains" with the approved text of the design's A9 (the list of sounds, the defaults, the autoplay rule, the reduced-motion rule, the night wind, the saved choices, and the statement that all sounds are synthesised with the Web Audio API so there is nothing to license), with no sentence about the hardware silent switch, because no device check has been made yet; leave the Credits screen and `THIRD_PARTY_NOTICES.txt` unchanged; edit no other README section in this task
     - _Requirements: 18.5, 20.5_
-  - [ ] 14.2 Measure the bundle and update the README figures
+  - [x] 14.2 Measure the bundle and update the README figures
     - Run `npm run build -w app` and `npm run check:bundle`; compare the counted total with the baseline in `.kiro/specs/night-sounds/bundle-baseline.txt`: the counted growth must be less than 8,000 bytes gzip and the counted total at most 300,000; if not, stop and report with the per-file sizes. Update the README "Real first load" sentence and the "Exact figures" line (and the file-weight table if its rows changed) with the printed numbers, so the README comparison of `check:bundle` stays within its 1% tolerance and prints "README CHECK PASSED"; report the before and after counted totals and the growth
     - _Requirements: 19.1, 19.2, 19.3, 19.5_
 
-- [ ] 15. Final checkpoint
-  - [ ] 15.1 Run every check and report
+- [x] 15. Final checkpoint
+  - [x] 15.1 Run every check and report
     - Before every end-to-end run, wait until nothing listens on port 4173
     - Run `npm test` at the repository root; `npx tsc --noEmit`, `npx tsc --noEmit -p app` and `npx tsc --noEmit -p oracle` (no errors); `npm run build -w app`; `npm run check:bundle` (exit 0; report the counted growth against the baseline and the README check result); `npm run test:e2e` (port 4173 free first; wait for it to finish); `npm run check:data` and `npm run check:levels` (unaffected: both pass and no data file changed)
     - Report the real gzip size the sound code adds: the counted total printed by `npm run check:bundle` now, minus the counted total recorded before any code change in `.kiro/specs/night-sounds/bundle-baseline.txt` by task 4.1, in bytes, with the per-file sizes

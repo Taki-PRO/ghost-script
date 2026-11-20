@@ -328,10 +328,10 @@ Recipe bounds (all gains are linear, before the Master_Gain):
 1. THE Ambience_Toggle SHALL be a native `button` with the accessible name "Night wind" and `aria-pressed` set to `true` WHILE the Ambience_Setting is on and `false` WHILE it is off.
 2. THE Ambience_Toggle SHALL show the visible text "Night wind: on" or "Night wind: off", so the state is never carried by colour alone.
 3. THE Ambience_Toggle SHALL have the classes `slip` and not `slip-primary`, a height of at least 44 px and the same visible focus ring as the other buttons.
-4. THE menu and THE Graveyard SHALL each render the Ambience_Toggle, and no other screen SHALL render it.
+4. THE Graveyard SHALL render the Ambience_Toggle, and no other screen SHALL render it, so the menu shows no Ambience_Toggle (approved by the human, because the toggle made the worst-case menu overflow one screen).
 5. WHILE the Sound_Setting is off, THE Ambience_Toggle SHALL be rendered with `aria-disabled="true"` and with a visible text note that the wind needs sound on.
 6. WHEN the player activates the Ambience_Toggle, THE Ambience_Toggle SHALL flip the Ambience_Setting and save it.
-7. THE Ambience_Toggle SHALL NOT make the menu or the Graveyard show a second seal-red slip.
+7. THE Ambience_Toggle SHALL NOT make the Graveyard show a seal-red slip.
 
 ### Requirement 16: Persistence (storage schema 4)
 
@@ -427,7 +427,7 @@ The human approved the answer given with every open question, including the ones
 - **Key tap:** an ignored key is silent; one tap recipe for every key; `key-wrong` fires for each counted miss only.
 - **Ink:** one sweep per `animateStroke` call of an accepted key (never for the first-meeting forming); a rejected Write stroke is silent; the sweep also plays under reduced motion.
 - **Seal and chimes:** the thud plays only for a clean outcome and the chime follows 180 ms later; struggled has the same fundamental, shorter, quieter, with no second partial; the gave-up tone is quiet and gentle (330 Hz down to 196 Hz, peak 0.06).
-- **Night wind:** built, off by default even when sound is on, played only on the menu and the Graveyard and kept running between them; its toggle lives in the page content of those two screens and is disabled with a visible note while sound is off or reduced motion is requested.
+- **Night wind:** built, off by default even when sound is on, played only on the menu and the Graveyard and kept running between them; its toggle lives in the page content of the Graveyard only (the menu shows none) and is disabled with a visible note while sound is off or reduced motion is requested.
 - **Toggle:** accessible name "Sound" with `aria-pressed`; not shown on the loading and error screens; turning sound on plays one confirming `key-tap`; hidden when Web Audio is missing.
 - **Position:** 16 px left of the Moon_Disc below 992 px and 16 px below it from 992 px (supersedes "to the left of the Moon_Disc" at every width and the 8 px gap, Requirements 14.3 and 14.11).
 - **Séance header:** the heading "Ghost n of N" moves into the step-label column at every width, as one element (Requirement 14.7).

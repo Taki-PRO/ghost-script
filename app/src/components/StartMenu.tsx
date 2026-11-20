@@ -1,5 +1,4 @@
 import type { Level } from '../data/types';
-import { AmbienceToggle } from './AmbienceToggle';
 import { GhostFigure } from './GhostFigure';
 
 export interface StartMenuProps {
@@ -115,7 +114,6 @@ export function StartMenu({
         >
           Graveyard
         </button>
-        <AmbienceToggle />
         <div className="flex flex-col gap-2">
           <button
             type="button"

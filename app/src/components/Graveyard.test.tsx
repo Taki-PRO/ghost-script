@@ -647,6 +647,7 @@ describe('Graveyard night wind toggle (night-sounds Req 8.3, 8.7, 15.1, 15.4 to 
     expect(toggle.parentElement?.className).toContain('self-start');
     expect(toggle.classList.contains('slip')).toBe(true);
     expect(toggle.className).not.toContain('slip-primary');
+    expect(document.querySelectorAll('.slip-primary')).toHaveLength(0);
   });
 
   it('is aria-disabled with its note while sound is off, and a click changes nothing', () => {

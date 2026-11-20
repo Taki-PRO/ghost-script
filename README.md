@@ -52,7 +52,7 @@ Ghost Script has quiet sounds, all made in your browser with the Web Audio API. 
 - A shorter, quieter chime when a ghost struggled, and a quiet falling tone when you gave up.
 - An optional night wind on the menu and the Graveyard.
 
-Sound is on by default, but nothing sounds until your first click, tap or key press. The night wind is off by default, and it stays off while your device asks for reduced motion. The speaker button at the top of every screen except the loading and error screens turns all sound on or off, and the night wind has its own button on the menu and the Graveyard. Both choices are saved in your browser. The sounds are the same for every character, so they never hint at an answer.
+Sound is on by default, but nothing sounds until your first click, tap or key press. The night wind is off by default, and it stays off while your device asks for reduced motion. The speaker button at the top of every screen except the loading and error screens turns all sound on or off, and the night wind has its own button on the Graveyard. Both choices are saved in your browser. The sounds are the same for every character, so they never hint at an answer.
 
 ## Data and licences
 
@@ -136,9 +136,9 @@ The same seed and row count always give the same positions, so adding override o
 
 These sizes are as of this build (`npm run build -w app`, then `npm run check:bundle`). Gzip sizes are those printed by `npm run check:bundle` (gzip level 9).
 
-Real first load: about 584 kB gzipped, of which about 230 kB counts against the 300 kB budget.
+Real first load: about 588 kB gzipped, of which about 235 kB counts against the 300 kB budget.
 
-Exact figures, as printed by `npm run check:bundle`: 230,447 bytes counted + 353,215 bytes level 1 dataset = 583,662 bytes. The budget is 300,000 bytes and applies to the counted part only (230,447). The budget does not count the level 1 dataset. The largest counted files are the app script (83,839 bytes gzip), the level 1 font subset (66,575 bytes), the heading font in WOFF (31,288 bytes) and WOFF2 (23,424 bytes) and the stylesheet (11,959 bytes). The small level manifest `data/levels.json` (6,258 bytes raw, 2,597 bytes gzip) is read by the level screen and is part of the counted total. The legend stroke file `data/legend-strokes.json` (14,220 bytes raw, 6,348 bytes gzip) holds the outlines for the intro's legend line and is also part of the counted total.
+Exact figures, as printed by `npm run check:bundle`: 234,999 bytes counted + 353,215 bytes level 1 dataset = 588,214 bytes. The budget is 300,000 bytes and applies to the counted part only (234,999). The budget does not count the level 1 dataset. The largest counted files are the app script (88,351 bytes gzip), the level 1 font subset (66,575 bytes), the heading font in WOFF (31,288 bytes) and WOFF2 (23,424 bytes) and the stylesheet (12,105 bytes). The small level manifest `data/levels.json` (6,258 bytes raw, 2,597 bytes gzip) is read by the level screen and is part of the counted total. The legend stroke file `data/legend-strokes.json` (14,220 bytes raw, 6,348 bytes gzip) holds the outlines for the intro's legend line and is also part of the counted total.
 
 Files loaded only when a level is chosen or needed (listed by the bundle check, not counted):
 

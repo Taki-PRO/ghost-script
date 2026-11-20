@@ -159,16 +159,17 @@ for (const vp of WIDTHS) {
         await expect(page.getByRole('heading', { level: 1, name: 'Where will you begin?' })).toBeVisible();
         await check(page, 'level');
       });
-      // Start menu, which also holds the Ambience_Toggle.
+      // Start menu: the Ambience_Toggle lives on the Graveyard only, so it is absent here.
       await onScreen(browser, vp, seedState(), async (page) => {
         await expect(page.getByRole('button', { name: 'Begin a Nightly Séance' })).toBeVisible();
-        await expect(page.getByTestId('ambience-toggle')).toBeVisible();
+        await expect(page.getByTestId('ambience-toggle')).toHaveCount(0);
         await check(page, 'menu');
       });
       // Graveyard (with the Ambience_Toggle) and its sticky header.
       await onScreen(browser, vp, seedState(), async (page) => {
         await menuOpen(page, 'Graveyard');
         await expect(page.getByRole('heading', { level: 1, name: 'Graveyard' })).toBeVisible();
+        await expect(page.getByTestId('ambience-toggle')).toBeVisible();
         await check(page, 'graveyard');
         await expectStickyHeader(page, vp.width, 'graveyard', /^Back to menu$/);
       });

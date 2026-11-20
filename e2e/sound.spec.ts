@@ -7,6 +7,7 @@ import {
   datasetMap,
   datasetRecord,
   installAudioRecorder,
+  loopStopCount,
   loopingStarts,
   readAudioLog,
   recordMedia,
@@ -22,51 +23,6 @@ import {
 // answer: the keys typed come from characters.json at test time.
 
 const CLICK_SPOT = { x: 3, y: 700 };
-
-/**
- * Chromium defines `start` on `AudioBufferSourceNode.prototype` itself, so the Audio_Recorder's
- * wrapper of `AudioScheduledSourceNode.prototype.start` never sees noise or wind sources. This
- * adds the missing buffer-source starts to the recorder's own log, and counts `stop()` calls on
- * looping sources (the wind). It runs after `installAudioRecorder`, so `window.__audio` exists.
- */
-async function installBufferSourceHooks(page: Page): Promise<void> {
-  await page.addInitScript(() => {
-    const w = window as unknown as {
-      __loopStops: number;
-      __audio: {
-        firstGestureAt: number | null;
-        starts: { t: number | null; kind: string; loop: boolean }[];
-      };
-    };
-    w.__loopStops = 0;
-    if (typeof AudioBufferSourceNode !== 'undefined') {
-      const start = AudioBufferSourceNode.prototype.start;
-      AudioBufferSourceNode.prototype.start = function (
-        this: AudioBufferSourceNode,
-        ...args: [when?: number, offset?: number, duration?: number]
-      ): void {
-        const first = w.__audio.firstGestureAt;
-        w.__audio.starts.push({
-          t: first === null ? null : performance.now() - first,
-          kind: 'AudioBufferSourceNode',
-          loop: this.loop === true,
-        });
-        start.apply(this, args);
-      };
-    }
-    if (typeof AudioScheduledSourceNode !== 'undefined') {
-      const stop = AudioScheduledSourceNode.prototype.stop;
-      AudioScheduledSourceNode.prototype.stop = function (this: AudioScheduledSourceNode, when?: number): void {
-        if ((this as unknown as { loop?: boolean }).loop === true) w.__loopStops += 1;
-        stop.call(this, when);
-      };
-    }
-  });
-}
-
-async function loopStops(page: Page): Promise<number> {
-  return page.evaluate(() => (window as unknown as { __loopStops: number }).__loopStops);
-}
 
 /** Console errors and uncaught page errors seen so far. */
 function watchErrors(page: Page): string[] {
@@ -98,7 +54,6 @@ test.describe('night sounds end to end', () => {
   test.beforeEach(async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'no-preference' });
     await installAudioRecorder(page);
-    await installBufferSourceHooks(page);
   });
 
   for (const [name, state] of [
@@ -256,7 +211,8 @@ test.describe('night sounds end to end', () => {
     const media = recordMedia(page);
     await seed(page, seedSound({ soundOn: true }));
     await openMenu(page);
-    await expect(page.getByTestId('ambience-toggle')).toHaveAttribute('aria-pressed', 'false');
+    // The Ambience_Toggle lives on the Graveyard only.
+    await expect(page.getByTestId('ambience-toggle')).toHaveCount(0);
     await page.mouse.click(CLICK_SPOT.x, CLICK_SPOT.y);
     await expect.poll(async () => (await readAudioLog(page)).constructed).toBe(1);
     await page.waitForTimeout(1500);
@@ -271,16 +227,16 @@ test.describe('night sounds end to end', () => {
     const media = recordMedia(page);
     await seed(page, seedSound({ soundOn: true, ambienceOn: true }));
     await openMenu(page);
-    await expect(page.getByTestId('ambience-toggle')).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.getByTestId('ambience-toggle')).toHaveCount(0);
     expect(loopingStarts(await readAudioLog(page)), 'wind before a gesture').toEqual([]);
 
     await page.mouse.click(CLICK_SPOT.x, CLICK_SPOT.y);
     await expect.poll(async () => loopingStarts(await readAudioLog(page)).length, { timeout: 10_000 }).toBe(1);
-    expect(await loopStops(page)).toBe(0);
+    expect(await loopStopCount(page)).toBe(0);
 
     await page.getByRole('button', { name: 'Begin a Nightly Séance' }).click();
     await expect(page.getByRole('region', { name: 'Summon step' })).toBeVisible({ timeout: 10_000 });
-    await expect.poll(() => loopStops(page), { timeout: 10_000 }).toBeGreaterThanOrEqual(1);
+    await expect.poll(() => loopStopCount(page), { timeout: 10_000 }).toBeGreaterThanOrEqual(1);
     await page.waitForTimeout(800);
     expect(loopingStarts(await readAudioLog(page)).length, 'the wind restarted in the séance').toBe(1);
     expect(media.requests).toEqual([]);
@@ -296,12 +252,15 @@ test.describe('night sounds end to end', () => {
     await expect.poll(async () => loopingStarts(await readAudioLog(page)).length, { timeout: 10_000 }).toBe(1);
 
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await expect.poll(() => loopStops(page), { timeout: 10_000 }).toBeGreaterThanOrEqual(1);
-    await expect(page.getByTestId('ambience-toggle')).toHaveAttribute('aria-disabled', 'true');
-    // The saved choice is untouched.
-    expect((await savedState(page)).ambienceOn).toBe(true);
+    await expect.poll(() => loopStopCount(page), { timeout: 10_000 }).toBeGreaterThanOrEqual(1);
     await page.waitForTimeout(800);
     expect(loopingStarts(await readAudioLog(page)).length, 'the wind restarted while reduced').toBe(1);
+    // The Ambience_Toggle lives on the Graveyard: it shows as disabled there, and the saved choice is untouched.
+    await page.getByRole('button', { name: 'Graveyard' }).click();
+    await expect(page.getByTestId('ambience-toggle')).toHaveAttribute('aria-disabled', 'true');
+    expect((await savedState(page)).ambienceOn).toBe(true);
+    await page.waitForTimeout(800);
+    expect(loopingStarts(await readAudioLog(page)).length, 'the wind started on the Graveyard while reduced').toBe(1);
 
     await page.emulateMedia({ reducedMotion: 'no-preference' });
     await expect.poll(async () => loopingStarts(await readAudioLog(page)).length, { timeout: 10_000 }).toBe(2);
