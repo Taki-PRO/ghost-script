@@ -852,6 +852,13 @@ Playtest with 5 people
 
 ---
 
+## Nov 20, 2026: Listening test
+
+- **What I did:** Played the live build with the sound on, on my laptop and on a phone: key taps, wrong-key taps, brush sweeps, the seal thud, the chimes, the Sound toggle beside the moon, and the night wind switched on from the Graveyard.
+- **Result:** every sound plays, and the toggle turns sound off and on. This closes the human listening task of `night-sounds`.
+
+---
+
 ## Template for new entries
 
 ## [Date]: [Short title]
